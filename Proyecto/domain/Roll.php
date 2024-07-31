@@ -4,11 +4,13 @@ class Roll {
     private $idTBRoll;
     private $nameTBRoll;
     private $descriptionTBRoll;
+    private $statusTBRoll;
 
-    function __construct ($idTBRoll = 0, $nameTBRoll = "", $descriptionTBRoll="") { 
+    function __construct ($idTBRoll = 0, $nameTBRoll = "", $descriptionTBRoll="", $statusTBRoll=true) { 
         $this->idTBRoll = $idTBRoll;
         $this->nameTBRoll = $nameTBRoll;
         $this->descriptionTBRoll = $descriptionTBRoll;
+        $this->statusTBRoll = $statusTBRoll;
     }
 
     function getIdTBRoll () { 
@@ -20,6 +22,9 @@ class Roll {
     function getDescriptionTBRoll () {
         return $this->descriptionTBRoll;
     }
+    function getStatusTBRoll () {
+        return $this->statusTBRoll;
+    }
 
     function setNameTBRoll ($nameTBRoll) { 
         $this->nameTBRoll = $nameTBRoll;
@@ -30,4 +35,8 @@ class Roll {
     function setDescriptionTBRoll ($descriptionTBRoll) {
         $this->descriptionTBRoll = $descriptionTBRoll;
     }
+    function setStatusTBRoll ($statusTBRoll) {
+        $this->statusTBRoll = $statusTBRoll;
+    }
+
 }

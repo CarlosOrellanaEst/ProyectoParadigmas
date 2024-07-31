@@ -26,7 +26,7 @@
             <label for="name">Nombre</label>
             <input required placeholder="nombre" type="text" name="rollName" id="name"/></td>
             <label for="description">Descripción</label>
-            <input required placeholder="descripción" type="text" name="rollDescription" id="description"/></td>
+            <input placeholder="descripción" type="text" name="rollDescription" id="description"/></td>
             <input type="submit" value="Crear" name="create" id="create"/></td>
         </form>
     </section>

@@ -15,11 +15,15 @@ class RollBusiness {
     public function getAllTBRolls() {
         return $this->rollData->getAllTBRolls();
     }
+    public function getOneTBRoll($idRoll) {
+        return $this->rollData->getTBRoll($idRoll);
+    }
+
     public function updateTBRoll($roll) {
         return $this->rollData->updateTBRoll($roll);
     }
-    public function deleteTBRoll($roll) {
-        return $this->rollData->deleteTBRoll($roll);
+    public function deleteTBRoll($idRoll) {
+        return $this->rollData->deleteTBRoll($idRoll);
     }
     
 }
