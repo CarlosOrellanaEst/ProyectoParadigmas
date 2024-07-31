@@ -2,9 +2,6 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>CRUD Roll</title>
-
-<!--     <link rel="icon" href="../resources/icons/bull.png"> -->
-<!--     <link rel="stylesheet" href="../resources/css/css.css"> -->
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <style>
         td, th {
@@ -15,19 +12,19 @@
     <?php
     include '../business/rollBusiness.php';
     ?>
+    <script src="../resources/rollView.js"></script>
 </head>
 <body>
     <header> 
-        <h1>CRUD Rolles</h1>
+        <h1>CRUD Roles</h1>
     </header>
-
     <section id="formCreate">
         <form method="post" action="../business/rollAction.php">
             <label for="name">Nombre</label>
-            <input required placeholder="nombre" type="text" name="rollName" id="name"/></td>
+            <input required placeholder="nombre" type="text" name="rollName" id="name"/>
             <label for="description">Descripción</label>
-            <input placeholder="descripción" type="text" name="rollDescription" id="description"/></td>
-            <input type="submit" value="Crear" name="create" id="create"/></td>
+            <input placeholder="descripción" type="text" name="rollDescription" id="description"/>
+            <input type="submit" value="Crear" name="create" id="create"/>
         </form>
     </section>
     <br><br>
@@ -63,7 +60,7 @@
                 }
 
                 foreach ($allRolls as $current) {
-                    echo '<form method="post" action="../business/rollAction.php">';
+                    echo '<form method="post" action="../business/rollAction.php" onsubmit="return confirmDelete(event);">';
                     echo '<input type="hidden" name="rollID" value="' . $current->getIdTBRoll() . '">';
                     echo '<tr>';
                         echo '<td><input type="text" name="rollName" value="' . $current->getNameTBRoll() . '"/></td>';
