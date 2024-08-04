@@ -1,22 +1,18 @@
 <?php
-require_once 'data/data.php';
+require_once '../data/loginData.php'; // Ajusta la ruta si es necesario
 
 class LoginBusiness {
     private $loginData;
 
     public function __construct() {
-        $this->loginData = new data();
+        $this->loginData = new LoginData();
     }
 
     public function authenticate($username, $password) {
-        // Obtener el usuario por el nombre de usuario
         $user = $this->loginData->getUserByUsername($username);
-
-        // Verificar si el usuario existe y la contraseña es correcta
         if ($user && password_verify($password, $user['password'])) {
-            return $user; // Retornar los datos del usuario si la autenticación es exitosa
+            return $user;
         }
-        return null; // Retornar null si la autenticación falla
+        return null;
     }
 }
-?>

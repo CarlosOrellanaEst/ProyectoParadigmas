@@ -22,3 +22,4 @@ class LoginData {
         $this->connection->close(); // Cerrar la conexión al final
     }
 }
+?>

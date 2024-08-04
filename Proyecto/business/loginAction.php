@@ -1,29 +1,34 @@
 <?php
-require_once 'business/loginBusiness.php';
+require_once 'C:/xampp/htdocs/ProyectoParadigmas/Proyecto/business/loginBusiness.php';
 
-session_start(); // Iniciar sesión
 
-// Verificar si se enviaron los datos del formulario
-if (isset($_POST['username']) && isset($_POST['password'])) {
-    $username = $_POST['username'];
+session_start();
+
+header('Content-Type: application/json');
+
+$response = array();
+
+if (isset($_POST['userName']) && isset($_POST['password'])) {
+
+    $username = $_POST['userName'];
     $password = $_POST['password'];
 
     $loginBusiness = new LoginBusiness();
     $user = $loginBusiness->authenticate($username, $password);
 
     if ($user) {
-        // Autenticación exitosa
         $_SESSION['user'] = $user;
-        header('Location: dashboard.php'); // Redirigir al usuario a la página del dashboard
-        exit();
+        $response['success'] = true;
+        $response['message'] = "Bienvenido";
     } else {
-        // Autenticación fallida
-        header('Location: login.php?error=1'); // Redirigir al login con un mensaje de error
-        exit();
+        $response['success'] = false;
+        $response['message'] = "Usuario o contraseña incorrecto";
     }
 } else {
-    // Si los datos no están completos, redirigir al login
-    header('Location: login.php?error=2');
-    exit();
+    $response['success'] = false;
+    $response['message'] = "Datos incompletos";
 }
-?>
+
+echo json_encode($response);
+exit();
+
