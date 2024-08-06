@@ -9,10 +9,8 @@ class LoginBusiness {
     }
 
     public function authenticate($username, $password) {
-        $user = $this->loginData->getUserByUsername($username);
-        if ($user && password_verify($password, $user['tbpassword'])) {
-            return $user;
-        }
-        return null;
+        $hashedText = hash('sha256', $password);
+        $user = $this->loginData->getUserByUsername($username, $hashedText);
+        return $user;
     }
 }
