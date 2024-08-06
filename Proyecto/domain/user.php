@@ -5,17 +5,15 @@ class User {
     private $userLastName;
     private $password;
     private $phone;
-    private $userID;
     private $active;
     private $userType;
 
-    public function __construct($id, $userName, $userLastName, $password, $phone, $userID, $active, $userType) {
+    public function __construct($id, $userName, $userLastName, $password, $phone, $active, $userType) {
         $this->id = $id;
         $this->userName = $userName;
         $this->userLastName = $userLastName;
         $this->password = $password;
         $this->phone = $phone;
-        $this->userID = $userID;
         $this->active = $active;
         $this->userType = $userType;
     }
@@ -39,10 +37,6 @@ class User {
 
     public function getPhone() {
         return $this->phone;
-    }
-
-    public function getUserID() {
-        return $this->userID;
     }
 
     public function getActive() {
@@ -82,4 +76,3 @@ class User {
         $this->userType = $userType;
     }
 }
-?>

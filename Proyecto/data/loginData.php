@@ -10,7 +10,7 @@ class LoginData {
     }
 
     public function getUserByUsername($username) {
-        $query = "SELECT * FROM tbuser WHERE userName = ? LIMIT 1";
+        $query = "SELECT * FROM tbuser WHERE tbuserName = ? LIMIT 1";
         $stmt = $this->connection->prepare($query);
         $stmt->bind_param("s", $username);
         $stmt->execute();
@@ -22,4 +22,4 @@ class LoginData {
         $this->connection->close(); // Cerrar la conexión al final
     }
 }
-?>
+

@@ -49,6 +49,7 @@
                 if (data.success) {
                     messageDiv.innerText = data.message;
                     messageDiv.style.color = "green";
+                    
                     // Redirige a la página de dashboard después de mostrar el mensaje
                     setTimeout(() => {
                         window.location.href = "dashboard.php";

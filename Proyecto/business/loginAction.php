@@ -15,7 +15,7 @@ if (isset($_POST['userName']) && isset($_POST['password'])) {
 
     $loginBusiness = new LoginBusiness();
     $user = $loginBusiness->authenticate($username, $password);
-
+    
     if ($user) {
         $_SESSION['user'] = $user;
         $response['success'] = true;
