@@ -11,6 +11,9 @@
     
     <?php
     include '../business/bankAccountBusiness.php';
+    include '../business/OwnerBusiness.php';
+    $ownerBusiness = new OwnerBusiness();
+    $owners = $ownerBusiness->getAllTBOwners();
     ?>
     <script src="../resources/bankAccountView.js"></script>
 </head>
@@ -19,62 +22,34 @@
         <h1>CRUD Cuenta de banco</h1>
     </header>
     <section id="formCreate">
-        <form method="post" action="../business/rollAction.php">
-            <label for="name">Nombre</label>
-            <input required placeholder="nombre" type="text" name="rollName" id="name"/>
-            <label for="description">Descripción</label>
-            <input placeholder="descripción" type="text" name="rollDescription" id="description"/>
+        <form method="post" action="../business/bankAccountAction.php">
+            <label for="ownerId">ID del Propietario</label>
+            <select name="ownerId" id="ownerId" required>
+                <!-- Opciones se llenarán aquí con PHP -->
+                <?php foreach ($owners as $owner): ?>
+                    <option value="<?php echo htmlspecialchars($owner->getIdTBOwner()); ?>">
+                        <?php echo htmlspecialchars($owner->getName() . ' ' . $owner->getSurnames()); ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+            
+            <label for="accountNumber">Número de Cuenta</label>
+            <input required placeholder="Número de cuenta" type="text" name="accountNumber" id="accountNumber"/>
+            
+            <label for="bank">Nombre del Banco</label>
+            <input required placeholder="Nombre del banco" type="text" name="bank" id="bank"/>
+            
+            <label for="status">Estado</label>
+            <select name="status" id="status" required>
+                <option value="1">Activo</option>
+                <option value="0">Inactivo</option>
+            </select>
+            
             <input type="submit" value="Crear" name="create" id="create"/>
         </form>
     </section>
+
     <br><br>
-    <section>
-        <form id="formSearchOne" method="get">
-            <label for="searchOne">Buscar por nombre</label>
-            <input type="text" required placeholder="nombre del rol" name="searchOne" id="searchOne">
-            <input type="submit" value="Buscar"/>
-        </form>
-
-        <table>
-            <thead>
-                <tr>
-                    <th>Nombre</th>
-                    <th>Descripción</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php
-                $rollBusiness = new RollBusiness();
-                $allRolls = $rollBusiness->getAllTBRolls();
-                $rollsFiltered = [];
-
-                // Filtrar los resultados si se ha realizado una búsqueda
-                if (isset($_GET['searchOne'])) {
-                    $searchTerm = $_GET['searchOne'];
-                    $rollsFiltered  = array_filter($allRolls, function($roll) use ($searchTerm) {
-                        return stripos($roll->getNameTBRoll(), $searchTerm) !== false;
-                    });
-                }
-                if (count($rollsFiltered) > 0) {
-                    $allRolls = $rollsFiltered;
-                }
-
-                foreach ($allRolls as $current) {
-                    echo '<form method="post" action="../business/rollAction.php" onsubmit="return confirmDelete(event);">';
-                    echo '<input type="hidden" name="rollID" value="' . $current->getIdTBRoll() . '">';
-                    echo '<tr>';
-                        echo '<td><input type="text" name="rollName" value="' . $current->getNameTBRoll() . '"/></td>';
-                        echo '<td><input type="text" name="rollDescription" value="' . $current->getDescriptionTBRoll() . '"/></td>';
-                        echo '<td>';
-                            echo '<input type="submit" value="Actualizar" name="update"/>';
-                            echo '<input type="submit" value="Eliminar" name="delete"/>';
-                        echo '</td>';
-                    echo '</tr>';
-                    echo '</form>';
-                }
-                ?>
-            </tbody>
-        </table>
-    </section>
+    
 </body>
 </html>
