@@ -1,15 +1,17 @@
 <?php
 
+include_once '../domain/Owner.php';
+
 class BankAccount {
     private $tbBankAccountId;
-    private $ownerId;
+    private $owner;
     private $accountNumber;
     private $bank;
     private $status;
 
-    public function __construct ($tbBankAccountId, $ownerId, $accountNumber, $bank, $status){
+    public function __construct ($tbBankAccountId, Owner $owner, $accountNumber, $bank, $status){
         $this->tbBankAccountId = $tbBankAccountId;
-        $this->ownerId = $ownerId;
+        $this->owner = $owner;
         $this->accountNumber = $accountNumber;
         $this->bank = $bank;
         $this->status = $status;
@@ -22,11 +24,11 @@ class BankAccount {
         $this->tbBankAccountId = $tbBankAccountId;
     }
 
-    public function getOwnerId(){
-        return $this->ownerId;
+    public function getOwner() {
+        return $this->owner;
     }
-    public function setOwnerId($ownerId){
-        $this->ownerId = $ownerId;
+    public function setOwner(Owner $owner) {
+        $this->owner = $owner;
     }
 
     public function getAccountNumber(){

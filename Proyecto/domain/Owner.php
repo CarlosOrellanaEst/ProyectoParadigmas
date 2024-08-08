@@ -1,12 +1,12 @@
 <?php
-include '../domain/Person.php';
+include_once '../domain/Person.php';
 
-class Owner extends Person{
+class Owner extends Person {
     private $idTBOwner;
     private $directionTBOwner;
     private $statusTBOwner;
 
-    function __construct($idTBOwner = 0, $directionTBOwner = "", $name = "", $surnames = "", $legalIdentification = "", $phone = "", $email = "", $statusTBOwner = true) {
+    public function __construct($idTBOwner = 0, $directionTBOwner = "", $name = "", $surnames = "", $legalIdentification = "", $phone = "", $email = "", $statusTBOwner = true) {
         parent::__construct($name, $surnames, $legalIdentification, $phone, $email);
         $this->idTBOwner = $idTBOwner;
         $this->directionTBOwner = $directionTBOwner;
@@ -22,7 +22,7 @@ class Owner extends Person{
         return $this->directionTBOwner;
     }
 
-    function getStatusTBOwner () {
+    public function getStatusTBOwner() {
         return $this->statusTBOwner;
     }
 
@@ -34,8 +34,8 @@ class Owner extends Person{
     public function setDirectionTBOwner($directionTBOwner) {
         $this->directionTBOwner = $directionTBOwner;
     }
-    function setStatusTBOwner ($statusTBOwner) {
+
+    public function setStatusTBOwner($statusTBOwner) {
         $this->statusTBOwner = $statusTBOwner;
     }
-
 }

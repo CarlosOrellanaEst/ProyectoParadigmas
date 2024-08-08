@@ -1,3 +1,3 @@
 <?php
 
-include './ownerBusiness.php';
+include_once './ownerBusiness.php';

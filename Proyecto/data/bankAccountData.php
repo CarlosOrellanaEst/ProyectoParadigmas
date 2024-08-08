@@ -1,9 +1,10 @@
 <?php
 
 include_once 'data.php';
-include '../domain/BankAccount.php';
+include_once '../domain/BankAccount.php';
+include_once '../domain/Owner.php';
 
-class bankAccountData extends Data {
+class BankAccountData extends Data {
     public function insertTbBankAccount($bankAccount) {
         $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
         if (!$conn) {
@@ -23,19 +24,20 @@ class bankAccountData extends Data {
         }
     
         $queryInsert = "INSERT INTO tbbankaccount (tbbankAccountId, tbbankAccountOwnerId, tbbankAccountNumber, tbbankAccountBankName, tbbankAccountStatus) VALUES (?, ?, ?, ?, ?)";
-        $stmt = $conn->prepare($queryInsert); // el prepared statement de java
+        $stmt = $conn->prepare($queryInsert);
         if ($stmt === false) {
             die("Prepare failed: " . $conn->error);
         }
     
-        $tbBankAccountId = $nextId;
-        $ownerId = $bankAccount->getOwnerId();
-        $accountNumber = $bankAccount->getAccountNumber();
-        $bank = $bankAccount->getBank();
-        $status = $bankAccount->getStatus();
+        $tbbankAccountId = $nextId;
+        $owner = $bankAccount->getOwner();
+        $tbbankAccountOwnerId = $owner->getId();
+        $tbbankAccountNumber = $bankAccount->getAccountNumber();
+        $tbbankAccountBankName = $bankAccount->getBank();
+        $tbbankAccountStatus = $bankAccount->getStatus();
     
         // Vincula los parámetros del statement
-        $stmt->bind_param("iissi", $tbBankAccountId, $ownerId, $accountNumber, $bank, $status); // "iissi": cada letra es el tipo de dato de los parámetros
+        $stmt->bind_param("iissi", $tbbankAccountId, $tbbankAccountOwnerId, $tbbankAccountNumber, $tbbankAccountBankName, $tbbankAccountStatus);
     
         // Ejecuta la declaración
         $result = $stmt->execute();
