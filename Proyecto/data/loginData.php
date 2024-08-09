@@ -15,12 +15,24 @@ class LoginData {
         $stmt->bind_param("ss", $username, $password);
         $stmt->execute();
         $result = $stmt->get_result();
-        //Revisar si trae el objeto completo y estudiarlo...
-        $user = $result->fetch_assoc();
+        
+        if ($row = $result->fetch_assoc()) {
+            $user = new User();
+            $user->setUserID($row['tbuserid']);
+            $user->setUserName($row['tbuserName']);
+            $user->setUserLastName($row['tbuserLastName']);
+            $user->setPassword($row['tbpassword']);
+            $user->setPhone($row['tbphone']);
+            $user->setActive($row['tbactive']);
+            $user->setUserType($row['tbuserType']);
+        } else {
+            $user = null;
+        }
+        
         $stmt->close();
-    
-        return $user ? $user : null;
+        return $user;
     }
+    
     
     
 

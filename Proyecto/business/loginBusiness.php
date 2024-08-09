@@ -9,8 +9,14 @@ class LoginBusiness {
     }
 
     public function authenticate($username, $password) {
+        // Hashear la contraseña con SHA-256
         $hashedText = hash('sha256', $password);
+    
+        // Obtener el usuario por nombre de usuario y contraseña hasheada
         $user = $this->loginData->getUserByUsername($username, $hashedText);
-        return $user;
+    
+        // Retornar el objeto User si se encontró, o null si no
+        return $user !== null ? $user : null;
     }
+    
 }

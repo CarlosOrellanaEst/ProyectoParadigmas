@@ -51,8 +51,15 @@
                     messageDiv.style.color = "green";
                     
                     // Redirige a la página de dashboard después de mostrar el mensaje
+                    // Redirige a la página correspondiente según el userType después de mostrar el mensaje
                     setTimeout(() => {
-                        window.location.href = "dashboard.php";
+                        if (data.userType === "Administrador") {
+                            window.location.href = "adminView.php";
+                        } else if (data.userType === "Turista") {
+                            window.location.href = "touristView.php";
+                        } else if(data.userType === "Propietario") {
+                            window.location.href = "propietarioView.php";
+                        }
                     }, 2000); // Redirige después de 2 segundos
                 } else {
                     messageDiv.innerText = data.message;

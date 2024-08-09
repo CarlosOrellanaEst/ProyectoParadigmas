@@ -8,7 +8,7 @@ class User {
     private $active;
     private $userType;
 
-    public function __construct($id, $userName, $userLastName, $password, $phone, $active, $userType) {
+    public function __construct($id = null, $userName = null, $userLastName = null, $password = null, $phone = null, $active = null, $userType = null) {
         $this->id = $id;
         $this->userName = $userName;
         $this->userLastName = $userLastName;
