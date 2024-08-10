@@ -14,7 +14,7 @@ if (isset($_POST['create'])) {
 
         if (strlen($name) > 0) {
             if (!is_numeric($name) && !is_numeric($surnames) && ctype_alnum($legalIdentification) && ctype_alnum($phone) && preg_match('/^[\s\S]*$/', $email) && ctype_alnum($direction) ) {
-                $owner = new Owner(0, $name, $surnames, $legalIdentification, $phone, $email, $direction, 1);
+                $owner = new Owner(0, $direction, $name, $surnames, $legalIdentification, $phone, $email, 1);
                 $ownerBusiness = new OwnerBusiness();
 
                 $result = $ownerBusiness->insertTBOwner($owner);
@@ -56,7 +56,7 @@ if (isset($_POST['update'])) {
 
         if (strlen($name) > 0) {
             if (!is_numeric($name) && !is_numeric($surnames) && ctype_alnum($legalIdentification) && ctype_alnum($phone) && preg_match('/^[\s\S]*$/', $email) && ctype_alnum($direction) && is_numeric($id)) {
-                $owner = new Owner($id, $name, $surnames, $legalIdentification, $phone, $email, $direction);
+                $owner = new Owner($id, $direction, $name, $surnames, $legalIdentification, $phone, $email, 1);
                 $ownerBusiness = new OwnerBusiness();
                 $result = $ownerBusiness->updateTBOwner($owner);
 
