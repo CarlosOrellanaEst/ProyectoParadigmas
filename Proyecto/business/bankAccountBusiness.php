@@ -10,9 +10,23 @@ class BankAccountBusiness {
         $this->bankAccountData = new BankAccountData(); 
     }
 
-    public function insertTbBankAccount($tbBankAccountId, Owner $owner, $accountNumber, $bank, $status) {
-        $bankAccount = new BankAccount($tbBankAccountId, $owner, $accountNumber, $bank, $status);
-        
+    public function insertTbBankAccount($bankAccount) {
         return $this->bankAccountData->insertTbBankAccount($bankAccount);
+    }
+
+    public function getAllTBBankAccount() {
+        return $this->bankAccountData->getAllTbBankAccount();
+    }
+
+    public function deleteTBBankAccount($idBankAccount) {
+        return $this->bankAccountData->deleteTbBankAccount($idBankAccount);
+    }
+
+    public function updateTBBankAccount($bankAccount) {
+        return $this->bankAccountData->updateTbBankAccount($bankAccount);
+    }
+
+    public function getOneTBBankAccount($idBankAccount) {
+        return $this->bankAccountData->getTbBankAccount($idBankAccount);
     }
 }
