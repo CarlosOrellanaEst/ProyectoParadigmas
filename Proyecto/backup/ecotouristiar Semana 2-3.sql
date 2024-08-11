@@ -54,7 +54,9 @@ CREATE TABLE tbowner (
     tbowneremail VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
     tbownerdirection VARCHAR(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
     tbownerstatus tinyint(1) NOT NULL,
-    UNIQUE (tbowneremail)
+    UNIQUE (tbowneremail),
+    UNIQUE (tbownerlegalidentification),
+    UNIQUE (tbownerphone)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 
