@@ -1,17 +1,20 @@
 <?php
-include_once '../domain/Person.php';
+include '../domain/Person.php';
 
-class Owner extends Person {
-    private $idTBOwner;
-    private $directionTBOwner;
-    private $statusTBOwner;
+class Owner extends Person{
+     private $idTBOwner;
+     private $directionTBOwner;
+     private $statusTBOwner;
 
-    public function __construct($idTBOwner = 0, $directionTBOwner = "", $name = "", $surnames = "", $legalIdentification = "", $phone = "", $email = "", $statusTBOwner = true) {
+     function __construct($idTBOWner = 0, $directionTBOwner="", $name="", $surnames="", $legalIdentification="", $phone="", $email="", $statusTBOwner=true){
+
         parent::__construct($name, $surnames, $legalIdentification, $phone, $email);
-        $this->idTBOwner = $idTBOwner;
-        $this->directionTBOwner = $directionTBOwner;
-        $this->statusTBOwner = $statusTBOwner;
+
+        $this->idTBOwner=$idTBOWner;
+        $this->directionTBOwner=$directionTBOwner;
+        $this->statusTBOwner=$statusTBOwner;
     }
+
 
     // Getters
     public function getIdTBOwner() {
@@ -22,7 +25,7 @@ class Owner extends Person {
         return $this->directionTBOwner;
     }
 
-    public function getStatusTBOwner() {
+    function getStatusTBOwner () {
         return $this->statusTBOwner;
     }
 
@@ -34,8 +37,8 @@ class Owner extends Person {
     public function setDirectionTBOwner($directionTBOwner) {
         $this->directionTBOwner = $directionTBOwner;
     }
-
-    public function setStatusTBOwner($statusTBOwner) {
+    function setStatusTBOwner ($statusTBOwner) {
         $this->statusTBOwner = $statusTBOwner;
     }
+
 }
