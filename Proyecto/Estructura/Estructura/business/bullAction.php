@@ -80,7 +80,7 @@ if (isset($_POST['update'])) {
 
                 $bullBusiness = new BullBusiness();
 
-                $result = $bullBusiness->insertTBull($bull);
+                $result = $bullBusiness->insertTBBull($bull);
 
                 if ($result == 1) {
                     header("location: ../view/bullView.php?success=inserted");

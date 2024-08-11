@@ -64,6 +64,14 @@ INSERT INTO `tbuser` (`tbuserid`, `tbuserName`, `tbuserLastName`, `tbuserpasswor
 COMMIT;
 
 
+CREATE TABLE `tbbankaccount` (
+  `tbbankAccountId` int(11) NOT NULL,
+  `tbbankAccountOwnerId` int(11) NOT NULL,
+  `tbbankAccountNumber` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `tbbankAccountBankName` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `tbbankAccountStatus` tinyint(1) NOT NULL,
+  `tbbankAccountIsActive` int(11) NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
