@@ -20,9 +20,9 @@ function showAlertBasedOnURL() {
         }
     } else if(urlParams.has('error')) {
         if(paramError === 'alreadyexists') { 
-            alert('Error.\nYa existe un dueño con este correo');
+            alert('Error.\nEl tele');
         } else if (paramError === 'emptyField') {
-            alert('Error.\n Ingrese un correo diferente');
+            alert('Error.\nEl telefono o el correo ya existe');
         } else {
             alert('Error.\nPor favor notificar de este error');
         }
