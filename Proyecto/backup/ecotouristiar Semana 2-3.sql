@@ -44,6 +44,17 @@ INSERT INTO `tbroll` (`tbrollid`, `tbrollname`, `tbrolldescription`, `tbrollstat
 (3, 'Propietario', '', 1);
 COMMIT;
 
+CREATE TABLE `tbuser` (
+  `tbuserid` int(11) NOT NULL,
+  `tbuserName` varchar(255) NOT NULL,
+  `tbuserLastName` varchar(255) NOT NULL,
+  `tbuserpassword` varchar(255) NOT NULL,
+  `tbuserphone` varchar(255) NOT NULL,
+  `tbuserStatus` tinyint(1) NOT NULL,
+  `tbuserType` varchar(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
 INSERT INTO `tbuser` (`tbuserid`, `tbuserName`, `tbuserLastName`, `tbuserpassword`, `tbuserphone`, `tbuserStatus`, `tbuserType`) VALUES
 (1, 'admin', 'Admin', 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3', '1234567890', 1, 'Administrador'),
 (2, 'johndoe', 'Doe', 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3', '9876543210', 1, 'Turista'),
