@@ -46,7 +46,6 @@ class RollData extends Data {
             $stmt->close();
             mysqli_close($conn);
         }
-
         return $result;
     }
     // lee todos
@@ -98,13 +97,18 @@ class RollData extends Data {
         $conn->set_charset('utf8');
     
         $id = $roll->getIdTBRoll();
-        $newName = mysqli_real_escape_string($conn,  $roll->getNameTBRoll());
-        $newDescription = mysqli_real_escape_string($conn,  $roll->getDescriptionTBRoll());
-    
-        $query = "UPDATE tbroll SET tbrollname = '$newName', tbrolldescription = '$newDescription' WHERE tbrollid = $id";
-        $result = mysqli_query($conn, $query);
-    
-        mysqli_close($conn);
+
+        if ($this->getTBRollByName($roll->getNameTBRoll())) {
+            $result = null; 
+        } else {
+            $newName = mysqli_real_escape_string($conn,  $roll->getNameTBRoll());
+            $newDescription = mysqli_real_escape_string($conn,  $roll->getDescriptionTBRoll());
+        
+            $query = "UPDATE tbroll SET tbrollname = '$newName', tbrolldescription = '$newDescription' WHERE tbrollid = $id";
+            $result = mysqli_query($conn, $query);
+        
+            mysqli_close($conn);
+        }
         return $result;
     }
     
