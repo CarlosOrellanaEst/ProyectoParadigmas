@@ -1,7 +1,7 @@
 <?php
 
 include_once 'data.php';
-include '../domain/Owner.php';
+include_once '../domain/Owner.php';
 
 class ownerData extends Data {
 
