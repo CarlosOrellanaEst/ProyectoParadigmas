@@ -1,5 +1,5 @@
 <?php
-require_once 'C:/xampp/htdocs/ProyectoParadigmas/Proyecto/business/loginBusiness.php';
+require_once './loginBusiness.php';
 
 
 session_start();
