@@ -1,5 +1,5 @@
 <?php
-include '../domain/Person.php';
+include_once  '../domain/Person.php';
 
 class Owner extends Person{
      private $idTBOwner;
