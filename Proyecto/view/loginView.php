@@ -8,7 +8,8 @@
 <body>
     <div>
         <h2>Iniciar Sesión</h2>
-        <div id="message" style="display: none;"></div>
+        <div id="message" hidden></div>
+
         <form id="loginForm" method="POST" action="../business/loginAction.php">
             <div>
                 <label for="userName">Nombre de Usuario</label>
@@ -45,10 +46,11 @@
             .then(response => response.json())
             .then(data => {
                 const messageDiv = document.getElementById("message");
-                messageDiv.style.display = "block";
+                
                 if (data.success) {
                     messageDiv.innerText = data.message;
-                    messageDiv.style.color = "green";
+                    
+                    alert(messageDiv.innerText);
                     
                     // Redirige a la página de dashboard después de mostrar el mensaje
                     // Redirige a la página correspondiente según el userType después de mostrar el mensaje
@@ -63,7 +65,8 @@
                     }, 2000); // Redirige después de 2 segundos
                 } else {
                     messageDiv.innerText = data.message;
-                    messageDiv.style.color = "red";
+                    
+                    alert(messageDiv.innerText);
                 }
             })
             .catch(error => {
