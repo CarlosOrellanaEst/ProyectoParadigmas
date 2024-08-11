@@ -5,6 +5,7 @@ class Roll {
     private $nameTBRoll;
     private $descriptionTBRoll;
     private $statusTBRoll;
+    private $email;
 
     function __construct ($idTBRoll = 0, $nameTBRoll = "", $descriptionTBRoll="", $statusTBRoll=true) { 
         $this->idTBRoll = $idTBRoll;
