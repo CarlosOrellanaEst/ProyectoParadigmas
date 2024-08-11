@@ -9,7 +9,7 @@
     <div>
         <h2>Iniciar Sesión</h2>
         <div id="message" style="display: none;"></div>
-        <form id="loginForm" method="POST" action="/Proyecto/business/loginAction.php">
+        <form id="loginForm" method="POST" action="../business/loginAction.php">
             <div>
                 <label for="userName">Nombre de Usuario</label>
                 <input type="text" id="userName" name="userName" required>
@@ -35,7 +35,7 @@
             const password = document.getElementById("password").value;
 
             // Realiza la solicitud AJAX
-            fetch("/Proyecto/business/loginAction.php", {
+            fetch("../business/loginAction.php", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/x-www-form-urlencoded"
