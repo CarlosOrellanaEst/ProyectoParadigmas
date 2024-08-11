@@ -6,6 +6,6 @@
     <title>Texto Simple</title>
 </head>
 <body>
-    <p>PAGINA DE PROPIETARIO.</p>
+    <p>PAGINA DE ADMIN.</p>
 </body>
 </html>
