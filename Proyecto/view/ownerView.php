@@ -12,7 +12,7 @@
     <?php
     include '../business/OwnerBusiness.php';
     ?>
-    <script src="../resources/rollView.js"></script>
+    <script src="../resources/ownerView.js"></script>
 </head>
 <body>
     <header> 
