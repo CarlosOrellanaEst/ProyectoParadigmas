@@ -67,7 +67,7 @@ class ownerData extends Data {
     
         $owners = [];
         while ($row = mysqli_fetch_assoc($result)) {
-            $currentOwner = new Owner($row['tbownerid'], $row['tbownerphone'], $row['tbownername'], $row['tbownersurnames'], $row['tbownerlegalidentification'], $row['tbowneremail'], $row['tbownerdirection'], $row['tbownerstatus']);
+            $currentOwner = new Owner($row['tbownerid'],$row['tbownerdirection'], $row['tbownername'], $row['tbownersurnames'], $row['tbownerlegalidentification'], $row['tbownerphone'], $row['tbowneremail'],  $row['tbownerstatus']);
             array_push($owners, $currentOwner);
         }
     
