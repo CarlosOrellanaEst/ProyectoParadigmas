@@ -21,20 +21,82 @@
     <section id="formCreate">
         <form method="post" action="../business/ownerAction.php">
             <label for="name">Nombre</label>
-            <input required placeholder="nombre" type="text" name="ownerName" id="name"/>
+            <input 
+                required 
+                placeholder="nombre" 
+                type="text" 
+                name="ownerName" 
+                id="name" 
+                pattern="[A-Za-z\s]+" 
+                title="Solo se permiten letras y espacios"
+                oninput="this.value = this.value.replace(/[^A-Za-z\s]/g, '')"
+                minlength="2" 
+                maxlength="50"
+            />
+            
             <label for="surnames">Apellidos</label>
-            <input placeholder="apellidos" type="text" name="ownerSurnames" id="surnames"/>
-            <label for="legalIdentification">Identificacion Legal</label>
-            <input placeholder="identificacionLegal" type="text" name="ownerLegalIdentification" id="legalIdentification"/>
-            <label for="phone">Telefono</label>
-            <input placeholder="telefono" type="text" name="ownerPhone" id="phone"/>
+            <input 
+                required 
+                placeholder="apellidos" 
+                type="text" 
+                name="ownerSurnames" 
+                id="surnames" 
+                pattern="[A-Za-z\s]+" 
+                title="Solo se permiten letras y espacios"
+                oninput="this.value = this.value.replace(/[^A-Za-z\s]/g, '')"
+                minlength="2" 
+                maxlength="100"
+            />
+            
+            <label for="legalIdentification">Identificación Legal</label>
+            <input 
+                required 
+                placeholder="identificacionLegal" 
+                type="text" 
+                name="ownerLegalIdentification" 
+                id="legalIdentification" 
+                pattern="[0-9]{9}" 
+                title="Debe ser un número de 9 dígitos"
+                oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+            />
+            
+            <label for="phone">Teléfono</label>
+            <input 
+                required 
+                placeholder="telefono" 
+                type="text" 
+                name="ownerPhone" 
+                id="phone" 
+                pattern="[0-9]{8}" 
+                title="Debe ser un número de 8 dígitos"
+                oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+            />
+            
             <label for="email">Correo</label>
-            <input placeholder="correo" type="text" name="ownerEmail" id="email"/>
-            <label for="direction">Direccion</label>
-            <input placeholder="direccion" type="text" name="ownerDirection" id="direction"/>
+            <input 
+                required 
+                placeholder="correo" 
+                type="email" 
+                name="ownerEmail" 
+                id="email"
+            />
+            
+            <label for="direction">Dirección</label>
+            <input 
+                required 
+                placeholder="direccion" 
+                type="text" 
+                name="ownerDirection" 
+                id="direction" 
+                minlength="5" 
+                maxlength="255"
+            />
+            
             <input type="submit" value="Crear" name="create" id="create"/>
         </form>
     </section>
+
+
     <br><br>
     <section>
         <form id="formSearchOne" method="get">
@@ -75,12 +137,29 @@
                     echo '<form method="post" action="../business/ownerAction.php" onsubmit="return confirmDelete(event);">';
                     echo '<input type="hidden" name="ownerID" value="' . $current->getIdTBOwner() . '">';
                     echo '<tr>';
-                        echo '<td><input type="text" name="ownerName" value="' . $current->getName() . '"/></td>';
-                        echo '<td><input type="text" name="ownerSurnames" value="' . $current->getSurnames() . '"/></td>';
-                        echo '<td><input type="text" name="ownerLegalIdentification" value="' . $current->getLegalIdentification() . '"/></td>';
-                        echo '<td><input type="text" name="ownerPhone" value="' . $current->getPhone() . '"/></td>';
-                        echo '<td><input type="text" name="ownerEmail" value="' . $current->getEmail() . '"/></td>';
-                        echo '<td><input type="text" name="ownerDirection" value="' . $current->getDirectionTBOwner() . '"/></td>';
+                        echo '<td><input type="text" name="ownerName" value="' . $current->getName() . '" 
+                            pattern="[A-Za-z\s]+" title="Solo se permiten letras y espacios" 
+                            oninput="this.value = this.value.replace(/[^A-Za-z\s]/g, \'\')" 
+                            minlength="2" maxlength="50" required/></td>';
+                        
+                        echo '<td><input type="text" name="ownerSurnames" value="' . $current->getSurnames() . '" 
+                            pattern="[A-Za-z\s]+" title="Solo se permiten letras y espacios" 
+                            oninput="this.value = this.value.replace(/[^A-Za-z\s]/g, \'\')" 
+                            minlength="2" maxlength="100" required/></td>';
+                        
+                        echo '<td><input type="text" name="ownerLegalIdentification" value="' . $current->getLegalIdentification() . '" 
+                            pattern="[0-9]{9}" title="Debe ser un número de 9 dígitos" 
+                            oninput="this.value = this.value.replace(/[^0-9]/g, \'\')" required/></td>';
+                        
+                        echo '<td><input type="text" name="ownerPhone" value="' . $current->getPhone() . '" 
+                            pattern="[0-9]{8}" title="Debe ser un número de 8 dígitos" 
+                            oninput="this.value = this.value.replace(/[^0-9]/g, \'\')" required/></td>';
+                        
+                        echo '<td><input type="email" name="ownerEmail" value="' . $current->getEmail() . '" required/></td>';
+                        
+                        echo '<td><input type="text" name="ownerDirection" value="' . $current->getDirectionTBOwner() . '" 
+                            minlength="5" maxlength="255" required/></td>';
+                        
                         echo '<td>';
                             echo '<input type="submit" value="Actualizar" name="update"/>';
                             echo '<input type="submit" value="Eliminar" name="delete"/>';
