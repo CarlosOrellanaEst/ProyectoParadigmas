@@ -22,7 +22,7 @@ function showAlertBasedOnURL() {
         if(paramError === 'alreadyexists') { 
             alert('Error.\nEl telefono o el correo ya existe');
         } else if (paramError === 'emptyField') {
-            alert('Error.\nEl telefono o el correo ya existe');
+            alert('Error. El telefono o el correo ya existe');
         } else {
             alert('Error.\nPor favor notificar de este error');
         }
