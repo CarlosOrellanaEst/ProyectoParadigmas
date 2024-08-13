@@ -2,10 +2,10 @@
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
--- Servidor: 127.0.0.1
--- Tiempo de generación: 11-08-2024 a las 05:26:52
--- Versión del servidor: 10.4.28-MariaDB
--- Versión de PHP: 8.2.4
+-- Servidor: localhost
+-- Tiempo de generación: 13-08-2024 a las 19:23:39
+-- Versión del servidor: 10.4.32-MariaDB
+-- Versión de PHP: 8.2.12
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de datos: `ecotouristiar`
+-- Base de datos: `dbecotouristiar`
 --
 
 -- --------------------------------------------------------
@@ -28,19 +28,19 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `tbbankaccount` (
-  `tbbankAccountId` int(11) NOT NULL,
-  `tbbankAccountOwnerId` int(11) NOT NULL,
-  `tbbankAccountNumber` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `tbbankAccountBankName` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `tbbankAccountStatus` tinyint(1) NOT NULL,
-  `tbbankAccountIsActive` int(11) NOT NULL DEFAULT 1
+  `tbbankaccountid` int(11) NOT NULL,
+  `tbbankaccountownerid` int(11) NOT NULL,
+  `tbbankaccountnumber` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `tbbankaccountbankname` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `tbbankaccountstatus` tinyint(1) NOT NULL,
+  `tbbankaccountisactive` int(11) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `tbbankaccount`
 --
 
-INSERT INTO `tbbankaccount` (`tbbankAccountId`, `tbbankAccountOwnerId`, `tbbankAccountNumber`, `tbbankAccountBankName`, `tbbankAccountStatus`, `tbbankAccountIsActive`) VALUES
+INSERT INTO `tbbankaccount` (`tbbankaccountid`, `tbbankaccountownerid`, `tbbankaccountnumber`, `tbbankaccountbankname`, `tbbankaccountstatus`, `tbbankaccountisactive`) VALUES
 (1, 10, '1111111', 'bcr', 1, 0),
 (2, 2, '33', 'ddd', 0, 0),
 (3, 10, '5', 'sdf', 1, 0),
@@ -96,19 +96,19 @@ INSERT INTO `tbroll` (`tbrollid`, `tbrollname`, `tbrolldescription`, `tbrollstat
 
 CREATE TABLE `tbuser` (
   `tbuserid` int(11) NOT NULL,
-  `tbuserName` varchar(255) NOT NULL,
-  `tbuserLastName` varchar(255) NOT NULL,
+  `tbusername` varchar(255) NOT NULL,
+  `tbuserlastname` varchar(255) NOT NULL,
   `tbuserpassword` varchar(255) NOT NULL,
   `tbuserphone` varchar(255) NOT NULL,
-  `tbuserStatus` tinyint(1) NOT NULL,
-  `tbuserType` varchar(255) NOT NULL
+  `tbuserstatus` tinyint(1) NOT NULL,
+  `tbusertype` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Volcado de datos para la tabla `tbuser`
 --
 
-INSERT INTO `tbuser` (`tbuserid`, `tbuserName`, `tbuserLastName`, `tbuserpassword`, `tbuserphone`, `tbuserStatus`, `tbuserType`) VALUES
+INSERT INTO `tbuser` (`tbuserid`, `tbusername`, `tbuserlastname`, `tbuserpassword`, `tbuserphone`, `tbuserstatus`, `tbusertype`) VALUES
 (1, 'admin', 'Admin', 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3', '1234567890', 1, 'Administrador'),
 (2, 'johndoe', 'Doe', 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3', '9876543210', 1, 'Turista'),
 (3, 'janedoe', 'Doe', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', '5432167890', 1, 'Turista'),

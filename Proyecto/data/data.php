@@ -33,7 +33,7 @@ class Data {
                 $this->server = "127.0.0.1";
                 $this->user = "root";
                 $this->password = "";
-                $this->db = "ecotouristiar";
+                $this->db = "dbecotouristiar";
                 break;
         }
     }
