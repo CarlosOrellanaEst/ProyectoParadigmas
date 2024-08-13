@@ -11,30 +11,28 @@ SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
 
-
+-- Guardar configuración actual
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8mb4 */;
 
---
 -- Base de datos: `ecotouristiar`
 --
 
 -- --------------------------------------------------------
 
---
 -- Estructura de tabla para la tabla `tbroll`
 --
 
 CREATE TABLE `tbroll` (
-  `tbrollid` int(11) NOT NULL,
+  `tbrollid` int(11) NOT NULL AUTO_INCREMENT,
   `tbrollname` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `tbrolldescription` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `tbrollstatus` tinyint(1) NOT NULL
+  `tbrollstatus` tinyint(1) NOT NULL,
+  PRIMARY KEY (`tbrollid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
 -- Volcado de datos para la tabla `tbroll`
 --
 
@@ -42,18 +40,20 @@ INSERT INTO `tbroll` (`tbrollid`, `tbrollname`, `tbrolldescription`, `tbrollstat
 (1, 'Administrador', 'Acceso completo a todas las funciones y configuraciones del sistema.', 1),
 (2, 'Turista', 'Potencial cliente de los negocios registrados en el sistema', 1),
 (3, 'Propietario', '', 1);
-COMMIT;
+
+-- Estructura de tabla para la tabla `tbuser`
+--
 
 CREATE TABLE `tbuser` (
-  `tbuserid` int(11) NOT NULL,
+  `tbuserid` int(11) NOT NULL AUTO_INCREMENT,
   `tbuserName` varchar(255) NOT NULL,
   `tbuserLastName` varchar(255) NOT NULL,
   `tbuserpassword` varchar(255) NOT NULL,
   `tbuserphone` varchar(255) NOT NULL,
   `tbuserStatus` tinyint(1) NOT NULL,
-  `tbuserType` varchar(255) NOT NULL
+  `tbuserType` varchar(255) NOT NULL,
+  PRIMARY KEY (`tbuserid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
 
 INSERT INTO `tbuser` (`tbuserid`, `tbuserName`, `tbuserLastName`, `tbuserpassword`, `tbuserphone`, `tbuserStatus`, `tbuserType`) VALUES
 (1, 'admin', 'Admin', 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3', '1234567890', 1, 'Administrador'),
@@ -61,34 +61,39 @@ INSERT INTO `tbuser` (`tbuserid`, `tbuserName`, `tbuserLastName`, `tbuserpasswor
 (3, 'janedoe', 'Doe', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', '5432167890', 1, 'Turista'),
 (4, 'alice', 'Wonderland', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', '7654321098', 1, 'Turista'),
 (5, 'bob', 'Builder', 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3', '8765432109', 1, 'Propietario');
-COMMIT;
 
+-- Estructura de tabla para la tabla `tbbankaccount`
+--
 
 CREATE TABLE `tbbankaccount` (
-  `tbbankAccountId` int(11) NOT NULL,
+  `tbbankAccountId` int(11) NOT NULL AUTO_INCREMENT,
   `tbbankAccountOwnerId` int(11) NOT NULL,
   `tbbankAccountNumber` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `tbbankAccountBankName` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `tbbankAccountStatus` tinyint(1) NOT NULL,
-  `tbbankAccountIsActive` int(11) NOT NULL DEFAULT 1
+  `tbbankAccountIsActive` int(11) NOT NULL DEFAULT 1,
+  PRIMARY KEY (`tbbankAccountId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---Estructura de tabla para la tabla `tbowner`
-CREATE TABLE tbowner (
-    tbownerid INT(11) NOT NULL,
-    tbownername VARCHAR(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-    tbownersurnames VARCHAR(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-    tbownerlegalidentification VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-    tbownerphone VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-    tbowneremail VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-    tbownerdirection VARCHAR(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-    tbownerstatus tinyint(1) NOT NULL,
-    UNIQUE (tbowneremail),
-    UNIQUE (tbownerlegalidentification),
-    UNIQUE (tbownerphone)
-)ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+-- Estructura de tabla para la tabla `tbowner`
+--
 
+CREATE TABLE `tbowner` (
+  `tbownerid` INT(11) NOT NULL AUTO_INCREMENT,
+  `tbownername` VARCHAR(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `tbownersurnames` VARCHAR(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `tbownerlegalidentification` VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `tbownerphone` VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `tbowneremail` VARCHAR(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `tbownerdirection` VARCHAR(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `tbownerstatus` tinyint(1) NOT NULL,
+  UNIQUE KEY (`tbowneremail`),
+  UNIQUE KEY (`tbownerlegalidentification`),
+  UNIQUE KEY (`tbownerphone`),
+  PRIMARY KEY (`tbownerid`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+-- Restaurar configuración original
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
