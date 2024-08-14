@@ -13,7 +13,8 @@ if (isset($_POST['create'])) {
         $direction = $_POST['ownerDirection'];
 
         if (strlen($name) > 0) {
-            if (!is_numeric($name) && !is_numeric($surnames) && ctype_alnum($legalIdentification) && ctype_alnum($phone) && preg_match('/^[\s\S]*$/', $email) && ctype_alnum($direction) ) {
+            if (!is_numeric($name) && !is_numeric($surnames)  && ctype_alnum($legalIdentification) && ctype_alnum($phone) && preg_match('/^[\s\S]*$/', $email)) {
+                
                 $owner = new Owner(0, $direction, $name, $surnames, $legalIdentification, $phone, $email, 1);
                 $ownerBusiness = new OwnerBusiness();
 
