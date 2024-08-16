@@ -18,7 +18,7 @@ class BankAccountData extends Data {
         $conn->set_charset('utf8');
 
         // Obtiene el último id
-        $queryGetLastId = "SELECT MAX(tbbankAccountId) AS idtbbankAccount FROM tbbankaccount";
+        $queryGetLastId = "SELECT MAX(tbbankaccountid) AS idtbbankAccount FROM tbbankaccount";
         $idCont = mysqli_query($conn, $queryGetLastId);
         $nextId = 1;
 
@@ -27,7 +27,7 @@ class BankAccountData extends Data {
             $nextId = $lastId + 1;
         }
 
-        $queryInsert = "INSERT INTO tbbankaccount (tbbankAccountId, tbbankAccountOwnerId, tbbankAccountNumber, tbbankAccountBankName, tbbankAccountStatus) VALUES (?, ?, ?, ?, ?)";
+        $queryInsert = "INSERT INTO tbbankaccount (tbbankaccountid, tbbankaccountownerid, tbbankaccountnumber, tbbankaccountbankname, tbbankaccountstatus) VALUES (?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($queryInsert);
         if ($stmt === false) {
             die("Prepare failed: " . $conn->error);
@@ -64,8 +64,8 @@ class BankAccountData extends Data {
 
         $bankA = [];
         while ($row = mysqli_fetch_assoc($result)) {
-            $currentBankAccount = new BankAccount($row['tbbankAccountId'], $row['tbbankAccountOwnerId'], $row['tbbankAccountNumber'],
-            $row['tbbankAccountBankName'], $row['tbbankAccountStatus']);
+            $currentBankAccount = new BankAccount($row['tbbankaccountid'], $row['tbbankaccountownerid'], $row['tbbankaccountnumber'],
+            $row['tbbankaccountbankname'], $row['tbbankaccountstatus']);
             array_push($bankA, $currentBankAccount);
         }
 
@@ -77,7 +77,7 @@ class BankAccountData extends Data {
         $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
         $conn->set_charset('utf8');
 
-        $queryUpdate = "UPDATE tbbankaccount SET tbbankAccountIsActive=0 where tbbankAccountId=" . $idBankAccount . ";";
+        $queryUpdate = "UPDATE tbbankaccount SET tbbankAccountIsActive=0 where tbbankaccountid=" . $idBankAccount . ";";
         $result = mysqli_query($conn, $queryUpdate);
         mysqli_close($conn);
 
@@ -96,7 +96,7 @@ class BankAccountData extends Data {
         $newBankName = mysqli_real_escape_string($conn,  $bankAccount->getBank());
         $newStatus = mysqli_real_escape_string($conn,  $bankAccount->getStatus());
     
-        $query = "UPDATE tbbankaccount SET tbbankAccountNumber = '$newAccountNumber', tbbankAccountBankName = '$newBankName', tbbankAccountStatus = '$newStatus' WHERE tbbankAccountId = $id";
+        $query = "UPDATE tbbankaccount SET tbbankaccountnumber = '$newAccountNumber', tbbankaccountbankname = '$newBankName', tbbankaccountstatus = '$newStatus' WHERE tbbankaccountid = $id";
         $result = mysqli_query($conn, $query);
     
         mysqli_close($conn);
@@ -110,12 +110,12 @@ class BankAccountData extends Data {
         }
         $conn->set_charset('utf8');
     
-        $query = "SELECT * FROM tbbankaccount WHERE tbbankAccountId = $idBankAccount";
+        $query = "SELECT * FROM tbbankaccount WHERE tbbankaccountid = $idBankAccount";
         $result = mysqli_query($conn, $query);
     
         if ($row = mysqli_fetch_assoc($result)) {
-            $bankAccountReturn = new BankAccount($row['tbbankAccountId'], $row['tbbankAccountOwnerId'], $row['tbbankAccountNumber'],
-            $row['tbbankAccountBankName'], $row['tbbankAccountStatus']);
+            $bankAccountReturn = new BankAccount($row['tbbankaccountid'], $row['tbbankaccountownerid'], $row['tbbankaccountnumber'],
+            $row['tbbankaccountbankname'], $row['tbbankaccountstatus']);
         } else {
             $bankAccountReturn = null;
         }

@@ -48,8 +48,8 @@ if (isset($_POST['create'])) {
 }
 
 if (isset($_POST['delete'])) { 
-    if (isset($_POST['tbBankAccountID'])) {
-        $id = $_POST['tbBankAccountID'];
+    if (isset($_POST['tbbankaccountid'])) {
+        $id = $_POST['tbbankaccountid'];
         $bankBusiness = new bankAccountBusiness();
         $result = $bankBusiness ->deleteTBBankAccount($id);
 
@@ -64,11 +64,11 @@ if (isset($_POST['delete'])) {
 } 
 
 if (isset($_POST['update'])) {
-    if (isset($_POST['BankName']) && isset($_POST['AccountNumber']) && isset($_POST['Status']) && isset($_POST['tbBankAccountID'])) {
+    if (isset($_POST['BankName']) && isset($_POST['AccountNumber']) && isset($_POST['Status']) && isset($_POST['tbbankaccountid'])) {
         $Bankname = $_POST['BankName'];
         $AccountNumber = $_POST['AccountNumber'];
         $Status = $_POST['Status'];
-        $id = $_POST['tbBankAccountID'];
+        $id = $_POST['tbbankaccountid'];
 
         if (strlen($Bankname) > 0) {
             if (!is_numeric($Bankname) && is_numeric($AccountNumber) && is_numeric($Status) && is_numeric($id)) {

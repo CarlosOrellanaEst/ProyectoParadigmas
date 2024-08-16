@@ -12,7 +12,7 @@
         
         <?php
         include '../business/bankAccountBusiness.php';
-        include '../business/OwnerBusiness.php';
+        include '../business/ownerBusiness.php';
         $ownerBusiness = new OwnerBusiness();
         $owners = $ownerBusiness->getAllTBOwners();
         ?>
@@ -83,7 +83,7 @@
                         if (count($all) > 0) {
                             foreach ($all as $current) {
                                 echo '<form method="post" action="../business/bankAccountAction.php" onsubmit="return confirmAction(event);">';
-                                echo '<input type="hidden" name="tbBankAccountID" value="' . $current->getTbBankAccountId() . '">';
+                                echo '<input type="hidden" name="tbbankaccountid" value="' . $current->getTbBankAccountId() . '">';
                                 echo '<tr>';
                                     echo '<td><input type="text" name="OwnerId" value="' . $current->getOwnerId() . '"/></td>';
                                     echo '<td><input type="text" name="BankName" value="' . $current->getBank() . '"/></td>';
