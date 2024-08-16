@@ -20,6 +20,8 @@ function showAlertBasedOnURL() {
         }
     } else if(urlParams.has('error')) {
         if(paramError === 'alreadyexists') { 
+            alert('Error.\nEl tele');
+        } else if (paramError === 'emptyField') {
             alert('Error.\nEl telefono o el correo ya existe');
         } else if (paramError === 'emptyField') {
             alert('Error. El telefono o el correo ya existe');
