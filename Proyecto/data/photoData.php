@@ -19,22 +19,27 @@ class photoData extends Data {
     // Obtiene el último id de la tabla tbphoto
     $queryGetLastId = "SELECT MAX(tbphotoid) AS idtbphoto FROM tbphoto";
     $idCont = mysqli_query($conn, $queryGetLastId);
-    $nextId = 1;
 
+    // Verifica si la consulta falló
+    if (!$idCont) {
+        die("Error en la consulta SQL: " . mysqli_error($conn));
+    }
+
+    $nextId = 1;
     if ($row = mysqli_fetch_row($idCont)) {
         $lastId = $row[0] !== null ? (int)trim($row[0]) : 0;
         $nextId = $lastId + 1;
     }
     
     // Prepara la consulta de inserción
-    $queryInsert = "INSERT INTO tbphoto (tbphotoid, tbuphotourl, tbphotostatus) VALUES (?, ?, ?)";
+    $queryInsert = "INSERT INTO tbphoto (tbphotoid, tbphotourl, tbphotostatus) VALUES (?, ?, ?)";
     $stmt = $conn->prepare($queryInsert);
     if ($stmt === false) {
-        die("Prepare failed: " . $conn->error);
+        die("Prepare failed: " . $conn->error); 
     }
 
     // Obtén la URL de la foto y establece el estado como true
-    $url = $photo->setUrlTBPhoto(); // Asegúrate de que setUrlTBPhoto devuelva la URL correcta
+    $url = $photo->getUrlTBPhoto(); // Asegúrate de que getUrlTBPhoto devuelva la URL correcta
     $statusDelete = true;
 
     // Vincula los parámetros del statement
@@ -49,6 +54,68 @@ class photoData extends Data {
 
     return $result;
 }
+// lee todos
+public function getAllTBPhotos() {
+    $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
+    if (!$conn) {
+        die("Connection failed: " . mysqli_connect_error());
+    }
+    $conn->set_charset('utf8');
 
-   
+    $query = "SELECT * FROM tbphoto WHERE tbphotostatus = 1;";
+    $result = mysqli_query($conn, $query);
+
+    $photos = [];
+    while ($row = mysqli_fetch_assoc($result)) {
+        $currentPhoto = new Photo($row['tbphotoid'], $row['tbphotourl'], $row['tbphotostatus']);
+        array_push($photos, $currentPhoto);
+    }
+
+    mysqli_close($conn);
+    return $photos;
+}
+
+public function updateTBPhoto($photo) {
+    $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
+    if (!$conn) {
+        die("Connection failed: " . mysqli_connect_error());
+    }
+    $conn->set_charset('utf8');
+
+    // Obtén los valores
+    $id = $photo->getIdTBPhoto();
+    $newUrl = mysqli_real_escape_string($conn, $photo->getUrlTBPhoto());
+    
+    // Actualiza la consulta
+    $query = "UPDATE tbphoto SET tbphotourl = '$newUrl' WHERE tbphotoid = $id";
+
+    // Ejecuta la consulta
+    $result = mysqli_query($conn, $query);
+
+    if (!$result) {
+        die("Error en la consulta de actualización: " . mysqli_error($conn));
+    }
+
+    mysqli_close($conn);
+
+    return $result;
+}
+
+
+public function deleteTBPhoto($idPhoto) {
+    $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
+    $conn->set_charset('utf8');
+
+    $queryUpdate = "UPDATE tbphoto SET tbphotostatus = 0 WHERE tbphotoid = " . $idPhoto . ";";
+    $result = mysqli_query($conn, $queryUpdate);
+
+    if (!$result) {
+        die("Error en la eliminación: " . mysqli_error($conn));
+    }
+
+    mysqli_close($conn);
+
+    return $result;
+}
+ 
 } 

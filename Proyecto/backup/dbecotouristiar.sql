@@ -129,8 +129,8 @@ ALTER TABLE `tbowner`
 COMMIT;
 
 CREATE TABLE `tbphoto` (
-  `tbuphotoid` int(11) NOT NULL,
-  `tbuphotourl` varchar(255) NOT NULL,
+  `tbphotoid` int(11) NOT NULL,
+  `tbphotourl` varchar(255) NOT NULL,
   `tbphotostatus` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 

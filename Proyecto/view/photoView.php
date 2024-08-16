@@ -1,73 +1,54 @@
 <!DOCTYPE html>
+<html lang="es">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>CRUD Roll</title>
+    <title>CRUD Fotos</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <style>
-        td, th {
-            border-right: 1px solid;
-        }
-    </style>
-    
     <?php
     include '../business/photoBusiness.php';
     ?>
-    <script src="../resources/photoView.js"></script>
 </head>
 <body>
     <header> 
         <h1>CRUD Fotos</h1>
     </header>
+
+    <!-- Formulario para crear una nueva foto -->
     <section id="formCreate">
-    <form method="post" action="../business/photoAction.php" enctype="multipart/form-data">
-    <input type="file" name="imagen" accept="image/*" id="file-input" style="display: none;">
-    <button type="button" onclick="document.getElementById('file-input').click();">Subir Imagen</button>
-    <input type="submit" value="Crear" name="create" id="create"/>
-</form>
-
-    </section>
-    <br><br>
-    <section>
-        <form id="formSearchOne" method="get">
-            <label for="searchOne">Buscar por nombre</label>
-            <input type="text" required placeholder="nombre del rol" name="searchOne" id="searchOne">
-            <input type="submit" value="Buscar"/>
+        <form method="post" action="../business/photoAction.php" enctype="multipart/form-data">
+            <input type="file" name="imagen" required>
+            <input type="submit" value="Crear" name="create" id="create"/>
         </form>
+    </section>
 
+    <br><br>
+
+    <!-- Listado de fotos -->
+    <section>
         <table>
             <thead>
                 <tr>
-                    <th>Nombre</th>
-                    <th>Descripción</th>
+                    <th>Foto</th>
+                    <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
                 <?php
-                $rollBusiness = new RollBusiness();
-                $allRolls = $rollBusiness->getAllTBRolls();
-                $rollsFiltered = [];
-
-                // Filtrar los resultados si se ha realizado una búsqueda
-                if (isset($_GET['searchOne'])) {
-                    $searchTerm = $_GET['searchOne'];
-                    $rollsFiltered  = array_filter($allRolls, function($roll) use ($searchTerm) {
-                        return stripos($roll->getNameTBRoll(), $searchTerm) !== false;
-                    });
-                }
-                if (count($rollsFiltered) > 0) {
-                    $allRolls = $rollsFiltered;
-                }
-
-                foreach ($allRolls as $current) {
-                    echo '<form method="post" action="../business/rollAction.php" onsubmit="return confirmDelete(event);">';
-                    echo '<input type="hidden" name="rollID" value="' . $current->getIdTBRoll() . '">';
+                $photoBusiness = new photoBusiness();
+                $allphotos = $photoBusiness->getAllTBPhotos();
+                
+                foreach ($allphotos as $current) {
+                    echo '<form method="post" action="../business/photoAction.php" enctype="multipart/form-data">';
+                    echo '<input type="hidden" name="photoID" value="' . $current->getIdTBPhoto() . '">';
                     echo '<tr>';
-                        echo '<td><input type="text" name="rollName" value="' . $current->getNameTBRoll() . '"/></td>';
-                        echo '<td><input type="text" name="rollDescription" value="' . $current->getDescriptionTBRoll() . '"/></td>';
-                        echo '<td>';
-                            echo '<input type="submit" value="Actualizar" name="update"/>';
-                            echo '<input type="submit" value="Eliminar" name="delete"/>';
-                        echo '</td>';
+                    echo '<td><img src="../images/' . $current->getUrlTBPhoto() . '" alt="Foto" width="100" height="100" name="photoURL"/></td>';
+                    echo '<td>';
+                        // Input para seleccionar la nueva imagen
+                        echo '<input type="file" name="newImage" accept="image/*">';
+                        // Botones de acción
+                        echo '<input type="submit" value="Actualizar" name="update"/>';
+                        echo '<input type="submit" value="Eliminar" name="delete"/>';
+                    echo '</td>';
                     echo '</tr>';
                     echo '</form>';
                 }
