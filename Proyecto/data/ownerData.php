@@ -24,8 +24,14 @@ class ownerData extends Data {
                $nextId = $lastId + 1;
            }
            if ($this->getTBOwnerByEmail($owner->getEmail())) {
-               $result = null;
-           } else {
+               $result = "Email";
+           }else if ($this->getTBOwnerByPhone($owner->getPhone())) {
+                $result = "Phone";
+
+         }else if ($this->getTBOwnerByLegalId($owner->getLegalIdentification())) {
+                $result = "LegalId";
+        }else
+        {
  
                $queryInsert = "INSERT INTO tbowner (tbownerid, tbownername, tbownersurnames, tbownerlegalidentification, tbownerphone, tbowneremail, tbownerdirection, tbownerstatus) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
                $stmt = $conn->prepare($queryInsert); // el prepared statement de java
@@ -126,27 +132,48 @@ class ownerData extends Data {
         return $ownerReturn;
     } 
 
-    public function updateTBOwner($owner) {
-        $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
-        if (!$conn) {
-            die("Connection failed: " . mysqli_connect_error());
-        }
-        $conn->set_charset('utf8');
+   public function updateTBOwner($owner) {
+    $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
+    if (!$conn) {
+        die("Connection failed: " . mysqli_connect_error());
+    }
+    $conn->set_charset('utf8');
     
-        $id = $owner->getIdTBOwner();
-        $newName = mysqli_real_escape_string($conn,  $owner->getName());
-        $newSurnames = mysqli_real_escape_string($conn,  $owner->getSurnames());
-        $newLegalIdentification = mysqli_real_escape_string($conn,  $owner->getLegalIdentification());
-        $newPhone = mysqli_real_escape_string($conn,  $owner->getPhone());
-        $newEmail = mysqli_real_escape_string($conn,  $owner->getEmail());
-        $newDirection = mysqli_real_escape_string($conn,  $owner->getDirectionTBOwner());
-    
+    $id = $owner->getIdTBOwner();
+    $newName = mysqli_real_escape_string($conn,  $owner->getName());
+    $newSurnames = mysqli_real_escape_string($conn,  $owner->getSurnames());
+    $newLegalIdentification = mysqli_real_escape_string($conn,  $owner->getLegalIdentification());
+    $newPhone = mysqli_real_escape_string($conn,  $owner->getPhone());
+    $newEmail = mysqli_real_escape_string($conn,  $owner->getEmail());
+    $newDirection = mysqli_real_escape_string($conn,  $owner->getDirectionTBOwner());
+
+    // Verifica si el nuevo correo ya existe excluyendo el dueño actual
+    $emailQuery = "SELECT * FROM tbowner WHERE tbowneremail = '$newEmail' AND tbownerid != $id";
+    $emailResult = mysqli_query($conn, $emailQuery);
+
+    // Verifica si el nuevo teléfono ya existe excluyendo el dueño actual
+    $phoneQuery = "SELECT * FROM tbowner WHERE tbownerphone = '$newPhone' AND tbownerid != $id";
+    $phoneResult = mysqli_query($conn, $phoneQuery);
+
+    // Verifica si la nueva identificación legal ya existe excluyendo el dueño actual
+    $legalIdQuery = "SELECT * FROM tbowner WHERE tbownerlegalidentification = '$newLegalIdentification' AND tbownerid != $id";
+    $legalIdResult = mysqli_query($conn, $legalIdQuery);
+
+    if (mysqli_num_rows($emailResult) > 0) {
+        $result = "Email";
+    } else if (mysqli_num_rows($phoneResult) > 0) {
+        $result = "Phone";
+    } else if (mysqli_num_rows($legalIdResult) > 0) {
+        $result = "LegalId";
+    } else {
+        // Si las validaciones pasan, proceder con la actualización
         $query = "UPDATE tbowner SET tbownername = '$newName', tbownersurnames = '$newSurnames', tbownerlegalidentification = '$newLegalIdentification', tbownerphone = '$newPhone', tbowneremail = '$newEmail', tbownerdirection = '$newDirection' WHERE tbownerid = $id";
         $result = mysqli_query($conn, $query);
-    
-        mysqli_close($conn);
-        return $result;
     }
+
+    mysqli_close($conn);
+    return $result;
+}
 
     public function deleteTBOwner($idOwner) {
         $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
@@ -167,6 +194,41 @@ class ownerData extends Data {
         $conn->set_charset('utf8');
     
         $query = "SELECT * FROM tbowner WHERE tbowneremail= '$ownerEmail'    ";
+        $result = mysqli_query($conn, $query);
+        
+        $row = mysqli_fetch_assoc($result);
+
+        $row != null && count($row) > 0 ? $ownerReturn = true : $ownerReturn = false;
+    
+        mysqli_close($conn);
+        return $ownerReturn;
+    } 
+    public function getTBOwnerByPhone($ownerPhone) {
+        $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
+        if (!$conn) {
+            die("Connection failed: " . mysqli_connect_error());
+        }
+        $conn->set_charset('utf8');
+    
+        $query = "SELECT * FROM tbowner WHERE tbownerphone= '$ownerPhone'    ";
+        $result = mysqli_query($conn, $query);
+        
+        $row = mysqli_fetch_assoc($result);
+
+        $row != null && count($row) > 0 ? $ownerReturn = true : $ownerReturn = false;
+    
+        mysqli_close($conn);
+        return $ownerReturn;
+    } 
+
+    public function getTBOwnerByLegalId($LegalId) {
+        $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
+        if (!$conn) {
+            die("Connection failed: " . mysqli_connect_error());
+        }
+        $conn->set_charset('utf8');
+    
+        $query = "SELECT * FROM tbowner WHERE tbownerlegalidentification= '$LegalId'    ";
         $result = mysqli_query($conn, $query);
         
         $row = mysqli_fetch_assoc($result);
