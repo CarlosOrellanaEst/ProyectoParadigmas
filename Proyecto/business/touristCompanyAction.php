@@ -1,5 +1,6 @@
 <?php
 require_once 'touristCompanyBusiness.php';
+include './OwnerBusiness.php';
 
 if (isset($_POST['action'])) {
     $touristCompanyBusiness = new TouristCompanyBusiness();
@@ -10,7 +11,7 @@ if (isset($_POST['action'])) {
                 $_POST['id'],
                 $_POST['legalName'],
                 $_POST['magicName'],
-                (new OwnerBusiness())->getOwnerById($_POST['ownerId']),
+                (new OwnerBusiness())->getTBOwner($_POST['ownerId']),
                 (new CompanyTypeBusiness())->getCompanyTypeById($_POST['companyTypeId'])
             );
             $touristCompanyBusiness->createTouristCompany($touristCompany);
@@ -21,7 +22,7 @@ if (isset($_POST['action'])) {
                 $_POST['id'],
                 $_POST['legalName'],
                 $_POST['magicName'],
-                (new OwnerBusiness())->getOwnerById($_POST['ownerId']),
+                (new OwnerBusiness())->getTBOwner($_POST['ownerId']),
                 (new CompanyTypeBusiness())->getCompanyTypeById($_POST['companyTypeId'])
             );
             $touristCompanyBusiness->updateTouristCompany($touristCompany);
