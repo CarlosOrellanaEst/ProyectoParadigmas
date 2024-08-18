@@ -1,63 +1,71 @@
 <?php
 class touristCompany{
 
-    private $id;
-    private $legalName;
-    private $magicName;
-    private $owner;
-    private $companyType;
+    private $tbtouristcompanyid;
+    private $tbtouristcompanylegalname;
+    private $tbtouristcompanymagicname;
+    private $tbtouristcompanyowner;
+    private $tbtouristcompanycompanyType;
+    private $tbtouristcompanystatus;
 
-    function __construct($id = 0, $legalName="", $magicName="", $owner="", $companyType=""){
-
-        $this->id=$id;
-        $this->legalName=$legalName;
-        $this->magicName=$magicName;
-        $this->owner=$owner;
-        $this->companyType=$companyType;
-
+    public function __construct($tbtouristcompanyid, $tbtouristcompanylegalname, $tbtouristcompanymagicname, $tbtouristcompanyowner, $tbtouristcompanycompanyType, $tbtouristcompanystatus){
+        $this->tbtouristcompanyid = $tbtouristcompanyid;
+        $this->tbtouristcompanylegalname = $tbtouristcompanylegalname;
+        $this->tbtouristcompanymagicname = $tbtouristcompanymagicname;
+        $this->tbtouristcompanyowner = $tbtouristcompanyowner;
+        $this->tbtouristcompanycompanyType = $tbtouristcompanycompanyType;
+        $this->tbtouristcompanystatus = $tbtouristcompanystatus;
     }
 
-
-    public function getId() {
-        return $this->id;
+    public function getId(){
+        return $this->tbtouristcompanyid;
     }
 
-    public function getLegalName() {
-        return $this->legalName;
+    public function getLegalName(){
+        return $this->tbtouristcompanylegalname;
     }
 
-    public function getMagicName() {
-        return $this->magicName;
+    public function getMagicName(){
+        return $this->tbtouristcompanymagicname;
     }
 
-    public function getOwner() {
-        return $this->owner;
+    public function getOwner(){
+        return $this->tbtouristcompanyowner;
     }
 
-    public function getCompanyType() {
-        return $this->companyType;
+    public function getCompanyType(){
+        return $this->tbtouristcompanycompanyType;
     }
 
-
-    public function setId($id) {
-        $this->id = $id;
+    public function getStatus(){
+        return $this->tbtouristcompanystatus;
     }
 
-    public function setLegalName($legalName) {
-        $this->legalName = $legalName;
+    public function setId($tbtouristcompanyid){
+        $this->tbtouristcompanyid = $tbtouristcompanyid;
+    }
+    
+    public function setLegalName($tbtouristcompanylegalname){
+        $this->tbtouristcompanylegalname = $tbtouristcompanylegalname;
     }
 
-    public function setMagicName($magicName) {
-        $this->magicName = $magicName;
+    public function setMagicName($tbtouristcompanymagicname){
+        $this->tbtouristcompanymagicname = $tbtouristcompanymagicname;
     }
 
-    public function setOwner($owner) {
-        $this->owner = $owner;
+    public function setOwner($tbtouristcompanyowner){
+        $this->tbtouristcompanyowner = $tbtouristcompanyowner;
     }
 
-    public function setCompanyType($companyType) {
-        $this->companyType = $companyType;
+    public function setCompanyType($tbtouristcompanycompanyType){
+        $this->tbtouristcompanycompanyType = $tbtouristcompanycompanyType;
     }
+
+    public function setStatus($tbtouristcompanystatus){
+        $this->tbtouristcompanystatus = $tbtouristcompanystatus;
+    }
+
+    
 
 
 

@@ -1,64 +1,167 @@
 <?php
-class TouristCompanyData {
-    private $connection;
 
-    public function __construct() {
-        $this->connection = (new Data())->connect(); // Asumiendo que `Data` es la clase que maneja la conexión
-    }
+include_once 'data.php';
+include_once '../domain/TouristCompany.php';
+class TouristCompanyData extends Data{
 
     public function insertTouristCompany($touristCompany) {
-        $query = "INSERT INTO tourist_company (id, legal_name, magic_name, owner_id, type_id) VALUES (?, ?, ?, ?, ?)";
-        $stmt = $this->connection->prepare($query);
-        $stmt->bind_param("issii", 
-            $touristCompany->getId(), 
-            $touristCompany->getLegalName(), 
-            $touristCompany->getMagicName(), 
-            $touristCompany->getOwner()->getId(), 
-            $touristCompany->getCompanyType()->getId()
-        );
-        $stmt->execute();
+
+        error_log($this->server);
+        error_log($this->user);
+        error_log($this->password);
+        error_log($this->db);
+
+        $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
+        if (!$conn) {
+            die("Connection failed: " . mysqli_connect_error());
+        }
+
+        $conn->set_charset('utf8');
+
+        $queryGetLastId = "SELECT MAX(tbtouristcompanyid) AS tbtouristcompanyid FROM tbtouristcompany";
+
+        $idCont = mysqli_query($conn, $queryGetLastId);
+
+        $nextId = 1;
+
+        if ($row = mysqli_fetch_row($idCont)) {
+            $lastId = $row[0] !== null ? (int)trim($row[0]) : 0;
+            $nextId = $lastId + 1;
+        }
+
+        $queryInsert = "INSERT INTO tbtouristcompany (tbtouristcompanyid, tbtouristcompanylegalname, tbtouristcompanymagicname, tbtouristcompanyowner, tbtouristcompanycompanyType, tbtouristcompanystatus) VALUES (?, ?, ?, ?, ?, ?)";
+        $stmt = $conn->prepare($queryInsert);
+        if ($stmt === false) {
+            die("Prepare failed: " . $conn->error);
+        }
+
+        $tbtouristcompanyid = $nextId;
+        $tbtouristcompanylegalname = $touristCompany->getLegalName();
+        $tbtouristcompanymagicname = $touristCompany->getMagicName();
+        $tbtouristcompanyowner = $touristCompany->getOwner();
+        $tbtouristcompanycompanyType = $touristCompany->getCompanyType();
+        $tbtouristcompanystatus = $touristCompany->getStatus();
+
+        $stmt->bind_param("issiii", $tbtouristcompanyid, $tbtouristcompanylegalname, $tbtouristcompanymagicname, $tbtouristcompanyowner, $tbtouristcompanycompanyType, $tbtouristcompanystatus);
+
+        $result = $stmt->execute();
+
         $stmt->close();
+
+        mysqli_close($conn);
+
+        return $result;
+   
     }
 
     public function getAllTouristCompanies() {
-        $query = "SELECT * FROM tourist_company";
-        $result = $this->connection->query($query);
+        $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
+        if (!$conn) {
+            die("Connection failed: " . mysqli_connect_error());
+        }
+        $conn->set_charset('utf8');
+
+        $query = "SELECT * FROM tbtouristcompany WHERE tbtouristcompanystatus=1;";
+
+        $result = mysqli_query($conn, $query);
+
         $touristCompanies = array();
 
-        while ($row = $result->fetch_assoc()) {
-            $owner = (new OwnerData())->getTBOwner($row['owner_id']);
-            $companyType = (new CompanyTypeData())->getCompanyTypeById($row['type_id']);
-            $touristCompanies[] = new TouristCompany(
-                $row['id'], 
-                $row['legal_name'], 
-                $row['magic_name'], 
-                $owner, 
-                $companyType
-            );
+        while ($row = mysqli_fetch_array($result)) {
+            $touristCompanies[] = new TouristCompany($row['tbtouristcompanyid'], $row['tbtouristcompanylegalname'], $row['tbtouristcompanymagicname'], $row['tbtouristcompanyowner'], $row['tbtouristcompanycompanyType'], $row['tbtouristcompanystatus']);
         }
+
+        mysqli_close($conn);
 
         return $touristCompanies;
     }
 
-    public function updateTouristCompany($touristCompany) {
-        $query = "UPDATE tourist_company SET legal_name = ?, magic_name = ?, owner_id = ?, type_id = ? WHERE id = ?";
-        $stmt = $this->connection->prepare($query);
-        $stmt->bind_param("ssiii", 
-            $touristCompany->getLegalName(), 
-            $touristCompany->getMagicName(), 
-            $touristCompany->getOwner()->getId(), 
-            $touristCompany->getCompanyType()->getId(), 
-            $touristCompany->getId()
-        );
-        $stmt->execute();
+    public function deleteTouristCompany($id) {
+        $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
+        if (!$conn) {
+            die("Connection failed: " . mysqli_connect_error());
+        }
+        $conn->set_charset('utf8');
+
+        $query = "UPDATE tbtouristcompany SET tbtouristcompanystatus=0 WHERE tbtouristcompanyid=?";
+
+        $stmt = $conn->prepare($query);
+        if ($stmt === false) {
+            die("Prepare failed: " . $conn->error);
+        }
+
+        $stmt->bind_param("i", $id);
+
+        $result = $stmt->execute();
+
         $stmt->close();
+
+        mysqli_close($conn);
+
+        return $result;
     }
 
-    public function deleteTouristCompany($id) {
-        $query = "DELETE FROM tourist_company WHERE id = ?";
-        $stmt = $this->connection->prepare($query);
-        $stmt->bind_param("i", $id);
-        $stmt->execute();
+    public function updateTouristCompany($touristCompany) {
+        $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
+        if (!$conn) {
+            die("Connection failed: " . mysqli_connect_error());
+        }
+        $conn->set_charset('utf8');
+
+        $query = "UPDATE tbtouristcompany SET tbtouristcompanylegalname=?, tbtouristcompanymagicname=?, tbtouristcompanyowner=?, tbtouristcompanycompanyType=?, tbtouristcompanystatus=? WHERE tbtouristcompanyid=?";
+
+        $stmt = $conn->prepare($query);
+        if ($stmt === false) {
+            die("Prepare failed: " . $conn->error);
+        }
+
+        $tbtouristcompanyid = $touristCompany->getId();
+        $tbtouristcompanylegalname = $touristCompany->getLegalName();
+        $tbtouristcompanymagicname = $touristCompany->getMagicName();
+        $tbtouristcompanyowner = $touristCompany->getOwner();
+        $tbtouristcompanycompanyType = $touristCompany->getCompanyType();
+        $tbtouristcompanystatus = $touristCompany->getStatus();
+
+        $stmt->bind_param("ssiiii", $tbtouristcompanylegalname, $tbtouristcompanymagicname, $tbtouristcompanyowner, $tbtouristcompanycompanyType, $tbtouristcompanystatus, $tbtouristcompanyid);
+
+        $result = $stmt->execute();
+
         $stmt->close();
+
+        mysqli_close($conn);
+
+        return $result;
+    }
+
+    public function getTouristById($id) {
+        $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
+        if (!$conn) {
+            die("Connection failed: " . mysqli_connect_error());
+        }
+        $conn->set_charset('utf8');
+
+        $query = "SELECT * FROM tbtouristcompany WHERE tbtouristcompanyid=?";
+
+        $stmt = $conn->prepare($query);
+        if ($stmt === false) {
+            die("Prepare failed: " . $conn->error);
+        }
+
+        $stmt->bind_param("i", $id);
+
+        $stmt->execute();
+
+        $stmt->bind_result($tbtouristcompanyid, $tbtouristcompanylegalname, $tbtouristcompanymagicname, $tbtouristcompanyowner, $tbtouristcompanycompanyType, $tbtouristcompanystatus);
+
+        $stmt->fetch();
+
+        $touristCompany = new TouristCompany($tbtouristcompanyid, $tbtouristcompanylegalname, $tbtouristcompanymagicname, $tbtouristcompanyowner, $tbtouristcompanycompanyType, $tbtouristcompanystatus);
+
+        $stmt->close();
+
+        mysqli_close($conn);
+
+        return $touristCompany;
     }
 }
+?>
