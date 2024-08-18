@@ -27,28 +27,31 @@ class BankAccountData extends Data {
             $nextId = $lastId + 1;
         }
 
-        $queryInsert = "INSERT INTO tbbankaccount (tbbankaccountid, tbbankaccountownerid, tbbankaccountnumber, tbbankaccountbankname, tbbankaccountstatus) VALUES (?, ?, ?, ?, ?)";
-        $stmt = $conn->prepare($queryInsert);
-        if ($stmt === false) {
-            die("Prepare failed: " . $conn->error);
+        if ($this->getTbBankAccountByAccountNumber($bankAccount->getAccountNumber())) {
+            $result = null;
+        } else {
+            $queryInsert = "INSERT INTO tbbankaccount (tbbankaccountid, tbbankaccountownerid, tbbankaccountnumber, tbbankaccountbankname, tbbankaccountstatus) VALUES (?, ?, ?, ?, ?)";
+            $stmt = $conn->prepare($queryInsert);
+            if ($stmt === false) {
+                die("Prepare failed: " . $conn->error);
+            }
+        
+            $tbbankAccountId = $nextId;
+            $tbbankAccountOwnerId = $bankAccount->getOwnerId();
+            $tbbankAccountNumber = $bankAccount->getAccountNumber();
+            $tbbankAccountBankName = $bankAccount->getBank();
+            $tbbankAccountStatus = $bankAccount->getStatus();
+
+            // Vincula los parámetros del statement
+            $stmt->bind_param("iissi", $tbbankAccountId, $tbbankAccountOwnerId, $tbbankAccountNumber, $tbbankAccountBankName, $tbbankAccountStatus);
+
+            // Ejecuta la declaración
+            $result = $stmt->execute();
+        
+            // Cierra la declaración y la conexión
+            $stmt->close();
+            mysqli_close($conn);
         }
-    
-        $tbbankAccountId = $nextId;
-        $tbbankAccountOwnerId = $bankAccount->getOwnerId();
-        $tbbankAccountNumber = $bankAccount->getAccountNumber();
-        $tbbankAccountBankName = $bankAccount->getBank();
-        $tbbankAccountStatus = $bankAccount->getStatus();
-
-        // Vincula los parámetros del statement
-        $stmt->bind_param("iissi", $tbbankAccountId, $tbbankAccountOwnerId, $tbbankAccountNumber, $tbbankAccountBankName, $tbbankAccountStatus);
-
-        // Ejecuta la declaración
-        $result = $stmt->execute();
-    
-        // Cierra la declaración y la conexión
-        $stmt->close();
-        mysqli_close($conn);
-    
         return $result;
     }
 
@@ -103,24 +106,21 @@ class BankAccountData extends Data {
         return $result;
     }
 
-    public function getTbBankAccount($idBankAccount) {
+    public function getTbBankAccountByAccountNumber($accountNumber) {
         $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
         if (!$conn) {
             die("Connection failed: " . mysqli_connect_error());
         }
         $conn->set_charset('utf8');
     
-        $query = "SELECT * FROM tbbankaccount WHERE tbbankaccountid = $idBankAccount";
+        $query = "SELECT * FROM tbbankaccount WHERE tbbankaccountnumber= '$accountNumber'    ";
         $result = mysqli_query($conn, $query);
-    
-        if ($row = mysqli_fetch_assoc($result)) {
-            $bankAccountReturn = new BankAccount($row['tbbankaccountid'], $row['tbbankaccountownerid'], $row['tbbankaccountnumber'],
-            $row['tbbankaccountbankname'], $row['tbbankaccountstatus']);
-        } else {
-            $bankAccountReturn = null;
-        }
+        
+        $row = mysqli_fetch_assoc($result);
+
+        $row != null && count($row) > 0 ? $rollReturn = true : $rollReturn = false;
     
         mysqli_close($conn);
-        return $bankAccountReturn;
-    } 
+        return $rollReturn;
+    }
 }

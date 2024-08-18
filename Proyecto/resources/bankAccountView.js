@@ -24,6 +24,23 @@ function showAlertBasedOnURL() {
             default:
             break;
         }
+    } else if (urlParams.has('error')){
+        switch (urlParams.get('error')) {
+            case 'dbError':
+                alert('Error interno al realizar la acción.');
+            break;
+            case 'emptyField':
+                alert('El campo de texto no debe estar vacío.');
+            break;
+            case 'numberFormat':
+                alert('No puedes ingresar solo números en el nombre del banco.');
+            break;
+            case 'alreadyexists':
+                alert('El número de cuenta ya existe, ingrese otro.');
+            break;
+            default:
+            break;
+        }
     }
 }
 

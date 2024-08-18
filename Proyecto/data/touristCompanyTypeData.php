@@ -27,26 +27,29 @@ class touristCompanyTypeData extends Data {
             $nextId = $lastId + 1;
         }
 
-        $queryInsert = "INSERT INTO tbtouristcompanytype (tbtouristcompanytypeid, tbtouristcompanytypename, tbtouristcompanytypedescription) VALUES (?, ?, ?)";
-        $stmt = $conn->prepare($queryInsert);
-        if ($stmt === false) {
-            die("Prepare failed: " . $conn->error);
+        if ($this->getTbTouristCompanyTypeByName($companyType->getName())) {
+            $result = null;
+        } else {
+            $queryInsert = "INSERT INTO tbtouristcompanytype (tbtouristcompanytypeid, tbtouristcompanytypename, tbtouristcompanytypedescription) VALUES (?, ?, ?)";
+            $stmt = $conn->prepare($queryInsert);
+            if ($stmt === false) {
+                die("Prepare failed: " . $conn->error);
+            }
+        
+            $tbtouristcompanytypeid = $nextId;
+            $tbtouristcompanytypename = $companyType->getName();
+            $tbtouristcompanytypedescription = $companyType->getDescription();
+
+            // Vincula los parámetros del statement
+            $stmt->bind_param("iss", $tbtouristcompanytypeid, $tbtouristcompanytypename, $tbtouristcompanytypedescription);
+
+            // Ejecuta la declaración
+            $result = $stmt->execute();
+        
+            // Cierra la declaración y la conexión
+            $stmt->close();
+            mysqli_close($conn);
         }
-    
-        $tbtouristcompanytypeid = $nextId;
-        $tbtouristcompanytypename = $companyType->getName();
-        $tbtouristcompanytypedescription = $companyType->getDescription();
-
-        // Vincula los parámetros del statement
-        $stmt->bind_param("iss", $tbtouristcompanytypeid, $tbtouristcompanytypename, $tbtouristcompanytypedescription);
-
-        // Ejecuta la declaración
-        $result = $stmt->execute();
-    
-        // Cierra la declaración y la conexión
-        $stmt->close();
-        mysqli_close($conn);
-    
         return $result;
     }
 
@@ -99,23 +102,21 @@ class touristCompanyTypeData extends Data {
         return $result;
     }
 
-    public function getTbTouristCompanyTypeById($idTouristCompanyType) {
+    public function getTbTouristCompanyTypeByName($companyTypeName) {
         $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
         if (!$conn) {
             die("Connection failed: " . mysqli_connect_error());
         }
         $conn->set_charset('utf8');
     
-        $query = "SELECT * FROM tbtouristcompanytype WHERE tbtouristcompanytypeid = $idTouristCompanyType";
+        $query = "SELECT * FROM tbtouristcompanytype WHERE tbtouristcompanytypename= '$companyTypeName'    ";
         $result = mysqli_query($conn, $query);
-    
-        if ($row = mysqli_fetch_assoc($result)) {
-            $TouristCompanyTypeReturn = new TouristCompanyType($row['tbtouristcompanytypeid'], $row['tbtouristcompanytypename'], $row['tbtouristcompanytypedescription']);
-        } else {
-            $TouristCompanyTypeReturn = null;
-        }
+        
+        $row = mysqli_fetch_assoc($result);
+
+        $row != null && count($row) > 0 ? $rollReturn = true : $rollReturn = false;
     
         mysqli_close($conn);
-        return $TouristCompanyTypeReturn;
+        return $rollReturn;
     } 
 }
