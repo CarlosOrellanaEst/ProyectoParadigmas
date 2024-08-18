@@ -2,11 +2,11 @@
 
 class Person {
    
-    private $name;
-    private $surnames;
-    private $legalIdentification;
-    private $phone;
-    private $email;
+    protected $name;
+    protected $surnames;
+    protected $legalIdentification;
+    protected $phone;
+    protected $email;
 
     function __construct($name="", $surnames="", $legalIdentification="", $phone="", $email=""){
 

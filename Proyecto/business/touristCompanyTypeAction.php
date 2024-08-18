@@ -11,7 +11,7 @@ if (isset($_POST['create'])) {
         // trim()
         if (strlen(trim($name)) > 0) {
             if (!is_numeric($name) && !is_numeric($description)) {
-                $companyType = new TouristCompanyType(0, $name, $description);
+                $companyType = new touristCompanyType(0, $name, $description);
                 
                 $companyTypeBusiness = new touristCompanyTypeBusiness();
 

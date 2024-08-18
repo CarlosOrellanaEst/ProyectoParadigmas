@@ -1,36 +1,52 @@
 <?php
 
-include_once '../data/touristCompanyBusiness.php';
+include_once '../business/touristCompanyBusiness.php';
 include_once '../domain/TouristCompany.php';
+include_once '../domain/owner.php'; // Asegúrate de incluir el archivo correcto para la clase Owner
+include_once '../domain/TouristCompanyType.php'; // Asegúrate de incluir el archivo correcto para la clase CompanyType
+include_once '../business/OwnerBusiness.php'; // Asegúrate de incluir el archivo correcto para la clase OwnerBusiness
+include_once '../business/touristCompanyTypeBusiness.php'; // Asegúrate de incluir el archivo correcto para la clase touristCompanyTypeBusiness
+
 
 if(isset($_POST['create'])){
     if(isset($_POST['legalName'])){
         if(isset($_POST['magicName'])){
-            if(isset($_POST['owner'])){
+            if(isset($_POST['ownerId'])){ // Usa 'ownerId' como en el formulario
                 if(isset($_POST['companyType'])){
                     if(isset($_POST['status'])){
                         $legalName = $_POST['legalName'];
                         $magicName = $_POST['magicName'];
-                        $owner = $_POST['owner'];
-                        $companyType = $_POST['companyType'];
+                        $ownerId = $_POST['ownerId']; // Usa 'ownerId'
+                        $companyTypeId = $_POST['companyType']; // Usa 'companyType'
                         $status = $_POST['status'];
 
-                        if(strlen(trim($legalName)) > 0 && strlen(trim($magicName)) > 0 && strlen(trim($owner)) > 0 && $companyType instanceof CompanyType && strlen(trim($status)) > 0){
-                            if(!is_numeric($legalName) && !is_numeric($magicName) && !is_numeric($owner) && is_numeric($status)){
-                                $touristCompany = new TouristCompany(0, $legalName, $magicName, $owner, $companyType, $status);
+                        // Validación de campos
+                        if(strlen(trim($legalName)) > 0 && strlen(trim($magicName)) > 0 && is_numeric($ownerId) && is_numeric($companyTypeId) && strlen(trim($status)) >= 0){
+                            if(!is_numeric($legalName) && !is_numeric($magicName) && is_numeric($status)){
+                                // Aquí deberías obtener instancias de las clases Owner y CompanyType usando los IDs
+                                $ownerBusiness = new OwnerBusiness();
+                                $owner = $ownerBusiness->getTBOwner($ownerId); // Método para obtener el objeto Owner
 
-                                $touristCompanyBusiness = new TouristCompanyBusiness();
+                                $touristCompanyTypeBusiness = new touristCompanyTypeBusiness();
+                                $companyType = $touristCompanyTypeBusiness->getById($companyTypeId); // Método para obtener el objeto CompanyType
 
-                                $result = $touristCompanyBusiness->insert($touristCompany);
+                                if($owner && $companyType) {
+                                    $touristCompany = new TouristCompany(0, $legalName, $magicName, $owner, $companyType, $status);
+                                    $touristCompanyBusiness = new touristCompanyBusiness();
+                                    $result = $touristCompanyBusiness->insert($touristCompany);
 
-                                if($result == 1){
-                                    header("location: ../view/touristCompanyView.php?success=inserted");
-                                    exit();
-                                }else if($result == null){
-                                    header("location: ../view/touristCompanyView.php?error=alreadyexists");
-                                    exit();
-                                }else{
-                                    header("location: ../view/touristCompanyView.php?error=dbError");
+                                    if($result == 1){
+                                        header("location: ../view/touristCompanyView.php?success=inserted");
+                                        exit();
+                                    }else if($result == null){
+                                        header("location: ../view/touristCompanyView.php?error=alreadyexists");
+                                        exit();
+                                    }else{
+                                        header("location: ../view/touristCompanyView.php?error=dbError");
+                                        exit();
+                                    }
+                                } else {
+                                    header("location: ../view/touristCompanyView.php?error=invalidOwnerOrCompanyType");
                                     exit();
                                 }
                             }else{
@@ -42,7 +58,7 @@ if(isset($_POST['create'])){
                             exit();
                         }
                     }else{
-                        header("location: ../view/touristCompanyView.php?error=error");
+                        header("location: ../view/touristCompanyView.php?error=errorsInStatus");
                         exit();
                     }
                 }else{
@@ -62,7 +78,4 @@ if(isset($_POST['create'])){
         exit();
     }
 }
-
-
-
 ?>

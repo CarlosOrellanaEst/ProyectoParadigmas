@@ -1,7 +1,7 @@
 <?php
 
 include_once  '../data/touristCompanyTypeData.php';
-include_once  '../domain/TouristCompanyType.php';
+include_once  '../domain/touristCompanyType.php';
 
 class touristCompanyTypeBusiness {
     private $touristCompanyType;

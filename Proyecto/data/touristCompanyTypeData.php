@@ -62,7 +62,7 @@ class touristCompanyTypeData extends Data {
 
         $companyTypeList = [];
         while ($row = mysqli_fetch_assoc($result)) {
-            $companyType = new TouristCompanyType($row['tbtouristcompanytypeid'], $row['tbtouristcompanytypename'], $row['tbtouristcompanytypedescription']);
+            $companyType = new touristCompanyType($row['tbtouristcompanytypeid'], $row['tbtouristcompanytypename'], $row['tbtouristcompanytypedescription']);
             array_push($companyTypeList, $companyType);
         }
 

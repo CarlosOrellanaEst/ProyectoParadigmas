@@ -49,7 +49,7 @@
                 </thead>
                 <tbody>
                     <?php
-                        $touristCompanyTypeBusiness = new touristCompanyTypeBusiness();
+                        $touristCompanyTypeBusiness = new TouristCompanyTypeBusiness();
                         $all = $touristCompanyTypeBusiness->getAll();
                         $companyTypeFiltered = [];
 
