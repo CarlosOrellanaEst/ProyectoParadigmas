@@ -55,7 +55,7 @@
                 <label for="companyType">Tipo de empresa: </label>                    
                 <select required name="companyType" id="companyType">
                     <?php foreach ($touristCompanyTypes as $touristCompanyType): ?>
-                        <option value="<?php echo htmlspecialchars($touristCompanyType->getIdTBCompanyType()); ?>">
+                        <option value="<?php echo htmlspecialchars($touristCompanyType->getName()); ?>">
                             <?php echo htmlspecialchars($touristCompanyType->getName()); ?>
                         </option>
                     <?php endforeach; ?>
