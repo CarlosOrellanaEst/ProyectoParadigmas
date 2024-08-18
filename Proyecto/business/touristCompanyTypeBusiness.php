@@ -26,7 +26,7 @@ class touristCompanyTypeBusiness {
         return $this->touristCompanyType->updateTbTouristCompanyType($TouristCompanyType);
     }
 
-    public function getById($idBankAccount) {
+    public function getById($idTouristCompanyType) {
         return $this->touristCompanyType->getTbTouristCompanyTypeById($idTouristCompanyType);
     }
 }
