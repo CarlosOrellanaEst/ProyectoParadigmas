@@ -118,4 +118,6 @@ class touristCompanyTypeData extends Data {
         mysqli_close($conn);
         return $TouristCompanyTypeReturn;
     } 
+
+    
 }
