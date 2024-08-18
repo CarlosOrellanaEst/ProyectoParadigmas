@@ -115,7 +115,16 @@ INSERT INTO `tbuser` (`tbuserid`, `tbusername`, `tbuserlastname`, `tbuserpasswor
 (4, 'alice', 'Wonderland', '03ac674216f3e15c761ee1a5e255f067953623c8b388b4459e13f978d7c846f4', '7654321098', 1, 'Turista'),
 (5, 'bob', 'Builder', 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3', '8765432109', 1, 'Propietario');
 
+-- Estructura de tabla para la tabla `tbtouristcompanytype`
 --
+
+CREATE TABLE `tbtouristcompanytype` (
+  `tbtouristcompanytypeid` int(11) NOT NULL,
+  `tbtouristcompanytypename` varchar(100) NOT NULL,
+  `tbtouristcompanytypedescription` varchar(250) NOT NULL,
+  `tbtouristcompanytypeisactive` tinyint(1) NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+COMMIT;
 -- Índices para tablas volcadas
 --
 
