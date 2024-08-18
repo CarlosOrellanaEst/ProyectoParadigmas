@@ -124,6 +124,42 @@ CREATE TABLE `tbtouristcompanytype` (
   `tbtouristcompanytypedescription` varchar(250) NOT NULL,
   `tbtouristcompanytypeisactive` tinyint(1) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `tbtouristcompanytype`
+--
+
+INSERT INTO `tbtouristcompanytype` (`tbtouristcompanytypeid`, `tbtouristcompanytypename`, `tbtouristcompanytypedescription`, `tbtouristcompanytypeisactive`) VALUES
+(1, 'dxaxa223', 'a23', 1),
+(2, 'wdwdw', '', 1),
+(1, 'Agencia de Viajes', 'Agencia especializada en turismo nacional e internacional.', 1),
+(2, 'Guía Turístico', 'Servicios de guías turísticos especializados en diferentes regiones.', 1),
+(3, 'Transporte Turístico', 'Servicios de transporte para turistas, incluyendo autobuses y vans.', 1),
+(4, 'Alojamiento', 'Proveedores de alojamiento para turistas, como hoteles y hostales.', 1),
+(5, 'Actividades Recreativas', 'Organización de actividades recreativas y eventos para turistas.', 1);
+COMMIT;
+
+CREATE TABLE `tbowner` (
+  `tbownerid` int(11) NOT NULL,
+  `tbownername` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `tbownersurnames` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `tbownerlegalidentification` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `tbownerphone` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `tbowneremail` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `tbownerdirection` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `tbownerstatus` tinyint(1) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `tbowner`
+--
+
+INSERT INTO `tbowner` (`tbownerid`, `tbownername`, `tbownersurnames`, `tbownerlegalidentification`, `tbownerphone`, `tbowneremail`, `tbownerdirection`, `tbownerstatus`) VALUES
+(1, 'Carlos', 'González Pérez', '12345678', '555-1234', 'carlos.gonzalez@example.com', 'Calle Falsa 123, Ciudad', 1),
+(2, 'Ana', 'Martínez López', '87654321', '555-5678', 'ana.martinez@example.com', 'Avenida Siempre Viva 742, Ciudad', 1),
+(3, 'Luis', 'Ramírez Fernández', '11223344', '555-9101', 'luis.ramirez@example.com', 'Boulevard Libertad 90, Ciudad', 1),
+(4, 'Marta', 'Cruz García', '44332211', '555-1122', 'marta.cruz@example.com', 'Plaza Mayor 5, Ciudad', 1),
+(5, 'José', 'Sánchez Romero', '55667788', '555-3344', 'jose.sanchez@example.com', 'Calle de los Naranjos 20, Ciudad', 1);
 COMMIT;
 -- Índices para tablas volcadas
 --
