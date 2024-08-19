@@ -21,11 +21,11 @@ if(isset($_POST['create'])){
                         $status = $_POST['status'];
 
                         // Validación de campos
-                        if(strlen(trim($legalName)) > 0 && strlen(trim($magicName)) > 0 && is_numeric($ownerId)>0  && is_numeric($companyTypeId)>0 && strlen(trim($status)) >= 0){
+                        if(strlen(trim($legalName)) > 0 && strlen(trim($magicName)) > 0 && is_numeric($ownerId)>0  && is_numeric($companyTypeId)>0 && strlen(trim($status)) >= 0 ){
                             if(!is_numeric($legalName) && !is_numeric($magicName) && is_numeric($status)){
                                 // Aquí deberías obtener instancias de las clases Owner y CompanyType usando los IDs
                                 $ownerBusiness = new OwnerBusiness();
-                                $owner = $ownerBusiness->getTBOwner($ownerId); // Método para obtener el objeto Owner
+                                $owner = $ownerBusiness->getTBOwner($ownerId); // Método para obtener el objeto Owner   
 
                                 $touristCompanyTypeBusiness = new touristCompanyTypeBusiness();
                                 $companyType = $touristCompanyTypeBusiness->getById($companyTypeId); // Método para obtener el objeto CompanyType

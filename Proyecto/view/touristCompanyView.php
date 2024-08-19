@@ -39,13 +39,13 @@
         <section id="create">
             <form method="post" action="../business/touristCompanyAction.php" onsubmit="return confirmAction(event);">
                 <label for="legalName">Nombre legal: </label>
-                <input required placeholder="Nombre legal" type="text" name="legalName" id="legalName" />
+                <input placeholder="Nombre legal" type="text" name="legalName" id="legalName" />
                 <label for="magicName">Nombre mágico: </label>
-                <input required placeholder="Nombre mágico" type="text" name="magicName" id="magicName" />
+                <input placeholder="Nombre mágico" type="text" name="magicName" id="magicName" />
 
 
                 <label for="ownerId">Dueño: </label>
-                <select required name="ownerId" id="ownerId">
+                <select name="ownerId" id="ownerId">
                     <option value="0">Ninguno</option>
                     <?php foreach ($owners as $owner): ?>
                         <option value="<?php echo htmlspecialchars($owner->getIdTBOwner()); ?>">
@@ -55,7 +55,7 @@
                 </select>
 
                 <label for="companyType">Tipo de empresa: </label>
-                <select required name="companyType" id="companyType">
+                <select name="companyType" id="companyType">
                     <option value="0">Ninguno</option>
                     <?php foreach ($touristCompanyTypes as $touristCompanyType): ?>
                         <option value="<?php echo htmlspecialchars($touristCompanyType->getId()); ?>">
@@ -65,8 +65,8 @@
                 </select>
 
                 <label for="status">Estado: </label>
-                <select name="status" id="" required>
-                    <option value="-1">Ninguno</option>
+                <select name="status" id="">
+                    <option value="3">Ninguno</option>
                     <option value="1">Activo</option>
                     <option value="0">Inactivo</option>
                 </select>
@@ -79,10 +79,11 @@
         <section>
             <form id="formSearchOne" method="get">
                 <label for="searchOne">Buscar por nombre: </label>
-                <input type="text" required placeholder="Nombre" name="searchOne" id="searchOne">
+                <input type="text" placeholder="Nombre" name="searchOne" id="searchOne">
                 <input type="submit" value="Buscar" />
             </form>
             <br>
+            <div id="message" hidden></div>
             <table>
                 <thead>
                     <tr>
@@ -179,6 +180,12 @@
                 </tbody>
  
             </table>
+
+            <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    showAlertBasedOnURL();
+                });
+            </script>
 
 
 

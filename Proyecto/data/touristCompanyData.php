@@ -29,6 +29,11 @@ class TouristCompanyData extends Data{
             $nextId = $lastId + 1;
         }
 
+        if($this->getTouristCompanyByName($touristCompany->getLegalName())->getLegalName()=== $touristCompany->getLegalName()){
+             return $result = null;
+        }
+
+
         $queryInsert = "INSERT INTO tbtouristcompany (tbtouristcompanyid, tbtouristcompanylegalname, tbtouristcompanymagicname, tbtouristcompanyowner, tbtouristcompanycompanyType, tbtouristcompanystatus) VALUES (?, ?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($queryInsert);
         if ($stmt === false) {
@@ -115,6 +120,10 @@ class TouristCompanyData extends Data{
             die("Prepare failed: " . $conn->error);
         }
 
+        if($this->getTouristCompanyByName($touristCompany->getLegalName())->getLegalName()=== $touristCompany->getLegalName()){
+            return $result = null;
+       }
+
         $tbtouristcompanyid = $touristCompany->getId();
         $tbtouristcompanylegalname = $touristCompany->getLegalName();
         $tbtouristcompanymagicname = $touristCompany->getMagicName();
@@ -163,4 +172,39 @@ class TouristCompanyData extends Data{
 
         return $touristCompany;
     }
+
+    public function getTouristCompanyByName($touristCompanyName){
+        $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
+        if (!$conn) {
+            die("Connection failed: " . mysqli_connect_error());
+        }
+        $conn->set_charset('utf8');
+
+        $query = "SELECT * FROM tbtouristcompany WHERE tbtouristcompanylegalname=?";
+
+        $stmt = $conn->prepare($query);
+        if ($stmt === false) {
+            die("Prepare failed: " . $conn->error);
+        }
+
+        $stmt->bind_param("s", $touristCompanyName);
+
+        $stmt->execute();
+
+        $stmt->bind_result($tbtouristcompanyid, $tbtouristcompanylegalname, $tbtouristcompanymagicname, $tbtouristcompanyowner, $tbtouristcompanycompanyType, $tbtouristcompanystatus);
+
+        $stmt->fetch();
+
+        $touristCompany = new TouristCompany($tbtouristcompanyid, $tbtouristcompanylegalname, $tbtouristcompanymagicname, $tbtouristcompanyowner, $tbtouristcompanycompanyType, $tbtouristcompanystatus);
+
+        $stmt->close();
+
+        mysqli_close($conn);
+
+        return $touristCompany;
+    }
+
+    
+
+
 }

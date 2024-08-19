@@ -61,7 +61,7 @@ function showAlertBasedOnURL() {
                 alert('Debes ingresar un nombre, el campo de texto no debe estar vacío.');
                 break;
             case 'numberFormat':
-                alert('No puedes ingresar solo números en el campo de texto.');
+                alert('No puedes ingresar solo números o seleccionar Nignguno en Estado.');
                 break;
             case 'alreadyexists':
                 alert('El nombre ya existe, ingrese otro.');
@@ -134,7 +134,7 @@ document.addEventListener('DOMContentLoaded', function () {
             invalidOwnerOrCompanyType: 'El dueño o el tipo de empresa no son válidos.',
             dbError: 'Error al guardar la empresa en la base de datos.',
             alreadyexists: 'La empresa ya existe.',
-            updateFailed: 'Error al actualizar la empresa.',
+            updateFailed: 'Error al actualizar la empresa, YA EXISTE',
             deleteFailed: 'Error al eliminar la empresa.',
             missingFields: 'Faltan campos requeridos.',
             invalidId: 'ID inválido.',
