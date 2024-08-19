@@ -19,7 +19,7 @@
         <h1>CRUD Propietarios</h1>
     </header>
     <section id="formCreate">
-        <form method="post" action="../business/ownerAction.php">
+        <form method="post" action="../business/ownerAction.php" enctype="multipart/form-data" >
         <label for="name">Nombre</label>
             <input required placeholder="nombre" type="text" name="ownerName" id="name"/>
             <label for="surnames">Apellidos</label>
@@ -32,6 +32,7 @@
             <input placeholder="correo" type="text" name="ownerEmail" id="email"/>
             <label for="direction">Direccion</label>
             <input placeholder="direccion" type="text" name="ownerDirection" id="direction"/>
+            <input type="file" name="imagen" required>
             <input type="submit" value="Crear" name="create" id="create"/>
         </form>
     </section>
@@ -57,41 +58,50 @@
                 </tr>
             </thead>
             <tbody>
-                <?php
-                $ownerBusiness = new OwnerBusiness();
-                $allowners = $ownerBusiness->getAllTBOwner();
-                $ownersFiltered = [];
+    <?php
+    $ownerBusiness = new OwnerBusiness();
+    $allowners = $ownerBusiness->getAllTBOwner();
+    $ownersFiltered = [];
 
-                // Filtrar los resultados si se ha realizado una búsqueda
-                if (isset($_GET['searchOne'])) {
-                    $searchTerm = $_GET['searchOne'];
-                    $ownersFiltered  = array_filter($allowners, function($owner) use ($searchTerm) {
-                        return stripos($owner->getName(), $searchTerm) !== false;
-                    });
-                }
-                if (count($ownersFiltered) > 0) {
-                    $allowners = $ownersFiltered;
-                }
+    // Filtrar los resultados si se ha realizado una búsqueda
+    if (isset($_GET['searchOne'])) {
+        $searchTerm = $_GET['searchOne'];
+        $ownersFiltered  = array_filter($allowners, function($owner) use ($searchTerm) {
+            return stripos($owner->getName(), $searchTerm) !== false;
+        });
+    }
+    if (count($ownersFiltered) > 0) {
+        $allowners = $ownersFiltered;
+    }
 
-                foreach ($allowners as $current) {
-                    echo '<form method="post" action="../business/ownerAction.php" onsubmit="return confirmDelete(event);">';
-                    echo '<input type="hidden" name="ownerID" value="' . $current->getIdTBOwner() . '">';
-                    echo '<tr>';
-                        echo '<td><input type="text" name="ownerName" value="' . $current->getName() . '"/></td>';
-                        echo '<td><input type="text" name="ownerSurnames" value="' . $current->getSurnames() . '"/></td>';
-                        echo '<td><input type="text" name="ownerLegalIdentification" value="' . $current->getLegalIdentification() . '"/></td>';
-                        echo '<td><input type="text" name="ownerPhone" value="' . $current->getPhone() . '"/></td>';
-                        echo '<td><input type="text" name="ownerEmail" value="' . $current->getEmail() . '"/></td>';
-                        echo '<td><input type="text" name="ownerDirection" value="' . $current->getDirectionTBOwner() . '"/></td>';
-                        echo '<td>';
-                            echo '<input type="submit" value="Actualizar" name="update"/>';
-                            echo '<input type="submit" value="Eliminar" name="delete"/>';
-                        echo '</td>';
-                    echo '</tr>';
-                    echo '</form>';
-                }
-                ?>
-            </tbody>
+    foreach ($allowners as $current) {
+        echo '<form method="post" action="../business/ownerAction.php" onsubmit="return confirmDelete(event);" enctype="multipart/form-data">';
+        echo '<input type="hidden" name="ownerID" value="' . $current->getIdTBOwner() . '">';
+        echo '<tr>';
+        echo '<td><input type="text" name="ownerName" value="' . $current->getName() . '"/></td>';
+        echo '<td><input type="text" name="ownerSurnames" value="' . $current->getSurnames() . '"/></td>';
+        echo '<td><input type="text" name="ownerLegalIdentification" value="' . $current->getLegalIdentification() . '"/></td>';
+        echo '<td><input type="text" name="ownerPhone" value="' . $current->getPhone() . '"/></td>';
+        echo '<td><input type="text" name="ownerEmail" value="' . $current->getEmail() . '"/></td>';
+        echo '<td><input type="text" name="ownerDirection" value="' . $current->getDirectionTBOwner() . '"/></td>';
+        
+        // Mostrar la imagen
+        $photoUrl = $current->getPhotoURLTBOwner();
+        echo '<td><img src="../images/' . htmlspecialchars($photoUrl) . '" alt="Foto" width="100" height="100" /></td>';
+        
+        echo '<td>';
+        // Input para seleccionar la nueva imagen
+        echo '<input type="file" name="newImage" accept="image/*">';
+        // Botones de acción
+        echo '<input type="submit" value="Actualizar" name="update"/>';
+        echo '<input type="submit" value="Eliminar" name="delete"/>';
+        echo '</td>';
+        echo '</tr>';
+        echo '</form>';
+    }
+    ?>
+</tbody>
+
         </table>
     </section>
 </body>

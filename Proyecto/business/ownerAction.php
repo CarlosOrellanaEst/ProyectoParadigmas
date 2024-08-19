@@ -3,7 +3,7 @@
 include './OwnerBusiness.php';
 
 if (isset($_POST['create'])) {
-    if (isset($_POST['ownerName']) && isset($_POST['ownerSurnames']) && isset($_POST['ownerLegalIdentification']) && isset($_POST['ownerPhone']) && isset($_POST['ownerEmail']) && isset($_POST['ownerDirection'] )) {
+    if (isset($_POST['ownerName']) && isset($_POST['ownerSurnames']) && isset($_POST['ownerLegalIdentification']) && isset($_POST['ownerPhone']) && isset($_POST['ownerEmail']) && isset($_POST['ownerDirection']) && isset($_FILES['imagen']) && $_FILES['imagen']['error'] == UPLOAD_ERR_OK) {
       
         $name = $_POST['ownerName'];
         $surnames = $_POST['ownerSurnames'];
@@ -12,35 +12,56 @@ if (isset($_POST['create'])) {
         $email = $_POST['ownerEmail'];
         $direction = $_POST['ownerDirection'];
 
-        if (strlen($name) > 0) {
-            if (!is_numeric($name) && !is_numeric($surnames) && ctype_alnum($legalIdentification) && ctype_alnum($phone) && preg_match('/^[\s\S]*$/', $email)) {
-                $owner = new Owner(0, $direction, $name, $surnames, $legalIdentification, $phone, $email, 1);
-                $ownerBusiness = new OwnerBusiness();
+        // Configuración para la subida de imágenes
+        $uploadDir = '../images/';
+        $fileName = basename($_FILES['imagen']['name']);
+        $targetFilePath = $uploadDir . $fileName;
 
-                $result = $ownerBusiness->insertTBOwner($owner);
+        // Validación del tipo de archivo
+        $fileType = strtolower(pathinfo($targetFilePath, PATHINFO_EXTENSION));
+        $allowTypes = array('jpg', 'png', 'jpeg', 'gif');
 
-                if ($result == 1) {
-                    header("location: ../view/ownerView.php?success=inserted");
-                    exit();
-                } else if ($result == "Email") {
-                    header("location: ../view/ownerView.php?error=alreadyexists");
-                    exit();
-                }else if ($result == "Phone") {
-                    header("location: ../view/ownerView.php?error=phonealreadyexists");
-                    exit();
-                }if ($result == "LegalId") {
-                    header("location: ../view/ownerView.php?error=legalidalreadyexists");
-                    exit();
+        if (in_array($fileType, $allowTypes)) {
+            if (move_uploaded_file($_FILES['imagen']['tmp_name'], $targetFilePath)) {
+                // Imagen subida exitosamente
+
+                if (strlen($name) > 0) {
+                    if (!is_numeric($name) && !is_numeric($surnames) && ctype_alnum($legalIdentification) && ctype_alnum($phone) && preg_match('/^[\s\S]*$/', $email)) {
+                        $owner = new Owner(0, $direction, $name, $surnames, $legalIdentification, $phone, $email, $targetFilePath, 1);  // Incluyendo la ruta de la imagen
+                        $ownerBusiness = new OwnerBusiness();
+
+                        $result = $ownerBusiness->insertTBOwner($owner);
+
+                        if ($result == 1) {
+                            header("location: ../view/ownerView.php?success=inserted");
+                            exit();
+                        } else if ($result == "Email") {
+                            header("location: ../view/ownerView.php?error=alreadyexists");
+                            exit();
+                        } else if ($result == "Phone") {
+                            header("location: ../view/ownerView.php?error=phonealreadyexists");
+                            exit();
+                        } else if ($result == "LegalId") {
+                            header("location: ../view/ownerView.php?error=legalidalreadyexists");
+                            exit();
+                        } else {
+                            header("location: ../view/ownerView.php?error=dbError");
+                            exit();
+                        }
+                    } else {
+                        header("location: ../view/ownerView.php?error=numberFormat");
+                        exit();
+                    }
                 } else {
-                    header("location: ../view/ownerView.php?error=dbError");
+                    header("location: ../view/ownerView.php?error=emptyField");
                     exit();
                 }
             } else {
-                header("location: ../view/ownerView.php?error=numberFormat");
+                header("location: ../view/ownerView.php?error=imageUploadFailed");
                 exit();
             }
         } else {
-            header("location: ../view/ownerView.php?error=emptyField");
+            header("location: ../view/ownerView.php?error=invalidFileType");
             exit();
         }
     } else {
@@ -59,11 +80,41 @@ if (isset($_POST['update'])) {
         $email = $_POST['ownerEmail'];
         $direction = $_POST['ownerDirection'];
         $id = $_POST['ownerID'];
+        $photoFileName = '';
 
+        // Verificar si se ha subido una nueva imagen
+        if (isset($_FILES['newImage']) && $_FILES['newImage']['error'] == UPLOAD_ERR_OK) {
+            $uploadDir = '../images/';
+            $fileName = basename($_FILES['newImage']['name']);
+            $uniqueFileName = uniqid() . "_" . $fileName;  // Evita colisiones de nombre de archivo
+            $targetFilePath = $uploadDir . $uniqueFileName;
+
+            $fileType = strtolower(pathinfo($targetFilePath, PATHINFO_EXTENSION));
+            $allowTypes = array('jpg', 'png', 'jpeg', 'gif');
+
+            if (in_array($fileType, $allowTypes)) {
+                if (move_uploaded_file($_FILES['newImage']['tmp_name'], $targetFilePath)) {
+                    $photoFileName = $uniqueFileName;
+                } else {
+                    header("location: ../view/ownerView.php?error=uploadFailed");
+                    exit();
+                }
+            } else {
+                header("location: ../view/ownerView.php?error=invalidFileType");
+                exit();
+            }
+        } else {
+            // Si no se sube una nueva imagen, usar la URL actual de la foto
+            $ownerBusiness = new OwnerBusiness();
+            $currentOwner = $ownerBusiness->getOwnerByID($id);  // Asegúrate de que getOwnerByID existe y funciona
+            $photoFileName = $currentOwner->getPhotoURLTBOwner();  // Mantener la URL de la imagen existente
+        }
+
+        // Validaciones
         if (strlen($name) > 0) {
-            if (!is_numeric($name) && !is_numeric($surnames) && ctype_alnum($legalIdentification) && ctype_alnum($phone) && preg_match('/^[\s\S]*$/', $email) && is_numeric($id)) {
-                $owner = new Owner($id, $direction, $name, $surnames, $legalIdentification, $phone, $email, 1);
-                $ownerBusiness = new OwnerBusiness();
+            if (!is_numeric($name) && !is_numeric($surnames) && ctype_alnum($legalIdentification) && ctype_alnum($phone) && filter_var($email, FILTER_VALIDATE_EMAIL) && is_numeric($id)) {
+                $owner = new Owner($id, $direction, $name, $surnames, $legalIdentification, $phone, $email, $photoFileName, 1);  // Pasar siempre el nombre de archivo de la foto
+                $ownerBusiness = new OwnerBusiness();  // Crear una nueva instancia aquí también
                 $result = $ownerBusiness->updateTBOwner($owner);
 
                 if ($result == 1) {
@@ -72,10 +123,10 @@ if (isset($_POST['update'])) {
                 } else if ($result == "Email") {
                     header("location: ../view/ownerView.php?error=alreadyexists");
                     exit();
-                }else if ($result == "Phone") {
+                } else if ($result == "Phone") {
                     header("location: ../view/ownerView.php?error=phonealreadyexists");
                     exit();
-                }if ($result == "LegalId") {
+                } else if ($result == "LegalId") {
                     header("location: ../view/ownerView.php?error=legalidalreadyexists");
                     exit();
                 } else {

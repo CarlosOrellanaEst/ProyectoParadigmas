@@ -76,6 +76,7 @@ if (isset($_POST['update'])) {
         header("location: ../view/photoView.php?error=noFile");
         exit();
     }
+
 } else if (isset($_POST['delete'])) { 
     if (isset($_POST['photoID'])) {
         $id = $_POST['photoID'];
