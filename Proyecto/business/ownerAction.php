@@ -70,7 +70,6 @@ if (isset($_POST['create'])) {
     }
 }
 
-
 if (isset($_POST['update'])) {
     if (isset($_POST['ownerName'], $_POST['ownerSurnames'], $_POST['ownerLegalIdentification'], $_POST['ownerPhone'], $_POST['ownerEmail'], $_POST['ownerDirection'], $_POST['ownerID'])) {
         $name = $_POST['ownerName'];
@@ -80,21 +79,27 @@ if (isset($_POST['update'])) {
         $email = $_POST['ownerEmail'];
         $direction = $_POST['ownerDirection'];
         $id = $_POST['ownerID'];
+
+        // Variable para almacenar el nombre del archivo de la imagen
         $photoFileName = '';
+
+        // Obtener la URL actual de la foto
+        $ownerBusiness = new OwnerBusiness();
+        $currentOwner = $ownerBusiness->getTBOwner($id);
+        $existingPhotoFileName = $currentOwner->getPhotoURLTBOwner();
 
         // Verificar si se ha subido una nueva imagen
         if (isset($_FILES['newImage']) && $_FILES['newImage']['error'] == UPLOAD_ERR_OK) {
             $uploadDir = '../images/';
             $fileName = basename($_FILES['newImage']['name']);
-            $uniqueFileName = uniqid() . "_" . $fileName;  // Evita colisiones de nombre de archivo
-            $targetFilePath = $uploadDir . $uniqueFileName;
+            $targetFilePath = $uploadDir . $fileName;
 
             $fileType = strtolower(pathinfo($targetFilePath, PATHINFO_EXTENSION));
             $allowTypes = array('jpg', 'png', 'jpeg', 'gif');
 
             if (in_array($fileType, $allowTypes)) {
                 if (move_uploaded_file($_FILES['newImage']['tmp_name'], $targetFilePath)) {
-                    $photoFileName = $uniqueFileName;
+                    $photoFileName = $fileName;
                 } else {
                     header("location: ../view/ownerView.php?error=uploadFailed");
                     exit();
@@ -104,17 +109,18 @@ if (isset($_POST['update'])) {
                 exit();
             }
         } else {
-            // Si no se sube una nueva imagen, usar la URL actual de la foto
-            $ownerBusiness = new OwnerBusiness();
-            $currentOwner = $ownerBusiness->getOwnerByID($id);  // Asegúrate de que getOwnerByID existe y funciona
-            $photoFileName = $currentOwner->getPhotoURLTBOwner();  // Mantener la URL de la imagen existente
+            // No se subió nueva imagen, usar la URL actual de la foto
+            $photoFileName = $existingPhotoFileName;
         }
 
         // Validaciones
         if (strlen($name) > 0) {
             if (!is_numeric($name) && !is_numeric($surnames) && ctype_alnum($legalIdentification) && ctype_alnum($phone) && filter_var($email, FILTER_VALIDATE_EMAIL) && is_numeric($id)) {
-                $owner = new Owner($id, $direction, $name, $surnames, $legalIdentification, $phone, $email, $photoFileName, 1);  // Pasar siempre el nombre de archivo de la foto
-                $ownerBusiness = new OwnerBusiness();  // Crear una nueva instancia aquí también
+                // Crear objeto Owner con la URL de la imagen (nueva o existente)
+                $owner = new Owner($id, $direction, $name, $surnames, $legalIdentification, $phone, $email, $photoFileName, 1);
+
+                // Crear instancia de OwnerBusiness
+                $ownerBusiness = new OwnerBusiness();
                 $result = $ownerBusiness->updateTBOwner($owner);
 
                 if ($result == 1) {

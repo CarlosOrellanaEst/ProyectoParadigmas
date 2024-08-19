@@ -33,8 +33,7 @@ class ownerData extends Data {
         }else
         {
  
-               $queryInsert = "INSERT INTO tbowner (tbownerid, tbownername, tbownersurnames, tbownerlegalidentification, tbownerphone, tbowneremail, tbownerdirection, tbownerphotourl, tbownerstatus) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-               $stmt = $conn->prepare($queryInsert); // el prepared statement de java
+            $queryInsert = "INSERT INTO tbowner (tbownerid, tbownername, tbownersurnames, tbownerlegalidentification, tbownerphone, tbowneremail, tbownerdirection, tbownerphotourl, tbownerstatus) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";   $stmt = $conn->prepare($queryInsert); // el prepared statement de java
                if ($stmt === false) {
                    die("Prepare failed: " . $conn->error);
                }
@@ -49,7 +48,6 @@ class ownerData extends Data {
                $statusDelete=true;
                // Vincula los parámetros del statement
                $stmt->bind_param("isssssssi", $nextId, $name, $surnames, $legalIdentification, $phone, $email,$direction, $photoUrl, $statusDelete); // "issi": cada letra es el tipo de dato de los parametros
-           
                // Ejecuta la declaración
                $result = $stmt->execute();
            
@@ -74,25 +72,13 @@ class ownerData extends Data {
     
         $owners = [];
         while ($row = mysqli_fetch_assoc($result)) {
-            $currentOwner = new Owner(
-                $row['tbownerid'],
-                $row['tbownerdirection'],
-                $row['tbownername'],
-                $row['tbownersurnames'],
-                $row['tbownerlegalidentification'],
-                $row['tbownerphone'],
-                $row['tbowneremail'],
-                
-                $row['tbownerphotourl'], // Asegúrate de incluir este campo
-                $row['tbownerstatus']
-            );
+            $currentOwner = new Owner($row['tbownerid'],$row['tbownerdirection'], $row['tbownername'], $row['tbownersurnames'], $row['tbownerlegalidentification'], $row['tbownerphone'], $row['tbowneremail'], $row['tbownerphotourl'], $row['tbownerstatus']);
             array_push($owners, $currentOwner);
         }
     
         mysqli_close($conn);
         return $owners;
-    }
-    
+    } 
 
     public function getTBOwner($idTBOwner) {
         $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);

@@ -19,7 +19,7 @@
         <h1>CRUD Propietarios</h1>
     </header>
     <section id="formCreate">
-        <form method="post" action="../business/ownerAction.php" enctype="multipart/form-data" >
+    <form method="post" action="../business/ownerAction.php" enctype="multipart/form-data">
         <label for="name">Nombre</label>
             <input required placeholder="nombre" type="text" name="ownerName" id="name"/>
             <label for="surnames">Apellidos</label>

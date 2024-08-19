@@ -17,7 +17,7 @@ class photoData extends Data {
     $conn->set_charset('utf8');
 
     // Obtiene el último id de la tabla tbphoto
-    $queryGetLastId = "SELECT MAX(tbphotoid) AS idtbphoto FROM tbphoto";
+    $queryGetLastId = "SELECT MAX(tbphotoid) AS idtbphoto FROM tbphotoowner";
     $idCont = mysqli_query($conn, $queryGetLastId);
 
     // Verifica si la consulta falló
@@ -32,7 +32,7 @@ class photoData extends Data {
     }
     
     // Prepara la consulta de inserción
-    $queryInsert = "INSERT INTO tbphoto (tbphotoid, tbphotourl, tbphotostatus) VALUES (?, ?, ?)";
+    $queryInsert = "INSERT INTO tbphotoowner (tbphotoid, tbphotourl, tbphotostatus) VALUES (?, ?, ?)";
     $stmt = $conn->prepare($queryInsert);
     if ($stmt === false) {
         die("Prepare failed: " . $conn->error); 
@@ -62,7 +62,7 @@ public function getAllTBPhotos() {
     }
     $conn->set_charset('utf8');
 
-    $query = "SELECT * FROM tbphoto WHERE tbphotostatus = 1;";
+    $query = "SELECT * FROM tbphotoowner WHERE tbphotostatus = 1;";
     $result = mysqli_query($conn, $query);
 
     $photos = [];
