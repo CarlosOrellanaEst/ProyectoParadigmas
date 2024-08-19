@@ -1,15 +1,43 @@
-(function confirmAction(event) {
+function confirmAction(event) {
     if (event.submitter && event.submitter.name === 'delete') {
         return confirm('¿Estás seguro de que deseas eliminar este registro?');
     } else if (event.submitter && event.submitter.name === 'update') {
         return confirm('¿Estás seguro de que deseas actualizar este registro?');
+    } else if (event.submitter && event.submitter.name === 'create') {
+        return confirm('¿Estás seguro de que deseas insertar este registro?');
     }
     return true;
-})();
+};
 
 function showAlertBasedOnURL() {
     const urlParams = new URLSearchParams(window.location.search);
 
+    // Obtener parámetros de la URL
+    const paramSuccessInserted = urlParams.get('inserted');
+    const paramAlreadyExistsInserted = urlParams.get('alreadyexists');
+    const paramDbErrorInserted = urlParams.get('dbError');
+    const paramInvalidOwnerOrCompanyTypeInserted = urlParams.get('invalidOwnerOrCompanyType');
+    const paramNumberFormatInserted = urlParams.get('numberFormat');
+    const paramEmptyFieldInserted = urlParams.get('emptyField');
+    const paramErrorsInStatusInserted = urlParams.get('errorsInStatus');
+    const paramErrorCompanyTypeInserted = urlParams.get('companyType');
+    const paramErrorInOwnerInserted = urlParams.get('errorInOwner');
+    const paramErrorInMagicNameInserted = urlParams.get('errorInMagicName');
+    const paramErrorInLegalNameInserted = urlParams.get('errorInLegalName');
+
+    const paramSuccessUpdated = urlParams.get('updated');
+    const paramErrorUpdated = urlParams.get('error');
+    const paramInvalidOwnerOrCompanyTypeUpdated = urlParams.get('invalidOwnerOrCompanyType');
+    const paramNumberFormatUpdated = urlParams.get('numberFormat');
+    const paramEmptyFieldUpdated = urlParams.get('emptyField');
+    const paramMissingFieldsUpdated = urlParams.get('missingFields');
+
+    const paramDeleted = urlParams.get('deleted');
+    const paramDeleteFailed = urlParams.get('deleteFailed');
+    const paramInvalidId = urlParams.get('invalidId');
+    const paramMissingId = urlParams.get('missingId');
+
+    // Mostrar alertas basadas en los parámetros de la URL
     if (urlParams.has('success')) {
         switch (urlParams.get('success')) {
             case 'updated':
@@ -30,7 +58,7 @@ function showAlertBasedOnURL() {
                 alert('Error del sistema al realizar la acción.');
                 break;
             case 'emptyField':
-                alert('Deber ingresar un nombre, el campo de texto no debe estar vacío.');
+                alert('Debes ingresar un nombre, el campo de texto no debe estar vacío.');
                 break;
             case 'numberFormat':
                 alert('No puedes ingresar solo números en el campo de texto.');
@@ -38,11 +66,39 @@ function showAlertBasedOnURL() {
             case 'alreadyexists':
                 alert('El nombre ya existe, ingrese otro.');
                 break;
+            case 'invalidOwnerOrCompanyType':
+                alert('Tipo de propietario o empresa inválido.');
+                break;
+            case 'companyType':
+                alert('Error en el tipo de empresa.');
+                break;
+            case 'errorInOwner':
+                alert('Error en el propietario.');
+                break;
+            case 'errorInMagicName':
+                alert('Error en el nombre mágico.');
+                break;
+            case 'errorInLegalName':
+                alert('Error en el nombre legal.');
+                break;
+            case 'missingFields':
+                alert('Faltan campos requeridos.');
+                break;
+            case 'invalidId':
+                alert('ID inválido.');
+                break;
+            case 'missingId':
+                alert('ID faltante.');
+                break;
+            case 'deleteFailed':
+                alert('No se pudo eliminar.');
+                break;
             default:
                 break;
         }
     }
 }
+
 
 document.addEventListener('DOMContentLoaded', function () {
     // Función para mostrar mensajes de error
@@ -71,7 +127,7 @@ document.addEventListener('DOMContentLoaded', function () {
             errorInLegalName: 'El nombre legal es obligatorio y no puede ser un número.',
             errorInMagicName: 'El nombre mágico es obligatorio y no puede ser un número.',
             errorInOwner: 'Debe seleccionar un dueño válido.',
-            errorcompanyType: 'Debe seleccionar un tipo de empresa válido.',
+            errorCompanyType: 'Debe seleccionar un tipo de empresa válido.',
             errorsInStatus: 'El estado es obligatorio.',
             emptyField: 'Todos los campos deben estar llenos.',
             numberFormat: 'Formato de número incorrecto.',

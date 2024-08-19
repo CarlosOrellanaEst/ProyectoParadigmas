@@ -3,7 +3,9 @@
 
     <head>
         <meta charset="UTF-8">
-        <title>Empresa turística</title>
+        <button><a href="index.html">Index</a></button>
+        <title>Empresa turística</title> 
+        
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
         <style>
             td,
@@ -34,8 +36,8 @@
         <header>
             <h1>CRUD Empresa turística</h1>
         </header>
-        <section id="formCreate">
-            <form method="post" action="../business/touristCompanyAction.php">
+        <section id="create">
+            <form method="post" action="../business/touristCompanyAction.php" onsubmit="return confirmAction(event);">
                 <label for="legalName">Nombre legal: </label>
                 <input required placeholder="Nombre legal" type="text" name="legalName" id="legalName" />
                 <label for="magicName">Nombre mágico: </label>
@@ -44,35 +46,32 @@
 
                 <label for="ownerId">Dueño: </label>
                 <select required name="ownerId" id="ownerId">
-                <option value="0">Ninguno</option>
+                    <option value="0">Ninguno</option>
                     <?php foreach ($owners as $owner): ?>
-                        
                         <option value="<?php echo htmlspecialchars($owner->getIdTBOwner()); ?>">
                             <?php echo htmlspecialchars($owner->getName() . ' ' . $owner->getSurnames()); ?>
                         </option>
                     <?php endforeach; ?>
-                                        
                 </select>
-                    
-                <label for="companyType">Tipo de empresa: </label>           
+
+                <label for="companyType">Tipo de empresa: </label>
                 <select required name="companyType" id="companyType">
-                <option value="0">Ninguno</option>
+                    <option value="0">Ninguno</option>
                     <?php foreach ($touristCompanyTypes as $touristCompanyType): ?>
-                        
                         <option value="<?php echo htmlspecialchars($touristCompanyType->getId()); ?>">
                             <?php echo htmlspecialchars($touristCompanyType->getName()); ?>
                         </option>
                     <?php endforeach; ?>
-
                 </select>
-                 
+
                 <label for="status">Estado: </label>
                 <select name="status" id="" required>
                     <option value="-1">Ninguno</option>
                     <option value="1">Activo</option>
                     <option value="0">Inactivo</option>
                 </select>
-                <input type="submit" value="Crear" name="create" id="create" />    
+
+                <input type="submit" value="Crear" name="create" id="create" />
             </form>
 
         </section>
@@ -168,7 +167,7 @@
                             echo '<td>';
                             echo '<input type="hidden" name="id" value="' . $current->getId() . '">';
                             echo '<input type="submit" value="Actualizar" name="update" />';
-                            echo '<input type="submit" value="Eliminar" name="delete" />';
+                            echo '<input type="submit" value="Eliminar" name="delete"/>';
                             echo '</td>';
                             echo '</tr>';
                             echo '</form>';
@@ -178,6 +177,7 @@
                     }
                     ?>
                 </tbody>
+ 
             </table>
 
 
@@ -185,8 +185,10 @@
         
         </section>
 
-
+                      
     </body>
+    
+
 
 
 
