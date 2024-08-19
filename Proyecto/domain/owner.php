@@ -29,6 +29,10 @@ class Owner extends Person{
         return $this->statusTBOwner;
     }
 
+    public function getFullName(){
+        return $this->name." ".$this->surnames;
+    }
+
     // Setters
     public function setIdTBOwner($idTBOwner) {
         $this->idTBOwner = $idTBOwner;

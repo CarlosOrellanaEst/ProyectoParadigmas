@@ -78,4 +78,3 @@ if(isset($_POST['create'])){
         exit();
     }
 }
-?>

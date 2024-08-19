@@ -22,7 +22,7 @@
         include_once '../business/ownerBusiness.php';
         
         $ownerBusiness = new OwnerBusiness();
-        $owners = $ownerBusiness->getAllTBOwners();
+        $owners = $ownerBusiness->getAllTBOwner();
         $touristCompanyTypeBusiness = new touristCompanyTypeBusiness();
         $touristCompanyTypes = $touristCompanyTypeBusiness->getAll();
 
@@ -44,7 +44,9 @@
 
                 <label for="ownerId">Dueño: </label>
                 <select required name="ownerId" id="ownerId">
+                <option value="0">Ninguno</option>
                     <?php foreach ($owners as $owner): ?>
+                        
                         <option value="<?php echo htmlspecialchars($owner->getIdTBOwner()); ?>">
                             <?php echo htmlspecialchars($owner->getName() . ' ' . $owner->getSurnames()); ?>
                         </option>
@@ -52,9 +54,11 @@
                                         
                 </select>
                     
-                <label for="companyType">Tipo de empresa: </label>                    
+                <label for="companyType">Tipo de empresa: </label>           
                 <select required name="companyType" id="companyType">
+                <option value="0">Ninguno</option>
                     <?php foreach ($touristCompanyTypes as $touristCompanyType): ?>
+                        
                         <option value="<?php echo htmlspecialchars($touristCompanyType->getId()); ?>">
                             <?php echo htmlspecialchars($touristCompanyType->getName()); ?>
                         </option>
@@ -63,6 +67,7 @@
                  
                 <label for="status">Estado: </label>
                 <select name="status" id="" required>
+                    <option value="0">Ninguno</option>
                     <option value="1">Activo</option>
                     <option value="0">Inactivo</option>
                 </select>
@@ -92,7 +97,11 @@
                 <tbody>
                     <?php
                     $touristCompanyBusiness = new touristCompanyBusiness();
+                    $ownerBusiness = new OwnerBusiness();
+                    $touristCompanyTypeBusiness = new touristCompanyTypeBusiness();
                     $all = $touristCompanyBusiness->getAll();
+                    $allowners = $ownerBusiness->getAllTBOwner();
+                    $alltouristCompanyTypes = $touristCompanyTypeBusiness->getAll();
                     $touristCompanyFiltered = [];
 
                     // Filtrar los resultados si se ha realizado una búsqueda
@@ -106,15 +115,50 @@
                         $all = $touristCompanyFiltered;
                     }
 
+                    
+                    
+
                     if (count($all) > 0) {
                         foreach ($all as $current) {
+                            
+                            $assignedCompanyType = $touristCompanyTypeBusiness->getById($current->getCompanyType());
+                            $assignedOwner = $ownerBusiness->getTBOwner($current->getOwner());
                             echo '<form method="post" action="../business/touristCompanyAction.php" onsubmit="return confirmAction(event);">';
                             echo '<tr>';
-                            echo '<td>' . htmlspecialchars($current->getLegalName()) . '</td>';
-                            echo '<td>' . htmlspecialchars($current->getMagicName()) . '</td>';
-                            echo '<td>' . htmlspecialchars($current->getOwner()->getName() . ' ' . $current->getOwner()->getSurnames()) . '</td>';
-                            echo '<td>' . htmlspecialchars($current->getCompanyType()->getName()) . '</td>';
-                            echo '<td>' . ($current->getStatus() == 1 ? 'Activo' : 'Inactivo') . '</td>';
+                            echo '<td><input type="text" name="tbtouristcompanyid" value="'. htmlspecialchars($current->getLegalName()) .'"></td>';
+                            echo '<td><input type="text" name="magicName" value="' . htmlspecialchars($current->getMagicName()) . '"></td>';
+                            echo '<td>';
+                            echo '<select name="owner">';
+                            foreach ($allowners as $owner) {
+                                echo '<option value="' . htmlspecialchars($owner->getIdTBOwner()) . '"';
+                                
+                                if ($owner->getIdTBOwner() == $current->getOwner()) {
+                                    
+                                    echo ' selected';
+                                }
+                                echo '>' . htmlspecialchars($owner->getFullName()) . '</option>';
+                            }
+                            echo '>' . htmlspecialchars($assignedOwner->getFullName()) . '</option>';
+                            echo '</select>';
+                            echo '</td>';
+                            echo '<td>';
+                            echo '<select name="companyType">';
+                            foreach ($alltouristCompanyTypes as $touristCompanyType) {
+                                echo '<option value="' . htmlspecialchars($touristCompanyType->getId()) . '"';
+                                if ($touristCompanyType->getId() == $current->getCompanyType()) {
+                                    echo ' selected';
+                                }
+                                echo '>' . htmlspecialchars($touristCompanyType->getName()) . '</option>';
+                            }
+                            echo '>' . htmlspecialchars($assignedCompanyType->getName()) . '</option>';
+                            echo '</select>';
+                            echo '</td>';
+                            echo '<td>';
+                            echo '<select name="status">';
+                            echo '<option value="1" ' . ($current->getStatus() == 1 ? 'selected' : '') . '>Activo</option>';
+                            echo '<option value="0" ' . ($current->getStatus() == 0 ? 'selected' : '') . '>Inactivo</option>';
+                            echo '</select>';
+                            echo '</td>';
                             echo '<td>';
                             echo '<input type="hidden" name="id" value="' . $current->getId() . '">';
                             echo '<input type="submit" value="Actualizar" name="update" />';

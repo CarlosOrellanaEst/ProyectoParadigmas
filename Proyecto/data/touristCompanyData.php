@@ -164,4 +164,3 @@ class TouristCompanyData extends Data{
         return $touristCompany;
     }
 }
-?>

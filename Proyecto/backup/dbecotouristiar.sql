@@ -137,8 +137,6 @@ INSERT INTO `tbuser` (`tbuserid`, `tbusername`, `tbuserlastname`, `tbuserpasswor
 --
 
 INSERT INTO `tbtouristcompanytype` (`tbtouristcompanytypeid`, `tbtouristcompanytypename`, `tbtouristcompanytypedescription`, `tbtouristcompanytypeisactive`) VALUES
-(1, 'dxaxa223', 'a23', 1),
-(2, 'wdwdw', '', 1),
 (1, 'Agencia de Viajes', 'Agencia especializada en turismo nacional e internacional.', 1),
 (2, 'Guía Turístico', 'Servicios de guías turísticos especializados en diferentes regiones.', 1),
 (3, 'Transporte Turístico', 'Servicios de transporte para turistas, incluyendo autobuses y vans.', 1),
