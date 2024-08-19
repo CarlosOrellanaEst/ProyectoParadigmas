@@ -63,6 +63,7 @@
                             <?php echo htmlspecialchars($touristCompanyType->getName()); ?>
                         </option>
                     <?php endforeach; ?>
+
                 </select>
                  
                 <label for="status">Estado: </label>
@@ -125,10 +126,13 @@
                             $assignedOwner = $ownerBusiness->getTBOwner($current->getOwner());
                             echo '<form method="post" action="../business/touristCompanyAction.php" onsubmit="return confirmAction(event);">';
                             echo '<tr>';
+
+                            '<td><type="hidden" name="id" value="' . $current->getId() . '"></td>';
+
                             echo '<td><input type="text" name="tbtouristcompanyid" value="'. htmlspecialchars($current->getLegalName()) .'"></td>';
                             echo '<td><input type="text" name="magicName" value="' . htmlspecialchars($current->getMagicName()) . '"></td>';
                             echo '<td>';
-                            echo '<select name="owner">';
+                            echo '<select name="ownerId">';
                             foreach ($allowners as $owner) {
                                 echo '<option value="' . htmlspecialchars($owner->getIdTBOwner()) . '"';
                                 
@@ -139,6 +143,7 @@
                                 echo '>' . htmlspecialchars($owner->getFullName()) . '</option>';
                             }
                             echo '>' . htmlspecialchars($assignedOwner->getFullName()) . '</option>';
+
                             echo '</select>';
                             echo '</td>';
                             echo '<td>';
@@ -151,6 +156,7 @@
                                 echo '>' . htmlspecialchars($touristCompanyType->getName()) . '</option>';
                             }
                             echo '>' . htmlspecialchars($assignedCompanyType->getName()) . '</option>';
+
                             echo '</select>';
                             echo '</td>';
                             echo '<td>';
