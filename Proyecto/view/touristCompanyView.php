@@ -68,7 +68,7 @@
                  
                 <label for="status">Estado: </label>
                 <select name="status" id="" required>
-                    <option value="0">Ninguno</option>
+                    <option value="-1">Ninguno</option>
                     <option value="1">Activo</option>
                     <option value="0">Inactivo</option>
                 </select>

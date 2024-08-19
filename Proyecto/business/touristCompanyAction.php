@@ -21,7 +21,7 @@ if(isset($_POST['create'])){
                         $status = $_POST['status'];
 
                         // Validación de campos
-                        if(strlen(trim($legalName)) > 0 && strlen(trim($magicName)) > 0 && is_numeric($ownerId) && is_numeric($companyTypeId) && strlen(trim($status)) >= 0){
+                        if(strlen(trim($legalName)) > 0 && strlen(trim($magicName)) > 0 && is_numeric($ownerId)>0  && is_numeric($companyTypeId)>0 && strlen(trim($status)) >= 0){
                             if(!is_numeric($legalName) && !is_numeric($magicName) && is_numeric($status)){
                                 // Aquí deberías obtener instancias de las clases Owner y CompanyType usando los IDs
                                 $ownerBusiness = new OwnerBusiness();
