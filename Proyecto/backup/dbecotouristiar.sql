@@ -92,6 +92,18 @@ CREATE TABLE `tbtouristcompanytype` (
   `tbtouristcompanytypeisactive` tinyint(1) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- --------------------------------------------------------
+-- Estructura de tabla para la tabla `tbtouristcompany`
+
+CREATE TABLE `tbtouristcompany` (
+  `tbtouristcompanyid` int(11) NOT NULL,
+  `tbtouristcompanylegalname` varchar(255) NOT NULL,
+  `tbtouristcompanymagicname` varchar(255) NOT NULL,
+  `tbtouristcompanyowner` int(11) NOT NULL,
+  `tbtouristcompanycompanyType` int(11) NOT NULL,
+  `tbtouristcompanystatus` tinyint(1) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 --
 -- Volcado de datos para la tabla `tbroll`
 --
@@ -156,6 +168,15 @@ INSERT INTO `tbowner` (`tbownerid`, `tbownername`, `tbownersurnames`, `tbownerle
 (3, 'Luis', 'Ramírez Fernández', '11223344', '555-9101', 'luis.ramirez@example.com', 'Boulevard Libertad 90, Ciudad', 1),
 (4, 'Marta', 'Cruz García', '44332211', '555-1122', 'marta.cruz@example.com', 'Plaza Mayor 5, Ciudad', 1),
 (5, 'José', 'Sánchez Romero', '55667788', '555-3344', 'jose.sanchez@example.com', 'Calle de los Naranjos 20, Ciudad', 1);
+COMMIT;
+
+--
+-- Volcado de datos para la tabla `tbtouristcompany`
+--
+INSERT INTO `tbtouristcompany` (`tbtouristcompanyid`, `tbtouristcompanylegalname`, `tbtouristcompanymagicname`, `tbtouristcompanyowner`, `tbtouristcompanycompanyType`, `tbtouristcompanystatus`) VALUES
+(1, 'EMPRESA1', 'EMPRESACHIDA1', 2, 2, 1),
+(2, 'EMPRESA2', 'LAMASCHIDA2', 5, 5, 1),
+(3, 'PRUEBAELIMINAR3', 'CALAVERA3', 4, 3, 0);
 COMMIT;
 
 
