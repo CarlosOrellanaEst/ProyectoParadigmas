@@ -10,7 +10,7 @@ class LoginData {
     }
 
     public function getUserByUsername($username, $password) {
-        $query = "SELECT * FROM tbuser WHERE tbuserName = ? AND tbuserpassword = ? LIMIT 1";
+        $query = "SELECT * FROM tbuser WHERE tbusername = ? AND tbuserpassword = ? LIMIT 1";
         $stmt = $this->connection->prepare($query);
         $stmt->bind_param("ss", $username, $password);
         $stmt->execute();
@@ -19,12 +19,12 @@ class LoginData {
         if ($row = $result->fetch_assoc()) {
             $user = new User();
             $user->setUserID($row['tbuserid']);
-            $user->setUserName($row['tbuserName']);
-            $user->setUserLastName($row['tbuserLastName']);
+            $user->setUserName($row['tbusername']);
+            $user->setUserLastName($row['tbuserlastname']);
             $user->setPassword($row['tbuserpassword']);
             $user->setPhone($row['tbuserphone']);
-            $user->setActive($row['tbuserStatus']);
-            $user->setUserType($row['tbuserType']);
+            $user->setActive($row['tbuserstatus']);
+            $user->setUserType($row['tbusertype']);
         } else {
             $user = null;
         }

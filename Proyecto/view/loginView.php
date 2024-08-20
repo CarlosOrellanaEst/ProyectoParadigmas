@@ -70,9 +70,12 @@
                     alert(messageDiv.innerText);
                 }
             })
-            .catch(error => {
-                console.error("Error:", error);
-            });
+            .catch(async (error) => {
+    const responseText = await error.text();
+    console.error("Error en la respuesta:", responseText);
+    alert("Error inesperado. Verifica la consola para más detalles.");
+});
+
         });
     </script>
 </body>
