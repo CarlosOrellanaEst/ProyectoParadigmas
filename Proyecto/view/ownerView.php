@@ -10,7 +10,7 @@
         }
     </style>
     <?php
-    include '../business/OwnerBusiness.php';
+    include '../business/ownerBusiness.php';
     ?>
     <script src="../resources/ownerView.js"></script>
 </head>
