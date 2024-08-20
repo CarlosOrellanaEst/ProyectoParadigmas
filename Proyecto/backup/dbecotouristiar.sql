@@ -120,14 +120,6 @@ INSERT INTO `tbuser` (`tbuserid`, `tbusername`, `tbuserlastname`, `tbuserpasswor
 -- Índices para tablas volcadas
 --
 
---
--- Indices de la tabla `tbowner`
---
-ALTER TABLE `tbowner`
-  ADD UNIQUE KEY `tbowneremail` (`tbowneremail`),
-  ADD UNIQUE KEY `tbownerlegalidentification` (`tbownerlegalidentification`),
-  ADD UNIQUE KEY `tbownerphone` (`tbownerphone`);
-COMMIT;
 
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

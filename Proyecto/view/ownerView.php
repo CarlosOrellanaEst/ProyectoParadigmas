@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<html lang="es">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>CRUD Propietarios</title>
@@ -8,7 +9,6 @@
             border-right: 1px solid;
         }
     </style>
-    
     <?php
     include '../business/OwnerBusiness.php';
     ?>
@@ -19,24 +19,28 @@
         <h1>CRUD Propietarios</h1>
     </header>
     <section id="formCreate">
-    <form method="post" action="../business/ownerAction.php" enctype="multipart/form-data">
-        <label for="name">Nombre</label>
+        <form method="post" action="../business/ownerAction.php" enctype="multipart/form-data">
+            <label for="name">Nombre</label>
             <input required placeholder="nombre" type="text" name="ownerName" id="name"/>
             <label for="surnames">Apellidos</label>
             <input placeholder="apellidos" type="text" name="ownerSurnames" id="surnames"/>
-            <label for="legalIdentification">Identificacion Legal</label>
+            <label for="idType">Tipo de Identificación</label>
+            <select name="idType" id="idType">
+                <option value="CR">Cédula Nacional de Costa Rica</option>
+                <option value="foreign">Extranjero</option>
+            </select>
+            <label for="legalIdentification">Identificación Legal</label>
             <input placeholder="identificacionLegal" type="text" name="ownerLegalIdentification" id="legalIdentification"/>
-            <label for="phone">Telefono</label>
+            <label for="phone">Teléfono</label>
             <input placeholder="telefono" type="text" name="ownerPhone" id="phone"/>
             <label for="email">Correo</label>
             <input placeholder="correo" type="text" name="ownerEmail" id="email"/>
-            <label for="direction">Direccion</label>
+            <label for="direction">Dirección</label>
             <input placeholder="direccion" type="text" name="ownerDirection" id="direction"/>
             <input type="file" name="imagen" required>
             <input type="submit" value="Crear" name="create" id="create"/>
         </form>
     </section>
-
 
     <br><br>
     <section>
@@ -51,57 +55,68 @@
                 <tr>
                     <th>Nombre</th>
                     <th>Apellidos</th>
-                    <th>Identificacion Legal</th>
-                    <th>Telefono</th>
+                    <th>Tipo de Identificación</th>
+                    <th>Identificación Legal</th>
+                    <th>Teléfono</th>
                     <th>Correo</th>
-                    <th>Direccion</th>
+                    <th>Dirección</th>
+                    <th>Foto</th>
+                  
+                    <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
-    <?php
-    $ownerBusiness = new OwnerBusiness();
-    $allowners = $ownerBusiness->getAllTBOwner();
-    $ownersFiltered = [];
+                <?php
+                $ownerBusiness = new OwnerBusiness();
+                $allowners = $ownerBusiness->getAllTBOwner();
+                $ownersFiltered = [];
 
-    // Filtrar los resultados si se ha realizado una búsqueda
-    if (isset($_GET['searchOne'])) {
-        $searchTerm = $_GET['searchOne'];
-        $ownersFiltered  = array_filter($allowners, function($owner) use ($searchTerm) {
-            return stripos($owner->getName(), $searchTerm) !== false;
-        });
-    }
-    if (count($ownersFiltered) > 0) {
-        $allowners = $ownersFiltered;
-    }
+                // Filtrar los resultados si se ha realizado una búsqueda
+                if (isset($_GET['searchOne'])) {
+                    $searchTerm = $_GET['searchOne'];
+                    $ownersFiltered = array_filter($allowners, function($owner) use ($searchTerm) {
+                        return stripos($owner->getName(), $searchTerm) !== false;
+                    });
+                }
+                if (count($ownersFiltered) > 0) {
+                    $allowners = $ownersFiltered;
+                }
 
-    foreach ($allowners as $current) {
-        echo '<form method="post" action="../business/ownerAction.php" onsubmit="return confirmDelete(event);" enctype="multipart/form-data">';
-        echo '<input type="hidden" name="ownerID" value="' . $current->getIdTBOwner() . '">';
-        echo '<tr>';
-        echo '<td><input type="text" name="ownerName" value="' . $current->getName() . '"/></td>';
-        echo '<td><input type="text" name="ownerSurnames" value="' . $current->getSurnames() . '"/></td>';
-        echo '<td><input type="text" name="ownerLegalIdentification" value="' . $current->getLegalIdentification() . '"/></td>';
-        echo '<td><input type="text" name="ownerPhone" value="' . $current->getPhone() . '"/></td>';
-        echo '<td><input type="text" name="ownerEmail" value="' . $current->getEmail() . '"/></td>';
-        echo '<td><input type="text" name="ownerDirection" value="' . $current->getDirectionTBOwner() . '"/></td>';
-        
-        // Mostrar la imagen
-        $photoUrl = $current->getPhotoURLTBOwner();
-        echo '<td><img src="../images/' . htmlspecialchars($photoUrl) . '" alt="Foto" width="100" height="100" /></td>';
-        
-        echo '<td>';
-        // Input para seleccionar la nueva imagen
-        echo '<input type="file" name="newImage" accept="image/*">';
-        // Botones de acción
-        echo '<input type="submit" value="Actualizar" name="update"/>';
-        echo '<input type="submit" value="Eliminar" name="delete"/>';
-        echo '</td>';
-        echo '</tr>';
-        echo '</form>';
-    }
-    ?>
-</tbody>
+                foreach ($allowners as $current) {
+                    echo '<form method="post" action="../business/ownerAction.php" onsubmit="return confirmDelete(event);" enctype="multipart/form-data">';
+                    echo '<input type="hidden" name="ownerID" value="' . $current->getIdTBOwner() . '">';
+                    echo '<tr>';
+                    echo '<td><input type="text" name="ownerName" value="' . $current->getName() . '"/></td>';
+                    echo '<td><input type="text" name="ownerSurnames" value="' . $current->getSurnames() . '"/></td>';
+                    echo '<td>
+                    <select name="idType">
+                        <option value="CR">Cédula Nacional de Costa Rica</option>
+                        <option value="foreign">Extranjero</option>
+                    </select>
+                </td>';
+                    echo '<td><input type="text" name="ownerLegalIdentification" value="' . $current->getLegalIdentification() . '"/></td>';
+                    echo '<td><input type="text" name="ownerPhone" value="' . $current->getPhone() . '"/></td>';
+                    echo '<td><input type="text" name="ownerEmail" value="' . $current->getEmail() . '"/></td>';
+                    echo '<td><input type="text" name="ownerDirection" value="' . $current->getDirectionTBOwner() . '"/></td>';
+                    
+                    // Mostrar la imagen
+                    $photoUrl = $current->getPhotoURLTBOwner();
+                    echo '<td><img src="../images/' . $photoUrl . '" alt="Foto" width="75" height="75" /></td>';
 
+                    // Campo de selección para el tipo de identificación
+                  
+
+                    // Botones de acción
+                    echo '<td>';
+                    echo '<input type="file" name="newImage" accept="image/*" /><br />';
+                    echo '<input type="submit" value="Actualizar" name="update" />';
+                    echo '<input type="submit" value="Eliminar" name="delete" />';
+                    echo '</td>';
+                    echo '</tr>';
+                    echo '</form>';
+                }
+                ?>
+            </tbody>
         </table>
     </section>
 </body>
