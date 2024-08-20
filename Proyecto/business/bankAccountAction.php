@@ -79,6 +79,9 @@ if (isset($_POST['update'])) {
                 if ($result == 1) {
                     header("location: ../view/bankAccountView.php?success=updated");
                     exit();
+                } else if ($result == null) {
+                    header("location: ../view/bankAccountView.php?error=alreadyexists");
+                    exit();
                 } else {
                     header("location: ../view/bankAccountView.php?error=dbError");
                     exit();

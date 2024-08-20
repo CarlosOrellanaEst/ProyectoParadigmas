@@ -94,15 +94,19 @@ class BankAccountData extends Data {
         }
         $conn->set_charset('utf8');
     
-        $id = $bankAccount->getTbBankAccountId();
-        $newAccountNumber = mysqli_real_escape_string($conn,  $bankAccount->getAccountNumber());
-        $newBankName = mysqli_real_escape_string($conn,  $bankAccount->getBank());
-        $newStatus = mysqli_real_escape_string($conn,  $bankAccount->getStatus());
+        if ($this->getTbBankAccountByAccountNumber($bankAccount->getAccountNumber())) {
+            $result = null;
+        } else {
+            $id = $bankAccount->getTbBankAccountId();
+            $newAccountNumber = mysqli_real_escape_string($conn,  $bankAccount->getAccountNumber());
+            $newBankName = mysqli_real_escape_string($conn,  $bankAccount->getBank());
+            $newStatus = mysqli_real_escape_string($conn,  $bankAccount->getStatus());
+        
+            $query = "UPDATE tbbankaccount SET tbbankaccountnumber = '$newAccountNumber', tbbankaccountbankname = '$newBankName', tbbankaccountstatus = '$newStatus' WHERE tbbankaccountid = $id";
+            $result = mysqli_query($conn, $query);
     
-        $query = "UPDATE tbbankaccount SET tbbankaccountnumber = '$newAccountNumber', tbbankaccountbankname = '$newBankName', tbbankaccountstatus = '$newStatus' WHERE tbbankaccountid = $id";
-        $result = mysqli_query($conn, $query);
-    
-        mysqli_close($conn);
+            mysqli_close($conn);
+        }
         return $result;
     }
 
