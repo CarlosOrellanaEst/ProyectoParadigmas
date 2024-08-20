@@ -19,7 +19,7 @@
         <script src="../resources/bankAccountView.js"></script>
     </head>
     <body>
-        <a href="index.html">← Volver al inicio</a>
+    <a href="../index.html">← Volver al inicio</a>
         <header> 
             <h1>CRUD Cuenta de banco</h1>
         </header>

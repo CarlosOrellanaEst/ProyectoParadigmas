@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <button><a href="../index.html">Index</a></button>
+    <a href="../index.html">← Volver al inicio</a>
     <title>Iniciar Sesión</title>
 </head>
 <body>
