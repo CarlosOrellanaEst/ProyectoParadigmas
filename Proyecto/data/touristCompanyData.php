@@ -120,21 +120,21 @@ class TouristCompanyData extends Data{
             die("Prepare failed: " . $conn->error);
         }
 
-        if($this->getTouristCompanyByName($touristCompany->getLegalName())->getLegalName()=== $touristCompany->getLegalName()){
+        if($this->getTouristCompanyByName($touristCompany->getLegalName())->getLegalName()=== $touristCompany->getLegalName()){            
+            $tbtouristcompanyid = $touristCompany->getId();
+            $tbtouristcompanylegalname = $touristCompany->getLegalName();
+            $tbtouristcompanymagicname = $touristCompany->getMagicName();
+            $tbtouristcompanyowner = $touristCompany->getOwner();
+            $tbtouristcompanycompanyType = $touristCompany->getCompanyType();
+            $tbtouristcompanystatus = $touristCompany->getStatus();
+
+            $stmt->bind_param("ssiiii", $tbtouristcompanylegalname, $tbtouristcompanymagicname, $tbtouristcompanyowner, $tbtouristcompanycompanyType, $tbtouristcompanystatus, $tbtouristcompanyid);
+
+            $result = $stmt->execute();
+        }
+        else {
             return $result = null;
-       }
-
-        $tbtouristcompanyid = $touristCompany->getId();
-        $tbtouristcompanylegalname = $touristCompany->getLegalName();
-        $tbtouristcompanymagicname = $touristCompany->getMagicName();
-        $tbtouristcompanyowner = $touristCompany->getOwner();
-        $tbtouristcompanycompanyType = $touristCompany->getCompanyType();
-        $tbtouristcompanystatus = $touristCompany->getStatus();
-
-        $stmt->bind_param("ssiiii", $tbtouristcompanylegalname, $tbtouristcompanymagicname, $tbtouristcompanyowner, $tbtouristcompanycompanyType, $tbtouristcompanystatus, $tbtouristcompanyid);
-
-        $result = $stmt->execute();
-
+        }
         $stmt->close();
 
         mysqli_close($conn);
