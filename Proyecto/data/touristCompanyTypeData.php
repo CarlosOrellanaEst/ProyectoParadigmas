@@ -92,13 +92,18 @@ class touristCompanyTypeData extends Data {
         $conn->set_charset('utf8');
     
         $id = $TouristCompanyType->getId();
-        $newName = mysqli_real_escape_string($conn,  $TouristCompanyType->getName());
-        $newDescription = mysqli_real_escape_string($conn,  $TouristCompanyType->getDescription());
-    
-        $query = "UPDATE tbtouristcompanytype SET tbtouristcompanytypename = '$newName', tbtouristcompanytypedescription = '$newDescription' WHERE tbtouristcompanytypeid = $id";
-        $result = mysqli_query($conn, $query);
-    
-        mysqli_close($conn);
+        if ($this->getTbTouristCompanyTypeByName($TouristCompanyType->getName())) {
+            $result = null; 
+        } else {
+            $newName = mysqli_real_escape_string($conn,  $TouristCompanyType->getName());
+            $newDescription = mysqli_real_escape_string($conn,  $TouristCompanyType->getDescription());
+        
+            $query = "UPDATE tbtouristcompanytype SET tbtouristcompanytypename = '$newName', tbtouristcompanytypedescription = '$newDescription' WHERE tbtouristcompanytypeid = $id";
+            $result = mysqli_query($conn, $query);
+        
+            mysqli_close($conn);
+        }
+       
         return $result;
     }
 
