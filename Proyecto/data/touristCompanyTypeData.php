@@ -125,5 +125,22 @@ class touristCompanyTypeData extends Data {
         return $rollReturn;
     } 
 
+    public function getByIdTbTouristCompanyType($idTouristCompanyType) {
+        $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
+        if (!$conn) {
+            die("Connection failed: " . mysqli_connect_error());
+        }
+        $conn->set_charset('utf8');
+    
+        $query = "SELECT * FROM tbtouristcompanytype WHERE tbtouristcompanytypeid= $idTouristCompanyType";
+        $result = mysqli_query($conn, $query);
+        
+        $row = mysqli_fetch_assoc($result);
+        $companyType = new touristCompanyType($row['tbtouristcompanytypeid'], $row['tbtouristcompanytypename'], $row['tbtouristcompanytypedescription']);
+    
+        mysqli_close($conn);
+        return $companyType;
+    }
+
     
 }

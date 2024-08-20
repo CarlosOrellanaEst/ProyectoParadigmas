@@ -25,4 +25,8 @@ class touristCompanyTypeBusiness {
     public function update($TouristCompanyType) {
         return $this->touristCompanyType->updateTbTouristCompanyType($TouristCompanyType);
     }
+
+    public function getById($idTouristCompanyType) {
+        return $this->touristCompanyType->getByIdTbTouristCompanyType($idTouristCompanyType);
+    }
 }
