@@ -68,7 +68,7 @@
             </thead>
             <tbody>
                 <?php
-                $ownerBusiness = new OwnerBusiness();
+                $ownerBusiness = new ownerBusiness();
                 $allowners = $ownerBusiness->getAllTBOwner();
                 $ownersFiltered = [];
 
