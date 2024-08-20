@@ -16,6 +16,7 @@
 </head>
 <body>
     <header> 
+    <li><a href="index.html">CRUD Fotos</a></li>
         <h1>CRUD Propietarios</h1>
     </header>
     <section id="formCreate">

@@ -51,7 +51,7 @@ if (isset($_POST['create'])) {
 
                 // Validación del número de teléfono (8 dígitos)
                 if (!preg_match('/^\d{8}$/', $phone)) {
-                    header("location: ../view/ownerView.php?error=invalidPhoneNumber");
+                    header("location: ../view/ownerView.php?error=invalidPhone");
                     exit();
                 }
 
