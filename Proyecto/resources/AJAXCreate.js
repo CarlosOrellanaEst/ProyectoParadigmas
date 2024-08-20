@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function () {
     
         const name = document.getElementById('name').value.trim();    
         if (name === '') {
-            alert('Roll name cannot be empty.');
+            alert('El nombre del roll es obligatorio.');
             return;
         }
         const postData = {
