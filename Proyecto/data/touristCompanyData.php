@@ -126,7 +126,8 @@ class TouristCompanyData extends Data{
             $tbtouristcompanymagicname = $touristCompany->getMagicName();
             $tbtouristcompanyowner = $touristCompany->getOwner();
             $tbtouristcompanycompanyType = $touristCompany->getCompanyType();
-            $tbtouristcompanystatus = $touristCompany->getStatus();
+            $tbtouristcompanystatus = $touristCompany->getStatus()
+            ;
 
             $stmt->bind_param("ssiiii", $tbtouristcompanylegalname, $tbtouristcompanymagicname, $tbtouristcompanyowner, $tbtouristcompanycompanyType, $tbtouristcompanystatus, $tbtouristcompanyid);
 

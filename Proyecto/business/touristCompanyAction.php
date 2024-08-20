@@ -83,15 +83,15 @@ if (isset($_POST['update'])) {
     if (isset($_POST['ownerId']) && isset($_POST['tbtouristcompanyid']) && isset($_POST['magicName']) && isset($_POST['ownerId']) && isset($_POST['companyType']) && isset($_POST['status'])) {
         
         $id = $_POST['id'];
-        $tbtouristcompanyid = $_POST['tbtouristcompanyid'];
+        $tbtouristcompanyLegalName = $_POST['tbtouristcompanyid'];
         $magicName = $_POST['magicName'];
         $ownerId = $_POST['ownerId'];
         $companyTypeId = $_POST['companyType'];
         $status = $_POST['status'];
         
         // Validación de campos
-        if (strlen(trim($tbtouristcompanyid)) > 0 && strlen(trim($magicName)) > 0 && is_numeric($ownerId) && is_numeric($companyTypeId) && is_numeric($status)) {
-            if (!is_numeric($tbtouristcompanyid) && !is_numeric($magicName)) {
+        if (strlen(trim($tbtouristcompanyLegalName)) > 0 && strlen(trim($magicName)) > 0 && is_numeric($ownerId) && is_numeric($companyTypeId) && is_numeric($status)) {
+            if (!is_numeric($tbtouristcompanyLegalName) && !is_numeric($magicName) &&  is_numeric($status)) {
                 $ownerBusiness = new OwnerBusiness();
                 $owner = $ownerBusiness->getTBOwner($ownerId);
 
@@ -100,7 +100,7 @@ if (isset($_POST['update'])) {
 
                 if ($ownerId && $companyType) {
                     $touristCompanyBusiness = new touristCompanyBusiness();
-                    $touristCompany = new TouristCompany($id, $tbtouristcompanyid, $magicName, $ownerId, $companyTypeId, $status);
+                    $touristCompany = new TouristCompany($id, $tbtouristcompanyLegalName, $magicName, $ownerId, $companyTypeId, $status);
                     $result = $touristCompanyBusiness->update($touristCompany);
 
                     if ($result == 1) {
