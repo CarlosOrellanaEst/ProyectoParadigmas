@@ -64,12 +64,9 @@
                     <?php endforeach; ?>
                 </select>
 
-                <label for="status">Estado: </label>
-                <select name="status" id="">
-                    <option value="3">Ninguno</option>
-                    <option value="1">Activo</option>
-                    <option value="0">Inactivo</option>
-                </select>
+
+                <input type="hidden" name="status" value="1">
+
 
                 <input type="submit" value="Crear" name="create" id="create" />
             </form>
@@ -91,7 +88,6 @@
                         <th>Nombre mágico</th>
                         <th>Dueño</th>
                         <th>Tipo de empresa</th>
-                        <th>Estado</th>
                         <th>Acciónes</th>
                     </tr>
                 </thead>
@@ -159,12 +155,7 @@
 
                             echo '</select>';
                             echo '</td>';
-                            echo '<td>';
-                            echo '<select name="status">';
-                            echo '<option value="1" ' . ($current->getStatus() == 1 ? 'selected' : '') . '>Activo</option>';
-                            echo '<option value="0" ' . ($current->getStatus() == 0 ? 'selected' : '') . '>Inactivo</option>';
-                            echo '</select>';
-                            echo '</td>';
+                            echo '<input type="hidden" name="status" value="1">';
                             echo '<td>';
                             echo '<input type="hidden" name="id" value="' . $current->getId() . '">';
                             echo '<input type="submit" value="Actualizar" name="update" />';
