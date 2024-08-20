@@ -144,6 +144,8 @@ INSERT INTO `tbtouristcompanytype` (`tbtouristcompanytypeid`, `tbtouristcompanyt
 (5, 'Actividades Recreativas', 'Organización de actividades recreativas y eventos para turistas.', 1);
 COMMIT;
 
+
+
 --
 -- Volcado de datos para la tabla `tbowner`
 --
