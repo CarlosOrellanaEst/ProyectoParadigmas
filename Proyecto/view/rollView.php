@@ -12,16 +12,17 @@
     <?php
     include '../business/rollBusiness.php';
     ?>
-    <script src="../resources/rollView.js"></script>
+<!--     <script src="../resources/rollView.js"></script> -->
+    <script src="../resources/AJAXCreate.js"></script>
 </head>
 <body>
     <header> 
         <h1>CRUD Roles</h1>
     </header>
-    <section id="formCreate">
-        <form method="post" action="../business/rollAction.php">
+    <section>
+        <form method="post"  id="formCreate" >
             <label for="name">Nombre</label>
-            <input required placeholder="nombre" type="text" name="rollName" id="name"/>
+            <input placeholder="nombre" type="text" name="rollName" id="name"/>
             <label for="description">Descripción</label>
             <input placeholder="descripción" type="text" name="rollDescription" id="description"/>
             <input type="submit" value="Crear" name="create" id="create"/>

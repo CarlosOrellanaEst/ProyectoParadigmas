@@ -98,7 +98,7 @@ class RollData extends Data {
     
         $id = $roll->getIdTBRoll();
 
-        if ($this->getTBRollByName($roll->getNameTBRoll())) {
+        if (!($this->getTBRollByName($roll->getNameTBRoll()))) {
             $result = null; 
         } else {
             $newName = mysqli_real_escape_string($conn,  $roll->getNameTBRoll());
