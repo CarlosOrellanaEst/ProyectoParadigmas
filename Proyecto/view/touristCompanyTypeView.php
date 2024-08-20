@@ -19,6 +19,7 @@
         <script src="../resources/touristCompanyTypeView.js"></script>
     </head>
     <body>
+        <a href="index.html">← Volver al inicio</a>
         <header> 
             <h1>CRUD Tipo de empresa turística</h1>
         </header>

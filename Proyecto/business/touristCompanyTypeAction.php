@@ -74,6 +74,9 @@ if (isset($_POST['update'])) {
                 if ($result == 1) {
                     header("location: ../view/touristCompanyTypeView.php?success=updated");
                     exit();
+                } else if ($result == null) {
+                    header("location: ../view/touristCompanyTypeView.php?error=alreadyexists");
+                    exit();
                 } else {
                     header("location: ../view/touristCompanyTypeView.php?error=dbError");
                     exit();
