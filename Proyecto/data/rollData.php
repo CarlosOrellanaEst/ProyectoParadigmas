@@ -3,51 +3,54 @@
 include_once 'data.php';
 include '../domain/Roll.php';
 
+
 class RollData extends Data {
 
  // Prepared Statement
-    public function insertTBRoll($roll) {
-        $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
-        if (!$conn) {
-            die("Connection failed: " . mysqli_connect_error());
-        }
-
-        $conn->set_charset('utf8');
-
-        // Obtiene el último id
-        $queryGetLastId = "SELECT MAX(tbrollid) AS idtbroll FROM tbroll";
-        $idCont = mysqli_query($conn, $queryGetLastId);
-        $nextId = 1;
-
-        if ($row = mysqli_fetch_row($idCont)) {
-            $lastId = $row[0] !== null ? (int)trim($row[0]) : 0;
-            $nextId = $lastId + 1;
-        }
-        if ($this->getTBRollByName($roll->getNameTBRoll())) {
-            $result = null;
-        } else {
-            $queryInsert = "INSERT INTO tbroll (tbrollid, tbrollname, tbrolldescription, tbrollstatus) VALUES (?, ?, ?, ?)";
-            $stmt = $conn->prepare($queryInsert); // el prepared statement de java
-            if ($stmt === false) {
-                die("Prepare failed: " . $conn->error);
-            }
-            
-            $name = $roll->getNameTBRoll();
-            $description = $roll->getDescriptionTBRoll();
-            $statusDelete = true;
-        
-            // Vincula los parámetros del statement
-            $stmt->bind_param("issi", $nextId, $name, $description, $statusDelete); // "issi": cada letra es el tipo de dato de los parametros
-        
-            // Ejecuta la declaración
-            $result = $stmt->execute();
-        
-            // Cierra la declaración y la conexión
-            $stmt->close();
-            mysqli_close($conn);
-        }
-        return $result;
+ public function insertTBRoll($roll) {
+    $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
+    if (!$conn) {
+        return ['status' => 'error', 'message' => 'Connection failed: ' . mysqli_connect_error()];
     }
+
+    $conn->set_charset('utf8');
+
+    $queryGetLastId = "SELECT MAX(tbrollid) AS idtbroll FROM tbroll";
+    $idCont = mysqli_query($conn, $queryGetLastId);
+    $nextId = 1;
+
+    if ($row = mysqli_fetch_row($idCont)) {
+        $lastId = $row[0] !== null ? (int)trim($row[0]) : 0;
+        $nextId = $lastId + 1;
+    }
+
+    if ($this->getTBRollByName($roll->getNameTBRoll())) {
+        mysqli_close($conn);
+        return ['status' => 'error', 'message' => 'El nombre del roll ya existe.'];
+    } else {
+        $queryInsert = "INSERT INTO tbroll (tbrollid, tbrollname, tbrolldescription, tbrollstatus) VALUES (?, ?, ?, ?)";
+        $stmt = $conn->prepare($queryInsert);
+        if ($stmt === false) {
+            mysqli_close($conn);
+            return ['status' => 'error', 'message' => 'Prepare failed: ' . $conn->error];
+        }
+        
+        $name = $roll->getNameTBRoll();
+        $description = $roll->getDescriptionTBRoll();
+        $statusDelete = true;
+
+        $stmt->bind_param("issi", $nextId, $name, $description, $statusDelete);
+        $result = $stmt->execute();
+        $stmt->close();
+        mysqli_close($conn);
+
+        if ($result) {
+            return ['status' => 'success', 'message' => 'Roll añadido correctamente'];
+        } else {
+            return ['status' => 'error', 'message' => 'Falló al agregar el roll: ' . $conn->error];
+        }
+    }
+}
     // lee todos
     public function getAllTBRolls() {
         $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
