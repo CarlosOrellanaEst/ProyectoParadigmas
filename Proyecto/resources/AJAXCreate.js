@@ -24,7 +24,11 @@ document.addEventListener('DOMContentLoaded', function () {
                         if (response.status === 'success') {
                             alert(response.message);
                             document.getElementById('formCreate').reset();
-                            location.reload();
+                            // falta: recargar la misma pagina pero sin parametros en la url
+                            
+/*                             location.reload(); 
+                            window.location.href = window.location.pathname;
+                            window.location.reload(); */
                         } else {
                             alert('Error: ' + response.message);
                         }

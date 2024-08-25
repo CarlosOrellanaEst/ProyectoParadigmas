@@ -30,7 +30,7 @@ class RollData extends Data {
 
     $name = $roll->getNameTBRoll();
     $description = $roll->getDescriptionTBRoll();
-    $id = $roll->getIdTBRoll();
+    $status = 1;
 
     $exists = $this->getTBRollByName($roll->getNameTBRoll());
     if ($exists > 0) {
@@ -56,14 +56,14 @@ class RollData extends Data {
             }
         }
     } else {
-        $queryInsert = "INSERT INTO tbroll (tbrollid, tbrollname, tbrolldescription, tbrollstatus) VALUES (?, ?, ?, ?)";
+        $queryInsert = "INSERT INTO tbroll (tbrollid, tbrollname, tbrolldescription, tbrollstatus) VALUES (?, ?, ?, 1)";
         $stmt = $conn->prepare($queryInsert);
         if ($stmt === false) {
             mysqli_close($conn);
             return ['status' => 'error', 'message' => 'Prepare failed: ' . $conn->error];
         }
 
-        $stmt->bind_param("issi", $nextId, $name, $description, 1);
+        $stmt->bind_param("iss", $nextId, $name, $description);
         $result = $stmt->execute();
         $stmt->close();
         mysqli_close($conn);
@@ -125,7 +125,7 @@ class RollData extends Data {
     
         $id = $roll->getIdTBRoll();
 
-        if (!($this->getTBRollByName($roll->getNameTBRoll()))) {
+        if (($this->getTBRollByName($roll->getNameTBRoll()))) {
             $result = null; 
         } else {
             $newName = mysqli_real_escape_string($conn,  $roll->getNameTBRoll());
