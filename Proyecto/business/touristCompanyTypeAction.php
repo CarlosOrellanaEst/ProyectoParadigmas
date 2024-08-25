@@ -3,7 +3,48 @@
 include_once './touristCompanyTypeBusiness.php';
 include_once '../domain/TouristCompanyType.php';
 
-if (isset($_POST['create'])) {
+$response = array();
+
+if (isset($_POST['nameTouristCompanyType'])) {
+    $name = trim($_POST['nameTouristCompanyType']);
+    $description = trim($_POST['description']);
+
+    if (empty($name)) {
+        $response['status'] = 'error';
+        $response['message'] = 'El nombre de la actividad no puede estar vacío';
+
+    } else {
+        $companyType = new touristCompanyType(0, $name, $description);
+        $companyTypeBusiness = new touristCompanyTypeBusiness();
+        
+        if (is_numeric($description)) {
+            $response['status'] = 'error';
+            $response['message'] = 'La descripción no puede ser números unicamente.';
+        
+        } else {
+            if (is_numeric($name)) {
+                $response['status'] = 'error';
+                $response['message'] = 'El nombre de la actividad no puede ser números unicamente.';
+            } else {
+                $result = $companyTypeBusiness->insert($companyType);
+            
+                if ($result['status'] === 'success') {
+                    $response['status'] = 'success';
+                    $response['message'] = 'Tipo de empresa turística registrada correctamente.';
+                
+                } else if ($result['status'] === 'error') {
+                    $response['status'] = 'error';
+                    $response['message'] = 'Fallo al agregar el tipo de empresa turística ' . $result['message'];
+                
+                }
+            }
+        }
+    } 
+    echo json_encode($response);
+    exit();
+}     
+
+/*if (isset($_POST['create'])) {
     if (isset($_POST['name']) && isset($_POST['description'])) {
         $name = $_POST['name'];
         $description = $_POST['description'];
@@ -41,7 +82,7 @@ if (isset($_POST['create'])) {
         header("location: ../view/touristCompanyTypeView.php?error=error");
         exit();
     }
-}
+} */
 
 if (isset($_POST['delete'])) { 
     if (isset($_POST['tbtouristcompanytypeid'])) {
@@ -73,6 +114,9 @@ if (isset($_POST['update'])) {
 
                 if ($result == 1) {
                     header("location: ../view/touristCompanyTypeView.php?success=updated");
+                    exit();
+                } else if ($result == null) {
+                    header("location: ../view/touristCompanyTypeView.php?error=alreadyexists");
                     exit();
                 } else {
                     header("location: ../view/touristCompanyTypeView.php?error=dbError");

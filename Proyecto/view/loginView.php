@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <button><a href="index.html">Index</a></button>
+    <a href="../index.html">← Volver al inicio</a>
     <title>Iniciar Sesión</title>
 </head>
 <body>
@@ -14,11 +14,11 @@
         <form id="loginForm" method="POST" action="../business/loginAction.php">
             <div>
                 <label for="userName">Nombre de Usuario</label>
-                <input type="text" id="userName" name="userName" required>
+                <input type="text" id="userName" name="userName" >
             </div>
             <div>
                 <label for="password">Contraseña</label>
-                <input type="password" id="password" name="password" required>
+                <input type="password" id="password" name="password" >
             </div>
             <div>
                 <button type="submit">Ingresar</button>
@@ -29,54 +29,7 @@
         </form>
     </div>
 
-    <script>
-        document.getElementById("loginForm").addEventListener("submit", function(event) {
-            event.preventDefault(); // Previene el envío del formulario por defecto
-
-            const userName = document.getElementById("userName").value;
-            const password = document.getElementById("password").value;
-
-            // Realiza la solicitud AJAX
-            fetch("../business/loginAction.php", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/x-www-form-urlencoded"
-                },
-                body: `userName=${encodeURIComponent(userName)}&password=${encodeURIComponent(password)}`
-            })
-            .then(response => response.json())
-            .then(data => {
-                const messageDiv = document.getElementById("message");
-                
-                if (data.success) {
-                    messageDiv.innerText = data.message;
-                    
-                    alert(messageDiv.innerText);
-                    
-                    // Redirige a la página de dashboard después de mostrar el mensaje
-                    // Redirige a la página correspondiente según el userType después de mostrar el mensaje
-                    setTimeout(() => {
-                        if (data.userType === "Administrador") {
-                            window.location.href = "adminView.php";
-                        } else if (data.userType === "Turista") {
-                            window.location.href = "touristView.php";
-                        } else if(data.userType === "Propietario") {
-                            window.location.href = "propietarioView.php";
-                        }
-                    }, 2000); // Redirige después de 2 segundos
-                } else {
-                    messageDiv.innerText = data.message;
-                    
-                    alert(messageDiv.innerText);
-                }
-            })
-            .catch(async (error) => {
-    const responseText = await error.text();
-    console.error("Error en la respuesta:", responseText);
-    alert("Error inesperado. Verifica la consola para más detalles.");
-});
-
-        });
-    </script>
+    <script src="../resources/loginAJAX.js"></script>
+    
 </body>
 </html>

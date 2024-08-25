@@ -27,7 +27,7 @@ class OwnerBusiness {
     }
 
     public function getAllTBOwners() {
-        return $this->ownerData->getAllTBOwners();
+        return $this->ownerData->getAllTBOwner();
     }
     
 }

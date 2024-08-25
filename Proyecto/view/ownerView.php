@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<html lang="es">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>CRUD Propietarios</title>
@@ -8,94 +9,39 @@
             border-right: 1px solid;
         }
     </style>
-    
     <?php
-    include '../business/OwnerBusiness.php';
+    include '../business/ownerBusiness.php';
     ?>
     <script src="../resources/ownerView.js"></script>
 </head>
 <body>
     <header> 
+    <a href="../index.html">← Volver al inicio</a>
         <h1>CRUD Propietarios</h1>
     </header>
     <section id="formCreate">
-        <form method="post" action="../business/ownerAction.php">
+        <form method="post" action="../business/ownerAction.php" enctype="multipart/form-data">
             <label for="name">Nombre</label>
-            <input 
-                required 
-                placeholder="nombre" 
-                type="text" 
-                name="ownerName" 
-                id="name" 
-                pattern="[A-Za-z\s]+" 
-                title="Solo se permiten letras y espacios"
-                oninput="this.value = this.value.replace(/[^A-Za-z\s]/g, '')"
-                minlength="2" 
-                maxlength="50"
-            />
-            
+            <input required placeholder="nombre" type="text" name="ownerName" id="name"/>
             <label for="surnames">Apellidos</label>
-            <input 
-                required 
-                placeholder="apellidos" 
-                type="text" 
-                name="ownerSurnames" 
-                id="surnames" 
-                pattern="[A-Za-z\s]+" 
-                title="Solo se permiten letras y espacios"
-                oninput="this.value = this.value.replace(/[^A-Za-z\s]/g, '')"
-                minlength="2" 
-                maxlength="100"
-            />
-            
+            <input placeholder="apellidos" type="text" name="ownerSurnames" id="surnames"/>
+            <label for="idType">Tipo de Identificación</label>
+            <select name="idType" id="idType">
+                <option value="CR">Cédula Nacional de Costa Rica</option>
+                <option value="foreign">Extranjero</option>
+            </select>
             <label for="legalIdentification">Identificación Legal</label>
-            <input 
-                required 
-                placeholder="identificacionLegal" 
-                type="text" 
-                name="ownerLegalIdentification" 
-                id="legalIdentification" 
-                pattern="[0-9]{9}" 
-                title="Debe ser un número de 9 dígitos"
-                oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-            />
-            
+            <input placeholder="identificacionLegal" type="text" name="ownerLegalIdentification" id="legalIdentification"/>
             <label for="phone">Teléfono</label>
-            <input 
-                required 
-                placeholder="telefono" 
-                type="text" 
-                name="ownerPhone" 
-                id="phone" 
-                pattern="[0-9]{8}" 
-                title="Debe ser un número de 8 dígitos"
-                oninput="this.value = this.value.replace(/[^0-9]/g, '')"
-            />
-            
+            <input placeholder="telefono" type="text" name="ownerPhone" id="phone"/>
             <label for="email">Correo</label>
-            <input 
-                required 
-                placeholder="correo" 
-                type="email" 
-                name="ownerEmail" 
-                id="email"
-            />
-            
+            <input placeholder="correo" type="text" name="ownerEmail" id="email"/>
             <label for="direction">Dirección</label>
-            <input 
-                required 
-                placeholder="direccion" 
-                type="text" 
-                name="ownerDirection" 
-                id="direction" 
-                minlength="5" 
-                maxlength="255"
-            />
-            
+            <input placeholder="direccion" type="text" name="ownerDirection" id="direction"/>
+            <input type="file" name="imagen" required>
             <input type="submit" value="Crear" name="create" id="create"/>
         </form>
     </section>
-
 
     <br><br>
     <section>
@@ -110,22 +56,26 @@
                 <tr>
                     <th>Nombre</th>
                     <th>Apellidos</th>
-                    <th>Identificacion Legal</th>
-                    <th>Telefono</th>
+                    <th>Tipo de Identificación</th>
+                    <th>Identificación Legal</th>
+                    <th>Teléfono</th>
                     <th>Correo</th>
-                    <th>Direccion</th>
+                    <th>Dirección</th>
+                    <th>Foto</th>
+                  
+                    <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
                 <?php
-                $ownerBusiness = new OwnerBusiness();
+                $ownerBusiness = new ownerBusiness();
                 $allowners = $ownerBusiness->getAllTBOwner();
                 $ownersFiltered = [];
 
                 // Filtrar los resultados si se ha realizado una búsqueda
                 if (isset($_GET['searchOne'])) {
                     $searchTerm = $_GET['searchOne'];
-                    $ownersFiltered  = array_filter($allowners, function($owner) use ($searchTerm) {
+                    $ownersFiltered = array_filter($allowners, function($owner) use ($searchTerm) {
                         return stripos($owner->getName(), $searchTerm) !== false;
                     });
                 }
@@ -134,36 +84,35 @@
                 }
 
                 foreach ($allowners as $current) {
-                    echo '<form method="post" action="../business/ownerAction.php" onsubmit="return confirmDelete(event);">';
+                    echo '<form method="post" action="../business/ownerAction.php" onsubmit="return confirmDelete(event);" enctype="multipart/form-data">';
                     echo '<input type="hidden" name="ownerID" value="' . $current->getIdTBOwner() . '">';
                     echo '<tr>';
-                        echo '<td><input type="text" name="ownerName" value="' . $current->getName() . '" 
-                            pattern="[A-Za-z\s]+" title="Solo se permiten letras y espacios" 
-                            oninput="this.value = this.value.replace(/[^A-Za-z\s]/g, \'\')" 
-                            minlength="2" maxlength="50" required/></td>';
-                        
-                        echo '<td><input type="text" name="ownerSurnames" value="' . $current->getSurnames() . '" 
-                            pattern="[A-Za-z\s]+" title="Solo se permiten letras y espacios" 
-                            oninput="this.value = this.value.replace(/[^A-Za-z\s]/g, \'\')" 
-                            minlength="2" maxlength="100" required/></td>';
-                        
-                        echo '<td><input type="text" name="ownerLegalIdentification" value="' . $current->getLegalIdentification() . '" 
-                            pattern="[0-9]{9}" title="Debe ser un número de 9 dígitos" 
-                            oninput="this.value = this.value.replace(/[^0-9]/g, \'\')" required/></td>';
-                        
-                        echo '<td><input type="text" name="ownerPhone" value="' . $current->getPhone() . '" 
-                            pattern="[0-9]{8}" title="Debe ser un número de 8 dígitos" 
-                            oninput="this.value = this.value.replace(/[^0-9]/g, \'\')" required/></td>';
-                        
-                        echo '<td><input type="email" name="ownerEmail" value="' . $current->getEmail() . '" required/></td>';
-                        
-                        echo '<td><input type="text" name="ownerDirection" value="' . $current->getDirectionTBOwner() . '" 
-                            minlength="5" maxlength="255" required/></td>';
-                        
-                        echo '<td>';
-                            echo '<input type="submit" value="Actualizar" name="update"/>';
-                            echo '<input type="submit" value="Eliminar" name="delete"/>';
-                        echo '</td>';
+                    echo '<td><input type="text" name="ownerName" value="' . $current->getName() . '"/></td>';
+                    echo '<td><input type="text" name="ownerSurnames" value="' . $current->getSurnames() . '"/></td>';
+                    echo '<td>
+                    <select name="idType">
+                        <option value="CR">Cédula Nacional de Costa Rica</option>
+                        <option value="foreign">Extranjero</option>
+                    </select>
+                </td>';
+                    echo '<td><input type="text" name="ownerLegalIdentification" value="' . $current->getLegalIdentification() . '"/></td>';
+                    echo '<td><input type="text" name="ownerPhone" value="' . $current->getPhone() . '"/></td>';
+                    echo '<td><input type="text" name="ownerEmail" value="' . $current->getEmail() . '"/></td>';
+                    echo '<td><input type="text" name="ownerDirection" value="' . $current->getDirectionTBOwner() . '"/></td>';
+                    
+                    // Mostrar la imagen
+                    $photoUrl = $current->getPhotoURLTBOwner();
+                    echo '<td><img src="../images/' . $photoUrl . '" alt="Foto" width="75" height="75" /></td>';
+
+                    // Campo de selección para el tipo de identificación
+                  
+
+                    // Botones de acción
+                    echo '<td>';
+                    echo '<input type="file" name="newImage" accept="image/*" /><br />';
+                    echo '<input type="submit" value="Actualizar" name="update" />';
+                    echo '<input type="submit" value="Eliminar" name="delete" />';
+                    echo '</td>';
                     echo '</tr>';
                     echo '</form>';
                 }

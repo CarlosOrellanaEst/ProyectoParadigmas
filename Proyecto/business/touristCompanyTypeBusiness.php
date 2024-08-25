@@ -27,6 +27,6 @@ class touristCompanyTypeBusiness {
     }
 
     public function getById($idTouristCompanyType) {
-        return $this->touristCompanyType->getTbTouristCompanyTypeById($idTouristCompanyType);
+        return $this->touristCompanyType->getByIdTbTouristCompanyType($idTouristCompanyType);
     }
 }

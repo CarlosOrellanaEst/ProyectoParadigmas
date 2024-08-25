@@ -2,42 +2,34 @@
 
 include './rollBusiness.php';
 
-if (isset($_POST['create'])) {
-    if (isset($_POST['rollName']) && isset($_POST['rollDescription'])) {
-        $name = $_POST['rollName'];
-        $description = $_POST['rollDescription'];
 
-        if (strlen($name) > 0) {
-            if (!is_numeric($name) && !is_numeric($description)) {
-                $roll = new Roll(0, $name, $description, 1);
-                $rollBusiness = new RollBusiness();
+$response = array();
+// para el AJAX de Create
 
-                $result = $rollBusiness->insertTBRoll($roll);
+if (isset($_POST['name'])) {
+    $name = trim($_POST['name']);
+    $description = trim($_POST['description']);
 
-                if ($result == 1) {
-                    header("location: ../view/rollView.php?success=inserted");
-                    exit();
-                } else if ($result == null) {
-                    header("location: ../view/rollView.php?error=alreadyexists");
-                    exit();
-                } else {
-                    header("location: ../view/rollView.php?error=dbError");
-                    exit();
-                }
-            } else {
-                header("location: ../view/rollView.php?error=numberFormat");
-                exit();
-            }
-        } else {
-            header("location: ../view/rollView.php?error=emptyField");
-            exit();
-        }
+    if (empty($name)) {
+        $response['status'] = 'error';
+        $response['message'] = 'El nombre del roll no puede estar vacío';
     } else {
-        header("location: ../view/rollView.php?error=error");
-        exit();
-    }
-}
+        $roll = new Roll(0, $name, $description, 1);
 
+        $rollBusiness = new RollBusiness();
+        $result = $rollBusiness->insertTBRoll($roll);
+
+        if ($result['status'] === 'success') {
+            $response['status'] = 'success';
+            $response['message'] = 'Roll añadido correctamente';
+        } else {
+            $response['status'] = 'error';
+            $response['message'] = 'Fallo al agregar el roll: ' . $result['message'];
+        }
+    }
+    echo json_encode($response);
+    exit();
+}
 
 if (isset($_POST['update'])) {
     if (isset($_POST['rollName']) && isset($_POST['rollDescription']) && isset($_POST['rollID'])) {
@@ -55,7 +47,7 @@ if (isset($_POST['update'])) {
                     header("location: ../view/rollView.php?success=updated");
                     exit();
                 } else if ($result == null) {
-                    header("location: ../view/rollView.php?error=alreadyexists");
+                    header("location: ../view/rollView.php?error=notExists");
                     exit();
                  } else {
                     header("location: ../view/rollView.php?error=dbError");
@@ -76,7 +68,6 @@ if (isset($_POST['update'])) {
 }
 
 if (isset($_POST['delete'])) { 
-
     if (isset($_POST['rollID'])) {
         $id = $_POST['rollID'];
         $rollBusiness = new RollBusiness();
@@ -94,3 +85,4 @@ if (isset($_POST['delete'])) {
     header("location: ../view/rollView.php?error=error");
 }
 
+?>
