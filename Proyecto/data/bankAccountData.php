@@ -45,7 +45,7 @@ class BankAccountData extends Data {
                     return ['status' => 'error', 'message' => 'Prepare failed: ' . $conn->error];
                 }
 
-                $stmt->bind_param("si", $description, $exists);
+                $stmt->bind_param("si", $tbbankAccountBankName, $exists);
                 $result = $stmt->execute();
                 $stmt->close();
                 mysqli_close($conn);
