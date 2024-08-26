@@ -2,6 +2,9 @@ function confirmDelete(event) {
     if (event.submitter && event.submitter.name === 'delete') {
         return confirm('¿Estás seguro de que deseas eliminar este rol?');
     }
+    if (event.submitter && event.submitter.name === 'update') {
+        return confirm('¿Estás seguro de que deseas actualizar este rol?');
+    }
     return true;
 }
 
