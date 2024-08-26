@@ -124,18 +124,13 @@ class RollData extends Data {
         $conn->set_charset('utf8');
     
         $id = $roll->getIdTBRoll();
-
-        if (($this->getTBRollByName($roll->getNameTBRoll()))) {
-            $result = null; 
-        } else {
-            $newName = mysqli_real_escape_string($conn,  $roll->getNameTBRoll());
-            $newDescription = mysqli_real_escape_string($conn,  $roll->getDescriptionTBRoll());
-        
-            $query = "UPDATE tbroll SET tbrollname = '$newName', tbrolldescription = '$newDescription' WHERE tbrollid = $id";
-            $result = mysqli_query($conn, $query);
-        
-            mysqli_close($conn);
-        }
+        $newName = mysqli_real_escape_string($conn,  $roll->getNameTBRoll());
+        $newDescription = mysqli_real_escape_string($conn,  $roll->getDescriptionTBRoll());
+    
+        $query = "UPDATE tbroll SET tbrollname = '$newName', tbrolldescription = '$newDescription' WHERE tbrollid = $id";
+        $result = mysqli_query($conn, $query);
+    
+        mysqli_close($conn);
         return $result;
     }
     
