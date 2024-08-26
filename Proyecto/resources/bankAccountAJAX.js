@@ -26,6 +26,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         if (response.status === 'success') {
                             alert(response.message);
                             document.getElementById('formCreate').reset();
+                            redirectToCleanURL(); // Redirigir a la URL limpia después de crear una cuenta.
                             location.reload();
                         } else {
                             alert('Error: ' + response.message);
@@ -43,3 +44,13 @@ document.addEventListener('DOMContentLoaded', function () {
         + '&bank=' + encodeURIComponent(postData.bank) + '&status=' + encodeURIComponent(postData.status));
     });
 })
+
+function redirectToCleanURL() {
+    const cleanURL = window.location.origin + window.location.pathname;
+    window.history.replaceState({}, document.title, cleanURL);
+}
+
+window.onload = function () {
+    showAlertBasedOnURL();
+    redirectToCleanURL(); // Esto limpiará la URL después de mostrar los mensajes de alerta.
+};
