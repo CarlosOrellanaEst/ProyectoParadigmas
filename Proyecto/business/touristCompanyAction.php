@@ -51,58 +51,79 @@ if (isset($_POST['create'])) {
     echo json_encode($response);
     
 }
-/*
+
 if (isset($_POST['update'])) {
-    $id = $_POST['id'] ?? 0;
-    $legalName = $_POST['legalName'] ?? '';
-    $magicName = $_POST['magicName'] ?? '';
-    $ownerId = $_POST['ownerId'] ?? 0;
-    $companyTypeId = $_POST['companyType'] ?? 0;
-    $status = $_POST['status'] ?? '';
+    if (isset($_POST['ownerId']) && isset($_POST['tbtouristcompanyid']) && isset($_POST['magicName']) && isset($_POST['ownerId']) && isset($_POST['companyType']) && isset($_POST['status'])) {
+        
+        $id = $_POST['id'];
+        $tbtouristcompanyLegalName = $_POST['tbtouristcompanyid'];
+        $magicName = $_POST['magicName'];
+        $ownerId = $_POST['ownerId'];
+        $companyTypeId = $_POST['companyType'];
+        $status = $_POST['status'];
+        
+        // Validación de campos
+        if (strlen(trim($tbtouristcompanyLegalName)) > 0 && strlen(trim($magicName)) > 0 && is_numeric($ownerId) && is_numeric($companyTypeId) && is_numeric($status)) {
+            if (!is_numeric($tbtouristcompanyLegalName) && !is_numeric($magicName) &&  is_numeric($status)) {
+                $ownerBusiness = new OwnerBusiness();
+                $owner = $ownerBusiness->getTBOwner($ownerId);
 
-    if (!empty($legalName) && !empty($magicName) && is_numeric($id) && is_numeric($ownerId) && is_numeric($companyTypeId)) {
-        if (!is_numeric($legalName) && !is_numeric($magicName)) {
-            $touristCompanyBusiness = new touristCompanyBusiness();
-            $touristCompany = new TouristCompany($id, $legalName, $magicName, $ownerId, $companyTypeId, $status);
-            $result = $touristCompanyBusiness->update($touristCompany);
+                $touristCompanyTypeBusiness = new touristCompanyTypeBusiness();
+                $companyType = $touristCompanyTypeBusiness->getById($companyTypeId);
 
-            if ($result) {
-                $response = ['status' => 'success', 'message' => 'Empresa actualizada correctamente.'];
+                if ($ownerId && $companyType) {
+                    $touristCompanyBusiness = new touristCompanyBusiness();
+                    $touristCompany = new TouristCompany($id, $tbtouristcompanyLegalName, $magicName, $ownerId, $companyTypeId, $status);
+                    $result = $touristCompanyBusiness->update($touristCompany);
+
+                    if ($result == 1) {
+                        header("location: ../view/touristCompanyView.php?success=updated");
+                        exit();
+                    } else {
+                        header("location: ../view/touristCompanyView.php?error=updateFailed");
+                        exit();
+                    }
+                } else {
+                    header("location: ../view/touristCompanyView.php?error=invalidOwnerOrCompanyType");
+                    exit();
+                }
             } else {
-                $response = ['status' => 'error', 'message' => 'No se pudo actualizar la empresa.'];
+                header("location: ../view/touristCompanyView.php?error=numberFormat");
+                exit();
             }
         } else {
-            $response = ['status' => 'error', 'message' => 'El nombre legal y mágico no deben ser numéricos.'];
+            header("location: ../view/touristCompanyView.php?error=emptyField");
+            exit();
         }
     } else {
-        $response = ['status' => 'error', 'message' => 'Datos inválidos o faltantes.'];
+        header("location: ../view/touristCompanyView.php?error=missingFields");
+        exit();
     }
-    echo json_encode($response);
-    exit();
-} else if (isset($_POST['delete'])) {
-    if (isset($_POST['id'])) {
-        $id = $_POST['id'];
+}
 
+if (isset($_POST['delete'])) {
+    if (isset($_POST['id'])) {
+        
+        $id = $_POST['id'];
+        
+        // Validación de id
         if (is_numeric($id)) {
             $touristCompanyBusiness = new touristCompanyBusiness();
             $result = $touristCompanyBusiness->delete($id);
 
             if ($result == 1) {
-                $response = ['status' => 'success', 'message' => 'Empresa eliminada correctamente.'];
+                header("location: ../view/touristCompanyView.php?success=deleted");
+                exit();
             } else {
-                $response = ['status' => 'error', 'message' => 'No se pudo eliminar la empresa.'];
+                header("location: ../view/touristCompanyView.php?error=deleteFailed");
+                exit();
             }
         } else {
-            $response = ['status' => 'error', 'message' => 'ID inválido.'];
+            header("location: ../view/touristCompanyView.php?error=invalidId");
+            exit();
         }
     } else {
-        $response = ['status' => 'error', 'message' => 'ID faltante.'];
+        header("location: ../view/touristCompanyView.php?error=missingId");
+        exit();
     }
-    echo json_encode($response);
-    exit();
-} else {
-    $response = ['status' => 'error', 'message' => 'Acción no definida.'];
-    echo json_encode($response);
-    exit();
 }
-    */
