@@ -3,7 +3,13 @@
 
     <head>
         <meta charset="UTF-8">
-        <a href="../index.html">← Volver al inicio</a>
+        <body>
+            <header>
+                <h1>CRUD Empresa turística</h1>
+            </header>
+            <a href="../index.html">← Volver al inicio</a>
+            <section id="create">
+                ...
         <title>Empresa turística</title> 
         
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -29,15 +35,17 @@
         $touristCompanyTypes = $touristCompanyTypeBusiness->getAll();
 
         ?>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="../resources/touristCompanyView.js"></script>
-    </head>
 
+    </head>
+            <form method="post" id="formCreate" action="../business/touristCompanyAction.php">
     <body>
         <header>
             <h1>CRUD Empresa turística</h1>
         </header>
         <section id="create">
-            <form method="post" action="../business/touristCompanyAction.php" onsubmit="return confirmAction(event);">
+        <form method="post" id="formCreate">
                 <label for="legalName">Nombre legal: </label>
                 <input placeholder="Nombre legal" type="text" name="legalName" id="legalName" />
                 <label for="magicName">Nombre mágico: </label>
@@ -65,7 +73,7 @@
                 </select>
 
 
-                <input type="hidden" name="status" value="1">
+                <input type="hidden" id="status" name="status" value="1">
 
 
                 <input type="submit" value="Crear" name="create" id="create" />
@@ -74,114 +82,91 @@
         </section>
         <br>
         <section>
-            <form id="formSearchOne" method="get">
-                <label for="searchOne">Buscar por nombre: </label>
-                <input type="text" placeholder="Nombre" name="searchOne" id="searchOne">
-                <input type="submit" value="Buscar" />
-            </form>
-            <br>
-            <div id="message" hidden></div>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Nombre legal</th>
-                        <th>Nombre mágico</th>
-                        <th>Dueño</th>
-                        <th>Tipo de empresa</th>
-                        <th>Acciónes</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    $touristCompanyBusiness = new touristCompanyBusiness();
-                    $ownerBusiness = new OwnerBusiness();
-                    $touristCompanyTypeBusiness = new touristCompanyTypeBusiness();
-                    $all = $touristCompanyBusiness->getAll();
-                    $allowners = $ownerBusiness->getAllTBOwner();
-                    $alltouristCompanyTypes = $touristCompanyTypeBusiness->getAll();
-                    $touristCompanyFiltered = [];
+    <form id="formSearchOne" method="get">
+        <label for="searchOne">Buscar por nombre: </label>
+        <input type="text" placeholder="Nombre" name="searchOne" id="searchOne">
+        <input type="submit" value="Buscar" />
+    </form>
+    <br>
+    <div id="message" hidden></div>
+    <table>
+        <thead>
+            <tr>
+                <th>Nombre legal</th>
+                <th>Nombre mágico</th>
+                <th>Dueño</th>
+                <th>Tipo de empresa</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+            $touristCompanyBusiness = new touristCompanyBusiness();
+            $ownerBusiness = new OwnerBusiness();
+            $touristCompanyTypeBusiness = new touristCompanyTypeBusiness();
+            $all = $touristCompanyBusiness->getAll();
+            $allowners = $ownerBusiness->getAllTBOwner();
+            $alltouristCompanyTypes = $touristCompanyTypeBusiness->getAll();
+            $touristCompanyFiltered = [];
 
-                    // Filtrar los resultados si se ha realizado una búsqueda
-                    if (isset($_GET['searchOne'])) {
-                        $searchTerm = $_GET['searchOne'];
-                        $touristCompanyFiltered = array_filter($all, function($touristCompanyBusiness) use ($searchTerm) {
-                            return stripos($touristCompanyBusiness->getLegalName(), $searchTerm) !== false;
-                        });
-                    }
-                    if (count($touristCompanyFiltered) > 0) {
-                        $all = $touristCompanyFiltered;
-                    }
-
-                    
-                    
-
-                    if (count($all) > 0) {
-                        foreach ($all as $current) {
-                            
-                            $assignedCompanyType = $touristCompanyTypeBusiness->getById($current->getCompanyType());
-                            $assignedOwner = $ownerBusiness->getTBOwner($current->getOwner());
-                            echo '<form method="post" action="../business/touristCompanyAction.php" onsubmit="return confirmAction(event);">';
-                            echo '<tr>';
-
-                            '<td><type="hidden" name="id" value="' . $current->getId() . '"></td>';
-
-                            echo '<td><input type="text" name="tbtouristcompanyid" value="'. htmlspecialchars($current->getLegalName()) .'"></td>';
-                            echo '<td><input type="text" name="magicName" value="' . htmlspecialchars($current->getMagicName()) . '"></td>';
-                            echo '<td>';
-                            echo '<select name="ownerId">';
-                            foreach ($allowners as $owner) {
-                                echo '<option value="' . htmlspecialchars($owner->getIdTBOwner()) . '"';
-                                
-                                if ($owner->getIdTBOwner() == $current->getOwner()) {
-                                    
-                                    echo ' selected';
-                                }
-                                echo '>' . htmlspecialchars($owner->getFullName()) . '</option>';
-                            }
-                            echo '>' . htmlspecialchars($assignedOwner->getFullName()) . '</option>';
-
-                            echo '</select>';
-                            echo '</td>';
-                            echo '<td>';
-                            echo '<select name="companyType">';
-                            foreach ($alltouristCompanyTypes as $touristCompanyType) {
-                                echo '<option value="' . htmlspecialchars($touristCompanyType->getId()) . '"';
-                                if ($touristCompanyType->getId() == $current->getCompanyType()) {
-                                    echo ' selected';
-                                }
-                                echo '>' . htmlspecialchars($touristCompanyType->getName()) . '</option>';
-                            }
-                            echo '>' . htmlspecialchars($assignedCompanyType->getName()) . '</option>';
-
-                            echo '</select>';
-                            echo '</td>';
-                            echo '<input type="hidden" name="status" value="1">';
-                            echo '<td>';
-                            echo '<input type="hidden" name="id" value="' . $current->getId() . '">';
-                            echo '<input type="submit" value="Actualizar" name="update" />';
-                            echo '<input type="submit" value="Eliminar" name="delete"/>';
-                            echo '</td>';
-                            echo '</tr>';
-                            echo '</form>';
-                        }
-                    } else {
-                        echo '<tr><td colspan="6">No se encontraron resultados</td></tr>';
-                    }
-                    ?>
-                </tbody>
- 
-            </table>
-
-            <script>
-                document.addEventListener('DOMContentLoaded', function() {
-                    showAlertBasedOnURL();
+            // Filtrar los resultados si se ha realizado una búsqueda
+            if (isset($_GET['searchOne'])) {
+                $searchTerm = $_GET['searchOne'];
+                $touristCompanyFiltered = array_filter($all, function($touristCompany) use ($searchTerm) {
+                    return stripos($touristCompany->getLegalName(), $searchTerm) !== false;
                 });
-            </script>
+                $all = $touristCompanyFiltered;
+            }
 
+            if (count($all) > 0) {
+                foreach ($all as $current) {
+                    $assignedCompanyType = $touristCompanyTypeBusiness->getById($current->getCompanyType());
+                    $assignedOwner = $ownerBusiness->getTBOwner($current->getOwner());
+                    echo '<tr>';
+                    echo '<form method="post" class="formEdit" >';
+                    echo '<td><input type="text" name="legalName" value="' . htmlspecialchars($current->getLegalName()) . '"></td>';
+                    echo '<td><input type="text" name="magicName" value="' . htmlspecialchars($current->getMagicName()) . '"></td>';
+                    echo '<td>';
+                    echo '<select name="ownerId">';
+                    foreach ($allowners as $owner) {
+                        echo '<option value="' . htmlspecialchars($owner->getIdTBOwner()) . '"';
+                        if ($owner->getIdTBOwner() == $current->getOwner()) {
+                            echo ' selected';
+                        }
+                        echo '>' . htmlspecialchars($owner->getFullName()) . '</option>';
+                    }
+                    echo '</select>';
+                    echo '</td>';
+                    echo '<td>';
+                    echo '<select name="companyType">';
+                    foreach ($alltouristCompanyTypes as $touristCompanyType) {
+                        echo '<option value="' . htmlspecialchars($touristCompanyType->getId()) . '"';
+                        if ($touristCompanyType->getId() == $current->getCompanyType()) {
+                            echo ' selected';
+                        }
+                        echo '>' . htmlspecialchars($touristCompanyType->getName()) . '</option>';
+                    }
+                    echo '</select>';
+                    echo '</td>';
+                    echo '<input type="hidden" name="id" value="' . htmlspecialchars($current->getId()) . '">';
+                    echo '<input type="hidden" name="status" value="1">';
+                    echo '<td>';
+                    echo '<input type="submit" value="Actualizar" name="update">';
+                    echo '<button type="button" class="btnDelete">Eliminar</button>';
+                    echo '</td>';
+                    echo '</form>';
+                    echo '</tr>';
+                }
+            } else {
+                echo '<tr><td colspan="5">No se encontraron resultados</td></tr>';
+            }
+            ?>
+        </tbody>
+    </table>
 
+ 
+</section>
 
-        
-        </section>
 
                       
     </body>
