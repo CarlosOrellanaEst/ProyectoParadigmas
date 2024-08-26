@@ -3,7 +3,13 @@
 
     <head>
         <meta charset="UTF-8">
-        <a href="../index.html">← Volver al inicio</a>
+        <body>
+            <header>
+                <h1>CRUD Empresa turística</h1>
+            </header>
+            <a href="../index.html">← Volver al inicio</a>
+            <section id="create">
+                
         <title>Empresa turística</title> 
         
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -29,15 +35,17 @@
         $touristCompanyTypes = $touristCompanyTypeBusiness->getAll();
 
         ?>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="../resources/touristCompanyView.js"></script>
-    </head>
 
+    </head>
+            <form method="post" id="formCreate" action="../business/touristCompanyAction.php">
     <body>
         <header>
             <h1>CRUD Empresa turística</h1>
         </header>
         <section id="create">
-            <form method="post" action="../business/touristCompanyAction.php" onsubmit="return confirmAction(event);">
+        <form method="post" id="formCreate">
                 <label for="legalName">Nombre legal: </label>
                 <input placeholder="Nombre legal" type="text" name="legalName" id="legalName" />
                 <label for="magicName">Nombre mágico: </label>
@@ -65,7 +73,7 @@
                 </select>
 
 
-                <input type="hidden" name="status" value="1">
+                <input type="hidden" id="status" name="status" value="1">
 
 
                 <input type="submit" value="Crear" name="create" id="create" />
@@ -182,6 +190,8 @@
 
         
         </section>
+
+
 
                       
     </body>
