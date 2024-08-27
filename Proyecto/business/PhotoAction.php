@@ -18,20 +18,11 @@ if (isset($_POST['create'])) {
             $fileType = strtolower(pathinfo($targetFilePath, PATHINFO_EXTENSION));
 
             if (in_array($fileType, $allowTypes)) {
-                // Mueve el archivo temporal a una ubicación temporal
-                $tempPath = $_FILES['imagenes']['tmp_name'][$key];
-
-                // Define el formato y la calidad deseados
-                $outputFormat = 'jpeg'; // Cambiar según sea necesario
-                $quality = 90; // Cambiar según sea necesario
-
-                // Estandariza la imagen antes de moverla a la ubicación final
-                $estandarizado = standardizeImage($tempPath, $targetFilePath, 800, 600, $quality, $outputFormat);
-
-                if ($estandarizado) {
+                // Mueve el archivo temporal a la ubicación final
+                if (move_uploaded_file($_FILES['imagenes']['tmp_name'][$key], $targetFilePath)) {
                     $fileNames[] = basename($fileName);
                 } else {
-                    header("location: ../view/photoView.php?error=standardizationFailed");
+                    header("location: ../view/photoView.php?error=fileUploadError");
                     exit();
                 }
             } else {
