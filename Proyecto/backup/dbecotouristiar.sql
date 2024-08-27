@@ -179,6 +179,13 @@ INSERT INTO `tbtouristcompany` (`tbtouristcompanyid`, `tbtouristcompanylegalname
 (3, 'PRUEBAELIMINAR3', 'CALAVERA3', 4, 3, 0);
 COMMIT;
 
+CREATE TABLE `tbphoto` (
+  `tbphotoid` int(11) NOT NULL,
+  `tbphotourl` TEXT  NOT NULL,
+  `tbphotoindex` TEXT  NOT NULL,
+  `tbphotostatus` tinyint(1) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
