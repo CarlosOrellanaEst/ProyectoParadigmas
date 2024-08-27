@@ -65,6 +65,8 @@ document.addEventListener('DOMContentLoaded', function () {
                             alert(response.message);
                             document.getElementById('formCreate').reset();
                             location.reload();
+                            redirectToCleanURL();
+
                         } else {
                             alert('Error: ' + response.message);
                         }
@@ -135,5 +137,15 @@ function showAlertBasedOnURL() {
     }
 } 
 
+function redirectToCleanURL() {
+    const cleanURL = window.location.origin + window.location.pathname;
+    window.history.replaceState({}, document.title, cleanURL);
+}
+
+window.onload = function () {
+    showAlertBasedOnURL();
+    redirectToCleanURL(); // Esto limpiará la URL después de mostrar los mensajes de alerta.
+};
 
 window.onload = showAlertBasedOnURL;
+
