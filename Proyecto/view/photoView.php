@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <a href="../index.html">← Volver al inicio</a>
     <title>CRUD Fotos</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <?php include '../business/PhotoBusiness.php'; ?>
@@ -29,7 +30,8 @@
                 <tr>
                     <th>Fotos</th>
                     <th>Actualizar Imagen</th>
-                    <th>Eliminar</th>
+                    <th>Eliminar Imagen</th>
+                    <th>Eliminar Todo</th>
                 </tr>
             </thead>
             <tbody>
@@ -42,7 +44,9 @@
                     echo '<tr>';
                     echo '<td>';
                     foreach ($photoUrls as $index => $photo) {
-                        echo '<img src="../images/' . trim($photo) . '" alt="Foto" width="100" height="100" />';
+                        if ($photo !== '5') { // Solo mostrar fotos activas
+                            echo '<img src="../images/' . trim($photo) . '" alt="Foto" width="100" height="100" />';
+                        }
                     }
                     echo '</td>';
                     echo '<td>';
@@ -52,7 +56,9 @@
                     echo '<input type="hidden" name="existingUrls" value="' . htmlspecialchars(implode(',', $photoUrls)) . '">';
                     echo '<select name="imageIndex">';
                     foreach ($photoUrls as $index => $photo) {
-                        echo '<option value="' . $index . '">Imagen ' . ($index + 1) . '</option>';
+                        if ($photo !== '5') { // Solo permitir seleccionar fotos activas
+                            echo '<option value="' . $index . '">Imagen ' . ($index + 1) . '</option>';
+                        }
                     }
                     echo '</select>';
                     echo '<input type="file" name="newImage" accept="image/*">';
@@ -60,10 +66,24 @@
                     echo '</form><br>'; // Línea de separación entre formularios
                     echo '</td>';
                     echo '<td>';
+                    // Formulario para eliminar una imagen específica
+                    echo '<form method="post" action="../business/PhotoAction.php">';
+                    echo '<input type="hidden" name="photoID" value="' . $current->getIdTBPhoto() . '">';
+                    echo '<select name="imageIndex">';
+                    foreach ($photoUrls as $index => $photo) {
+                        if ($photo !== '5') { // Solo permitir eliminar fotos activas
+                            echo '<option value="' . $index . '">Imagen ' . ($index + 1) . '</option>';
+                        }
+                    }
+                    echo '</select>';
+                    echo '<input type="submit" value="Eliminar Imagen" name="delete">';
+                    echo '</form>';
+                    echo '</td>';
+                    echo '<td>';
                     // Formulario para eliminar todas las imágenes de un registro
                     echo '<form method="post" action="../business/PhotoAction.php">';
                     echo '<input type="hidden" name="photoID" value="' . $current->getIdTBPhoto() . '">';
-                    echo '<input type="submit" value="Eliminar" name="delete">';
+                    echo '<input type="submit" value="Eliminar Todo" name="deleteAll">';
                     echo '</form>';
                     echo '</td>';
                     echo '</tr>';

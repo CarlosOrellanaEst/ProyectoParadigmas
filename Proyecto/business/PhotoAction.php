@@ -103,8 +103,29 @@ if (isset($_POST['update'])) {
 
 
 if (isset($_POST['delete'])) {
-    // Aquí debes añadir el código para eliminar las imágenes
+    if (isset($_POST['photoID']) && isset($_POST['imageIndex'])) {
+        $photoID = $_POST['photoID'];
+        $imageIndex = $_POST['imageIndex'];
+
+        // Obtén la instancia de PhotoBusiness
+        $photoBusiness = new PhotoBusiness();
+
+        // Elimina la imagen específica
+        $result = $photoBusiness->deleteTBPhoto($photoID, $imageIndex);
+
+        if ($result) {
+            header("Location: ../view/photoView.php?success=deleted");
+            exit();
+        } else {
+            header("Location: ../view/photoView.php?error=dbError");
+            exit();
+        }
+    } else {
+        header("Location: ../view/photoView.php?error=missingParameters");
+        exit();
+    }
 }
+
 
 
 function standardizeImage($sourcePath, $targetPath, $targetWidth = 800, $targetHeight = 600, $quality = 90, $outputFormat = 'jpeg') {

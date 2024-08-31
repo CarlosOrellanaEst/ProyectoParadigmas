@@ -19,4 +19,7 @@ class PhotoBusiness {
     public function updateTBPhoto($photoId, $imageIndex, $newUrl, $existingUrls) {
         return $this->photoData->updateTBPhoto($photoId, $imageIndex, $newUrl, $existingUrls);
     }
+    public function deleteTBPhoto($photoId, $imageIndex) {
+        return $this->photoData->deleteTBPhoto($photoId, $imageIndex);
+    }
 }

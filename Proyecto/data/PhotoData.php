@@ -48,42 +48,39 @@ class PhotoData extends Data {
     }
 
     public function getAllTBPhotos() {
-        // Establecer la conexión con la base de datos
         $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
         if (!$conn) {
             die("Connection failed: " . mysqli_connect_error());
         }
-    
-        // Establecer el conjunto de caracteres a UTF-8
         $conn->set_charset('utf8');
     
-        // Consulta para seleccionar todos los registros activos
-        $query = "SELECT * FROM tbphoto WHERE tbphotostatus = 1;";
+        $query = "SELECT * FROM tbphoto WHERE tbphotostatus = 1";
         $result = mysqli_query($conn, $query);
     
-        // Array para almacenar las fotos
         $photos = [];
     
-        // Procesar cada registro y crear un objeto Photo
         while ($row = mysqli_fetch_assoc($result)) {
-            // Crear una instancia de Photo con los datos de la fila actual
+            // Filtra las URLs inactivas
+            $urls = array_filter(explode(',', $row['tbphotourl']), function($url) {
+                return $url !== '0';
+            });
+    
+            // Crear una instancia de Photo con las URLs filtradas
             $currentPhoto = new Photo(
                 $row['tbphotoid'],
-                $row['tbphotourl'],
+                implode(',', $urls), // Sólo URLs activas
                 $row['tbphotoindex'],
                 $row['tbphotostatus']
             );
-            
-            // Agregar el objeto Photo al array de fotos
+    
             array_push($photos, $currentPhoto);
         }
     
-        // Cerrar la conexión
         mysqli_close($conn);
     
-        // Retornar el array de fotos
         return $photos;
     }
+    
     
     public function updateTBPhoto($photoId, $imageIndex, $newUrl, $existingUrls) {
         $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
@@ -113,5 +110,34 @@ class PhotoData extends Data {
         return $resultUpdate;
     }
     
+    public function deleteTBPhoto($photoId, $imageIndex) {
+        $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
+        if (!$conn) {
+            die("Connection failed: " . mysqli_connect_error());
+        }
+        $conn->set_charset('utf8');
+    
+        // Obtener las URLs existentes para la foto
+        $queryGetUrls = "SELECT tbphotourl FROM tbphoto WHERE tbphotoid = $photoId";
+        $resultGetUrls = mysqli_query($conn, $queryGetUrls);
+    
+        if ($resultGetUrls && $row = mysqli_fetch_assoc($resultGetUrls)) {
+            $existingUrls = explode(',', $row['tbphotourl']);
+            $existingUrls[$imageIndex] = '0'; // Marca la imagen como inactiva
+    
+            // Reconstruir el string de URLs
+            $newUrlsString = implode(',', $existingUrls);
+    
+            // Actualizar la URL en la base de datos
+            $queryUpdate = "UPDATE tbphoto SET tbphotourl = '$newUrlsString' WHERE tbphotoid = $photoId";
+            $resultUpdate = mysqli_query($conn, $queryUpdate);
+    
+            mysqli_close($conn);
+            return $resultUpdate;
+        } else {
+            mysqli_close($conn);
+            return false;
+        }
+    }
     
 }
