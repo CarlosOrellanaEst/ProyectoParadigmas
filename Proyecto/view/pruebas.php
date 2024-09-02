@@ -15,7 +15,7 @@
         $owners = $ownerBusiness->getAllTBOwner();
         $touristCompanyTypeBusiness = new touristCompanyTypeBusiness();
         $touristCompanyTypes = $touristCompanyTypeBusiness->getAll();
-        ?>
+    ?>
     <script src="../resources/touristCompanyView.js"></script>
 </head>
 

@@ -12,7 +12,6 @@ class Photo {
         $this->urlTBPhoto = $urlTBPhoto;
         $this->indexTBPhoto = $indexTBPhoto;
         $this->statusTBPhoto = $statusTBPhoto;
-     
     }
 
     // Getters
