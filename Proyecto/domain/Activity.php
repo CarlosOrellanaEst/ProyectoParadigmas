@@ -1,17 +1,21 @@
 <?php
 
 class Photo {
-    private $idTBPhoto;
-    private $urlTBPhoto;
-    private $indexTBPhoto;
-    private $statusTBPhoto;
-    private $directoryTBPhoto;
+    private $idTBActivity;
+    private $nameTBActivity;
+    private $attributeTBActivity;
+    private $indexTBActivity;
+    private $dataAttributeTBActivity;
+    private $statusTBActivity;
+   
 
-    function __construct ($idTBPhoto = 0, $urlTBPhoto = "", $indexTBPhoto="", $statusTBPhoto=true) { 
-        $this->idTBPhoto = $idTBPhoto;
-        $this->urlTBPhoto = $urlTBPhoto;
-        $this->indexTBPhoto = $indexTBPhoto;
-        $this->statusTBPhoto = $statusTBPhoto;
+    function __construct ($idTBActivity = 0, $nameTBActivity = "", $attributeTBActivity="", $indexTBActivity="",$dataAttributeTBActivity="",$statusTBActivity=true) { 
+        $this->idTBActivity = $idTBActivity;
+        $this->nameTBActivity = $nameTBActivity;
+        $this->attributeTBActivity = $attributeTBActivity;
+        $this->indexTBActivity = $indexTBActivity;
+        $this->dataAttributeTBActivity = $dataAttributeTBActivity;
+        $this->statusTBActivity = $statusTBActivity;
      
     }
 
