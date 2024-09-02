@@ -10,7 +10,7 @@
     <?php include '../business/touristCompanyBusiness.php'; 
      include '../business/ownerBusiness.php'; 
      include '../business/touristCompanyTypeBusiness.php'; 
-     include '../business/PhotoBusiness.php'; 
+ 
     $ownerBusiness = new OwnerBusiness();
         $owners = $ownerBusiness->getAllTBOwner();
         $touristCompanyTypeBusiness = new touristCompanyTypeBusiness();
@@ -24,54 +24,35 @@
         <h1>CRUD Empresa turística</h1>
     </header>
 
-    <!-- Botón para abrir el modal -->
-    <button id="btnOpenModal">Agregar imágenes</button>
+    <form method="post" action="../business/touristCompanyAction.php" enctype="multipart/form-data">
+    <label for="imagenes">Selecciona las imágenes (máximo 5):</label>
+    <input type="file" name="imagenes[]" accept="image/*" multiple>
+    <label for="legalName">Nombre legal: </label>
+    <input placeholder="Nombre legal" type="text" name="legalName" id="legalName" />
+    <label for="magicName">Nombre mágico: </label>
+    <input placeholder="Nombre mágico" type="text" name="magicName" id="magicName" />
+    <label for="ownerId">Dueño: </label>
+    <select name="ownerId" id="ownerId">
+        <option value="0">Ninguno</option>
+        <?php foreach ($owners as $owner): ?>
+            <option value="<?php echo htmlspecialchars($owner->getIdTBOwner()); ?>">
+                <?php echo htmlspecialchars($owner->getName() . ' ' . $owner->getSurnames()); ?>
+            </option>
+        <?php endforeach; ?>
+    </select>
+    <label for="companyType">Tipo de empresa: </label>
+    <select name="companyType" id="companyType">
+        <option value="0">Ninguno</option>
+        <?php foreach ($touristCompanyTypes as $touristCompanyType): ?>
+            <option value="<?php echo htmlspecialchars($touristCompanyType->getId()); ?>">
+                <?php echo htmlspecialchars($touristCompanyType->getName()); ?>
+            </option>
+        <?php endforeach; ?>
+    </select>
+    <input type="hidden" name="status" value="1">
+    <input type="submit" value="Crear" name="create" id="create" />
+</form>
 
-    <!-- Modal con el formulario de subir imágenes -->
-    <div id="myModal" class="modal">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Subir Imágenes</h2>
-            <form method="post" action="../business/PhotoAction.php" enctype="multipart/form-data">
-                <label for="imagenes">Selecciona las imágenes (máximo 5):</label>
-                <input type="file" name="imagenes[]" accept="image/*" multiple>
-                <input type="submit" value="Crear" name="create" id="create" />
-            </form>
-        </div>
-    </div>
-
-    <!-- Formulario para crear empresas turísticas -->
-    <section id="create">
-        <form method="post" action="../business/touristCompanyAction.php" onsubmit="return confirmAction(event);">
-            <label for="legalName">Nombre legal: </label>
-            <input placeholder="Nombre legal" type="text" name="legalName" id="legalName" />
-            <label for="magicName">Nombre mágico: </label>
-            <input placeholder="Nombre mágico" type="text" name="magicName" id="magicName" />
-
-            <label for="ownerId">Dueño: </label>
-            <select name="ownerId" id="ownerId">
-                <option value="0">Ninguno</option>
-                <?php foreach ($owners as $owner): ?>
-                    <option value="<?php echo htmlspecialchars($owner->getIdTBOwner()); ?>">
-                        <?php echo htmlspecialchars($owner->getName() . ' ' . $owner->getSurnames()); ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
-
-            <label for="companyType">Tipo de empresa: </label>
-            <select name="companyType" id="companyType">
-                <option value="0">Ninguno</option>
-                <?php foreach ($touristCompanyTypes as $touristCompanyType): ?>
-                    <option value="<?php echo htmlspecialchars($touristCompanyType->getId()); ?>">
-                        <?php echo htmlspecialchars($touristCompanyType->getName()); ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
-
-            <input type="hidden" name="status" value="1">
-            <input type="submit" value="Crear" name="create" id="create" />
-        </form>
-    </section>
 
     <br>
 

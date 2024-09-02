@@ -5,7 +5,7 @@ class Photo {
     private $urlTBPhoto;
     private $indexTBPhoto;
     private $statusTBPhoto;
-    private $directoryTBPhoto;
+   
 
     function __construct ($idTBPhoto = 0, $urlTBPhoto = "", $indexTBPhoto="", $statusTBPhoto=true) { 
         $this->idTBPhoto = $idTBPhoto;

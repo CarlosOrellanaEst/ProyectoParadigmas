@@ -10,43 +10,47 @@ class PhotoData extends Data {
         if (!$conn) {
             die("Connection failed: " . mysqli_connect_error());
         }
-
+    
         $conn->set_charset('utf8');
-
+    
+        // Obtener el último ID insertado antes de la nueva inserción
         $queryGetLastId = "SELECT MAX(tbphotoid) AS idtbphoto FROM tbphoto";
         $idCont = mysqli_query($conn, $queryGetLastId);
         $lastId = 0;
-
         if ($row = mysqli_fetch_row($idCont)) {
             $lastId = $row[0] !== null ? (int)trim($row[0]) : 0;
         }
-
+    
         $urls = array_slice(array_map('trim', explode(',', $photoUrls)), 0, 5);
-        $indices = implode(',', array_keys($urls));
-        $urlsString = implode(',', $urls);
-
+    
         $queryInsert = "INSERT INTO tbphoto (tbphotoid, tbphotourl, tbphotoindex, tbphotostatus) VALUES (?, ?, ?, ?)";
         $stmt = $conn->prepare($queryInsert);
         if ($stmt === false) {
             die("Prepare failed: " . $conn->error);
         }
-
+    
         $statusDelete = true;
-        $nextId = $lastId + 1;
-        $stmt->bind_param("issi", $nextId, $urlsString, $indices, $statusDelete);
-
-        $result = $stmt->execute();
-
-        if (!$result) {
-            echo "Execute failed: " . $stmt->error;
+        $lastInsertedId = $lastId; // Inicializa con el último ID antes de insertar
+        $result = true;
+    
+        foreach ($urls as $index => $url) {
+            $nextId = $lastId + $index + 1;
+            $stmt->bind_param("issi", $nextId, $url, $index, $statusDelete);
+            if (!$stmt->execute()) {
+                $result = false; // Si falla alguna inserción, marcamos el resultado como falso
+                break;
+            }
+            $lastInsertedId = $nextId; // Actualiza el último ID insertado
         }
-
+    
         $stmt->close();
         mysqli_close($conn);
-
-        return $result;
+    
+        return $result ? $lastInsertedId : false; // Devuelve el último ID insertado o false si falló
     }
-
+    
+    
+    
    public function getAllTBPhotos() {
     $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
     if (!$conn) {
@@ -138,6 +142,21 @@ class PhotoData extends Data {
             mysqli_close($conn);
             return false;
         }
+    }
+    public function getLastInsertedPhotoId() {
+        $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
+        if (!$conn) {
+            die("Connection failed: " . mysqli_connect_error());
+        }
+        
+        $conn->set_charset('utf8');
+        
+        // Obtener el último ID insertado
+        $lastInsertId = mysqli_insert_id($conn);
+        
+        mysqli_close($conn);
+        
+        return $lastInsertId;
     }
     
 }

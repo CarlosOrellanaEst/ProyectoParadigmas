@@ -22,4 +22,7 @@ class PhotoBusiness {
     public function deleteTBPhoto($photoId, $imageIndex) {
         return $this->photoData->deleteTBPhoto($photoId, $imageIndex);
     }
+    public function getLastInsertedPhotoId() {
+        return $this->photoData->getLastInsertedPhotoId();
+    }
 }

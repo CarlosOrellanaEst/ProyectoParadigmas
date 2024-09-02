@@ -6,12 +6,51 @@ include_once '../domain/owner.php'; // Asegúrate de incluir el archivo correcto
 include_once '../domain/TouristCompanyType.php'; // Asegúrate de incluir el archivo correcto para la clase CompanyType
 include_once '../business/OwnerBusiness.php'; // Asegúrate de incluir el archivo correcto para la clase OwnerBusiness
 include_once '../business/touristCompanyTypeBusiness.php'; // Asegúrate de incluir el archivo correcto para la clase touristCompanyTypeBusiness
+include_once '../business/PhotoBusiness.php'; // Incluye el archivo que define PhotoBusiness
 
 header('Content-Type: application/json');
 
-$response = ['status' => 'error', 'message' => 'An unknown error occurred.'];
-
 if (isset($_POST['create'])) {
+    if (isset($_FILES['imagenes']) && !empty($_FILES['imagenes']['name'][0])) {
+        $uploadDir = '../images/';
+        $fileNames = array();
+        $allowTypes = array('jpg', 'png', 'jpeg', 'gif');
+
+        // Verifica que no se suban más de 5 archivos
+        if (count($_FILES['imagenes']['name']) > 5) {
+            header("location: ../view/photoView.php?error=tooManyFiles");
+            exit();
+        }
+
+        // Mover los archivos y obtener los nombres
+        foreach ($_FILES['imagenes']['name'] as $key => $fileName) {
+            $targetFilePath = $uploadDir . basename($fileName);
+            $fileType = strtolower(pathinfo($targetFilePath, PATHINFO_EXTENSION));
+
+            if (in_array($fileType, $allowTypes)) {
+                $tempPath = $_FILES['imagenes']['tmp_name'][$key];
+                if (move_uploaded_file($tempPath, $targetFilePath)) {
+                    $fileNames[] = basename($fileName);
+                } else {
+                    header("location: ../view/photoView.php?error=moveFailed");
+                    exit();
+                }
+            } else {
+                header("location: ../view/photoView.php?error=invalidFileType");
+                exit();
+            }
+        }
+
+       // Insertar las fotos en la base de datos
+$photoUrls = implode(',', $fileNames);
+$photoBusiness = new PhotoBusiness();
+$lastPhotoId = $photoBusiness->insertMultiplePhotos($photoUrls);
+
+if ($lastPhotoId !== false) {
+    // Aquí el valor de $lastPhotoId ya es el último ID insertado correctamente
+    // Puedes proceder con la inserción de la compañía turística usando $lastPhotoId
+
+    // Obtener datos de la empresa turística
     $legalName = $_POST['legalName'] ?? '';
     $magicName = $_POST['magicName'] ?? '';
     $ownerId = $_POST['ownerId'] ?? 0;
@@ -27,13 +66,12 @@ if (isset($_POST['create'])) {
             $companyType = $touristCompanyTypeBusiness->getById($companyTypeId);
 
             if ($owner && $companyType) {
-                $touristCompany = new TouristCompany(0, $legalName, $magicName, $ownerId, $companyTypeId, $status);
+                $touristCompany = new TouristCompany(0, $legalName, $magicName, $ownerId, $companyTypeId, $lastPhotoId, $status);
                 $touristCompanyBusiness = new touristCompanyBusiness();
-                $result = $touristCompanyBusiness->insert($touristCompany);
+                $result = $touristCompanyBusiness->insert($touristCompany, $lastPhotoId);
 
                 if ($result == 1) {
                     $response = ['status' => 'success', 'message' => 'Company successfully created.'];
-                    
                 } elseif ($result === null) {
                     $response = ['status' => 'error', 'message' => 'Company already exists.'];
                 } else {
@@ -48,9 +86,14 @@ if (isset($_POST['create'])) {
     } else {
         $response = ['status' => 'error', 'message' => 'Empty fields are not allowed.'];
     }
-    echo json_encode($response);
-    
+} else {
+    $response = ['status' => 'error', 'message' => 'Failed to insert photos.'];
 }
+
+echo json_encode($response);
+    }
+}
+
 
 if (isset($_POST['update'])) {
     if (isset($_POST['ownerId']) && isset($_POST['tbtouristcompanyid']) && isset($_POST['magicName']) && isset($_POST['ownerId']) && isset($_POST['companyType']) && isset($_POST['status'])) {
