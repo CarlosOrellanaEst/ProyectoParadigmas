@@ -47,7 +47,7 @@ if (isset($_POST['update'])) {
                     header("location: ../view/rollView.php?success=updated");
                     exit();
                 } else if ($result == null) {
-                    header("location: ../view/rollView.php?error=notExists");
+                    header("location: ../view/rollView.php?error=alreadyExists");
                     exit();
                  } else {
                     header("location: ../view/rollView.php?error=dbError");

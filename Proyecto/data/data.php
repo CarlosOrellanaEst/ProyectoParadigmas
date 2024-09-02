@@ -37,23 +37,6 @@ class Data {
                 break;
         }
     }
-
-    /* Método para establecer la conexión */
-    public function connect() {
-        $this->connection = new mysqli($this->server, $this->user, $this->password, $this->db);
-        if ($this->connection->connect_error) {
-            die("Conexión fallida: " . $this->connection->connect_error);
-        }
-        return $this->connection;
-    }
-
-    /* Método para cerrar la conexión */
-    public function close() {
-        $this->connection->close();
-    }
-
-    
-
 }
 
 

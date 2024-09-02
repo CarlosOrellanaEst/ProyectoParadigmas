@@ -4,17 +4,17 @@ document.addEventListener('DOMContentLoaded', function () {
         e.preventDefault();
     
         const name = document.getElementById('name').value.trim();    
-        if (name === '') {
-            alert('El nombre del roll no puede estar vacio.');
+        if (name === ' ') {
+            alert('El nombre de la actividad no puede estar vacio.');
             return;
         }
         const postData = {
-            name: document.getElementById('name').value,
+            nameTouristCompanyType: document.getElementById('name').value,
             description: document.getElementById('description').value,
         };
     
         let xhr = new XMLHttpRequest();
-        xhr.open('POST', '../business/rollAction.php', true);
+        xhr.open('POST', '../business/touristCompanyTypeAction.php', true);
         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
         xhr.onreadystatechange = function () {
             if (xhr.readyState === 4) {
@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     if (xhr.status === 200) {
                         if (response.status === 'success') {
                             alert(response.message);
-                            document.getElementById('formCreate').reset();                            
+                            document.getElementById('formCreate').reset();
                             redirectToCleanURL();
                             location.reload();
                         } else {
@@ -38,20 +38,16 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             }
         };
-        xhr.send('name=' + encodeURIComponent(postData.name) + '&description=' + encodeURIComponent(postData.description));
+        xhr.send('nameTouristCompanyType=' + encodeURIComponent(postData.nameTouristCompanyType) + '&description=' + encodeURIComponent(postData.description));
     });
- 
-
-
-    
-    function redirectToCleanURL() {
-        const cleanURL = window.location.origin + window.location.pathname;
-        window.history.replaceState({}, document.title, cleanURL);
-    }
-    window.onload = function () {
-        showAlertBasedOnURL();
-        redirectToCleanURL(); // Esto limpiará la URL después de mostrar los mensajes de alerta.
-    };
-
-
 })
+
+function redirectToCleanURL() {
+    const cleanURL = window.location.origin + window.location.pathname;
+    window.history.replaceState({}, document.title, cleanURL);
+}
+
+window.onload = function () {
+    showAlertBasedOnURL();
+    redirectToCleanURL(); // Esto limpiará la URL después de mostrar los mensajes de alerta.
+};

@@ -32,12 +32,13 @@ class RollData extends Data {
     $description = $roll->getDescriptionTBRoll();
     $id = $roll->getIdTBRoll();
 
-    $exists = $this->getTBRollByName($roll->getNameTBRoll());
+    $exists = $this->getTBRollByName($roll);
     if ($exists > 0) {
-        if ($this->getTBRollExistsIsActive($exists)) {
+      /*  if ($this->getTBRollExistsIsActive($exists)) { */
             mysqli_close($conn);
-            return ['status' => 'error', 'message' => 'El nombre del roll ya existe.'];
-        } else {
+            return ['status' => 'error', 'message' => 'El nombre del roll ya existe.']; 
+       /* } */
+       /* }   else {
             $queryUpdate = "UPDATE tbroll SET tbrolldescription = ?, tbrollstatus = 1 WHERE tbrollid = ?";
             $stmt = $conn->prepare($queryUpdate);
             if ($stmt === false) {
@@ -54,16 +55,16 @@ class RollData extends Data {
             } else {
                 return ['status' => 'error', 'message' => 'Falló al agregar el roll: ' . $conn->error];
             }
-        }
+        }  */
     } else {
-        $queryInsert = "INSERT INTO tbroll (tbrollid, tbrollname, tbrolldescription, tbrollstatus) VALUES (?, ?, ?, ?)";
+        $queryInsert = "INSERT INTO tbroll (tbrollid, tbrollname, tbrolldescription, tbrollstatus) VALUES (?, ?, ?, 1)";
         $stmt = $conn->prepare($queryInsert);
         if ($stmt === false) {
             mysqli_close($conn);
             return ['status' => 'error', 'message' => 'Prepare failed: ' . $conn->error];
         }
 
-        $stmt->bind_param("issi", $nextId, $name, $description, 1);
+        $stmt->bind_param("iss", $nextId, $name, $description);
         $result = $stmt->execute();
         $stmt->close();
         mysqli_close($conn);
@@ -122,10 +123,12 @@ class RollData extends Data {
             die("Connection failed: " . mysqli_connect_error());
         }
         $conn->set_charset('utf8');
-    
+        
         $id = $roll->getIdTBRoll();
+        $var = $this->getTBRollIDByName($roll);
+        $rollRegistered = $this->getTBRollObject($var);
 
-        if (!($this->getTBRollByName($roll->getNameTBRoll()))) {
+        if ($rollRegistered->getNameTBRoll() == $roll->getNameTBRoll()) { 
             $result = null; 
         } else {
             $newName = mysqli_real_escape_string($conn,  $roll->getNameTBRoll());
@@ -150,33 +153,78 @@ class RollData extends Data {
         return $result;
     }    
 
-    public function getTBRollByName($rollName) {
+    public function getTBRollIDByName($roll) {
         $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
         if (!$conn) {
             die("Connection failed: " . mysqli_connect_error());
         }
         $conn->set_charset('utf8');
     
-        // Asegúrate de escapar adecuadamente el valor para evitar SQL Injection
-        $rollName = mysqli_real_escape_string($conn, $rollName);
+        $rollName = mysqli_real_escape_string($conn, $roll->getNameTBRoll());
+        $rollID = mysqli_real_escape_string($conn, $roll->getIdTBRoll());
     
-        $query = "SELECT tbrollid FROM tbroll WHERE tbrollname = '$rollName'";
+        $query = "SELECT tbrollid FROM tbroll WHERE tbrollname = '$rollName' AND tbrollid != '$rollID'";
         $result = mysqli_query($conn, $query);
     
         $rollId = null;
         if ($result) {
             $row = mysqli_fetch_assoc($result);
             if ($row != null && count($row) > 0) {
-                $rollId = $row['tbrollid']; // Asumiendo que 'id' es el nombre de la columna que contiene el ID
+                $rollId = $row['tbrollid'];
             }
             else {
                 $rollId = 0;
             }
         }
-    
         mysqli_close($conn);
         return $rollId;
     }
+    public function getTBRollByName($roll) {
+        $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
+        if (!$conn) {
+            die("Connection failed: " . mysqli_connect_error());
+        }
+        $conn->set_charset('utf8');
+    
+        $rollName = mysqli_real_escape_string($conn, $roll->getNameTBRoll());
+        $rollID = mysqli_real_escape_string($conn, $roll->getIdTBRoll());
+    
+        $query = "SELECT tbrollid FROM tbroll WHERE tbrollname = '$rollName' AND tbrollstatus=1";
+        $result = mysqli_query($conn, $query);
+    
+        $rollId = null;
+        if ($result) {
+            $row = mysqli_fetch_assoc($result);
+            if ($row != null && count($row) > 0) {
+                $rollId = $row['tbrollid'];
+            }
+            else {
+                $rollId = 0;
+            }
+        }
+        mysqli_close($conn);
+        return $rollId;
+    }
+
+    public function getTBRollObject($id) {
+        $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
+        if (!$conn) {
+            die("Connection failed: " . mysqli_connect_error());
+        }
+        $conn->set_charset('utf8');
+    
+        $query = "SELECT * FROM tbroll WHERE tbrollstatus = 1 AND tbrollid = '$id';";
+        $result = mysqli_query($conn, $query);
+    
+        $currentRoll = new Roll();
+        while ($row = mysqli_fetch_assoc($result)) {
+            $currentRoll = new Roll($row['tbrollid'], $row['tbrollname'], $row['tbrolldescription'], $row['tbrollstatus']);
+        }
+    
+        mysqli_close($conn);
+        return $currentRoll;
+    } 
+
     
     public function getTBRollExistsIsActive($rollId) {
         $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);

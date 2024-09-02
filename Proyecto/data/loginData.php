@@ -1,17 +1,18 @@
 <?php
 require_once 'data.php'; // Incluir la clase Data
 require_once '../domain/user.php'; // Incluir la clase User
-class LoginData {
-    private $connection;
 
-    public function __construct() {
-        $db = new Data();
-        $this->connection = $db->connect(); // Establecer la conexión a la base de datos
-    }
+class LoginData extends Data {
 
     public function getUserByUsername($username, $password) {
+        $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db); // Usar el método de conexión de la clase Data
+
         $query = "SELECT * FROM tbuser WHERE tbusername = ? AND tbuserpassword = ? LIMIT 1";
-        $stmt = $this->connection->prepare($query);
+        $stmt = $conn->prepare($query);
+        if ($stmt === false) {
+            die("Prepare failed: " . $conn->error);
+        }
+
         $stmt->bind_param("ss", $username, $password);
         $stmt->execute();
         $result = $stmt->get_result();
@@ -28,16 +29,9 @@ class LoginData {
         } else {
             $user = null;
         }
-        
+
         $stmt->close();
+
         return $user;
     }
-    
-    
-    
-
-    public function __destruct() {
-        $this->connection->close(); // Cerrar la conexión al final
-    }
 }
-
