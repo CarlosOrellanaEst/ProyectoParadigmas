@@ -34,7 +34,7 @@ class TouristCompanyData extends Data{
         }
 
 
-        $queryInsert = "INSERT INTO tbtouristcompany (tbtouristcompanyid, tbtouristcompanylegalname, tbtouristcompanymagicname, tbtouristcompanyowner, tbtouristcompanycompanyType, tbtouristcompanystatus) VALUES (?, ?, ?, ?, ?, ?)";
+        $queryInsert = "INSERT INTO tbtouristcompany (tbtouristcompanyid, tbtouristcompanylegalname, tbtouristcompanymagicname, tbtouristcompanyowner, tbtouristcompanycompanytype, tbtouristcompanystatus) VALUES (?, ?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($queryInsert);
         if ($stmt === false) {
             die("Prepare failed: " . $conn->error);
@@ -44,10 +44,10 @@ class TouristCompanyData extends Data{
         $tbtouristcompanylegalname = $touristCompany->getLegalName();
         $tbtouristcompanymagicname = $touristCompany->getMagicName();
         $tbtouristcompanyowner = $touristCompany->getOwner();
-        $tbtouristcompanycompanyType = $touristCompany->getCompanyType();
+        $tbtouristcompanycompanytype = $touristCompany->getCompanyType();
         $tbtouristcompanystatus = $touristCompany->getStatus();
 
-        $stmt->bind_param("issiii", $tbtouristcompanyid, $tbtouristcompanylegalname, $tbtouristcompanymagicname, $tbtouristcompanyowner, $tbtouristcompanycompanyType, $tbtouristcompanystatus);
+        $stmt->bind_param("issiii", $tbtouristcompanyid, $tbtouristcompanylegalname, $tbtouristcompanymagicname, $tbtouristcompanyowner, $tbtouristcompanycompanytype, $tbtouristcompanystatus);
 
         $result = $stmt->execute();
 
@@ -73,7 +73,7 @@ class TouristCompanyData extends Data{
         $touristCompanies = array();
 
         while ($row = mysqli_fetch_array($result)) {
-            $touristCompanies[] = new TouristCompany($row['tbtouristcompanyid'], $row['tbtouristcompanylegalname'], $row['tbtouristcompanymagicname'], $row['tbtouristcompanyowner'], $row['tbtouristcompanycompanyType'], $row['tbtouristcompanystatus']);
+            $touristCompanies[] = new TouristCompany($row['tbtouristcompanyid'], $row['tbtouristcompanylegalname'], $row['tbtouristcompanymagicname'], $row['tbtouristcompanyowner'], $row['tbtouristcompanycompanytype'], $row['tbtouristcompanystatus']);
         }
 
         mysqli_close($conn);
@@ -113,7 +113,7 @@ class TouristCompanyData extends Data{
         }
         $conn->set_charset('utf8');
 
-        $query = "UPDATE tbtouristcompany SET tbtouristcompanylegalname=?, tbtouristcompanymagicname=?, tbtouristcompanyowner=?, tbtouristcompanycompanyType=?, tbtouristcompanystatus=? WHERE tbtouristcompanyid=?";
+        $query = "UPDATE tbtouristcompany SET tbtouristcompanylegalname=?, tbtouristcompanymagicname=?, tbtouristcompanyowner=?, tbtouristcompanycompanytype=?, tbtouristcompanystatus=? WHERE tbtouristcompanyid=?";
 
         $stmt = $conn->prepare($query);
         if ($stmt === false) {
@@ -125,11 +125,11 @@ class TouristCompanyData extends Data{
             $tbtouristcompanylegalname = $touristCompany->getLegalName();
             $tbtouristcompanymagicname = $touristCompany->getMagicName();
             $tbtouristcompanyowner = $touristCompany->getOwner();
-            $tbtouristcompanycompanyType = $touristCompany->getCompanyType();
+            $tbtouristcompanycompanytype = $touristCompany->getCompanyType();
             $tbtouristcompanystatus = $touristCompany->getStatus()
             ;
 
-            $stmt->bind_param("ssiiii", $tbtouristcompanylegalname, $tbtouristcompanymagicname, $tbtouristcompanyowner, $tbtouristcompanycompanyType, $tbtouristcompanystatus, $tbtouristcompanyid);
+            $stmt->bind_param("ssiiii", $tbtouristcompanylegalname, $tbtouristcompanymagicname, $tbtouristcompanyowner, $tbtouristcompanycompanytype, $tbtouristcompanystatus, $tbtouristcompanyid);
 
             $result = $stmt->execute();
         }
@@ -161,11 +161,11 @@ class TouristCompanyData extends Data{
 
         $stmt->execute();
 
-        $stmt->bind_result($tbtouristcompanyid, $tbtouristcompanylegalname, $tbtouristcompanymagicname, $tbtouristcompanyowner, $tbtouristcompanycompanyType, $tbtouristcompanystatus);
+        $stmt->bind_result($tbtouristcompanyid, $tbtouristcompanylegalname, $tbtouristcompanymagicname, $tbtouristcompanyowner, $tbtouristcompanycompanytype, $tbtouristcompanystatus);
 
         $stmt->fetch();
 
-        $touristCompany = new TouristCompany($tbtouristcompanyid, $tbtouristcompanylegalname, $tbtouristcompanymagicname, $tbtouristcompanyowner, $tbtouristcompanycompanyType, $tbtouristcompanystatus);
+        $touristCompany = new TouristCompany($tbtouristcompanyid, $tbtouristcompanylegalname, $tbtouristcompanymagicname, $tbtouristcompanyowner, $tbtouristcompanycompanytype, $tbtouristcompanystatus);
 
         $stmt->close();
 
@@ -192,11 +192,11 @@ class TouristCompanyData extends Data{
 
         $stmt->execute();
 
-        $stmt->bind_result($tbtouristcompanyid, $tbtouristcompanylegalname, $tbtouristcompanymagicname, $tbtouristcompanyowner, $tbtouristcompanycompanyType, $tbtouristcompanystatus);
+        $stmt->bind_result($tbtouristcompanyid, $tbtouristcompanylegalname, $tbtouristcompanymagicname, $tbtouristcompanyowner, $tbtouristcompanycompanytype, $tbtouristcompanystatus);
 
         $stmt->fetch();
 
-        $touristCompany = new TouristCompany($tbtouristcompanyid, $tbtouristcompanylegalname, $tbtouristcompanymagicname, $tbtouristcompanyowner, $tbtouristcompanycompanyType, $tbtouristcompanystatus);
+        $touristCompany = new TouristCompany($tbtouristcompanyid, $tbtouristcompanylegalname, $tbtouristcompanymagicname, $tbtouristcompanyowner, $tbtouristcompanycompanytype, $tbtouristcompanystatus);
 
         $stmt->close();
 

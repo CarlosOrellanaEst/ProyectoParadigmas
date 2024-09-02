@@ -24,6 +24,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         if (response.status === 'success') {
                             alert(response.message);
                             document.getElementById('formCreate').reset();
+                            redirectToCleanURL();
                             location.reload();
                         } else {
                             alert('Error: ' + response.message);
@@ -40,3 +41,13 @@ document.addEventListener('DOMContentLoaded', function () {
         xhr.send('nameTouristCompanyType=' + encodeURIComponent(postData.nameTouristCompanyType) + '&description=' + encodeURIComponent(postData.description));
     });
 })
+
+function redirectToCleanURL() {
+    const cleanURL = window.location.origin + window.location.pathname;
+    window.history.replaceState({}, document.title, cleanURL);
+}
+
+window.onload = function () {
+    showAlertBasedOnURL();
+    redirectToCleanURL(); // Esto limpiará la URL después de mostrar los mensajes de alerta.
+};

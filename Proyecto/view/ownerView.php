@@ -1,28 +1,25 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta charset="UTF-8">
     <title>CRUD Propietarios</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         td, th {
             border-right: 1px solid;
         }
     </style>
-    <?php
-    include '../business/ownerBusiness.php';
-    ?>
     <script src="../resources/ownerView.js"></script>
+    <script src="../resources/AJAXOwner.js"></script>
 </head>
 <body>
-    <header> 
-    <a href="../index.html">← Volver al inicio</a>
+    <header>
+        <a href="../index.html">← Volver al inicio</a>
         <h1>CRUD Propietarios</h1>
     </header>
-    <section id="formCreate">
-        <form method="post" action="../business/ownerAction.php" enctype="multipart/form-data">
+    <<form id="formCreate" method="post" enctype="multipart/form-data" action="../business/ownerAction.php">
             <label for="name">Nombre</label>
-            <input required placeholder="nombre" type="text" name="ownerName" id="name"/>
+            <input placeholder="nombre" type="text" name="ownerName" id="name"/>
             <label for="surnames">Apellidos</label>
             <input placeholder="apellidos" type="text" name="ownerSurnames" id="surnames"/>
             <label for="idType">Tipo de Identificación</label>
@@ -38,7 +35,7 @@
             <input placeholder="correo" type="text" name="ownerEmail" id="email"/>
             <label for="direction">Dirección</label>
             <input placeholder="direccion" type="text" name="ownerDirection" id="direction"/>
-            <input type="file" name="imagen" required>
+            <input type="file" name="imagen" id="imagen">
             <input type="submit" value="Crear" name="create" id="create"/>
         </form>
     </section>
@@ -62,12 +59,12 @@
                     <th>Correo</th>
                     <th>Dirección</th>
                     <th>Foto</th>
-                  
                     <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
                 <?php
+                include '../business/ownerBusiness.php';
                 $ownerBusiness = new ownerBusiness();
                 $allowners = $ownerBusiness->getAllTBOwner();
                 $ownersFiltered = [];
@@ -75,7 +72,7 @@
                 // Filtrar los resultados si se ha realizado una búsqueda
                 if (isset($_GET['searchOne'])) {
                     $searchTerm = $_GET['searchOne'];
-                    $ownersFiltered = array_filter($allowners, function($owner) use ($searchTerm) {
+                    $ownersFiltered = array_filter($allowners, function ($owner) use ($searchTerm) {
                         return stripos($owner->getName(), $searchTerm) !== false;
                     });
                 }
@@ -99,15 +96,11 @@
                     echo '<td><input type="text" name="ownerPhone" value="' . $current->getPhone() . '"/></td>';
                     echo '<td><input type="text" name="ownerEmail" value="' . $current->getEmail() . '"/></td>';
                     echo '<td><input type="text" name="ownerDirection" value="' . $current->getDirectionTBOwner() . '"/></td>';
-                    
+
                     // Mostrar la imagen
                     $photoUrl = $current->getPhotoURLTBOwner();
                     echo '<td><img src="../images/' . $photoUrl . '" alt="Foto" width="75" height="75" /></td>';
 
-                    // Campo de selección para el tipo de identificación
-                  
-
-                    // Botones de acción
                     echo '<td>';
                     echo '<input type="file" name="newImage" accept="image/*" /><br />';
                     echo '<input type="submit" value="Actualizar" name="update" />';
