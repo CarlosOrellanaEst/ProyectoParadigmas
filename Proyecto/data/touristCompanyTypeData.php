@@ -5,6 +5,95 @@ include_once '../domain/TouristCompanyType.php';
 
 class touristCompanyTypeData extends Data {
     public function insertTbTouristCompanyType($companyType) {
+        $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
+        if (!$conn) {
+            return ['status' => 'error', 'message' => 'Connection failed: ' . mysqli_connect_error()];
+        }
+
+        $conn->set_charset('utf8');
+
+        $queryGetLastId = "SELECT MAX(tbtouristcompanytypeid) AS idtbtouristcompanytype FROM tbtouristcompanytype";
+        $idCont = mysqli_query($conn, $queryGetLastId);
+        if ($idCont === false) {
+            mysqli_close($conn);
+            return ['status' => 'error', 'message' => 'Failed to get last ID: ' . $conn->error];
+        }
+
+        $nextId = 1;
+        if ($row = mysqli_fetch_row($idCont)) {
+            $lastId = $row[0] !== null ? (int)trim($row[0]) : 0;
+            $nextId = $lastId + 1;
+        }
+
+        $tbtouristcompanytypename = $companyType->getName();
+        $tbtouristcompanytypedescription = $companyType->getDescription();
+
+        $exists = $this->getTbTouristCompanyTypeByName($companyType->getName());
+        
+        if ($exists > 0) {
+            if ($this->getTbTouristCompanyTypeExistsIsActive($exists)) {
+                mysqli_close($conn);
+                return ['status' => 'error', 'message' => 'El nombre de la actividad ya existe.'];
+            } else {
+                $queryInsert = "UPDATE tbtouristcompanytype SET tbtouristcompanytypename = ?, tbtouristcompanytypedescription = ?, tbtouristcompanytypeisactive = 1 WHERE tbtouristcompanytypeid = ?";
+                $stmt = $conn->prepare($queryInsert);
+                
+                if ($stmt === false) {
+                    mysqli_close($conn);
+                    return ['status' => 'error', 'message' => 'Prepare failed: ' . $conn->error];
+                }
+
+                $stmt->bind_param("ssi", $tbtouristcompanytypename, $tbtouristcompanytypedescription, $exists);
+                $result = $stmt->execute();
+                $stmt->close();
+                mysqli_close($conn);
+
+                if ($result) {
+                    return ['status' => 'success', 'message' => 'Tipo de empresa turística registrada correctamenteee.'];
+                } else {
+                    return ['status' => 'error', 'message' => 'Falló al agregar el tipo de empresa turística: ' . $conn->error];
+                }
+            }
+        } else {
+            $queryInsert = "INSERT INTO tbtouristcompanytype (tbtouristcompanytypeid, tbtouristcompanytypename, tbtouristcompanytypedescription, tbtouristcompanytypeisactive) VALUES (?, ?, ?, ?)";
+            $stmt = $conn->prepare($queryInsert);
+
+            if ($stmt === false) {
+                mysqli_close($conn);
+                return ['status' => 'error', 'message' => 'Prepare failed: ' . $conn->error];
+            }
+            $isActive = 1;
+            $stmt->bind_param("issi", $nextId, $tbtouristcompanytypename, $tbtouristcompanytypedescription, $isActive);
+            $result = $stmt->execute();
+            $stmt->close();
+            mysqli_close($conn);
+
+            if ($result) {
+                return ['status' => 'success', 'message' => 'Tipo de empresa turística añadida correctamente brrr'];
+            } else {
+                return ['status' => 'error', 'message' => 'Falló al agregar el tipo de empresa turística: ' . $conn->error];
+            }
+        }
+    }
+
+    public function getTbTouristCompanyTypeExistsIsActive($Id) {
+        $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
+        if (!$conn) {
+            die("Connection failed: " . mysqli_connect_error());
+        }
+        $conn->set_charset('utf8');
+    
+        $query = "SELECT * FROM tbtouristcompanytype WHERE tbtouristcompanytypeisactive=1 AND tbtouristcompanytypeid = $Id";
+        $result = mysqli_query($conn, $query);
+        
+        $row = mysqli_fetch_assoc($result);
+
+        $row != null && count($row) > 0 ? $rollReturn = true : $rollReturn = false;
+    
+        mysqli_close($conn);
+        return $rollReturn;
+    }
+    /*public function insertTbTouristCompanyType($companyType) {
         error_log($this->server);
         error_log($this->user);
         error_log($this->password);
@@ -51,7 +140,7 @@ class touristCompanyTypeData extends Data {
             mysqli_close($conn);
         }
         return $result;
-    }
+    } */
 
     public function getAllTbTouristCompanyType() {
         $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
@@ -91,21 +180,58 @@ class touristCompanyTypeData extends Data {
         }
         $conn->set_charset('utf8');
     
-        $id = $TouristCompanyType->getId();
-        if ($this->getTbTouristCompanyTypeByName($TouristCompanyType->getName())) {
-            $result = null; 
-        } else {
-            $newName = mysqli_real_escape_string($conn,  $TouristCompanyType->getName());
-            $newDescription = mysqli_real_escape_string($conn,  $TouristCompanyType->getDescription());
+        $id = (int)$TouristCompanyType->getId();
+        $newName = $TouristCompanyType->getName();
+        $newDescription = $TouristCompanyType->getDescription();
         
-            $query = "UPDATE tbtouristcompanytype SET tbtouristcompanytypename = '$newName', tbtouristcompanytypedescription = '$newDescription' WHERE tbtouristcompanytypeid = $id";
-            $result = mysqli_query($conn, $query);
-        
-            mysqli_close($conn);
+        $currentName = $this->getByIdTbTouristCompanyType($id);
+    
+        if ($currentName && $currentName->getName() !== $newName) {
+            if ($this->getTbTouristCompanyTypeByName($newName)) {
+                mysqli_close($conn);
+                return null;
+            }
         }
-       
+    
+        $stmt = $conn->prepare("UPDATE tbtouristcompanytype SET tbtouristcompanytypename = ?, tbtouristcompanytypedescription = ? WHERE tbtouristcompanytypeid = ?");
+        $stmt->bind_param("ssi", $newName, $newDescription, $id);
+        $result = $stmt->execute();
+        
+        $stmt->close();
+        mysqli_close($conn);
         return $result;
     }
+    
+
+    /*public function updateTbTouristCompanyType($TouristCompanyType) {
+        $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
+        if (!$conn) {
+            die("Connection failed: " . mysqli_connect_error());
+        }
+        $conn->set_charset('utf8');
+    
+        $id = $TouristCompanyType->getId();
+
+        $newName = mysqli_real_escape_string($conn,  $TouristCompanyType->getName());
+        $newDescription = mysqli_real_escape_string($conn,  $TouristCompanyType->getDescription());
+        
+        $currentName = $this->getByIdTbTouristCompanyType($id);
+
+        if ($currentName && $currentName->getName() !== $newName) {
+            if ($this->getTbTouristCompanyTypeByName($newName)) {
+                mysqli_close($conn);
+                return null;
+            }
+        }
+
+        $query = "UPDATE tbtouristcompanytype 
+                  SET tbtouristcompanytypename = '$newName', tbtouristcompanytypedescription = '$newDescription'
+                  WHERE tbtouristcompanytypeid = $id";
+        $result = mysqli_query($conn, $query);
+    
+        mysqli_close($conn);
+        return $result;
+    } */
 
     public function getTbTouristCompanyTypeByName($companyTypeName) {
         $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);

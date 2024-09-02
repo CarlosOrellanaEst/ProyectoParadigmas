@@ -14,19 +14,21 @@
             }
         </style>
         <?php
-        include '../business/touristCompanyTypeBusiness.php';
+            include '../business/touristCompanyTypeBusiness.php';
         ?>
+        <script src="../resources/touristCompanyTypeAJAX.js"></script>
         <script src="../resources/touristCompanyTypeView.js"></script>
+        
     </head>
     <body>
         <a href="../index.html">← Volver al inicio</a>
         <header> 
             <h1>CRUD Tipo de empresa turística</h1>
         </header>
-        <section id="formCreate">
-            <form method="post" action="../business/touristCompanyTypeAction.php">
+        <section>
+            <form method="post"  id="formCreate">
                 <label for="name">Nombre de la actividad: </label>
-                <input required placeholder="Nombre de la actividad" type="text" name="name" id="name"/>
+                <input placeholder="Nombre de la actividad" type="text" name="nameTouristCompanyType" id="name"/>
                 <label for="description">Descripción de la actividad: </label>
                 <input class="text" placeholder="Descripción" type="text" name="description" id="description"/>
                 <input type="submit" value="Crear" name="create" id="create"/>
@@ -50,7 +52,7 @@
                 </thead>
                 <tbody>
                     <?php
-                        $touristCompanyTypeBusiness = new TouristCompanyTypeBusiness();
+                        $touristCompanyTypeBusiness = new touristCompanyTypeBusiness();
                         $all = $touristCompanyTypeBusiness->getAll();
                         $companyTypeFiltered = [];
 
