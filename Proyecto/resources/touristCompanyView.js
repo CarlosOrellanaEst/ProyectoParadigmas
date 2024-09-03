@@ -232,4 +232,3 @@ document.getElementById('formCreate').addEventListener('submit', function (e) {
     xhr.send(formData);
 });
 
-

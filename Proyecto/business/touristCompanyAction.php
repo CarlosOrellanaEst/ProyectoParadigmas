@@ -20,8 +20,8 @@ if (isset($_POST['create'])) {
         // Verifica que no se suban más de 5 archivos
         if (count($_FILES['imagenes']['name']) > 5) {
             $response['status'] = 'error';
-                    $response['message'] = 'Se permite maximo 5 imagenes';
-                    echo json_encode($response);
+            $response['message'] = 'Se permite máximo 5 imágenes';
+            echo json_encode($response);
             exit();
         }
 
@@ -42,54 +42,59 @@ if (isset($_POST['create'])) {
                 }
             } else {
                 $response['status'] = 'error';
-                $response['message'] = 'Formato de imagen invalido';
+                $response['message'] = 'Formato de imagen inválido';
                 echo json_encode($response);
                 exit();
             }
         }
 
-       // Insertar las fotos en la base de datos
+        // Insertar las fotos en la base de datos
         $photoUrls = implode(',', $fileNames);
-       // Obtener datos de la empresa turística
-    $legalName = $_POST['legalName'] ?? '';
-    $magicName = $_POST['magicName'] ?? '';
-    $ownerId = $_POST['ownerId'] ?? 0;
-    $companyTypeId = $_POST['companyType'] ?? 0;
-    $status = $_POST['status'] ?? '';
+        
+        // Obtener datos de la empresa turística
+        $legalName = $_POST['legalName'] ?? '';
+        $magicName = $_POST['magicName'] ?? '';
+        $ownerId = $_POST['ownerId'] ?? 0;
+        $companyTypeId = $_POST['companyType'] ?? 0;
+        $status = $_POST['status'] ?? '';
 
-    if (!empty($legalName) && !empty($magicName) && is_numeric($ownerId) && is_numeric($companyTypeId)) {
-        if (!is_numeric($legalName) && !is_numeric($magicName)) {
-            $ownerBusiness = new OwnerBusiness();
-            $owner = $ownerBusiness->getTBOwner($ownerId);
+        if (!empty($legalName) && !empty($magicName) && is_numeric($ownerId) && is_numeric($companyTypeId)) {
+            if (!is_numeric($legalName) && !is_numeric($magicName)) {
+                $ownerBusiness = new OwnerBusiness();
+                $owner = $ownerBusiness->getTBOwner($ownerId);
 
-            $touristCompanyTypeBusiness = new touristCompanyTypeBusiness();
-            $companyType = $touristCompanyTypeBusiness->getById($companyTypeId);
+                $touristCompanyTypeBusiness = new TouristCompanyTypeBusiness();
+                $companyType = $touristCompanyTypeBusiness->getById($companyTypeId);
 
-            if ($owner && $companyType) {
-                $touristCompany = new TouristCompany(0, $legalName, $magicName, $ownerId, $companyTypeId, $photoUrls, $status);
-                $touristCompanyBusiness = new touristCompanyBusiness();
-                $result = $touristCompanyBusiness->insert($touristCompany);
+                if ($owner && $companyType) {
+                    $touristCompany = new TouristCompany(0, $legalName, $magicName, $ownerId, $companyTypeId, $photoUrls, $status);
+                    $touristCompanyBusiness = new TouristCompanyBusiness();
+                    $result = $touristCompanyBusiness->insert($touristCompany);
 
-                if ($result == 1) {
-                    $response = ['status' => 'success', 'message' => 'Company successfully created.'];
-                } elseif ($result === null) {
-                    $response = ['status' => 'error', 'message' => 'Company already exists.'];
+                    // Verificación del resultado de la inserción
+                    if ($result['status'] == 'success') {
+                        $response = ['status' => 'success', 'message' => 'Compañía creada con éxito.'];
+                    } elseif ($result['status'] == 'error' && isset($result['message']) && $result['message'] === 'Compañía ya existe.') {
+                        $response = ['status' => 'error', 'message' => 'Compañía ya existe.'];
+                    } else {
+                        $response = ['status' => 'error', 'message' => 'Error en la base de datos: ' . $result['message']];
+                    }
                 } else {
-                    $response = ['status' => 'error', 'message' => 'Database error.'];
+                    $response = ['status' => 'error', 'message' => 'Propietario o tipo de compañía inválido.'];
                 }
             } else {
-                $response = ['status' => 'error', 'message' => 'Invalid owner or company type.'];
+                $response = ['status' => 'error', 'message' => 'Formato de datos inválido.'];
             }
         } else {
-            $response = ['status' => 'error', 'message' => 'Invalid data format.'];
+            $response = ['status' => 'error', 'message' => 'Los campos no deben estar vacíos.'];
         }
+
+        echo json_encode($response);
+        exit();
     } else {
-        $response = ['status' => 'error', 'message' => 'Empty fields are not allowed.'];
-    }
-
-
-echo json_encode($response);
-exit();
+        $response = ['status' => 'error', 'message' => 'No se han subido imágenes.'];
+        echo json_encode($response);
+        exit();
     }
 }
 

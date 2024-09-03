@@ -27,7 +27,7 @@ class TouristCompanyBusiness {
     }
 
     public function getById($idTouristCompany) {
-        return $this->touristCompanyData->getTouristById($idTouristCompany);
+        return $this->touristCompanyData->getTouristCompany($idTouristCompany);
     }
 
     public function getByName($touristCompanyName) {
