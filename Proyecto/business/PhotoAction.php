@@ -101,17 +101,23 @@ if (isset($_POST['delete'])) {
         $photoID = $_POST['photoID'];
         $imageIndex = $_POST['imageIndex'];
 
-        // Obtén la instancia de PhotoBusiness
-        $photoBusiness = new PhotoBusiness();
+        // Validar que photoID e imageIndex sean enteros para evitar inyecciones SQL
+        if (filter_var($photoID, FILTER_VALIDATE_INT) !== false && filter_var($imageIndex, FILTER_VALIDATE_INT) !== false) {
+            // Obtén la instancia de PhotoBusiness
+            $photoBusiness = new PhotoBusiness();
 
-        // Elimina la imagen específica
-        $result = $photoBusiness->deleteTBPhoto($photoID, $imageIndex);
+            // Elimina la imagen específica
+            $result = $photoBusiness->deleteTBPhoto($photoID, $imageIndex);
 
-        if ($result) {
-            header("Location: ../view/photoView.php?success=deleted");
-            exit();
+            if ($result) {
+                header("Location: ../view/photoView.php?success=deleted");
+                exit();
+            } else {
+                header("Location: ../view/photoView.php?error=dbError");
+                exit();
+            }
         } else {
-            header("Location: ../view/photoView.php?error=dbError");
+            header("Location: ../view/photoView.php?error=invalidParameters");
             exit();
         }
     } else {
@@ -119,6 +125,7 @@ if (isset($_POST['delete'])) {
         exit();
     }
 }
+
 
 
 
