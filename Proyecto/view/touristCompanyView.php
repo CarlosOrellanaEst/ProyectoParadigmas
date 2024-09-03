@@ -11,7 +11,7 @@
 
     $ownerBusiness = new OwnerBusiness();
     $owners = $ownerBusiness->getAllTBOwner();
-    $touristCompanyTypeBusiness = new touristCompanyTypeBusiness();
+    $touristCompanyTypeBusiness = new TouristCompanyTypeBusiness();
     $touristCompanyTypes = $touristCompanyTypeBusiness->getAll();
     $imageBasePath = '../images/';
     ?>
@@ -82,9 +82,9 @@
             </thead>
             <tbody>
                 <?php
-                $touristCompanyBusiness = new touristCompanyBusiness();
+                $touristCompanyBusiness = new TouristCompanyBusiness();
                 $ownerBusiness = new OwnerBusiness();
-                $touristCompanyTypeBusiness = new touristCompanyTypeBusiness();
+                $touristCompanyTypeBusiness = new TouristCompanyTypeBusiness();
                 $all = $touristCompanyBusiness->getAll();
                 $allowners = $ownerBusiness->getAllTBOwner();
                 $alltouristCompanyTypes = $touristCompanyTypeBusiness->getAll();
@@ -116,7 +116,7 @@
                             if ($owner->getIdTBOwner() == $current->getTbtouristcompanyowner()) {
                                 echo ' selected';
                             }
-                            echo '>' . htmlspecialchars($owner->getFullName()) . '</option>';
+                            echo '>' . htmlspecialchars($owner->getName() . ' ' . $owner->getSurnames()) . '</option>';
                         }
                         echo '</select>';
                         echo '</td>';
@@ -165,7 +165,7 @@
                         echo '</form>';
                         echo '</tr>';
                 
-                }
+                    }
                 } else {
                     echo '<tr><td colspan="6">No se encontraron resultados</td></tr>';
                 }

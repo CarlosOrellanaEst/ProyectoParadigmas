@@ -135,36 +135,58 @@ public function getAllTouristCompanies() {
             die("Connection failed: " . mysqli_connect_error());
         }
         $conn->set_charset('utf8');
-
-        $query = "UPDATE tbtouristcompany SET tbtouristcompanylegalname=?, tbtouristcompanymagicname=?, tbtouristcompanyowner=?, tbtouristcompanycompanytype=?, tbtouristcompanystatus=? WHERE tbtouristcompanyid=?";
-
+    
+        // Primero, obtener la URL actual de la imagen
+        $currentUrlQuery = "SELECT tbtouristcompanyurl FROM tbtouristcompany WHERE tbtouristcompanyid = ?";
+        $stmt = $conn->prepare($currentUrlQuery);
+        if ($stmt === false) {
+            die("Prepare failed: " . $conn->error);
+        }
+    
+        $tbtouristcompanyid = $touristCompany->getTbtouristcompanyid();
+        $stmt->bind_param("i", $tbtouristcompanyid);
+        $stmt->execute();
+        $stmt->bind_result($currentUrl);
+        $stmt->fetch();
+        $stmt->close();
+    
+        // Extraer datos del objeto TouristCompany
+        $tbtouristcompanylegalname = $touristCompany->getTbtouristcompanylegalname();
+        $tbtouristcompanymagicname = $touristCompany->getTbtouristcompanymagicname();
+        $tbtouristcompanyowner = $touristCompany->getTbtouristcompanyowner();
+        $tbtouristcompanycompanytype = $touristCompany->getTbtouristcompanycompanytype();
+        $tbtouristcompanystatus = $touristCompany->getTbtouristcompanystatus();
+    
+        // Asumiendo que las URLs de las imágenes están almacenadas como un array en $touristCompany->getTbtouristcompanyurl()
+        // Si no se sube una nueva imagen, usar la URL actual
+        $tbtouristcompanyurl = $touristCompany->getTbtouristcompanyurl();
+        if ($tbtouristcompanyurl === null || empty($tbtouristcompanyurl)) {
+            $tbtouristcompanyurl = $currentUrl;
+        } else {
+            $tbtouristcompanyurl = implode(',', $tbtouristcompanyurl); // Concatenar las URLs de las imágenes
+        }
+    
+        // Actualización de la consulta
+        $query = "UPDATE tbtouristcompany SET tbtouristcompanylegalname=?, tbtouristcompanymagicname=?, tbtouristcompanyowner=?, tbtouristcompanycompanytype=?, tbtouristcompanyurl=?, tbtouristcompanystatus=? WHERE tbtouristcompanyid=?";
+        
         $stmt = $conn->prepare($query);
         if ($stmt === false) {
             die("Prepare failed: " . $conn->error);
         }
-
-        if($this->getTouristCompanyByName($touristCompany->getLegalName())->getLegalName()=== $touristCompany->getLegalName()){            
-            $tbtouristcompanyid = $touristCompany->getId();
-            $tbtouristcompanylegalname = $touristCompany->getLegalName();
-            $tbtouristcompanymagicname = $touristCompany->getMagicName();
-            $tbtouristcompanyowner = $touristCompany->getOwner();
-            $tbtouristcompanycompanytype = $touristCompany->getCompanyType();
-            $tbtouristcompanystatus = $touristCompany->getStatus()
-            ;
-
-            $stmt->bind_param("ssiiii", $tbtouristcompanylegalname, $tbtouristcompanymagicname, $tbtouristcompanyowner, $tbtouristcompanycompanytype, $tbtouristcompanystatus, $tbtouristcompanyid);
-
-            $result = $stmt->execute();
-        }
-        else {
-            return $result = null;
-        }
+    
+        // Vincular parámetros
+        $stmt->bind_param("ssiisii", $tbtouristcompanylegalname, $tbtouristcompanymagicname, $tbtouristcompanyowner, $tbtouristcompanycompanytype, $tbtouristcompanyurl, $tbtouristcompanystatus, $tbtouristcompanyid);
+    
+        // Ejecutar la consulta
+        $result = $stmt->execute();
+    
         $stmt->close();
-
         mysqli_close($conn);
-
+    
         return $result;
     }
+    
+    
 
     public function getTouristCompany($idTBTouristCompany) {
         $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);

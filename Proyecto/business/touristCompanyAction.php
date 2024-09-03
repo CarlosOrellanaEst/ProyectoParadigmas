@@ -73,9 +73,9 @@ if (isset($_POST['create'])) {
 
                     // Verificación del resultado de la inserción
                     if ($result['status'] == 'success') {
-                        $response = ['status' => 'success', 'message' => 'Compañía creada con éxito.'];
-                    } elseif ($result['status'] == 'error' && isset($result['message']) && $result['message'] === 'Compañía ya existe.') {
-                        $response = ['status' => 'error', 'message' => 'Compañía ya existe.'];
+                        $response = ['status' => 'success', 'message' => 'Empresa creada con éxito.'];
+                    } elseif ($result['status'] == 'error' && isset($result['message']) && $result['message'] === 'Empresa ya existe.') {
+                        $response = ['status' => 'error', 'message' => 'Empresa ya existe.'];
                     } else {
                         $response = ['status' => 'error', 'message' => 'Error en la base de datos: ' . $result['message']];
                     }
@@ -100,10 +100,10 @@ if (isset($_POST['create'])) {
 
 
 if (isset($_POST['update'])) {
-    if (isset($_POST['ownerId']) && isset($_POST['tbtouristcompanyid']) && isset($_POST['magicName']) && isset($_POST['ownerId']) && isset($_POST['companyType']) && isset($_POST['status'])) {
+    if (isset($_POST['id']) && isset($_POST['ownerId']) && isset($_POST['legalName']) && isset($_POST['magicName']) && isset($_POST['companyType']) && isset($_POST['status'])) {
         
         $id = $_POST['id'];
-        $tbtouristcompanyLegalName = $_POST['tbtouristcompanyid'];
+        $tbtouristcompanyLegalName = $_POST['legalName'];
         $magicName = $_POST['magicName'];
         $ownerId = $_POST['ownerId'];
         $companyTypeId = $_POST['companyType'];
@@ -111,19 +111,35 @@ if (isset($_POST['update'])) {
         
         // Validación de campos
         if (strlen(trim($tbtouristcompanyLegalName)) > 0 && strlen(trim($magicName)) > 0 && is_numeric($ownerId) && is_numeric($companyTypeId) && is_numeric($status)) {
-            if (!is_numeric($tbtouristcompanyLegalName) && !is_numeric($magicName) &&  is_numeric($status)) {
+            if (!is_numeric($tbtouristcompanyLegalName) && !is_numeric($magicName)) {
                 $ownerBusiness = new OwnerBusiness();
                 $owner = $ownerBusiness->getTBOwner($ownerId);
 
-                $touristCompanyTypeBusiness = new touristCompanyTypeBusiness();
+                $touristCompanyTypeBusiness = new TouristCompanyTypeBusiness();
                 $companyType = $touristCompanyTypeBusiness->getById($companyTypeId);
 
-                if ($ownerId && $companyType) {
-                    $touristCompanyBusiness = new touristCompanyBusiness();
-                    $touristCompany = new TouristCompany($id, $tbtouristcompanyLegalName, $magicName, $ownerId, $companyTypeId, $status);
+                if ($owner && $companyType) {
+                    $imagePaths = [];
+
+                    // Manejo de imágenes
+                    if (isset($_FILES['imagenes']) && $_FILES['imagenes']['error'][0] === UPLOAD_ERR_OK) {
+                        foreach ($_FILES['imagenes']['tmp_name'] as $key => $tmp_name) {
+                            $fileName = $_FILES['imagenes']['name'][$key];
+                            $fileTmp = $_FILES['imagenes']['tmp_name'][$key];
+                            $filePath = '../images/' . basename($fileName);
+                    
+                            if (move_uploaded_file($fileTmp, $filePath)) {
+                                $imagePaths[] = $filePath;
+                            }
+                        }
+                    }
+                    $touristCompanyBusiness = new TouristCompanyBusiness();
+                    $touristCompany = new TouristCompany($id, $tbtouristcompanyLegalName, $magicName, $ownerId, $companyTypeId, $imagePaths, $status);
+
+                    
                     $result = $touristCompanyBusiness->update($touristCompany);
 
-                    if ($result == 1) {
+                    if ($result) {
                         header("location: ../view/touristCompanyView.php?success=updated");
                         exit();
                     } else {

@@ -7,16 +7,14 @@ class Photo {
     private $indexTBActivity;
     private $dataAttributeTBActivity;
     private $statusTBActivity;
-   
 
-    function __construct ($idTBActivity = 0, $nameTBActivity = "", $attributeTBActivity="", $indexTBActivity="",$dataAttributeTBActivity="",$statusTBActivity=true) { 
+    function __construct ($idTBActivity = 0, $nameTBActivity = "", $attributeTBActivity="", $indexTBActivity="", $dataAttributeTBActivity="",$statusTBActivity=true) { 
         $this->idTBActivity = $idTBActivity;
         $this->nameTBActivity = $nameTBActivity;
         $this->attributeTBActivity = $attributeTBActivity;
         $this->indexTBActivity = $indexTBActivity;
         $this->dataAttributeTBActivity = $dataAttributeTBActivity;
         $this->statusTBActivity = $statusTBActivity;
-     
     }
 
     // Getters
