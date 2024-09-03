@@ -1,6 +1,6 @@
 <?php
 
-include_once '../data/PhotoData.php';
+include_once '../data/photoData.php';
 
 class PhotoBusiness {
 
@@ -22,7 +22,9 @@ class PhotoBusiness {
     public function deleteTBPhoto($photoId, $imageIndex) {
         return $this->photoData->deleteTBPhoto($photoId, $imageIndex);
     }
+    /*
     public function getLastInsertedPhotoId() {
         return $this->photoData->getLastInsertedPhotoId();
     }
+        */
 }

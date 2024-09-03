@@ -1,6 +1,6 @@
 <?php
 
-include '../business/PhotoBusiness.php';
+include '../business/photoBusiness.php';
 
 
 if (isset($_POST['create'])) {

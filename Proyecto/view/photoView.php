@@ -5,7 +5,7 @@
     <a href="../index.html">← Volver al inicio</a>
     <title>CRUD Fotos</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <?php include '../business/PhotoBusiness.php'; ?>
+    <?php include '../business/photoBusiness.php'; ?>
 </head>
 <body>
     <header> 
@@ -14,7 +14,7 @@
 
     <!-- Formulario para crear nuevas fotos -->
     <section id="formCreate">
-        <form method="post" action="../business/PhotoAction.php" enctype="multipart/form-data">
+        <form method="post" action="../business/photoAction.php" enctype="multipart/form-data">
             <label for="imagenes">Selecciona las imágenes (máximo 5):</label>
             <input type="file" name="imagenes[]" accept="image/*" multiple>
             <input type="submit" value="Crear" name="create" id="create"/>
@@ -27,7 +27,7 @@
     <!-- Listado de fotos -->
     <section>
         <?php
-        $photoBusiness = new PhotoBusiness();
+        $photoBusiness = new photoBusiness();
         $allphotos = $photoBusiness->getAllTBPhotos();
         ?>
 
@@ -70,7 +70,7 @@
                             </td>
                             <td>
                                 <!-- Formulario para actualizar una imagen -->
-                                <form method="post" action="../business/PhotoAction.php" enctype="multipart/form-data">
+                                <form method="post" action="../business/photoAction.php" enctype="multipart/form-data">
                                     <input type="hidden" name="photoID" value="<?php echo $current->getIdTBPhoto(); ?>">
                                     <select name="imageIndex">
                                         <?php foreach ($photoUrls as $index => $photo): ?>
@@ -85,7 +85,7 @@
                             </td>
                             <td>
                                 <!-- Formulario para eliminar una imagen específica -->
-                                <form method="post" action="../business/PhotoAction.php">
+                                <form method="post" action="../business/photoAction.php">
                                     <input type="hidden" name="photoID" value="<?php echo $current->getIdTBPhoto(); ?>">
                                     <select name="imageIndex">
                                         <?php foreach ($photoUrls as $index => $photo): ?>
@@ -99,7 +99,7 @@
                             </td>
                             <td>
                                 <!-- Formulario para eliminar todas las imágenes de un registro -->
-                                <form method="post" action="../business/PhotoAction.php">
+                                <form method="post" action="../business/photoAction.php">
                                     <input type="hidden" name="photoID" value="<?php echo $current->getIdTBPhoto(); ?>">
                                     <input type="submit" value="Eliminar Todo" name="deleteAll">
                                 </form>
