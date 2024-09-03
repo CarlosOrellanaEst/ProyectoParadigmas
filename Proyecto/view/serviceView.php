@@ -9,39 +9,24 @@
             border-right: 1px solid;
         }
     </style>
-
-<!--     <script src="../resources/serviceView.js"></script>
-    <script src="../resources/AJAXCreateService.js"></script> -->
+    <script src="../resources/AJAXCreateService.js"></script>
 </head>
 <body>
     <header> 
         <h1>CRUD Servicios</h1>
     </header>
     <section>
-        <form method="post"  id="formCreate">
-            <label for="description">Nombre del servicio</label>
-            <input placeholder="descripción" type="text" name="rollDescription" id="description"/>
+        <form method="POST"  id="formCreate" enctype="multipart/form-data">
+            <label for="serviceName">Nombre del servicio</label>
+            <input placeholder="servicio" type="text" name="serviceName" id="serviceName"/>
+            <label for="images">Selecciona las imágenes del servicio (máximo 5):</label>
+            <input type="file" id="images" name="images[]" accept="image/*" multiple>
+
             <input type="submit" value="Crear" name="create" id="create"/>
         </form>
     </section>
-        <!-- Botón para abrir el modal -->
-        <button id="btnOpenModal">Agregar imágenes</button>
-
-        <!-- Modal con el formulario de subir imágenes -->
-        <div id="myModal" class="modal">
-            <div class="modal-content">
-                <span class="close">&times;</span>
-                <h2>Subir Imágenes</h2>
-                <form method="post" action="../business/PhotoAction.php" enctype="multipart/form-data">
-                    <label for="imagenes">Selecciona las imágenes (máximo 5):</label>
-                    <input type="file" name="imagenes[]" accept="image/*" multiple>
-                    <input type="submit" value="Crear" name="create" id="create" />
-                </form>
-            </div>
-        </div>
     <br><br>
     <section>
-
 <!--         <table>
             <thead>
                 <tr>
@@ -51,7 +36,7 @@
             </thead>
             <tbody>
                 <?php
-                    $serviceBusiness = new serviceBusiness();
+                 /*    $serviceBusiness = new serviceBusiness();
                     $allRolls = $rollBusiness->getAllTBRolls();
                     $rollsFiltered = [];
 
@@ -77,34 +62,11 @@
                                 echo '<input type="submit" value="Eliminar" name="delete"/>';
                             echo '</td>';
                         echo '</tr>';
-                        echo '</form>';
-                    }
+                        echo '</form>'; 
+                    }*/
                 ?>
             </tbody>
         </table> -->
     </section>
-    <script>
-        // JavaScript para manejar el modal
-        var modal = document.getElementById("myModal");
-        var btn = document.getElementById("btnOpenModal");
-        var span = document.getElementsByClassName("close")[0];
-
-        // Cuando el usuario hace clic en el botón, abre el modal
-        btn.onclick = function() {
-            modal.style.display = "block";
-        }
-
-        // Cuando el usuario hace clic en la 'x', cierra el modal
-        span.onclick = function() {
-            modal.style.display = "none";
-        }
-
-        // Cuando el usuario hace clic fuera del modal, lo cierra
-        window.onclick = function(event) {
-            if (event.target == modal) {
-                modal.style.display = "none";
-            }
-        }
-    </script>
 </body>
 </html>

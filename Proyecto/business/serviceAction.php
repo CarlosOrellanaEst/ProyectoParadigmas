@@ -2,35 +2,122 @@
 
 include './serviceBusiness.php';
 
-
 $response = array();
 // para el AJAX de Create
 
-if (isset($_POST['name'])) {
-    $name = trim($_POST['name']);
-    $description = trim($_POST['description']);
+if (isset($_POST['create'])) {
+    $response = array();
+    if (isset($_FILES['images']) && !empty($_FILES['images']['name'][0])) {
+        $uploadDir = '../images/services';
+        $fileNames = array();
+        $allowTypes = array('jpg', 'png', 'jpeg', 'gif');
 
-    if (empty($name)) {
-        $response['status'] = 'error';
-        $response['message'] = 'El nombre del roll no puede estar vacío';
-    } else {
-        $roll = new Roll(0, $name, $description, 1);
-
-        $rollBusiness = new RollBusiness();
-        $result = $rollBusiness->insertTBRoll($roll);
-
-        if ($result['status'] === 'success') {
-            $response['status'] = 'success';
-            $response['message'] = 'Roll añadido correctamente';
-        } else {
+        // Verifica que no se suban más de 5 archivos
+        if (count($_FILES['images']['name']) > 5) {
             $response['status'] = 'error';
-            $response['message'] = 'Fallo al agregar el roll: ' . $result['message'];
+                    $response['message'] = 'Se permite maximo 5 imagenes';
+                    echo json_encode($response);
+            exit();
         }
+
+        // Mover los archivos y obtener los nombres
+        foreach ($_FILES['images']['name'] as $key => $fileName) {
+            $targetFilePath = $uploadDir . '/' . basename($fileName);
+            $fileType = strtolower(pathinfo($targetFilePath, PATHINFO_EXTENSION));
+        
+            if (in_array($fileType, $allowTypes)) {
+                $tempPath = $_FILES['images']['tmp_name'][$key];
+                if (move_uploaded_file($tempPath, $targetFilePath)) {
+                    $fileNames[] = basename($fileName);
+                } else {
+                    $response['status'] = 'error';
+                    $response['message'] = 'Error al mover la imagen';
+                    echo json_encode($response);
+                    exit();
+                }
+            } else {
+                $response['status'] = 'error';
+                $response['message'] = 'Formato de imagen invalido';
+                echo json_encode($response);
+                exit();
+            }
+        }
+
+        $photoUrls = implode(',', $fileNames);
+        error_log('File names: ' . implode(',', $fileNames));
+        $serviceName = $_POST['serviceName'] ?? '';
+
+        if (!empty($serviceName)) {
+            $service = new Service(0, $serviceName, $photoUrls, 1);
+            $serviceBusiness = new ServiceBusiness();
+            $result = $serviceBusiness->insertTBService($service);
+
+            if ($result == 1) {
+                $response = ['status' => 'success', 'message' => 'Service successfully added.'];
+            } elseif ($result === null) {
+                $response = ['status' => 'error', 'message' => 'Service already exists.'];
+            } else {
+                $response = ['status' => 'error', 'message' => 'Database error.'];
+            }
+        } else {
+            $response = ['status' => 'error', 'message' => 'Empty fields are not allowed.'];
+        }
+        echo json_encode($response);
+        exit();
+    }
+}
+
+
+/* if (isset($_POST['nameService'])) {
+    $name = trim($_POST['nameService']);
+    // si van fotos llamo al de insertar de fotos
+    if (isset($_FILES['imagenes']) && !empty($_FILES['imagenes']['name'][0])) { 
+        $uploadDir = '../images/services/';
+        $fileNames = array();
+        $allowTypes = array('jpg', 'png', 'jpeg', 'gif');
+
+        // Verifica que no se suban más de 5 archivos
+        if (count($_FILES['imagenes']['name']) > 5) {
+            header("location: ../view/serviceView.php?error=tooManyFiles");
+            exit();
+        }
+
+        foreach ($_FILES['imagenes']['name'] as $key => $fileName) {
+            $targetFilePath = $uploadDir . basename($fileName);
+            $fileType = strtolower(pathinfo($targetFilePath, PATHINFO_EXTENSION));
+
+            if (in_array($fileType, $allowTypes)) {
+                // Mueve el archivo temporal a la ubicación final
+                $tempPath = $_FILES['imagenes']['tmp_name'][$key];
+                if (move_uploaded_file($tempPath, $targetFilePath)) {
+                    $fileNames[] = basename($fileName);
+                } else {
+                    header("location: ../view/serviceView.php?error=moveFailed");
+                    exit();
+                }
+            } else {
+                header("location: ../view/serviceView.php?error=invalidFileType");
+                exit();
+            }
+        }
+
+        $photoUrls = implode(',', $fileNames);
+        
+        $service = new Service(0, $name,  $photoUrls, 1);
+        $serviceBusiness = new ServiceBusiness();
+        $result = $serviceBusiness->insertTBService($service);
+
+        if ($result) {
+            header("location: ../view/serviceView.php?success=inserted");
+        } else {
+            header("location: ../view/serviceView.php?error=insertFailed");
+        }
+        exit();
     }
     echo json_encode($response);
     exit();
 }
-
+ */
 if (isset($_POST['update'])) {
     if (isset($_POST['rollName']) && isset($_POST['rollDescription']) && isset($_POST['rollID'])) {
         $name = $_POST['rollName'];

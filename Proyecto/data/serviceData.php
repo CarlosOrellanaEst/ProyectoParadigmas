@@ -3,7 +3,6 @@
 include_once 'data.php';
 include '../domain/Service.php';
 
-
 class ServiceData extends Data {
 
  // Prepared Statement
@@ -12,38 +11,36 @@ class ServiceData extends Data {
         if (!$conn) {
             return ['status' => 'error', 'message' => 'Connection failed: ' . mysqli_connect_error()];
         }
-
         $conn->set_charset('utf8');
-
         $queryGetLastId = "SELECT MAX(tbserviceid) AS idtbservice FROM tbservice";
         $idCont = mysqli_query($conn, $queryGetLastId);
         if ($idCont === false) {
             mysqli_close($conn);
             return ['status' => 'error', 'message' => 'Failed to get last ID: ' . $conn->error];
         }
-
         $nextId = 1;
-        if ($row = mysqli_fetch_row($idCont)) {
+        if($row = mysqli_fetch_row($idCont)) {
             $lastId = $row[0] !== null ? (int)trim($row[0]) : 0;
             $nextId = $lastId + 1;
         }
 
         $name = $service->getNameTBService();
         $photourl = $service->getPhotoURLTBService();
-
         $exists = $this->getTBServiceByName($service);
+        $status = true;
+
         if ($exists > 0) {
                 mysqli_close($conn);
                 return ['status' => 'error', 'message' => 'El nombre del servicio ya existe.']; 
         } else {
-            $queryInsert = "INSERT INTO tbservice (tbserviceid, tbservicename, tbphoto, tbservicestatus) VALUES (?, ?, ?, 1)";
+            $queryInsert = "INSERT INTO tbservice (tbserviceid, tbservicename, tbphotourls, tbservicestatus) VALUES (?, ?, ?, ?)";
             $stmt = $conn->prepare($queryInsert);
             if ($stmt === false) {
                 mysqli_close($conn);
                 return ['status' => 'error', 'message' => 'Prepare failed: ' . $conn->error];
             }
 
-            $stmt->bind_param("iss", $nextId, $name, $photourl);
+            $stmt->bind_param("issi", $nextId, $name, $photourl, $status);
             $result = $stmt->execute();
             $stmt->close();
             mysqli_close($conn);

@@ -3,13 +3,13 @@
 class Service {
     private $idTBService;
     private $nameTBService;
-    private $photoURLTBService;
+    private $photoURLTBServiceArray;
     private $statusTBService;
 
-    function __construct($idTBService = 0, $nameTBService = "", $photoURLTBService = "", $statusTBService = 1) { 
+    function __construct($idTBService, $nameTBService, $photoURLTBService, $statusTBService) { 
         $this->idTBService = $idTBService;
         $this->nameTBService = $nameTBService;
-        $this->photoURLTBService = $photoURLTBService;
+        $this->photoURLTBServiceArray = $photoURLTBService;
         $this->statusTBService = $statusTBService;
     }
 
@@ -20,7 +20,7 @@ class Service {
         return $this->nameTBService;
     }
     public function getPhotoURLTBService() {
-        return $this->photoURLTBService;
+        return $this->photoURLTBServiceArray;
     }
     public function getStatusTBService() {
         return $this->statusTBService;
@@ -33,7 +33,7 @@ class Service {
         $this->nameTBService = $nameTBService;
     }
     public function setPhotoURLTBService($photoURLTBService) {
-        $this->photoURLTBService = $photoURLTBService;
+        $this->photoURLTBServiceArray = $photoURLTBService;
     }
     public function setStatusTBService($statusTBService) {
         $this->statusTBService = $statusTBService;
