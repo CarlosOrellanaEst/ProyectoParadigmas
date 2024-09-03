@@ -20,6 +20,7 @@
             <input type="submit" value="Crear" name="create" id="create"/>
         </form>
     </section>
+    <?php /* include '../componentes/View/formPhoto.php'; */ ?>
 
     <br><br>
 

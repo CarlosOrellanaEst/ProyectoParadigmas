@@ -44,41 +44,74 @@ class PhotoData extends Data {
     
     
     
-   public function getAllTBPhotos() {
-    $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
-    if (!$conn) {
-        die("Connection failed: " . mysqli_connect_error());
+    public function getAllTBPhotos() {
+        $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
+        if (!$conn) {
+            die("Connection failed: " . mysqli_connect_error());
+        }
+        $conn->set_charset('utf8');
+
+        $query = "SELECT * FROM tbphoto WHERE tbphotostatus = 1";
+        $result = mysqli_query($conn, $query);
+
+        $photos = [];
+
+        while ($row = mysqli_fetch_assoc($result)) {
+            // Filtra las URLs inactivas
+            $urls = array_filter(explode(',', $row['tbphotourl']), function($url) {
+                return $url !== '5';
+            });
+
+            // Crear una instancia de Photo con las URLs filtradas
+            $currentPhoto = new Photo(
+                $row['tbphotoid'],
+                implode(',', $urls), // Sólo URLs activas
+                $row['tbphotoindex'],
+                $row['tbphotostatus']
+            );
+
+            array_push($photos, $currentPhoto);
+        }
+
+        mysqli_close($conn);
+
+        return $photos;
     }
-    $conn->set_charset('utf8');
 
-    $query = "SELECT * FROM tbphoto WHERE tbphotostatus = 1";
-    $result = mysqli_query($conn, $query);
+    public function getTBPhotosByID($id) {
+        $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
+        if (!$conn) {
+            die("Connection failed: " . mysqli_connect_error());
+        }
+        $conn->set_charset('utf8');
 
-    $photos = [];
+        $query = "SELECT * FROM tbphoto WHERE tbphotoid = '$id' AND tbphotostatus = 1";
+        $result = mysqli_query($conn, $query);
 
-    while ($row = mysqli_fetch_assoc($result)) {
-        // Filtra las URLs inactivas
-        $urls = array_filter(explode(',', $row['tbphotourl']), function($url) {
-            return $url !== '5';
-        });
+        $photos = [];
 
-        // Crear una instancia de Photo con las URLs filtradas
-        $currentPhoto = new Photo(
-            $row['tbphotoid'],
-            implode(',', $urls), // Sólo URLs activas
-            $row['tbphotoindex'],
-            $row['tbphotostatus']
-        );
+        while ($row = mysqli_fetch_assoc($result)) {
+            // Filtra las URLs inactivas
+            $urls = array_filter(explode(',', $row['tbphotourl']), function($url) {
+                return $url !== '5';
+            });
 
-        array_push($photos, $currentPhoto);
+            // Crear una instancia de Photo con las URLs filtradas
+            $currentPhoto = new Photo(
+                $row['tbphotoid'],
+                implode(',', $urls), // Sólo URLs activas
+                $row['tbphotoindex'],
+                $row['tbphotostatus']
+            );
+
+            array_push($photos, $currentPhoto);
+        }
+
+        mysqli_close($conn);
+
+        return $photos;
     }
 
-    mysqli_close($conn);
-
-    return $photos;
-}
-
-    
     public function updateTBPhoto($photoId, $imageIndex, $newUrl, $existingUrls) {
         $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
         if (!$conn) {
