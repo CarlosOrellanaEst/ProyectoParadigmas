@@ -105,6 +105,15 @@ CREATE TABLE `tbtouristcompany` (
   `tbtouristcompanystatus` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- ----------------------------------------------------------
+CREATE TABLE `tbactivity` (
+  `tbactivityid` int(11) NOT NULL,
+  `tbactivityname` varchar(255) NOT NULL,
+  `tbactivityatributearray` varchar(255) NOT NULL,
+  `tbactivitydataarray` varchar(255) NOT NULL,
+  `tbactivitystatus` tinyint(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 --
 -- Volcado de datos para la tabla `tbroll`
 --
