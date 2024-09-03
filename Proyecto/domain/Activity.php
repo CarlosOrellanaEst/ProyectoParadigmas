@@ -1,53 +1,66 @@
 <?php
 
-class Photo {
+class Activity {
     private $idTBActivity;
     private $nameTBActivity;
-    private $attributeTBActivity;
-    private $indexTBActivity;
-    private $dataAttributeTBActivity;
+    private $attributeTBActivityArray;
+    private $dataAttributeTBActivityArray;
     private $statusTBActivity;
 
-    function __construct ($idTBActivity = 0, $nameTBActivity = "", $attributeTBActivity="", $indexTBActivity="", $dataAttributeTBActivity="",$statusTBActivity=true) { 
+    function __construct ($idTBActivity = 0, $nameTBActivity = "", $attributeTBActivityArray="",$dataAttributeTBActivityArray="",$statusTBActivity=true) { 
         $this->idTBActivity = $idTBActivity;
         $this->nameTBActivity = $nameTBActivity;
-        $this->attributeTBActivity = $attributeTBActivity;
-        $this->indexTBActivity = $indexTBActivity;
-        $this->dataAttributeTBActivity = $dataAttributeTBActivity;
+        $this->attributeTBActivityArray = $attributeTBActivityArray;
+        $this->dataAttributeTBActivityArray = $dataAttributeTBActivityArray;
         $this->statusTBActivity = $statusTBActivity;
     }
 
-    // Getters
-    public function getIdTBPhoto() {
-        return $this->idTBPhoto;
+    // Getter
+    
+    public function getIdTBActivity() {
+        return $this->idTBActivity;
     }
 
-    public function getUrlTBPhoto() {
-        return $this->urlTBPhoto;
+    public function getNameTBActivity() {
+        return $this->nameTBActivity;
     }
 
-    public function getIndexTBPhoto() {
-        return $this->indexTBPhoto;
+    public function getAttributeTBActivityArray() {
+        return $this->attributeTBActivityArray;
     }
 
-    public function getStatusTBPhoto() {
-        return $this->statusTBPhoto;
+    public function getDataAttributeTBActivityArray() {
+        return $this->dataAttributeTBActivityArray;
     }
 
-    // Setters
-    public function setIdTBPhoto($idTBPhoto) {
-        $this->idTBPhoto = $idTBPhoto;
+    public function getStatusTBActivity() {
+        return $this->statusTBActivity;
     }
 
-    public function setUrlTBPhoto($urlTBPhoto) {
-        $this->urlTBPhoto = $urlTBPhoto;
+    // Setter
+
+    public function setIdTBActivity($idTBActivity) {
+        $this->idTBActivity = $idTBActivity;
     }
 
-    public function setIndexTBPhoto($indexTBPhoto) {
-        $this->indexTBPhoto = $indexTBPhoto;
+    public function setNameTBActivity($nameTBActivity) {
+        $this->nameTBActivity = $nameTBActivity;
     }
 
-    public function setStatusTBPhoto($statusTBPhoto) {
-        $this->statusTBPhoto = $statusTBPhoto;
+    public function setAttributeTBActivityArray($attributeTBActivityArray) {
+        $this->attributeTBActivityArray = $attributeTBActivityArray;
     }
+
+
+    public function setDataAttributeTBActivityArray($dataAttributeTBActivityArray) {
+        $this->dataAttributeTBActivityArray = $dataAttributeTBActivityArray;
+    }
+
+    public function setStatusTBActivity($statusTBActivity) {
+        $this->statusTBActivity = $statusTBActivity;
+    }
+
+
+
+
 }
