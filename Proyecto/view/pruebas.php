@@ -170,12 +170,12 @@
                             echo 'No hay fotos';
                         }
                         echo '</td>';
-                        echo '<td>';
+
                         // Formulario para actualizar una imagen
+                        echo '<td>';
                         echo '<form method="post" action="../business/PhotoAction.php" enctype="multipart/form-data">';
                         echo '<input type="hidden" name="photoID" value="' . htmlspecialchars($current->getTbphotoid()) . '">';
-                        // Convertir $photoUrl en un array
-                        $photoUrlsArray = explode(',', $photoUrl);
+                        $photoUrlsArray = explode(',', $current->getPhotos()[0]->getUrlTBPhoto()); // Asegúrate de usar el primer set de URLs
                         echo '<input type="hidden" name="existingUrls" value="' . htmlspecialchars(implode(',', $photoUrlsArray)) . '">';
                         echo '<select name="imageIndex">';
                         foreach ($photoUrlsArray as $index => $photo) {
@@ -188,10 +188,11 @@
                         echo '<input type="submit" value="Actualizar Imagen" name="update">';
                         echo '</form><br>'; // Línea de separación entre formularios
                         echo '</td>';
-                        echo '<td>';
+
                         // Formulario para eliminar una imagen específica
+                        echo '<td>';
                         echo '<form method="post" action="../business/PhotoAction.php">';
-                        $photoUrlsArray = explode(',', $photoUrl);
+                        $photoUrlsArray = explode(',', $current->getPhotos()[0]->getUrlTBPhoto()); // Asegúrate de usar el primer set de URLs
                         echo '<input type="hidden" name="photoID" value="' . htmlspecialchars($current->getTbphotoid()) . '">';
                         echo '<select name="imageIndex">';
                         foreach ($photoUrlsArray as $index => $photo) {
@@ -203,20 +204,24 @@
                         echo '<input type="submit" value="Eliminar Imagen" name="delete">';
                         echo '</form>';
                         echo '</td>';
+
+                        // Acciones adicionales para actualizar o eliminar la empresa
                         echo '<td>';
                         echo '<input type="hidden" name="id" value="' . htmlspecialchars($current->getTbtouristcompanyid()) . '">';
-                        echo '<input type="submit" value="Actualizar">';
-                        echo '<input type="submit" value="Eliminar" name="delete" onclick="return confirm(\'¿Estás seguro de que deseas eliminar esta empresa turística?\');">';
+                        echo '<input type="submit" value="Actualizar" name="update">';
+                        echo '<input type="submit" value="Eliminar" name="delete" onclick="return confirm(\'¿Estás seguro de que deseas eliminar esta empresa?\');">';
                         echo '</td>';
+
                         echo '</tr>';
                         echo '</form>';
                     }
                 } else {
-                    echo '<tr><td colspan="8">No hay empresas turísticas disponibles.</td></tr>';
+                    echo '<tr><td colspan="8">No se encontraron resultados.</td></tr>';
                 }
                 ?>
             </tbody>
         </table>
     </section>
 </body>
+
 </html>

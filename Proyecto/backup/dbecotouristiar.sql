@@ -101,7 +101,7 @@ CREATE TABLE `tbtouristcompany` (
   `tbtouristcompanymagicname` varchar(255) NOT NULL,
   `tbtouristcompanyowner` int(11) NOT NULL,
   `tbtouristcompanycompanyType` int(11) NOT NULL,
-  `tbphotoid` int(11) NOT NULL,
+  `tbtouristcompanyurl` TEXT  NOT NULL,
   `tbtouristcompanystatus` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 

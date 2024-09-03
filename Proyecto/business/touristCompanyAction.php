@@ -11,6 +11,7 @@ include_once '../business/PhotoBusiness.php'; // Incluye el archivo que define P
 header('Content-Type: application/json');
 
 if (isset($_POST['create'])) {
+    $response = array();
     if (isset($_FILES['imagenes']) && !empty($_FILES['imagenes']['name'][0])) {
         $uploadDir = '../images/';
         $fileNames = array();
@@ -18,7 +19,9 @@ if (isset($_POST['create'])) {
 
         // Verifica que no se suban más de 5 archivos
         if (count($_FILES['imagenes']['name']) > 5) {
-            header("location: ../view/photoView.php?error=tooManyFiles");
+            $response['status'] = 'error';
+                    $response['message'] = 'Se permite maximo 5 imagenes';
+                    echo json_encode($response);
             exit();
         }
 
@@ -32,25 +35,22 @@ if (isset($_POST['create'])) {
                 if (move_uploaded_file($tempPath, $targetFilePath)) {
                     $fileNames[] = basename($fileName);
                 } else {
-                    header("location: ../view/photoView.php?error=moveFailed");
+                    $response['status'] = 'error';
+                    $response['message'] = 'Error al mover la imagen';
+                    echo json_encode($response);
                     exit();
                 }
             } else {
-                header("location: ../view/photoView.php?error=invalidFileType");
+                $response['status'] = 'error';
+                $response['message'] = 'Formato de imagen invalido';
+                echo json_encode($response);
                 exit();
             }
         }
 
        // Insertar las fotos en la base de datos
-$photoUrls = implode(',', $fileNames);
-$photoBusiness = new PhotoBusiness();
-$lastPhotoId = $photoBusiness->insertMultiplePhotos($photoUrls);
-
-if ($lastPhotoId !== false) {
-    // Aquí el valor de $lastPhotoId ya es el último ID insertado correctamente
-    // Puedes proceder con la inserción de la compañía turística usando $lastPhotoId
-
-    // Obtener datos de la empresa turística
+        $photoUrls = implode(',', $fileNames);
+       // Obtener datos de la empresa turística
     $legalName = $_POST['legalName'] ?? '';
     $magicName = $_POST['magicName'] ?? '';
     $ownerId = $_POST['ownerId'] ?? 0;
@@ -66,9 +66,9 @@ if ($lastPhotoId !== false) {
             $companyType = $touristCompanyTypeBusiness->getById($companyTypeId);
 
             if ($owner && $companyType) {
-                $touristCompany = new TouristCompany(0, $legalName, $magicName, $ownerId, $companyTypeId, $lastPhotoId, $status);
+                $touristCompany = new TouristCompany(0, $legalName, $magicName, $ownerId, $companyTypeId, $photoUrls, $status);
                 $touristCompanyBusiness = new touristCompanyBusiness();
-                $result = $touristCompanyBusiness->insert($touristCompany, $lastPhotoId);
+                $result = $touristCompanyBusiness->insert($touristCompany);
 
                 if ($result == 1) {
                     $response = ['status' => 'success', 'message' => 'Company successfully created.'];
@@ -86,11 +86,10 @@ if ($lastPhotoId !== false) {
     } else {
         $response = ['status' => 'error', 'message' => 'Empty fields are not allowed.'];
     }
-} else {
-    $response = ['status' => 'error', 'message' => 'Failed to insert photos.'];
-}
+
 
 echo json_encode($response);
+exit();
     }
 }
 
