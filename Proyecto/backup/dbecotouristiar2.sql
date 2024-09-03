@@ -110,6 +110,15 @@ INSERT INTO `tbphoto` (`tbphotoid`, `tbphotourl`, `tbphotoindex`, `tbphotostatus
 (5, 'WhatsApp Image 2024-08-12 at 17.24.09_7cd89334.jpg', '0', 1),
 (6, 'pexels-jaden-van-heyningen-1257873595-27438918.jpg', '0', 1),
 (7, 'dog.jpg', '0', 1);
+-- --------------------------------------------------------
+CREATE TABLE `tbactivity` (
+  `tbactivityid` int(11) NOT NULL,
+  `tbactivityname` varchar(255) NOT NULL,
+  `tbactivityatributearray` varchar(255) NOT NULL,
+  `tbactivitydataarray` varchar(255) NOT NULL,
+  `tbactivitystatus` tinyint(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 
 -- --------------------------------------------------------
 
