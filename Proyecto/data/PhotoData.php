@@ -1,7 +1,7 @@
 <?php
 
 include_once 'data.php';
-include '../domain/Photo.php';
+include_once '../domain/Photo.php';
 
 class PhotoData extends Data {
 
@@ -23,6 +23,8 @@ class PhotoData extends Data {
     
         $urls = array_slice(array_map('trim', explode(',', $photoUrls)), 0, 5);
     
+        $indices = implode(',', array_keys($urls));
+        $urlsString = implode(',', $urls);
         $queryInsert = "INSERT INTO tbphoto (tbphotoid, tbphotourl, tbphotoindex, tbphotostatus) VALUES (?, ?, ?, ?)";
         $stmt = $conn->prepare($queryInsert);
         if ($stmt === false) {
@@ -30,23 +32,14 @@ class PhotoData extends Data {
         }
     
         $statusDelete = true;
-        $lastInsertedId = $lastId; // Inicializa con el último ID antes de insertar
-        $result = true;
+        $nextId = $lastId + 1; // Incrementar el último ID para el nuevo registro
     
-        foreach ($urls as $index => $url) {
-            $nextId = $lastId + $index + 1;
-            $stmt->bind_param("issi", $nextId, $url, $index, $statusDelete);
-            if (!$stmt->execute()) {
-                $result = false; // Si falla alguna inserción, marcamos el resultado como falso
-                break;
-            }
-            $lastInsertedId = $nextId; // Actualiza el último ID insertado
-        }
-    
+        $stmt->bind_param("issi", $nextId, $urlsString, $indices, $statusDelete); // index es 0 ya que solo hay un registro
+        $result = $stmt->execute();
         $stmt->close();
         mysqli_close($conn);
     
-        return $result ? $lastInsertedId : false; // Devuelve el último ID insertado o false si falló
+        return $result ? $nextId : false;  // Devuelve el último ID insertado o false si falló
     }
     
     
@@ -115,6 +108,7 @@ class PhotoData extends Data {
     }
     
     public function deleteTBPhoto($photoId, $imageIndex) {
+        // Conectar a la base de datos
         $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
         if (!$conn) {
             die("Connection failed: " . mysqli_connect_error());
@@ -122,41 +116,52 @@ class PhotoData extends Data {
         $conn->set_charset('utf8');
     
         // Obtener las URLs existentes para la foto
-        $queryGetUrls = "SELECT tbphotourl FROM tbphoto WHERE tbphotoid = $photoId";
-        $resultGetUrls = mysqli_query($conn, $queryGetUrls);
+        $queryGetUrls = "SELECT tbphotourl, tbphotoindex FROM tbphoto WHERE tbphotoid = ?";
+        $stmtGetUrls = $conn->prepare($queryGetUrls);
+        $stmtGetUrls->bind_param("i", $photoId);
+        $stmtGetUrls->execute();
+        $resultGetUrls = $stmtGetUrls->get_result();
     
-        if ($resultGetUrls && $row = mysqli_fetch_assoc($resultGetUrls)) {
+        if ($resultGetUrls && $row = $resultGetUrls->fetch_assoc()) {
             $existingUrls = explode(',', $row['tbphotourl']);
-            $existingUrls[$imageIndex] = '5'; // Marca la imagen como inactiva
-    
-            // Reconstruir el string de URLs
-            $newUrlsString = implode(',', $existingUrls);
-    
-            // Actualizar la URL en la base de datos
-            $queryUpdate = "UPDATE tbphoto SET tbphotourl = '$newUrlsString' WHERE tbphotoid = $photoId";
-            $resultUpdate = mysqli_query($conn, $queryUpdate);
-    
-            mysqli_close($conn);
-            return $resultUpdate;
+            $existingIndexes = explode(',', $row['tbphotoindex']);
+            
+            if (isset($existingUrls[$imageIndex])) {
+                // Eliminar la URL de la imagen especificada
+                unset($existingUrls[$imageIndex]);
+                unset($existingIndexes[$imageIndex]);
+                
+                // Reindexar los arrays para mantener los índices consecutivos
+                $existingUrls = array_values($existingUrls);
+                $existingIndexes = array_values($existingIndexes);
+                
+                // Contar la cantidad de imágenes restantes
+                $imageCount = count($existingUrls);
+                
+                // Reconstruir los strings de URLs e índices
+                $newUrlsString = implode(',', $existingUrls);
+                $newIndexesString = implode(',', array_keys($existingIndexes));
+                
+                // Actualizar la URL y el número de índices en la base de datos
+                $queryUpdate = "UPDATE tbphoto SET tbphotourl = ?, tbphotoindex = ? WHERE tbphotoid = ?";
+                $stmtUpdate = $conn->prepare($queryUpdate);
+                $stmtUpdate->bind_param("ssi", $newUrlsString, $newIndexesString, $photoId);
+                $resultUpdate = $stmtUpdate->execute();
+                
+                $stmtGetUrls->close();
+                $stmtUpdate->close();
+                mysqli_close($conn);
+                return $resultUpdate;
+            } else {
+                mysqli_close($conn);
+                return false;
+            }
         } else {
             mysqli_close($conn);
             return false;
         }
     }
-    public function getLastInsertedPhotoId() {
-        $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
-        if (!$conn) {
-            die("Connection failed: " . mysqli_connect_error());
-        }
-        
-        $conn->set_charset('utf8');
-        
-        // Obtener el último ID insertado
-        $lastInsertId = mysqli_insert_id($conn);
-        
-        mysqli_close($conn);
-        
-        return $lastInsertId;
-    }
     
+    
+
 }

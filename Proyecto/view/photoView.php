@@ -25,72 +25,90 @@
 
     <!-- Listado de fotos -->
     <section>
-        <table>
-            <thead>
-                <tr>
-                    <th>Fotos</th>
-                    <th>Actualizar Imagen</th>
-                    <th>Eliminar Imagen</th>
-                    <th>Eliminar Todo</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php
-                $photoBusiness = new PhotoBusiness();
-                $allphotos = $photoBusiness->getAllTBPhotos();
+        <?php
+        $photoBusiness = new PhotoBusiness();
+        $allphotos = $photoBusiness->getAllTBPhotos();
+        ?>
 
-                foreach ($allphotos as $current) {
-                    $photoUrls = explode(',', $current->getUrlTBPhoto());
-                    echo '<tr>';
-                    echo '<td>';
-                    foreach ($photoUrls as $index => $photo) {
-                        if ($photo !== '5') { // Solo mostrar fotos activas
-                            echo '<img src="../images/' . trim($photo) . '" alt="Foto" width="100" height="100" />';
+        <!-- Verificar si hay fotos -->
+        <?php if (empty($allphotos)): ?>
+            <p>No hay imágenes disponibles.</p>
+        <?php else: ?>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Fotos</th>
+                        <th>Actualizar Imagen</th>
+                        <th>Eliminar Imagen</th>
+                        <th>Eliminar Todo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($allphotos as $current): ?>
+                        <?php
+                        $photoUrls = explode(',', $current->getUrlTBPhoto());
+                        $hasActivePhotos = false;
+                        foreach ($photoUrls as $photo) {
+                            if (trim($photo) !== '5' && !empty(trim($photo))) {
+                                $hasActivePhotos = true;
+                                break;
+                            }
                         }
-                    }
-                    echo '</td>';
-                    echo '<td>';
-                    // Formulario para actualizar una imagen
-                    echo '<form method="post" action="../business/PhotoAction.php" enctype="multipart/form-data">';
-                    echo '<input type="hidden" name="photoID" value="' . $current->getIdTBPhoto() . '">';
-                    echo '<input type="hidden" name="existingUrls" value="' . htmlspecialchars(implode(',', $photoUrls)) . '">';
-                    echo '<select name="imageIndex">';
-                    foreach ($photoUrls as $index => $photo) {
-                        if ($photo !== '5') { // Solo permitir seleccionar fotos activas
-                            echo '<option value="' . $index . '">Imagen ' . ($index + 1) . '</option>';
-                        }
-                    }
-                    echo '</select>';
-                    echo '<input type="file" name="newImage" accept="image/*">';
-                    echo '<input type="submit" value="Actualizar Imagen" name="update">';
-                    echo '</form><br>'; // Línea de separación entre formularios
-                    echo '</td>';
-                    echo '<td>';
-                    // Formulario para eliminar una imagen específica
-                    echo '<form method="post" action="../business/PhotoAction.php">';
-                    echo '<input type="hidden" name="photoID" value="' . $current->getIdTBPhoto() . '">';
-                    echo '<select name="imageIndex">';
-                    foreach ($photoUrls as $index => $photo) {
-                        if ($photo !== '5') { // Solo permitir eliminar fotos activas
-                            echo '<option value="' . $index . '">Imagen ' . ($index + 1) . '</option>';
-                        }
-                    }
-                    echo '</select>';
-                    echo '<input type="submit" value="Eliminar Imagen" name="delete">';
-                    echo '</form>';
-                    echo '</td>';
-                    echo '<td>';
-                    // Formulario para eliminar todas las imágenes de un registro
-                    echo '<form method="post" action="../business/PhotoAction.php">';
-                    echo '<input type="hidden" name="photoID" value="' . $current->getIdTBPhoto() . '">';
-                    echo '<input type="submit" value="Eliminar Todo" name="deleteAll">';
-                    echo '</form>';
-                    echo '</td>';
-                    echo '</tr>';
-                }
-                ?>
-            </tbody>
-        </table>
+                        ?>
+                        <tr>
+                            <td>
+                                <?php if ($hasActivePhotos): ?>
+                                    <?php foreach ($photoUrls as $index => $photo): ?>
+                                        <?php if (trim($photo) !== '5' && !empty(trim($photo))): ?>
+                                            <img src="../images/<?php echo trim($photo); ?>" alt="Foto" width="100" height="100" />
+                                        <?php endif; ?>
+                                    <?php endforeach; ?>
+                                <?php else: ?>
+                                    Vacío
+                                <?php endif; ?>
+                            </td>
+                            <td>
+                                <!-- Formulario para actualizar una imagen -->
+                                <form method="post" action="../business/PhotoAction.php" enctype="multipart/form-data">
+                                    <input type="hidden" name="photoID" value="<?php echo $current->getIdTBPhoto(); ?>">
+                                    <select name="imageIndex">
+                                        <?php foreach ($photoUrls as $index => $photo): ?>
+                                            <?php if (trim($photo) !== '5' && !empty(trim($photo))): ?>
+                                                <option value="<?php echo $index; ?>">Imagen <?php echo ($index + 1); ?></option>
+                                            <?php endif; ?>
+                                        <?php endforeach; ?>
+                                    </select>
+                                    <input type="file" name="newImage" accept="image/*">
+                                    <input type="submit" value="Actualizar Imagen" name="update">
+                                </form>
+                            </td>
+                            <td>
+                                <!-- Formulario para eliminar una imagen específica -->
+                                <form method="post" action="../business/PhotoAction.php">
+                                    <input type="hidden" name="photoID" value="<?php echo $current->getIdTBPhoto(); ?>">
+                                    <select name="imageIndex">
+                                        <?php foreach ($photoUrls as $index => $photo): ?>
+                                            <?php if (trim($photo) !== '5' && !empty(trim($photo))): ?>
+                                                <option value="<?php echo $index; ?>">Imagen <?php echo ($index + 1); ?></option>
+                                            <?php endif; ?>
+                                        <?php endforeach; ?>
+                                    </select>
+                                    <input type="submit" value="Eliminar Imagen" name="delete">
+                                </form>
+                            </td>
+                            <td>
+                                <!-- Formulario para eliminar todas las imágenes de un registro -->
+                                <form method="post" action="../business/PhotoAction.php">
+                                    <input type="hidden" name="photoID" value="<?php echo $current->getIdTBPhoto(); ?>">
+                                    <input type="submit" value="Eliminar Todo" name="deleteAll">
+                                </form>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        <?php endif; ?>
     </section>
 </body>
 </html>
+

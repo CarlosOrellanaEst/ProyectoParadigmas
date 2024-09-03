@@ -2,6 +2,7 @@
 
 include_once 'data.php';
 include_once '../domain/TouristCompany.php'; // Ajusta la ruta según tu estructura
+include_once '../domain/Photo.php'; 
 
 class TouristCompanyData extends Data{
 
@@ -53,31 +54,77 @@ class TouristCompanyData extends Data{
     $stmt->close();
     mysqli_close($conn);
 
+    
     return $result;
 }
 
 
-    public function getAllTouristCompanies() {
-        $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
-        if (!$conn) {
-            die("Connection failed: " . mysqli_connect_error());
-        }
-        $conn->set_charset('utf8');
-
-        $query = "SELECT * FROM tbtouristcompany WHERE tbtouristcompanystatus=1;";
-
-        $result = mysqli_query($conn, $query);
-
-        $touristCompanies = array();
-
-        while ($row = mysqli_fetch_array($result)) {
-            $touristCompanies[] = new TouristCompany($row['tbtouristcompanyid'], $row['tbtouristcompanylegalname'], $row['tbtouristcompanymagicname'], $row['tbtouristcompanyowner'], $row['tbtouristcompanycompanytype'], $row['tbtouristcompanystatus']);
-        }
-
-        mysqli_close($conn);
-
-        return $touristCompanies;
+public function getAllTouristCompanies() {
+    $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
+    if (!$conn) {
+        die("Connection failed: " . mysqli_connect_error());
     }
+    $conn->set_charset('utf8');
+
+    // Consulta para obtener todas las empresas turísticas activas
+    $query = "SELECT * FROM tbtouristcompany WHERE tbtouristcompanystatus = 1;";
+    $result = mysqli_query($conn, $query);
+
+    $touristCompanies = array();
+
+    while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
+        // Crear una instancia de TouristCompany
+        $company = new TouristCompany(
+            $row['tbtouristcompanyid'],
+            $row['tbtouristcompanylegalname'],
+            $row['tbtouristcompanymagicname'],
+            $row['tbtouristcompanyowner'],
+            $row['tbtouristcompanycompanyType'],
+            $row['tbphotoid'],
+            $row['tbtouristcompanystatus']
+        );
+
+        // Consultar las fotos asociadas a la empresa
+        $photoQuery = "SELECT * FROM tbphoto WHERE tbphotoid = ?";
+        $photoStmt = $conn->prepare($photoQuery);
+        if ($photoStmt === false) {
+            die("Prepare failed: " . $conn->error);
+        }
+
+        $photoStmt->bind_param("i", $row['tbphotoid']);
+        $photoStmt->execute();
+        $photoResult = $photoStmt->get_result();
+
+        while ($photoRow = $photoResult->fetch_assoc()) {
+            // Separar las URLs si están separadas por comas
+            $photoUrls = explode(',', $photoRow['tbphotourl']);
+
+            foreach ($photoUrls as $photoUrl) {
+                $photoUrl = trim($photoUrl); // Eliminar espacios en blanco
+
+                // Verificar si el URL contiene un "5"
+                if (strpos($photoUrl, '5') === false) {
+                    $photo = new Photo(
+                        $photoRow['tbphotoid'],
+                        $photoUrl, // Usar el URL individual
+                        $photoRow['tbphotoindex'],
+                        $photoRow['tbphotostatus']
+                    );
+                    $company->addPhoto($photo);
+                }
+            }
+        }
+
+        $photoStmt->close();
+        $touristCompanies[] = $company;
+    }
+
+    mysqli_close($conn);
+
+    return $touristCompanies;
+}
+
+
 
     public function deleteTouristCompany($id) {
         $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);

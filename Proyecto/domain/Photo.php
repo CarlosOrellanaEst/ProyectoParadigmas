@@ -5,14 +5,12 @@ class Photo {
     private $urlTBPhoto;
     private $indexTBPhoto;
     private $statusTBPhoto;
-   
 
-    function __construct ($idTBPhoto = 0, $urlTBPhoto = "", $indexTBPhoto="", $statusTBPhoto=true) { 
+    function __construct($idTBPhoto = 0, $urlTBPhoto = "", $indexTBPhoto = "", $statusTBPhoto = true) {
         $this->idTBPhoto = $idTBPhoto;
         $this->urlTBPhoto = $urlTBPhoto;
         $this->indexTBPhoto = $indexTBPhoto;
         $this->statusTBPhoto = $statusTBPhoto;
-     
     }
 
     // Getters
