@@ -19,7 +19,12 @@ document.addEventListener('DOMContentLoaded', function () {
             formData.append('images[]', images[i]);
         }
         formData.append('create', 'create');
-    
+        
+        // revisando lo que se envia al servidor
+/*         for (const value of formData.values()) {
+            console.log(value);
+        } */
+
         // Configuración AJAX
         let xhr = new XMLHttpRequest();
         xhr.open('POST', '../business/serviceAction.php', true);

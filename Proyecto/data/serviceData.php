@@ -26,6 +26,7 @@ class ServiceData extends Data {
 
         $name = $service->getNameTBService();
         $photourl = $service->getPhotoURLTBService();
+        echo($photourl);
         $exists = $this->getTBServiceByName($service);
         $status = true;
 

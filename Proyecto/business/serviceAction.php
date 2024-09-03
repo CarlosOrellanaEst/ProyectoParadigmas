@@ -44,7 +44,8 @@ if (isset($_POST['create'])) {
         }
 
         $photoUrls = implode(',', $fileNames);
-        error_log('File names: ' . implode(',', $fileNames));
+        echo ($photoUrls);
+     //   error_log('File names: ' . implode(',', $fileNames));
         $serviceName = $_POST['serviceName'] ?? '';
 
         if (!empty($serviceName)) {
