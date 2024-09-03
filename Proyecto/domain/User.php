@@ -65,7 +65,7 @@ class User {
     }
 
     public function setUserID($userID) {
-        $this->userID = $userID;
+        $this->id = $userID;
     }
 
     public function setActive($active) {

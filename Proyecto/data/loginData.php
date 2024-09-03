@@ -1,6 +1,6 @@
 <?php
 require_once 'data.php'; // Incluir la clase Data
-require_once '../domain/user.php'; // Incluir la clase User
+require_once '../domain/User.php'; // Incluir la clase User
 
 class LoginData extends Data {
 
