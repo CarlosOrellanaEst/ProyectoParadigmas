@@ -45,8 +45,18 @@ if (isset($_POST['create'])) {
         } else {
             $response = ['status' => 'error', 'message' => 'Invalid data format.'];
         }
+<<<<<<< Updated upstream
     } else {
         $response = ['status' => 'error', 'message' => 'Empty fields are not allowed.'];
+=======
+
+        //echo json_encode($response);
+        exit();
+    } else {
+        $response = ['status' => 'error', 'message' => 'No se han subido imágenes.'];
+        //echo json_encode($response);
+        exit();
+>>>>>>> Stashed changes
     }
     echo json_encode($response);
     

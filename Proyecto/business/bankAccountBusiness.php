@@ -25,10 +25,11 @@ class BankAccountBusiness {
     public function updateTBBankAccount($bankAccount) {
         return $this->bankAccountData->updateTbBankAccount($bankAccount);
     }
-
+    /*
     public function getOneTBBankAccount($idBankAccount) {
         return $this->bankAccountData->getTbBankAccount($idBankAccount);
     }
+        */
 
     
 }

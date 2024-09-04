@@ -178,6 +178,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const companyType = document.getElementById('companyType').value;
         const status = document.getElementById('status').value;
 
+<<<<<<< Updated upstream
         if (magicName === '') {
             alert('El nombre mágico no puede estar vacío.');
             return;
@@ -193,6 +194,43 @@ document.addEventListener('DOMContentLoaded', function () {
         if (companyType === '0') {
             alert('El tipo de empresa no puede ser ninguno.');
             return;
+=======
+    // Datos a enviar
+    const formData = new FormData();
+    formData.append('magicName', magicName);
+    formData.append('legalName', legalName);
+    formData.append('ownerId', owner);
+    formData.append('companyType', companyType);
+    formData.append('imagenes', images);
+    formData.append('status', status);
+    formData.append('create', 'create');
+
+    // Configuración AJAX
+    let xhr = new XMLHttpRequest();
+    xhr.open('POST', '../business/touristCompanyAction.php', true);
+
+    xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+            console.log(xhr.responseText);  // Verificar lo que devuelve el servidor
+            try {
+                let response = JSON.parse(xhr.responseText);
+                if (xhr.status === 200) {
+                    if (response.status === 'success') {
+                        //alert(response.message);
+                        document.getElementById('formCreate').reset();
+                        redirectToCleanURL();
+                        location.reload();
+                    } else {
+                        alert('Error: ' + response.message);
+                    }
+                } else {
+                    alert('HTTP Error: ' + xhr.status);
+                }
+            } catch (e) {
+                console.error('Respuesta JSON inválida:', xhr.responseText);
+                alert('Error procesando la respuesta del servidor.');
+            }
+>>>>>>> Stashed changes
         }
 
         // Datos a enviar
