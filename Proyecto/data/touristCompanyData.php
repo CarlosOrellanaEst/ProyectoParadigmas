@@ -212,7 +212,7 @@ public function getAllTouristCompanies() {
     
             // Separar las URLs si están separadas por comas
             $photoUrls = explode(',', $row['tbtouristcompanyurl']);
-            $company->setPhotoUrls(array_map('trim', $photoUrls)); // Limpiar espacios y establecer URLs
+            $company->setTbtouristcompanyurl(array_map('trim', $photoUrls)); // Limpiar espacios y establecer URLs
             
             $companyReturn = $company;
         } else {

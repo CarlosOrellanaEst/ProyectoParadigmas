@@ -2,11 +2,11 @@
 
 include_once '../business/touristCompanyBusiness.php';
 include_once '../domain/TouristCompany.php';
-include_once '../domain/owner.php'; // Asegúrate de incluir el archivo correcto para la clase Owner
+include_once '../domain/Owner.php'; // Asegúrate de incluir el archivo correcto para la clase Owner
 include_once '../domain/TouristCompanyType.php'; // Asegúrate de incluir el archivo correcto para la clase CompanyType
 include_once '../business/OwnerBusiness.php'; // Asegúrate de incluir el archivo correcto para la clase OwnerBusiness
 include_once '../business/touristCompanyTypeBusiness.php'; // Asegúrate de incluir el archivo correcto para la clase touristCompanyTypeBusiness
-include_once '../business/PhotoBusiness.php'; // Incluye el archivo que define PhotoBusiness
+include_once '../business/photoBusiness.php'; // Incluye el archivo que define PhotoBusiness
 
 header('Content-Type: application/json');
 
@@ -74,6 +74,7 @@ if (isset($_POST['create'])) {
                     // Verificación del resultado de la inserción
                     if ($result['status'] == 'success') {
                         $response = ['status' => 'success', 'message' => 'Empresa creada con éxito.'];
+
                     } elseif ($result['status'] == 'error' && isset($result['message']) && $result['message'] === 'Empresa ya existe.') {
                         $response = ['status' => 'error', 'message' => 'Empresa ya existe.'];
                     } else {
@@ -89,11 +90,11 @@ if (isset($_POST['create'])) {
             $response = ['status' => 'error', 'message' => 'Los campos no deben estar vacíos.'];
         }
 
-        echo json_encode($response);
+        Json_encode($response);
         exit();
     } else {
         $response = ['status' => 'error', 'message' => 'No se han subido imágenes.'];
-        echo json_encode($response);
+        json_encode($response);
         exit();
     }
 }

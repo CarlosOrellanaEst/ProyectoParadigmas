@@ -13,29 +13,30 @@ function showAlertBasedOnURL() {
     const urlParams = new URLSearchParams(window.location.search);
 
     // Obtener parámetros de la URL
-    const paramSuccessInserted = urlParams.get('inserted');
-    const paramAlreadyExistsInserted = urlParams.get('alreadyexists');
-    const paramDbErrorInserted = urlParams.get('dbError');
-    const paramInvalidOwnerOrCompanyTypeInserted = urlParams.get('invalidOwnerOrCompanyType');
-    const paramNumberFormatInserted = urlParams.get('numberFormat');
-    const paramEmptyFieldInserted = urlParams.get('emptyField');
-    const paramErrorsInStatusInserted = urlParams.get('errorsInStatus');
-    const paramErrorCompanyTypeInserted = urlParams.get('companyType');
-    const paramErrorInOwnerInserted = urlParams.get('errorInOwner');
-    const paramErrorInMagicNameInserted = urlParams.get('errorInMagicName');
-    const paramErrorInLegalNameInserted = urlParams.get('errorInLegalName');
+    // Remove unused variables
+    // const paramSuccessInserted = urlParams.get('inserted');
+    // const paramAlreadyExistsInserted = urlParams.get('alreadyexists');
+    // const paramDbErrorInserted = urlParams.get('dbError');
+    // const paramInvalidOwnerOrCompanyTypeInserted = urlParams.get('invalidOwnerOrCompanyType');
+    // const paramNumberFormatInserted = urlParams.get('numberFormat');
+    // const paramEmptyFieldInserted = urlParams.get('emptyField');
+    // const paramErrorsInStatusInserted = urlParams.get('errorsInStatus');
+    // const paramErrorCompanyTypeInserted = urlParams.get('companyType');
+    // const paramErrorInOwnerInserted = urlParams.get('errorInOwner');
+    // const paramErrorInMagicNameInserted = urlParams.get('errorInMagicName');
+    // const paramErrorInLegalNameInserted = urlParams.get('errorInLegalName');
 
-    const paramSuccessUpdated = urlParams.get('updated');
-    const paramErrorUpdated = urlParams.get('error');
-    const paramInvalidOwnerOrCompanyTypeUpdated = urlParams.get('invalidOwnerOrCompanyType');
-    const paramNumberFormatUpdated = urlParams.get('numberFormat');
-    const paramEmptyFieldUpdated = urlParams.get('emptyField');
-    const paramMissingFieldsUpdated = urlParams.get('missingFields');
+    // const paramSuccessUpdated = urlParams.get('updated');
+    // const paramErrorUpdated = urlParams.get('error');
+    // const paramInvalidOwnerOrCompanyTypeUpdated = urlParams.get('invalidOwnerOrCompanyType');
+    // const paramNumberFormatUpdated = urlParams.get('numberFormat');
+    // const paramEmptyFieldUpdated = urlParams.get('emptyField');
+    // const paramMissingFieldsUpdated = urlParams.get('missingFields');
 
-    const paramDeleted = urlParams.get('deleted');
-    const paramDeleteFailed = urlParams.get('deleteFailed');
-    const paramInvalidId = urlParams.get('invalidId');
-    const paramMissingId = urlParams.get('missingId');
+    // const paramDeleted = urlParams.get('deleted');
+    // const paramDeleteFailed = urlParams.get('deleteFailed');
+    // const paramInvalidId = urlParams.get('invalidId');
+    // const paramMissingId = urlParams.get('missingId');
 
     // Mostrar alertas basadas en los parámetros de la URL
     if (urlParams.has('success')) {
@@ -204,11 +205,13 @@ document.getElementById('formCreate').addEventListener('submit', function (e) {
     // Configuración AJAX
     let xhr = new XMLHttpRequest();
     xhr.open('POST', '../business/touristCompanyAction.php', true);
-
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     xhr.onreadystatechange = function () {
         if (xhr.readyState === 4) {
+            alert(xhr.readyState);
             console.log(xhr.responseText);  // Verificar lo que devuelve el servidor
             try {
+                alert(xhr.responseText);
                 let response = JSON.parse(xhr.responseText);
                 if (xhr.status === 200) {
                     if (response.status === 'success') {
