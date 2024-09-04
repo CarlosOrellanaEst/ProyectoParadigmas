@@ -94,7 +94,7 @@
                 if (isset($_GET['searchOne'])) {
                     $searchTerm = $_GET['searchOne'];
                     $touristCompanyFiltered = array_filter($all, function($touristCompany) use ($searchTerm) {
-                        return stripos($touristCompany->getLegalName(), $searchTerm) !== false;
+                        return stripos($touristCompany->getTbtouristcompanylegalname(), $searchTerm) !== false;
                     });
                 }
                 if (count($touristCompanyFiltered) > 0) {
