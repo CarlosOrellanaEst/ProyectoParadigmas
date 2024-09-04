@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if(userName === ''){
             alert('El usuario no puede estar vacio.');
             return;
-        }else if(password === ''){
+        } else if(password === ''){
             alert('La contraseña no puede estar vacia.');
             return; 
         }
@@ -18,36 +18,26 @@ document.addEventListener('DOMContentLoaded', function() {
             password: password
         };
 
-        let xhr = new XMLHttpRequest();
-        
+        let xhr = new XMLHttpRequest();    
         xhr.open('POST', '../business/loginAction.php', true);
-        
-        
         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-        
-        xhr.send('userName=' + encodeURIComponent(postData.userName) + '&password=' + encodeURIComponent(postData.password));
-        
-        xhr.onreadystatechange = function() {
-            
+        xhr.onreadystatechange = function() {   
             if (xhr.readyState === 4) {
                 try {
                     let response = JSON.parse(xhr.responseText);
-
                     if (xhr.status === 200) {
                         if (response.success === true) {
-
                             document.getElementById('loginForm').reset();
                             if (response.userType === 'Administrador') {
                                 // Redireccionar a la vista de administrador
-                                window.location.href = '../view/adminView.php';
+                                window.location.href = '../index.html';
                             } else if (response.userType === 'Turista') {
                                 // Redireccionar a la vista de usuario normal
                                 window.location.href = '../view/touristView.php';
                             } else if(response.userType === 'Propietario'){
                                 // Redireccionar a la vista de guia
                                 window.location.href = '../view/propietarioView.php';
-
-                            }else{
+                            } else{
                                 alert('Tipo de usuario desconocido');
                             }
                         } else {
@@ -62,6 +52,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
         };
-        
+        xhr.send('userName=' + encodeURIComponent(postData.userName) + '&password=' + encodeURIComponent(postData.password));
     });
 });

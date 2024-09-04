@@ -79,11 +79,11 @@ class touristCompany{
     public function getTbtouristcompanystatus() {
         return $this->tbtouristcompanystatus;
     }
-    public function addPhoto(Photo $photo) {
+/*     public function addPhoto(Photo $photo) {
         $this->photos[] = $photo;
     }
 
     public function getPhotos() {
         return $this->photos;
-    }
+    } */
 }

@@ -1,23 +1,31 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TouristIAr</title>
+    <title>Iniciar Sesión</title>
 </head>
 <body>
-    <h1>Indice de CRUDS</h1>
-    <ol>
-        <li><a href="./view/rollView.php">CRUD Roles</a></li>
-        <li><a href="./view/loginView.php">Login</a></li>
-        <li><a href="./view/bankAccountView.php">CRUD Cuenta bancaria</a></li>
-        <li><a href="./view/ownerView.php">CRUD Propietarios</a></li>
-        <li><a href="./view/touristCompanyTypeView.php">CRUD Tipo de empresa turística</a></li>
-        <li><a href="./view/touristCompanyView.php">CRUD Empresas turísticas</a></li>
-        <li><a href="./view/photoView.php">CRUD Fotos</a></li>
-        <li><a href="./view/ActivityView.php">CRUD Actividades</a></li>
-        <li><a href="./view/pruebas.php">Pruebas</a></li>
-        <li><a href="./view/serviceView.php">CRUD Servicios</a></li>
-    </ol>
+    <div>
+        <h2>Iniciar Sesión</h2>
+        <div id="message" hidden></div>
+        <form id="loginForm" method="POST">
+            <div>
+                <label for="userName">Nombre de Usuario</label>
+                <input type="text" id="userName" name="userName" >
+            </div>
+            <div>
+                <label for="password">Contraseña</label>
+                <input type="password" id="password" name="password" >
+            </div>
+            <div>
+                <button type="submit">Ingresar</button>
+            </div>
+<!--             <div>
+                <a href="/forgot_password.php">¿Olvidaste tu contraseña?</a>
+            </div> -->
+        </form>
+    </div>
+    <script src="resources/loginAJAX.js"></script>
 </body>
 </html>
