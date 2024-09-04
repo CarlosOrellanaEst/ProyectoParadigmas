@@ -195,6 +195,20 @@ class PhotoData extends Data {
         }
     }
     
-    
+    public function getLastInsertedPhotoId() {
+        $conn = mysqli_connect  ($this->server, $this->user, $this->password, $this->db);
+        if (!$conn) {
+            die("Connection failed: " . mysqli_connect_error());
+        }
+        
+        $conn->set_charset('utf8');
+        
+        // Obtener el último ID insertado
+        $lastInsertId = mysqli_insert_id($conn);
+        
+        mysqli_close($conn);
+        
+        return $lastInsertId;
+    }
 
 }
