@@ -58,33 +58,35 @@ if (isset($_POST['create'])) {
         $companyTypeId = $_POST['companyType'] ?? 0;
         $status = $_POST['status'] ?? '';
 
-        // Validar que el ownerId tenga un valor
-        if (!empty($ownerId) && is_numeric($ownerId)) {
-            $ownerBusiness = new OwnerBusiness();
-            $owner = $ownerBusiness->getTBOwner($ownerId);
+        if (!empty($legalName) && !empty($magicName) && is_numeric($ownerId) && is_numeric($companyTypeId)) {
+            if (!is_numeric($legalName) && !is_numeric($magicName)) {
+                $ownerBusiness = new OwnerBusiness();
+                $owner = $ownerBusiness->getTBOwner($ownerId);
 
-            // Validar si existe el tipo de empresa
-            $touristCompanyTypeBusiness = new TouristCompanyTypeBusiness();
-            $companyType = $companyTypeId ? $touristCompanyTypeBusiness->getById($companyTypeId) : null;
+                $touristCompanyTypeBusiness = new TouristCompanyTypeBusiness();
+                $companyType = $touristCompanyTypeBusiness->getById($companyTypeId);
 
-            if ($owner) {
-                $touristCompany = new TouristCompany(0, $legalName, $magicName, $ownerId, $companyTypeId, $photoUrls, $status);
-                $touristCompanyBusiness = new TouristCompanyBusiness();
-                $result = $touristCompanyBusiness->insert($touristCompany);
+                if ($owner && $companyType) {
+                    $touristCompany = new TouristCompany(0, $legalName, $magicName, $ownerId, $companyTypeId, $photoUrls, $status);
+                    $touristCompanyBusiness = new TouristCompanyBusiness();
+                    $result = $touristCompanyBusiness->insert($touristCompany);
 
-                // Verificación del resultado de la inserción
-                if ($result['status'] == 'success') {
-                    $response = ['status' => 'success', 'message' => 'Empresa creada con éxito.'];
-                } elseif ($result['status'] == 'error' && isset($result['message']) && $result['message'] === 'Empresa ya existe.') {
-                    $response = ['status' => 'error', 'message' => 'Empresa ya existe.'];
+                    // Verificación del resultado de la inserción
+                    if ($result['status'] == 'success') {
+                        $response = ['status' => 'success', 'message' => 'Empresa creada con éxito.'];
+                    } elseif ($result['status'] == 'error' && isset($result['message']) && $result['message'] === 'Empresa ya existe.') {
+                        $response = ['status' => 'error', 'message' => 'Empresa ya existe.'];
+                    } else {
+                        $response = ['status' => 'error', 'message' => 'Error en la base de datos: ' . $result['message']];
+                    }
                 } else {
-                    $response = ['status' => 'error', 'message' => 'Error en la base de datos: ' . $result['message']];
+                    $response = ['status' => 'error', 'message' => 'Propietario o tipo de compañía inválido.'];
                 }
             } else {
-                $response = ['status' => 'error', 'message' => 'Propietario inválido.'];
+                $response = ['status' => 'error', 'message' => 'Formato de datos inválido.'];
             }
         } else {
-            $response = ['status' => 'error', 'message' => 'El campo "Propietario" es obligatorio.'];
+            $response = ['status' => 'error', 'message' => 'Los campos no deben estar vacíos.'];
         }
 
         echo json_encode($response);
@@ -96,20 +98,53 @@ if (isset($_POST['create'])) {
     }
 }
 
-
 if (isset($_POST['update'])) {
     if (isset($_POST['id']) && isset($_POST['ownerId']) && isset($_POST['legalName']) && isset($_POST['magicName']) && isset($_POST['companyType']) && isset($_POST['status'])) {
         
         $id = $_POST['id'];
-        $tbtouristcompanyLegalName = $_POST['legalName'];
+        $legalName = $_POST['legalName'];
         $magicName = $_POST['magicName'];
         $ownerId = $_POST['ownerId'];
         $companyTypeId = $_POST['companyType'];
         $status = $_POST['status'];
-        
-        // Validación de campos
-        if (strlen(trim($tbtouristcompanyLegalName)) > 0 && strlen(trim($magicName)) > 0 && is_numeric($ownerId) && is_numeric($companyTypeId) && is_numeric($status)) {
-            if (!is_numeric($tbtouristcompanyLegalName) && !is_numeric($magicName)) {
+
+        // Variable para almacenar el nombre del archivo de la imagen
+        $photoFileName = '';
+
+        // Obtener la URL actual de la foto de la empresa turística
+        $touristCompanyBusiness = new TouristCompanyBusiness();
+        $currentTouristCompany = $touristCompanyBusiness->getById($id);
+        $existingPhotoFileName = $currentTouristCompany->getTbtouristcompanyurl(); // Asumimos que la URL de las imágenes se almacena aquí
+
+        // Verificar si se ha subido una nueva imagen
+        if (isset($_FILES['newImage']) && $_FILES['newImage']['error'] == UPLOAD_ERR_OK) {
+            $uploadDir = '../images/';
+            $fileName = basename($_FILES['newImage']['name']);
+            $targetFilePath = $uploadDir . $fileName;
+
+            $fileType = strtolower(pathinfo($targetFilePath, PATHINFO_EXTENSION));
+            $allowTypes = array('jpg', 'png', 'jpeg', 'gif');
+
+            // Validar el tipo de archivo y mover la imagen si es válido
+            if (in_array($fileType, $allowTypes)) {
+                if (move_uploaded_file($_FILES['newImage']['tmp_name'], $targetFilePath)) {
+                    $photoFileName = $fileName;
+                } else {
+                    header("location: ../view/touristCompanyView.php?error=uploadFailed");
+                    exit();
+                }
+            } else {
+                header("location: ../view/touristCompanyView.php?error=invalidFileType");
+                exit();
+            }
+        } else {
+            // Si no se sube una nueva imagen, se usa la existente
+            $photoFileName = $existingPhotoFileName;
+        }
+
+        // Validación básica
+        if (strlen(trim($legalName)) > 0 && strlen(trim($magicName)) > 0 && is_numeric($ownerId) && is_numeric($companyTypeId) && is_numeric($status)) {
+            if (!is_numeric($legalName) && !is_numeric($magicName)) {
                 $ownerBusiness = new OwnerBusiness();
                 $owner = $ownerBusiness->getTBOwner($ownerId);
 
@@ -117,24 +152,9 @@ if (isset($_POST['update'])) {
                 $companyType = $touristCompanyTypeBusiness->getById($companyTypeId);
 
                 if ($owner && $companyType) {
-                    $imagePaths = [];
+                    // Crear el objeto TouristCompany con la imagen actualizada (o la existente)
+                    $touristCompany = new TouristCompany($id, $legalName, $magicName, $ownerId, $companyTypeId, $photoFileName, $status);
 
-                    // Manejo de imágenes
-                    if (isset($_FILES['imagenes']) && $_FILES['imagenes']['error'][0] === UPLOAD_ERR_OK) {
-                        foreach ($_FILES['imagenes']['tmp_name'] as $key => $tmp_name) {
-                            $fileName = $_FILES['imagenes']['name'][$key];
-                            $fileTmp = $_FILES['imagenes']['tmp_name'][$key];
-                            $filePath = '../images/' . basename($fileName);
-                    
-                            if (move_uploaded_file($fileTmp, $filePath)) {
-                                $imagePaths[] = $filePath;
-                            }
-                        }
-                    }
-                    $touristCompanyBusiness = new TouristCompanyBusiness();
-                    $touristCompany = new TouristCompany($id, $tbtouristcompanyLegalName, $magicName, $ownerId, $companyTypeId, $imagePaths, $status);
-
-                    
                     $result = $touristCompanyBusiness->update($touristCompany);
 
                     if ($result) {
@@ -161,6 +181,7 @@ if (isset($_POST['update'])) {
         exit();
     }
 }
+
 
 if (isset($_POST['delete'])) {
     if (isset($_POST['id'])) {

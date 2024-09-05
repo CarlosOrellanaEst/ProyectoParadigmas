@@ -159,6 +159,7 @@
                         echo '<input type="hidden" name="status" value="1">';
                         echo '<td>';
                         echo '<input type="hidden" name="id" value="' . htmlspecialchars($current->getTbtouristcompanyid()) . '">';
+                        echo '<input type="file" name="newImage" accept="image/*" /><br />';
                         echo '<input type="submit" value="Actualizar" name="update" />';
                         echo '<input type="submit" value="Eliminar" name="delete"/>';
                         echo '</td>';
