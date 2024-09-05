@@ -3,49 +3,44 @@
 include_once './bankAccountBusiness.php';
 include_once '../domain/Owner.php';
 
-if (isset($_POST['create'])) {
-    if (isset($_POST['ownerId']) && isset($_POST['accountNumber']) && isset($_POST['bank']) && isset($_POST['status'])) {
-        $ownerId = $_POST['ownerId'];
-        $ownerName = ((isset($_POST['ownerName']))? $_POST['ownerName']: '');
-        
-        $accountNumber = $_POST['accountNumber'];
-        $bank = $_POST['bank'];
-        $status = $_POST['status'];
+$response = array();
 
-        // trim()
-        if (strlen(trim($accountNumber)) > 0 && strlen(trim($bank)) > 0) {
-            if (!is_numeric($bank)) {
-                $bankAccount = new BankAccount(0, $ownerId, $accountNumber, $bank, $status);
-                
-                $bankAccountBusiness = new BankAccountBusiness();
+if (isset($_POST['accountNumber'])) {
+    $ownerId = trim($_POST['ownerId']);
+    $ownerName = trim(((isset($_POST['ownerName']))? $_POST['ownerName']: ''));
+    $accountNumber = trim($_POST['accountNumber']);
+    $bank = trim($_POST['bank']);
+    $status = trim($_POST['status']);
 
-                $result = $bankAccountBusiness->insertTbBankAccount($bankAccount);
+    if (empty($accountNumber)) {
+        $response['status'] = 'error';
+        $response['message'] = 'El número de cuenta no puede estar vacío';
 
-                //echo $result;
-
-                if ($result == 1) {
-                    header("location: ../view/bankAccountView.php?success=inserted");
-                    exit();
-                } else if ($result == null) {
-                    header("location: ../view/bankAccountView.php?error=alreadyexists");
-                    exit();
-                } else {
-                    header("location: ../view/bankAccountView.php?error=dbError");
-                    exit();
-                }
-            } else {
-                header("location: ../view/bankAccountView.php?error=numberFormat");
-                exit();
-            }
-        } else {
-            header("location: ../view/bankAccountView.php?error=emptyField");
-            exit();
-        }
     } else {
-        header("location: ../view/bankAccountView.php?error=error");
-        exit();
-    }
-}
+        $bankAccount = new BankAccount(0, $ownerId, $accountNumber, $bank, $status);
+        $bankAccountBusiness = new BankAccountBusiness();
+        
+        if (is_numeric($bank)) {
+            $response['status'] = 'error';
+            $response['message'] = 'El nombre del banco no puede ser números unicamente.';
+        
+        } else {
+            $result = $bankAccountBusiness->insertTbBankAccount($bankAccount);
+            
+            if ($result['status'] === 'success') {
+                $response['status'] = 'success';
+                $response['message'] = 'Cuenta de banco registrada correctamente.';
+            
+            } else if ($result['status'] === 'error') {
+                $response['status'] = 'error';
+                $response['message'] = 'Fallo al agregar la cuenta de banco: ' . $result['message'];
+            
+            }
+        }
+    } 
+    echo json_encode($response);
+    exit();
+}        
 
 if (isset($_POST['delete'])) { 
     if (isset($_POST['tbbankaccountid'])) {

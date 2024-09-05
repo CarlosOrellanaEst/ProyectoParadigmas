@@ -5,31 +5,30 @@ include './rollBusiness.php';
 
 $response = array();
 // para el AJAX de Create
+
 if (isset($_POST['name'])) {
-    // Add task functionality
     $name = trim($_POST['name']);
     $description = trim($_POST['description']);
 
     if (empty($name)) {
         $response['status'] = 'error';
-        $response['message'] = 'el nombre del roll no puede estar vacio';
+        $response['message'] = 'El nombre del roll no puede estar vacío';
     } else {
         $roll = new Roll(0, $name, $description, 1);
 
         $rollBusiness = new RollBusiness();
         $result = $rollBusiness->insertTBRoll($roll);
 
-        if ($result) {
+        if ($result['status'] === 'success') {
             $response['status'] = 'success';
             $response['message'] = 'Roll añadido correctamente';
         } else {
             $response['status'] = 'error';
-            $response['message'] = 'fallo al agregar el roll: ' . mysqli_error($connection);
+            $response['message'] = 'Fallo al agregar el roll: ' . $result['message'];
         }
-        
-        echo json_encode($response);
-        exit();
     }
+    echo json_encode($response);
+    exit();
 }
 
 if (isset($_POST['update'])) {
@@ -48,7 +47,7 @@ if (isset($_POST['update'])) {
                     header("location: ../view/rollView.php?success=updated");
                     exit();
                 } else if ($result == null) {
-                    header("location: ../view/rollView.php?error=notExists");
+                    header("location: ../view/rollView.php?error=alreadyExists");
                     exit();
                  } else {
                     header("location: ../view/rollView.php?error=dbError");

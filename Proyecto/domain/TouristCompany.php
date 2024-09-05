@@ -6,72 +6,84 @@ class touristCompany{
     private $tbtouristcompanymagicname;
     private $tbtouristcompanyowner;
     private $tbtouristcompanycompanyType;
+    private $tbtouristcompanyurl;
     private $tbtouristcompanystatus;
+   
 
-    public function __construct($tbtouristcompanyid, $tbtouristcompanylegalname, $tbtouristcompanymagicname, $tbtouristcompanyowner, $tbtouristcompanycompanyType, $tbtouristcompanystatus){
+    public function __construct($tbtouristcompanyid, $tbtouristcompanylegalname, $tbtouristcompanymagicname, $tbtouristcompanyowner, $tbtouristcompanycompanyType, $tbtouristcompanyurl, $tbtouristcompanystatus){
         $this->tbtouristcompanyid = $tbtouristcompanyid;
         $this->tbtouristcompanylegalname = $tbtouristcompanylegalname;
         $this->tbtouristcompanymagicname = $tbtouristcompanymagicname;
         $this->tbtouristcompanyowner = $tbtouristcompanyowner;
         $this->tbtouristcompanycompanyType = $tbtouristcompanycompanyType;
+        $this->tbtouristcompanyurl = $tbtouristcompanyurl;
+        $this->tbtouristcompanystatus = $tbtouristcompanystatus;
+        
+    }
+
+    
+    // Setters
+    public function setTbtouristcompanyid($tbtouristcompanyid) {
+        $this->tbtouristcompanyid = $tbtouristcompanyid;
+    }
+
+    public function setTbtouristcompanylegalname($tbtouristcompanylegalname) {
+        $this->tbtouristcompanylegalname = $tbtouristcompanylegalname;
+    }
+
+    public function setTbtouristcompanymagicname($tbtouristcompanymagicname) {
+        $this->tbtouristcompanymagicname = $tbtouristcompanymagicname;
+    }
+
+    public function setTbtouristcompanyowner($tbtouristcompanyowner) {
+        $this->tbtouristcompanyowner = $tbtouristcompanyowner;
+    }
+
+    public function setTbtouristcompanycompanyType($tbtouristcompanycompanyType) {
+        $this->tbtouristcompanycompanyType = $tbtouristcompanycompanyType;
+    }
+
+    public function setTbtouristcompanyurl($tbtouristcompanyurl) {
+        $this->tbtouristcompanyurl = $tbtouristcompanyurl;
+    }
+
+    public function setTbtouristcompanystatus($tbtouristcompanystatus) {
         $this->tbtouristcompanystatus = $tbtouristcompanystatus;
     }
 
-    public function getId(){
+    // Getters
+    public function getTbtouristcompanyid() {
         return $this->tbtouristcompanyid;
     }
 
-    public function getLegalName(){
+    public function getTbtouristcompanylegalname() {
         return $this->tbtouristcompanylegalname;
     }
 
-    public function getMagicName(){
+    public function getTbtouristcompanymagicname() {
         return $this->tbtouristcompanymagicname;
     }
 
-    public function getOwner(){
+    public function getTbtouristcompanyowner() {
         return $this->tbtouristcompanyowner;
     }
 
-    public function getCompanyType(){
+    public function getTbtouristcompanycompanyType() {
         return $this->tbtouristcompanycompanyType;
     }
 
-    public function getStatus(){
+    public function getTbtouristcompanyurl() {
+        return $this->tbtouristcompanyurl;
+    }
+
+    public function getTbtouristcompanystatus() {
         return $this->tbtouristcompanystatus;
     }
-
-    public function setId($tbtouristcompanyid){
-        $this->tbtouristcompanyid = $tbtouristcompanyid;
-    }
-    
-    public function setLegalName($tbtouristcompanylegalname){
-        $this->tbtouristcompanylegalname = $tbtouristcompanylegalname;
+    public function addPhoto(Photo $photo) {
+        $this->photos[] = $photo;
     }
 
-    public function setMagicName($tbtouristcompanymagicname){
-        $this->tbtouristcompanymagicname = $tbtouristcompanymagicname;
+    public function getPhotos() {
+        return $this->photos;
     }
-
-    public function setOwner($tbtouristcompanyowner){
-        $this->tbtouristcompanyowner = $tbtouristcompanyowner;
-    }
-
-    public function setCompanyType($tbtouristcompanycompanyType){
-        $this->tbtouristcompanycompanyType = $tbtouristcompanycompanyType;
-    }
-
-    public function setStatus($tbtouristcompanystatus){
-        $this->tbtouristcompanystatus = $tbtouristcompanystatus;
-    }
-
-    
-
-
-
-
-
-
-    
-
 }
