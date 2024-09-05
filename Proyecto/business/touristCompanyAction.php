@@ -74,7 +74,6 @@ if (isset($_POST['create'])) {
                     // Verificación del resultado de la inserción
                     if ($result['status'] == 'success') {
                         $response = ['status' => 'success', 'message' => 'Empresa creada con éxito.'];
-
                     } elseif ($result['status'] == 'error' && isset($result['message']) && $result['message'] === 'Empresa ya existe.') {
                         $response = ['status' => 'error', 'message' => 'Empresa ya existe.'];
                     } else {
@@ -90,15 +89,14 @@ if (isset($_POST['create'])) {
             $response = ['status' => 'error', 'message' => 'Los campos no deben estar vacíos.'];
         }
 
-        Json_encode($response);
+        echo json_encode($response);
         exit();
     } else {
         $response = ['status' => 'error', 'message' => 'No se han subido imágenes.'];
-        json_encode($response);
+        echo json_encode($response);
         exit();
     }
 }
-
 
 if (isset($_POST['update'])) {
     if (isset($_POST['id']) && isset($_POST['ownerId']) && isset($_POST['legalName']) && isset($_POST['magicName']) && isset($_POST['companyType']) && isset($_POST['status'])) {

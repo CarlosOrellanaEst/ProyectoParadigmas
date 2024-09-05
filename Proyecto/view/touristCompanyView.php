@@ -15,8 +15,8 @@
     $touristCompanyTypes = $touristCompanyTypeBusiness->getAll();
     $imageBasePath = '../images/';
     ?>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="../resources/touristCompanyView.js"></script>
+    
+
 </head>
 <body>
     <header>
@@ -25,7 +25,7 @@
     <a href="../index.html">← Volver al inicio</a>
 
     <section id="create">
-        <form method="post" id="formCreate" action="../business/touristCompanyAction.php" enctype="multipart/form-data">
+        <form id="formCreate" method="post" action="../business/touristCompanyAction.php" enctype="multipart/form-data">
             <label for="legalName">Nombre legal: </label>
             <input placeholder="Nombre legal" type="text" name="legalName" id="legalName" required />
             <label for="magicName">Nombre mágico: </label>
@@ -172,11 +172,14 @@
                 ?>
             </tbody>
         </table>
-        <script>
+        
+    </section>
+    <script>
             document.addEventListener('DOMContentLoaded', function() {
                 showAlertBasedOnURL();
             });
         </script>
-    </section>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="../resources/touristCompanyView.js"></script>
 </body>
 </html>
