@@ -8,10 +8,10 @@
 <body>
     <p>PAGINA DE PROPIETARIO.</p>
     <ol>
-        <li><a href="./view/bankAccountView.php">CRUD Cuenta bancaria</a></li>
-        <li><a href="./view/ownerView.php">CRUD Propietarios</a></li>
-        <li><a href="./view/touristCompanyView.php">CRUD Empresas turísticas</a></li>
-        <li><a href="./view/ActivityView.php">CRUD Actividades</a></li>
+        <li><a href="bankAccountView.php">CRUD Cuenta bancaria</a></li>
+        <li><a href="ownerView.php">CRUD Propietarios</a></li>
+        <li><a href="touristCompanyView.php">CRUD Empresas turísticas</a></li>
+        <li><a href="activityView.php">CRUD Actividades</a></li>
 <!--         <li><a href="./view/pruebas.php">Pruebas</a></li>
         <li><a href="./view/serviceView.php">CRUD Servicios</a></li> -->
     </ol>

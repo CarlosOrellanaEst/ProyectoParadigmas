@@ -17,9 +17,10 @@ document.addEventListener('DOMContentLoaded', function() {
             userName: userName,
             password: password
         };
+        console.log(postData.userName+postData.password);
 
         let xhr = new XMLHttpRequest();    
-        xhr.open('POST', '../business/loginAction.php', true);
+        xhr.open('POST', 'business/loginAction.php', true);
         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
         xhr.onreadystatechange = function() {   
             if (xhr.readyState === 4) {
@@ -30,13 +31,13 @@ document.addEventListener('DOMContentLoaded', function() {
                             document.getElementById('loginForm').reset();
                             if (response.userType === 'Administrador') {
                                 // Redireccionar a la vista de administrador
-                                window.location.href = '../index.html';
+                                window.location.href = 'view/adminView.php';
                             } else if (response.userType === 'Turista') {
                                 // Redireccionar a la vista de usuario normal
-                                window.location.href = '../view/touristView.php';
+                                window.location.href = 'view/touristView.php';
                             } else if(response.userType === 'Propietario'){
                                 // Redireccionar a la vista de guia
-                                window.location.href = '../view/propietarioView.php';
+                                window.location.href = 'view/propietarioView.php';
                             } else{
                                 alert('Tipo de usuario desconocido');
                             }
@@ -47,7 +48,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         alert('HTTP Error: ' + xhr.status);
                     }
                 } catch (e) {
-                    //console.error('Invalid JSON response:', xhr.responseText);
+                    console.error('Invalid JSON response:', xhr.responseText);
                     alert('Error procesando la respuesta del servidor.');
                 }
             }

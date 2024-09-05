@@ -9,19 +9,18 @@ header('Content-Type: application/json');
 
 $response = array();
 
-if (isset($_POST['create'])) {
+if (isset($_POST['userName']) && isset($_POST['password'])) {
     $username = $_POST['userName'];
     $password = $_POST['password'];
-
     $loginBusiness = new LoginBusiness();
     $user = $loginBusiness->authenticate($username, $password);
-
     if ($user) {
         $_SESSION['user'] = $user;
         $response['success'] = true;
         $response['message'] = "Bienvenido";       
-        $response['userType'] = $user->getUserType(); // Accede al tipo de usuario usando el método getUserType()
+        $response['userType'] = $user->getUserType();
         Utils::$userLogged = $user;
+   //     echo(Utils::$userLogged->getUserName() . Utils::$userLogged->getPassword() . Utils::$userLogged->getUserType());
         error_log("User Type: " . $response['userType']);
     } else {
         $response['success'] = false;

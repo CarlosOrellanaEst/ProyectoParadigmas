@@ -11,7 +11,6 @@ class LoginBusiness {
     public function authenticate($username, $password) {
         // Hashear la contraseña con SHA-256
         $hashedText = hash('sha256', $password);
-    
         // Obtener el usuario por nombre de usuario y contraseña hasheada
         $user = $this->loginData->getUserByUsername($username, $hashedText);
     
