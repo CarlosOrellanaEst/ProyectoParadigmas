@@ -45,7 +45,7 @@ document.getElementById('formCreate').addEventListener('submit', function (e) {
     const companyType = document.getElementById('companyType').value;
     const images = document.getElementById('imagenes').files;
     const status = document.getElementById('status').value;
-
+    /*
     if (magicName === '') {
         alert('El nombre mágico no puede estar vacío.');
         return;
@@ -54,15 +54,17 @@ document.getElementById('formCreate').addEventListener('submit', function (e) {
         alert('El nombre legal no puede estar vacío.');
         return;
     }
+        */
     if (owner === '0') {
         alert('El propietario no puede ser "Ninguno".');
         return;
     }
+    /*
     if (companyType === '0') {
         alert('El tipo de empresa no puede ser "Ninguno".');
         return;
     }
-
+    */
     // Crear el objeto FormData
     const formData = new FormData();
     formData.append('magicName', magicName);

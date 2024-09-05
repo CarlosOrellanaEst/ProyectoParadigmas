@@ -58,35 +58,33 @@ if (isset($_POST['create'])) {
         $companyTypeId = $_POST['companyType'] ?? 0;
         $status = $_POST['status'] ?? '';
 
-        if (!empty($legalName) && !empty($magicName) && is_numeric($ownerId) && is_numeric($companyTypeId)) {
-            if (!is_numeric($legalName) && !is_numeric($magicName)) {
-                $ownerBusiness = new OwnerBusiness();
-                $owner = $ownerBusiness->getTBOwner($ownerId);
+        // Validar que el ownerId tenga un valor
+        if (!empty($ownerId) && is_numeric($ownerId)) {
+            $ownerBusiness = new OwnerBusiness();
+            $owner = $ownerBusiness->getTBOwner($ownerId);
 
-                $touristCompanyTypeBusiness = new TouristCompanyTypeBusiness();
-                $companyType = $touristCompanyTypeBusiness->getById($companyTypeId);
+            // Validar si existe el tipo de empresa
+            $touristCompanyTypeBusiness = new TouristCompanyTypeBusiness();
+            $companyType = $companyTypeId ? $touristCompanyTypeBusiness->getById($companyTypeId) : null;
 
-                if ($owner && $companyType) {
-                    $touristCompany = new TouristCompany(0, $legalName, $magicName, $ownerId, $companyTypeId, $photoUrls, $status);
-                    $touristCompanyBusiness = new TouristCompanyBusiness();
-                    $result = $touristCompanyBusiness->insert($touristCompany);
+            if ($owner) {
+                $touristCompany = new TouristCompany(0, $legalName, $magicName, $ownerId, $companyTypeId, $photoUrls, $status);
+                $touristCompanyBusiness = new TouristCompanyBusiness();
+                $result = $touristCompanyBusiness->insert($touristCompany);
 
-                    // Verificación del resultado de la inserción
-                    if ($result['status'] == 'success') {
-                        $response = ['status' => 'success', 'message' => 'Empresa creada con éxito.'];
-                    } elseif ($result['status'] == 'error' && isset($result['message']) && $result['message'] === 'Empresa ya existe.') {
-                        $response = ['status' => 'error', 'message' => 'Empresa ya existe.'];
-                    } else {
-                        $response = ['status' => 'error', 'message' => 'Error en la base de datos: ' . $result['message']];
-                    }
+                // Verificación del resultado de la inserción
+                if ($result['status'] == 'success') {
+                    $response = ['status' => 'success', 'message' => 'Empresa creada con éxito.'];
+                } elseif ($result['status'] == 'error' && isset($result['message']) && $result['message'] === 'Empresa ya existe.') {
+                    $response = ['status' => 'error', 'message' => 'Empresa ya existe.'];
                 } else {
-                    $response = ['status' => 'error', 'message' => 'Propietario o tipo de compañía inválido.'];
+                    $response = ['status' => 'error', 'message' => 'Error en la base de datos: ' . $result['message']];
                 }
             } else {
-                $response = ['status' => 'error', 'message' => 'Formato de datos inválido.'];
+                $response = ['status' => 'error', 'message' => 'Propietario inválido.'];
             }
         } else {
-            $response = ['status' => 'error', 'message' => 'Los campos no deben estar vacíos.'];
+            $response = ['status' => 'error', 'message' => 'El campo "Propietario" es obligatorio.'];
         }
 
         echo json_encode($response);
@@ -97,6 +95,7 @@ if (isset($_POST['create'])) {
         exit();
     }
 }
+
 
 if (isset($_POST['update'])) {
     if (isset($_POST['id']) && isset($_POST['ownerId']) && isset($_POST['legalName']) && isset($_POST['magicName']) && isset($_POST['companyType']) && isset($_POST['status'])) {

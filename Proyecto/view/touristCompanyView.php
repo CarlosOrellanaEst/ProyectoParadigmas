@@ -27,9 +27,9 @@
     <section id="create">
         <form id="formCreate" method="post" action="../business/touristCompanyAction.php" enctype="multipart/form-data">
             <label for="legalName">Nombre legal: </label>
-            <input placeholder="Nombre legal" type="text" name="legalName" id="legalName" required />
+            <input placeholder="Nombre legal" type="text" name="legalName" id="legalName"  />
             <label for="magicName">Nombre mágico: </label>
-            <input placeholder="Nombre mágico" type="text" name="magicName" id="magicName" required />
+            <input placeholder="Nombre mágico" type="text" name="magicName" id="magicName"  />
 
             <label for="ownerId">Dueño: </label>
             <select name="ownerId" id="ownerId" required>
@@ -42,7 +42,7 @@
             </select>
 
             <label for="companyType">Tipo de empresa: </label>
-            <select name="companyType" id="companyType" required>
+            <select name="companyType" id="companyType" >
                 <option value="0">Ninguno</option>
                 <?php foreach ($touristCompanyTypes as $touristCompanyType): ?>
                     <option value="<?php echo htmlspecialchars($touristCompanyType->getId()); ?>">
