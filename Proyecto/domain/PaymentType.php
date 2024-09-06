@@ -17,10 +17,10 @@ class PaymentType {
         $this->sinpeNumber = $sinpeNumber;
     }
 
-    public function getTbBankAccountId(){
+    public function getTbPaymentTypeId(){
         return $this->tbPaymentTypeId;
     }   
-    public function setTbBankAccountId($tbPaymentTypeId){
+    public function setTbPaymentTypeId($tbPaymentTypeId){
         $this->tbPaymentTypeId = $tbPaymentTypeId;
     }
 

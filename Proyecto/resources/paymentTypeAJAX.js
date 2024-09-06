@@ -11,12 +11,12 @@ document.addEventListener('DOMContentLoaded', function () {
         const postData = {
             ownerId: document.getElementById('ownerId').value,
             accountNumber: document.getElementById('accountNumber').value,
-            bank: document.getElementById('bank').value,
+            sinpeNumber: document.getElementById('sinpeNumber').value,
             status: document.getElementById('status').value,
         };
     
         let xhr = new XMLHttpRequest();
-        xhr.open('POST', '../business/bankAccountAction.php', true);
+        xhr.open('POST', '../business/paymentTypeAction.php', true);
         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
         xhr.onreadystatechange = function () {
             if (xhr.readyState === 4) {
@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         };
         xhr.send('ownerId=' + encodeURIComponent(postData.ownerId) + '&accountNumber=' + encodeURIComponent(postData.accountNumber)
-        + '&bank=' + encodeURIComponent(postData.bank) + '&status=' + encodeURIComponent(postData.status));
+        + '&sinpeNumber=' + encodeURIComponent(postData.sinpeNumber) + '&status=' + encodeURIComponent(postData.status));
     });
 })
 
