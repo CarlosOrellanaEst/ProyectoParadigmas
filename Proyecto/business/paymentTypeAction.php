@@ -17,7 +17,7 @@ if (isset($_POST['accountNumber'])) {
         $response['message'] = 'El número de cuenta no puede estar vacío';
 
     } else {
-        $paymentType = new PaymentType(0, $ownerId, $accountNumber, $bank, $status);
+        $paymentType = new PaymentType(0, $ownerId, $accountNumber, $bank, 1);
         $paymentTypeBusiness = new paymentTypeBusiness();
         
         if (is_numeric($bank)) {

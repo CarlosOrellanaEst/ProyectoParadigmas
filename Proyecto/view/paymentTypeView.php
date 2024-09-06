@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Cuenta de banco</title>
+    <title>Tipo de pago</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <style>
         td, th {
@@ -11,7 +11,7 @@
     
     <?php
         include '../business/paymentTypeBusiness.php';
-        include '../business/ownerBusiness.php';
+        include '../business/OwnerBusiness.php';
         $ownerBusiness = new OwnerBusiness();
         $owners = $ownerBusiness->getAllTBOwners();
     ?>
@@ -21,7 +21,7 @@
 <body>
     <a href="../index.html">← Volver al inicio</a>
     <header> 
-        <h1>CRUD Cuenta de banco</h1>
+        <h1>CRUD Tipo de pago</h1>
     </header>
     <section>
         <form method="post"  id="formCreate" >
@@ -37,7 +37,7 @@
             <label for="accountNumber">Número de Cuenta</label>
             <input placeholder="Número de cuenta" type="text" name="accountNumber" id="accountNumber"/>
             <label for="sinpeNumber">Número de SINPE</label>
-            <input  placeholder="Número de SINPE" type="text" name="sinpeNumber" id="sinpeNUmber"/>
+            <input  placeholder="Número de SINPE" type="text" name="sinpeNumber" id="sinpeNumber"/>
             <label for="status">Estado</label>
             <select name="status" id="status" required>
                 <option value="1">Activo</option>
