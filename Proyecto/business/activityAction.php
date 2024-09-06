@@ -3,31 +3,43 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-include_once '../business/activityBusiness.php'; // Ajusta la ruta según tu estructura
-include_once '../domain/activity.php'; // Ajusta la ruta según tu estructura
+include_once '../business/activityBusiness.php'; 
+include_once '../domain/activity.php'; 
+
 
 if (isset($_POST['create'])) {
-    $nameTBActivity = $_POST['nameTBActivity'];
+    $nameTBActivity = isset($_POST['nameTBActivity']) ? trim($_POST['nameTBActivity']) : '';
+    $attributeTBActivityArray = isset($_POST['attributeTBActivityArray']) ? explode(',', $_POST['attributeTBActivityArray']) : [];
+    $dataAttributeTBActivityArray = isset($_POST['dataAttributeTBActivityArray']) ? explode(',', $_POST['dataAttributeTBActivityArray']) : [];
 
-    // Decodificar los arrays JSON recibidos
-    $attributeTBActivityArray = isset($_POST['attributeTBActivityArray']) ? json_decode($_POST['attributeTBActivityArray'], true) : [];
-    $dataAttributeTBActivityArray = isset($_POST['dataAttributeTBActivityArray']) ? json_decode($_POST['dataAttributeTBActivityArray'], true) : [];
-
-    $statusTBActivity = isset($_POST['statusTBActivity']) ? 1 : 0;
+    // Validar los datos
+    if (empty($nameTBActivity)) {
+        echo json_encode(['status' => 'error', 'message' => 'El nombre de la actividad es requerido.']);
+        exit();
+    }
 
     // Crear una instancia de Activity con los datos decodificados
-    $activity = new Activity(0, $nameTBActivity, $attributeTBActivityArray, $dataAttributeTBActivityArray, $statusTBActivity);
+    $activity = new Activity(0, $nameTBActivity, $attributeTBActivityArray, $dataAttributeTBActivityArray, 1);
 
+    // Crear una instancia de ActivityBusiness
     $activityBusiness = new ActivityBusiness();
+
+    // Insertar la actividad en la base de datos
     $result = $activityBusiness->insertActivity($activity);
 
+    // Enviar respuesta al cliente
     if ($result) {
-        echo "Activity inserted successfully";
+        echo json_encode(['status' => 'success', 'message' => 'Actividad insertada correctamente']);
     } else {
-        error_log("Error inserting activity: " . mysqli_error($conn));
-        echo "Error inserting activity";
+        error_log("Error al insertar actividad");
+        echo json_encode(['status' => 'error', 'message' => 'Error al insertar actividad']);
     }
+} else {
+    // Manejo de otros casos si es necesario
+    echo json_encode(['status' => 'error', 'message' => 'Solicitud no válida']);
 }
+
+
 
 
 

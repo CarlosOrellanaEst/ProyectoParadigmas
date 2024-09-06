@@ -1,65 +1,48 @@
 document.addEventListener('DOMContentLoaded', function () {
-    // Manejo del formulario de creación
     document.getElementById('formCreate').addEventListener('submit', function (event) {
-        event.preventDefault(); // Prevenir el envío estándar del formulario
+        event.preventDefault();
 
-        let nameTBActivity = document.getElementById('nameTBActivity').value;
+        // Obtener los atributos y datos
+        const attributeInputs = document.querySelectorAll('input[name="attributeTBActivityArray"]');
+        const dataInputs = document.querySelectorAll('input[name="dataAttributeTBActivityArray"]');
 
-        // Recolectar los datos de los inputs y convertirlos en arrays
-        let attributeTBActivityArray = [];
-        document.querySelectorAll("input[name='attributeTBActivityArray[]']").forEach(function(input) {
-            attributeTBActivityArray.push(input.value);
-        });
+        // Convertir los atributos y datos en cadenas separadas por comas
+        const attributeTBActivityArray = Array.from(attributeInputs).map(input => input.value).join(',');
+        const dataAttributeTBActivityArray = Array.from(dataInputs).map(input => input.value).join(',');
 
-        let dataAttributeTBActivityArray = [];
-        document.querySelectorAll("input[name='dataAttributeTBActivityArray[]']").forEach(function(input) {
-            dataAttributeTBActivityArray.push(input.value);
-        });
+        const formData = new FormData(this);
+        formData.append('attributeTBActivityArray', attributeTBActivityArray);
+        formData.append('dataAttributeTBActivityArray', dataAttributeTBActivityArray);
+        formData.append('create', 'create');
 
-        let statusTBActivity = document.getElementById('statusTBActivity').value;
-
-        // Preparar el FormData para enviar al servidor
-        let formData = new FormData();
-        formData.append('nameTBActivity', nameTBActivity);
-        formData.append('attributeTBActivityArray', JSON.stringify(attributeTBActivityArray));
-        formData.append('dataAttributeTBActivityArray', JSON.stringify(dataAttributeTBActivityArray));
-        formData.append('statusTBActivity', statusTBActivity);
-        formData.append('create', true);
-
-        // Enviar la solicitud AJAX
         let xhr = new XMLHttpRequest();
         xhr.open('POST', '../business/activityAction.php', true);
-        
-        xhr.onload = function () {
-            console.log(xhr.responseText); // Verificar la respuesta del servidor
-            if (xhr.status === 200) {
-                let response = xhr.responseText;
-                if (response.includes('Activity inserted successfully')) {
-                    alert('Actividad insertada exitosamente.');
-                    document.getElementById('formCreate').reset(); // Limpiar el formulario
-                    document.getElementById('attributes').innerHTML = `
-                        <div>
-                            <label for="attribute1">Atributo: </label>
-                            <input type="text" name="attributeTBActivityArray[]" id="attribute1" placeholder="Atributo" required />
-                            <label for="dataAttributeTBActivityArray[]">Dato: </label>
-                            <input type="text" name="dataAttributeTBActivityArray[]" placeholder="Dato" required />
-                        </div>
-                    `; // Limpiar los atributos agregados dinámicamente
-                    location.reload(); // Recargar la página para actualizar la tabla
-                } else {
-                    alert('Error en la operación: ' + response);
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4) {
+                try {
+                    let response = JSON.parse(xhr.responseText);
+                    if (xhr.status === 200) {
+                        if (response.status === 'success') {
+                            alert(response.message);
+                            document.getElementById('formCreate').reset();
+                            location.reload();
+                        } else {
+                            alert('Error: ' + response.message);
+                        }
+                    } else {
+                        alert('Error HTTP: ' + xhr.status);
+                    }
+                } catch (e) {
+                    console.error('Respuesta JSON inválida:', xhr.responseText);
+                    alert('Error procesando la respuesta del servidor.');
                 }
-            } else {
-                alert('Error en la solicitud AJAX: ' + xhr.status + ' - ' + xhr.statusText);
             }
-        };
-        
-        xhr.onerror = function () {
-            alert('Error en la solicitud AJAX. No se pudo completar la solicitud.');
         };
 
         xhr.send(formData);
     });
+
+
 
     // Manejo de eliminación y actualización
     document.querySelectorAll('form[action="../business/activityAction.php"]').forEach(function(form) {
@@ -81,6 +64,7 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
+    // Función para manejar la eliminación
     function handleDeleteActivity(form) {
         console.log('Enviando solicitud de eliminación');
         let idTBActivity = form.querySelector("input[name='idTBActivity']").value;
@@ -108,6 +92,7 @@ document.addEventListener('DOMContentLoaded', function () {
         xhr.send(formData);
     }
 
+    // Función para manejar la actualización
     function handleUpdateActivity(form) {
         console.log('Enviando solicitud de actualización');
         let idTBActivity = form.querySelector("input[name='idTBActivity']").value;

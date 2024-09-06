@@ -25,9 +25,9 @@
             <div id="attributes">
                 <div>
                     <label for="attribute1">Atributo: </label>
-                    <input type="text" name="attributeTBActivityArray[]" id="attribute1" placeholder="Atributo" required />
-                    <label for="dataAttributeTBActivityArray[]">Dato: </label>
-                    <input type="text" name="dataAttributeTBActivityArray[]" placeholder="Dato" required />
+                    <input type="text" name="attributeTBActivityArray" id="attribute1" placeholder="Atributo" required />
+                    <label for="dataAttributeTBActivityArray">Dato: </label>
+                    <input type="text" name="dataAttributeTBActivityArray" placeholder="Dato" required />
                 </div>
             </div>
             <button type="button" id="addAttribute">Agregar otro atributo</button>
@@ -115,9 +115,9 @@
             const attributeContainer = document.createElement('div');
             attributeContainer.innerHTML = `
                 <label>Atributo: </label>
-                <input type="text" name="attributeTBActivityArray[]" placeholder="Atributo" required />
+                <input type="text" name="attributeTBActivityArray" placeholder="Atributo" required />
                 <label>Dato: </label>
-                <input type="text" name="dataAttributeTBActivityArray[]" placeholder="Dato" required />
+                <input type="text" name="dataAttributeTBActivityArray" placeholder="Dato" required />
             `;
             document.getElementById('attributes').appendChild(attributeContainer);
         });
