@@ -11,14 +11,14 @@ class ActivityData extends Data {
         if (!$conn) {
             die("Connection failed: " . mysqli_connect_error());
         }
-
+    
         $conn->set_charset('utf8mb4');
-
+    
         // Verificar si la actividad ya existe
         if ($this->getActivityByName($activity->getNameTBActivity())) {
             return null; // La actividad ya existe
         }
-
+    
         // Obtener el próximo ID
         $queryGetLastId = "SELECT MAX(tbactivityid) AS tbactivityid FROM tbactivity";
         $idCont = mysqli_query($conn, $queryGetLastId);
@@ -27,33 +27,37 @@ class ActivityData extends Data {
             $lastId = $row[0] !== null ? (int)trim($row[0]) : 0;
             $nextId = $lastId + 1;
         }
-
+    
         // Insertar la actividad
         $queryInsert = "INSERT INTO tbactivity (tbactivityid, tbactivityname, tbactivityatributearray, tbactivitydataarray, tbactivitystatus) VALUES (?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($queryInsert);
         if ($stmt === false) {
             die("Prepare failed: " . $conn->error);
         }
-
+    
         $tbactivityid = $nextId;
         $tbactivityname = $activity->getNameTBActivity();
-        $tbactivityatributearray = $activity->getAttributeTBActivityArray();
-        $tbactivitydataarray = $activity->getDataAttributeTBActivityArray();
+        
+        // Los valores deben estar separados por comas
+        $tbactivityatributearray = implode(",", $activity->getAttributeTBActivityArray());
+        $tbactivitydataarray = implode(",", $activity->getDataAttributeTBActivityArray());
+        
         $tbactivitystatus = $activity->getStatusTBActivity();
-
+    
+        // Vinculación de parámetros
         $stmt->bind_param("isssi", $tbactivityid, $tbactivityname, $tbactivityatributearray, $tbactivitydataarray, $tbactivitystatus);
         $result = $stmt->execute();
-
+    
         if (!$result) {
             echo "Execute failed: " . $stmt->error;
         }
-
+    
         $stmt->close();
         mysqli_close($conn);
-
+    
         return $result;
     }
-
+    
     public function getAllActivities() {
         $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
         if (!$conn) {
@@ -67,21 +71,22 @@ class ActivityData extends Data {
         $activities = array();
     
         while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
-            // Decodificar JSON a array de PHP
-            $attributeArray = json_decode($row['tbactivityatributearray'], true);
-            $dataArray = json_decode($row['tbactivitydataarray'], true);
+            // Separar los atributos y datos por comas y convertirlos en arrays
+            $attributeArray = explode(',', $row['tbactivityatributearray']);
+            $dataArray = explode(',', $row['tbactivitydataarray']);
     
-            // Verificar si la decodificación fue exitosa
-            if ($attributeArray === null || $dataArray === null) {
-                // Manejar el error según sea necesario
-                continue; // O podrías lanzar una excepción
+            // Verificar si ambos arrays tienen la misma longitud
+            if (count($attributeArray) !== count($dataArray)) {
+                // Manejar el error según sea necesario, por ejemplo, omitir la actividad
+                continue;
             }
     
+            // Crear la instancia de Activity
             $activity = new Activity(
                 $row['tbactivityid'],
                 $row['tbactivityname'],
-                $attributeArray,  // Pasar los arrays decodificados
-                $dataArray,       // Pasar los arrays decodificados
+                $attributeArray,  // Pasar los arrays de atributos
+                $dataArray,       // Pasar los arrays de datos
                 $row['tbactivitystatus']
             );
     
@@ -92,6 +97,7 @@ class ActivityData extends Data {
     
         return $activities;
     }
+    
     
 
     public function deleteActivity($id) {
@@ -124,32 +130,37 @@ class ActivityData extends Data {
             die("Connection failed: " . mysqli_connect_error());
         }
         $conn->set_charset('utf8mb4');
-
+    
+        // Convertir arrays a cadenas separadas por comas
+        $attributes = implode(',', $activity->getAttributeTBActivityArray());
+        $dataAttributes = implode(',', $activity->getDataAttributeTBActivityArray());
+    
         $query = "UPDATE tbactivity SET tbactivityname=?, tbactivityatributearray=?, tbactivitydataarray=?, tbactivitystatus=? WHERE tbactivityid=?";
-
+    
         $stmt = $conn->prepare($query);
         if ($stmt === false) {
             die("Prepare failed: " . $conn->error);
         }
-
-        if ($this->getActivityByName($activity->getNameTBActivity())->getNameTBActivity() === $activity->getNameTBActivity()) {
-            $tbactivityid = $activity->getIdTBActivity();
-            $tbactivityname = $activity->getNameTBActivity();
-            $tbactivityatributearray = $activity->getAttributeTBActivityArray();
-            $tbactivitydataarray = $activity->getDataAttributeTBActivityArray();
-            $tbactivitystatus = $activity->getStatusTBActivity();
-
-            $stmt->bind_param("sssii", $tbactivityname, $tbactivityatributearray, $tbactivitydataarray, $tbactivitystatus, $tbactivityid);
-
-            $result = $stmt->execute();
-        } else {
-            return $result = null;
+    
+        $tbactivityid = $activity->getIdTBActivity();
+        $tbactivityname = $activity->getNameTBActivity();
+        $tbactivityatributearray = $attributes;
+        $tbactivitydataarray = $dataAttributes;
+        $tbactivitystatus = $activity->getStatusTBActivity();
+    
+        $stmt->bind_param("sssii", $tbactivityname, $tbactivityatributearray, $tbactivitydataarray, $tbactivitystatus, $tbactivityid);
+    
+        $result = $stmt->execute();
+        if ($result === false) {
+            die("Execute failed: " . $stmt->error);
         }
+    
         $stmt->close();
         mysqli_close($conn);
-
+    
         return $result;
     }
+    
 
     public function getActivityById($id) {
         $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
