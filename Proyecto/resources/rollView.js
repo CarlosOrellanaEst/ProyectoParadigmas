@@ -2,6 +2,9 @@ function confirmDelete(event) {
     if (event.submitter && event.submitter.name === 'delete') {
         return confirm('¿Estás seguro de que deseas eliminar este rol?');
     }
+    if (event.submitter && event.submitter.name === 'update') {
+        return confirm('¿Estás seguro de que deseas actualizar este rol?');
+    }
     return true;
 }
 
@@ -10,23 +13,27 @@ function showAlertBasedOnURL() {
     const paramSuccess = urlParams.get('success');
     const paramError = urlParams.get('error');
 
-    if (urlParams.has('success')) {
-        if(paramSuccess === 'updated') {
+    // Verificar y mostrar alertas de éxito
+    if (paramSuccess) {
+        if (paramSuccess === 'updated') {
             alert('El rol se ha actualizado con éxito.');
-        } else if (paramSuccess && urlParams.get('success') === 'inserted') {
+        } else if (paramSuccess === 'inserted') {
             alert('El rol se ha creado con éxito.');
-        } else if (paramSuccess && urlParams.get('success') === 'deleted') {
+        } else if (paramSuccess === 'deleted') {
             alert('El rol se ha eliminado con éxito.');
         }
-    } else if(urlParams.has('error')) {
-        if(paramError === 'alreadyexists') { 
+    }
+
+    // Verificar y mostrar alertas de error
+    if (paramError) {
+        if (paramError === 'alreadyExists') {
             alert('Error.\nYa existe dicho rol');
         } else if (paramError === 'numberFormat' || paramError === 'emptyField') {
-            alert('Error.\n Ingrese un nombre para el rol. No se permiten numeros');
+            alert('Error.\nIngrese un nombre para el rol. No se permiten numeros');
         } else {
             alert('Error.\nPor favor notificar de este error');
         }
     }
-} 
+}
 
 window.onload = showAlertBasedOnURL;

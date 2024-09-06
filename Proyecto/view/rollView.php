@@ -13,7 +13,7 @@
     <?php
     include '../business/rollBusiness.php';
     ?>
-<!--     <script src="../resources/rollView.js"></script> -->
+    <script src="../resources/rollView.js"></script>
     <script src="../resources/AJAXCreate.js"></script>
 </head>
 <body>
