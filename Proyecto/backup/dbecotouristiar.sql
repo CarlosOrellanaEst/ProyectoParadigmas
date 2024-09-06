@@ -24,17 +24,29 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `tbbankaccount`
+-- Estructura de tabla para la tabla `tbpaymenttype`
 --
 
-CREATE TABLE `tbbankaccount` (
-  `tbbankaccountid` int(11) NOT NULL,
-  `tbbankaccountownerid` int(11) NOT NULL,
-  `tbbankaccountnumber` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `tbbankaccountbankname` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `tbbankaccountstatus` tinyint(1) NOT NULL,
-  `tbbankaccountisactive` int(11) NOT NULL DEFAULT 1
+CREATE TABLE `tbpaymenttype` (
+  `tbpaymenttypeid` int(11) NOT NULL,
+  `tbownerid` int(11) NOT NULL,
+  `tbpaymenttypenumber` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `tbpaymenttypesinpenumber` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `tbpaymenttypestatus` tinyint(1) NOT NULL DEFAULT 1,
+  `tbpaymenttypeisactive` int(11) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `tbpaymenttype`
+--
+
+INSERT INTO `tbpaymenttype` (`tbpaymenttypeid`, `tbownerid`, `tbpaymenttypenumber`, `tbpaymenttypesinpenumber`, `tbpaymenttypestatus`, `tbpaymenttypeisactive`) VALUES
+(1, 1, '1234567890123456', 'Bank of America', 1, 1),
+(2, 2, '2345678901234567', 'Chase Bank', 1, 1),
+(3, 3, '3456789012345678', 'Wells Fargo', 1, 1),
+(4, 4, '4567890123456789', 'Citibank', 1, 1),
+(5, 5, '5678901234567890', 'Goldman Sachs', 1, 1);
+COMMIT;
 
 
 -- --------------------------------------------------------
@@ -117,21 +129,6 @@ CREATE TABLE `tbactivity` (
 --
 -- Volcado de datos para la tabla `tbroll`
 --
-
--- --------------------------------------------------------
---
--- Volcado de datos para la tabla `tbbankaccount`
---
-
--- Inserción de datos en la tabla `tbbankaccount`
-INSERT INTO `tbbankaccount` (`tbbankaccountid`, `tbbankaccountownerid`, `tbbankaccountnumber`, `tbbankaccountbankname`, `tbbankaccountstatus`, `tbbankaccountisactive`) VALUES
-(1, 1, '1234567890123456', 'Bank of America', 1, 1),
-(2, 2, '2345678901234567', 'Chase Bank', 1, 1),
-(3, 3, '3456789012345678', 'Wells Fargo', 1, 1),
-(4, 4, '4567890123456789', 'Citibank', 1, 1),
-(5, 5, '5678901234567890', 'Goldman Sachs', 1, 1);
-
-
 -- --------------------------------------------------------
 --
 -- Volcado de datos para la tabla `tbroll`
