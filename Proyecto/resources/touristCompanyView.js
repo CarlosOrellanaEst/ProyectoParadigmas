@@ -4,39 +4,66 @@ function showAlertBasedOnURL() {
     if (urlParams.has('success')) {
         switch (urlParams.get('success')) {
             case 'updated':
-                alert('Se ha actualizado correctamente.');
+                alert('La empresa se ha actualizado correctamente.');
                 break;
             case 'deleted':
-                alert('Se ha eliminado correctamente.');
+                alert('La empresa se ha eliminado correctamente.');
                 break;
             case 'inserted':
-                alert('Se ha ingresado correctamente.');
+                alert('La empresa se ha creado correctamente.');
                 break;
             default:
                 break;
         }
     } else if (urlParams.has('error')) {
         switch (urlParams.get('error')) {
+            case 'uploadFailed':
+                alert('Error al subir la imagen. Por favor, inténtelo de nuevo.');
+                break;
+            case 'invalidFileType':
+                alert('Formato de imagen inválido. Solo se permiten JPG, PNG, JPEG y GIF.');
+                break;
             case 'dbError':
-                alert('Error del sistema al realizar la acción.');
+                alert('Error en la base de datos al realizar la acción.');
                 break;
             case 'emptyField':
-                alert('Debes ingresar un nombre, el campo de texto no debe estar vacío.');
+                alert('El campo de texto no puede estar vacío.');
+                break;
+            case 'invalidOwnerOrCompanyType':
+                alert('Propietario o tipo de empresa no válido. Por favor, revise los campos.');
+                break;
+            case 'invalidId':
+                alert('ID inválido. No se pudo completar la acción.');
+                break;
+            case 'missingFields':
+                alert('Faltan campos obligatorios. Por favor, complete todos los datos.');
+                break;
+            case 'deleteFailed':
+                alert('Error al eliminar la empresa.');
+                break;
+            case 'updateFailed':
+                alert('Error al actualizar la empresa.');
                 break;
             default:
-                alert('Ocurrió un error.');
+                alert('Ocurrió un error inesperado.');
                 break;
         }
     }
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     showAlertBasedOnURL();
 });
 
+function confirmAction(event) {
+    if (!confirm("¿Estás seguro de que quieres eliminar esta empresa?")) {
+        event.preventDefault(); // Detener la acción si no se confirma
+    }
+}
+
 
 document.getElementById('formCreate').addEventListener('submit', function (e) {
-    e.preventDefault(); // Prevenir que la página se recargue
+    e.preventDefault(); // Prevenir recarga de página
 
     // Validaciones
     const magicName = document.getElementById('magicName').value.trim();
@@ -45,26 +72,24 @@ document.getElementById('formCreate').addEventListener('submit', function (e) {
     const companyType = document.getElementById('companyType').value;
     const images = document.getElementById('imagenes').files;
     const status = document.getElementById('status').value;
-    /*
-    if (magicName === '') {
-        alert('El nombre mágico no puede estar vacío.');
-        return;
+    const ownerError = document.getElementById('ownerError');
+    // Validación específica de campos
+
+    ownerError.style.display = 'none';
+
+    // Validación
+    if (owner === '0') { // Si el valor seleccionado es "Ninguno"
+        ownerError.style.display = 'inline'; // Mostrar el mensaje de error
+        return; // Detener el envío del formulario
     }
-    if (legalName === '') {
-        alert('El nombre legal no puede estar vacío.');
-        return;
-    }
-        */
+    
     if (owner === '0') {
-        alert('El propietario no puede ser "Ninguno".');
+        alert('Debes seleccionar un propietario.');
         return;
     }
-    /*
-    if (companyType === '0') {
-        alert('El tipo de empresa no puede ser "Ninguno".');
-        return;
-    }
-    */
+ 
+
+
     // Crear el objeto FormData
     const formData = new FormData();
     formData.append('magicName', magicName);
@@ -77,8 +102,8 @@ document.getElementById('formCreate').addEventListener('submit', function (e) {
     for (let i = 0; i < images.length; i++) {
         formData.append('imagenes[]', images[i]);
     }
-    
-    formData.append('create', 'create'); // Asegúrate de que el campo de acción esté presente
+
+    formData.append('create', 'create'); // Campo de acción
 
     // Configuración de la solicitud AJAX
     let xhr = new XMLHttpRequest();
@@ -90,7 +115,7 @@ document.getElementById('formCreate').addEventListener('submit', function (e) {
                 if (response.status === 'success') {
                     alert(response.message);
                     document.getElementById('formCreate').reset();
-                    
+
                     // Redirigir después de la inserción exitosa
                     window.location.href = "touristCompanyView.php?success=inserted";
                 } else {

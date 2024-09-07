@@ -26,36 +26,50 @@
 
     <section id="create">
         <form id="formCreate" method="post" action="../business/touristCompanyAction.php" enctype="multipart/form-data">
-            <label for="legalName">Nombre legal: </label>
-            <input placeholder="Nombre legal" type="text" name="legalName" id="legalName"  />
-            <label for="magicName">Nombre mágico: </label>
-            <input placeholder="Nombre mágico" type="text" name="magicName" id="magicName"  />
+            <div class="form-group">
+                <label for="legalName">Nombre legal:</label>
+                <input placeholder="Nombre legal" type="text" name="legalName" id="legalName" />
+            </div>
 
-            <label for="ownerId">Dueño: </label>
-            <select name="ownerId" id="ownerId" required>
-                <option value="0">Ninguno</option>
-                <?php foreach ($owners as $owner): ?>
-                    <option value="<?php echo htmlspecialchars($owner->getIdTBOwner()); ?>">
-                        <?php echo htmlspecialchars($owner->getName() . ' ' . $owner->getSurnames()); ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
+            <div class="form-group">
+                <label for="magicName">Nombre mágico:</label>
+                <input placeholder="Nombre mágico" type="text" name="magicName" id="magicName" />
+            </div>
 
-            <label for="companyType">Tipo de empresa: </label>
-            <select name="companyType" id="companyType" >
-                <option value="0">Ninguno</option>
-                <?php foreach ($touristCompanyTypes as $touristCompanyType): ?>
-                    <option value="<?php echo htmlspecialchars($touristCompanyType->getId()); ?>">
-                        <?php echo htmlspecialchars($touristCompanyType->getName()); ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
+            <div class="form-group">
+            <label for="ownerId">Dueño: <span id="ownerError" style="color:red; display:none;">*campo obligatorio</span></label>
+                <select name="ownerId" id="ownerId" required>
+                    <option value="0">Ninguno</option>
+                    <?php foreach ($owners as $owner): ?>
+                        <option value="<?php echo htmlspecialchars($owner->getIdTBOwner()); ?>">
+                            <?php echo htmlspecialchars($owner->getName() . ' ' . $owner->getSurnames()); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
 
-            <label for="imagenes">Imágenes: </label>
-            <input type="file" name="imagenes[]" id="imagenes" multiple />
+            <div class="form-group">
+                <label for="companyType">Tipo de empresa:</label>
+                <select name="companyType" id="companyType" >
+                    <option value="0">Ninguno</option>
+                    <?php foreach ($touristCompanyTypes as $touristCompanyType): ?>
+                        <option value="<?php echo htmlspecialchars($touristCompanyType->getId()); ?>">
+                            <?php echo htmlspecialchars($touristCompanyType->getName()); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="imagenes">Imágenes:</label>
+                <input type="file" name="imagenes[]" id="imagenes" multiple />
+            </div>
 
             <input type="hidden" id="status" name="status" value="1">
-            <input type="submit" value="Crear" name="create" id="create" />
+
+            <div class="form-group">
+                <input type="submit" value="Crear" name="create" id="create" />
+            </div>
         </form>
     </section>
 
@@ -107,8 +121,8 @@
                         $assignedOwner = $ownerBusiness->getTBOwner($current->getTbtouristcompanyowner());
                         echo '<tr>';
                         echo '<form method="post" action="../business/touristCompanyAction.php" onsubmit="return confirmAction(event);">';
-                        echo '<td><input type="text" name="legalName" value="'. htmlspecialchars($current->getTbtouristcompanylegalname()) .'" required></td>';
-                        echo '<td><input type="text" name="magicName" value="' . htmlspecialchars($current->getTbtouristcompanymagicname()) . '" required></td>';
+                        echo '<td><input type="text" name="legalName" value="'. htmlspecialchars($current->getTbtouristcompanylegalname()) .'" ></td>';
+                        echo '<td><input type="text" name="magicName" value="' . htmlspecialchars($current->getTbtouristcompanymagicname()) . '" ></td>';
                         echo '<td>';
                         echo '<select name="ownerId" required>';
                         foreach ($allowners as $owner) {
@@ -135,7 +149,7 @@
                         $images = $current->getTbtouristcompanyurl(); // Supongamos que getTbtouristcompanyurl() devuelve un array de URLs
 
                         // Verificar si $images es un array
-                        if (is_array($images) && !empty($images)) {
+                        if (!empty($images)) {
                             echo '<div style="white-space: nowrap;">'; // Contenedor en línea para las imágenes
                             foreach ($images as $image) {
                                 // Limpiar la URL de espacios en blanco
@@ -155,6 +169,7 @@
                         } else {
                             echo 'No hay imágenes';
                         }
+                        
                         echo '</td>';
                         echo '<input type="hidden" name="status" value="1">';
                         echo '<td>';
