@@ -253,6 +253,30 @@ public function getAllTouristCompanies() {
     
         return $touristCompany;
     }
+
+    public function removeImageFromCompany($companyId, $newImageUrls) {
+        $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
+        if (!$conn) {
+            die("Connection failed: " . mysqli_connect_error());
+        }
+        $conn->set_charset('utf8');
+    
+        // Actualizar la URL en la base de datos
+        $query = "UPDATE tbtouristcompany SET tbtouristcompanyurl=? WHERE tbtouristcompanyid=?";
+        $stmt = $conn->prepare($query);
+        if ($stmt === false) {
+            die("Prepare failed: " . $conn->error);
+        }
+    
+        $stmt->bind_param("si", $newImageUrls, $companyId);
+        $result = $stmt->execute();
+    
+        $stmt->close();
+        mysqli_close($conn);
+    
+        return $result;
+    }
+    
     
    
 

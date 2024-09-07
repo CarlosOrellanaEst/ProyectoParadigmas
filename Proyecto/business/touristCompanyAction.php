@@ -178,3 +178,41 @@ if (isset($_POST['delete'])) {
         exit();
     }
 }
+
+if (isset($_POST['deleteImage'])) {
+    $companyId = $_POST['photoID'];
+    $imageIndexToDelete = (int)$_POST['imageIndex']; // Asegúrate de que el índice sea un entero
+    
+    // Obtener las imágenes actuales del registro de la empresa
+    $touristCompanyBusiness = new TouristCompanyBusiness();
+    $currentTouristCompany = $touristCompanyBusiness->getById($companyId);
+    
+    // Obtener la lista de imágenes actuales
+    $images = $currentTouristCompany->getTbtouristcompanyurl();
+    
+    // Verificar si el índice de la imagen a eliminar es válido
+    if (isset($images[$imageIndexToDelete])) {
+        // Ruta completa del archivo en el servidor
+        $filePath = '../images/' . trim($images[$imageIndexToDelete]);
+        
+        // Eliminar la imagen del servidor
+        if (file_exists($filePath)) {
+            unlink($filePath); // Eliminar la imagen físicamente del servidor
+        }
+        
+        // Eliminar la imagen del array de URLs
+        unset($images[$imageIndexToDelete]);
+        
+        // Actualizar la lista de imágenes en la base de datos
+        $newImageUrls = implode(',', $images); // Convertir el array de nuevo en string separado por comas
+        $touristCompanyBusiness->removeImageFromCompany($companyId, $newImageUrls);
+        
+        // Redireccionar o mostrar un mensaje de éxito
+        header("location: ../view/touristCompanyView.php?success=imagen_eliminada");
+        exit();
+    } else {
+        // Redireccionar o mostrar un mensaje de error si el índice es inválido
+        header("ocation: ../view/touristCompanyView.php?eerror=image_not_found");
+        exit();
+    }
+}
