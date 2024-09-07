@@ -11,8 +11,8 @@
     
     <?php
         include '../business/paymentTypeBusiness.php';
-        include '../business/OwnerBusiness.php';
-        $ownerBusiness = new OwnerBusiness();
+        include '../business/ownerBusiness.php';
+        $ownerBusiness = new ownerBusiness();
         $owners = $ownerBusiness->getAllTBOwners();
     ?>
     <script src="../resources/paymentTypeView.js"></script>
@@ -23,6 +23,7 @@
     <header> 
         <h1>CRUD Tipo de pago</h1>
     </header>
+    
     <section>
         <form method="post"  id="formCreate" >
             <label for="ownerId">ID del Propietario</label>
