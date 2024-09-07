@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<html lang="es">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Tipo de pago</title>
@@ -12,8 +13,13 @@
     <?php
         include '../business/paymentTypeBusiness.php';
         include '../business/OwnerBusiness.php';
+
+        // Verificar si OwnerBusiness está devolviendo datos
         $ownerBusiness = new OwnerBusiness();
         $owners = $ownerBusiness->getAllTBOwners();
+        if (!$owners || empty($owners)) {
+            echo "<script>alert('No se encontraron propietarios.');</script>";
+        }
     ?>
     <script src="../resources/paymentTypeView.js"></script>
     <script src="../resources/paymentTypeAJAX.js"></script>
@@ -24,25 +30,33 @@
         <h1>CRUD Tipo de pago</h1>
     </header>
     <section>
-        <form method="post"  id="formCreate" >
+        <form method="post" id="formCreate">
             <label for="ownerId">ID del Propietario</label>
             <select name="ownerId" id="ownerId" required>
-                <!-- Opciones se llenarán aquí con PHP -->
-                <?php foreach ($owners as $owner): ?>
-                    <option value="<?php echo htmlspecialchars($owner->getOwnerId()); ?>">
-                        <?php echo htmlspecialchars($owner->getName() . ' ' . $owner->getSurnames()); ?>
-                    </option>
-                <?php endforeach; ?>
+                <!-- Opciones llenadas con PHP -->
+                <?php if (!empty($owners)): ?>
+                    <?php foreach ($owners as $owner): ?>
+                        <option value="<?php echo htmlspecialchars($owner->getIdTBOwner()); ?>">
+                            <?php echo htmlspecialchars($owner->getName() . ' ' . $owner->getSurnames()); ?>
+                        </option>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <option value="">No hay propietarios disponibles</option>
+                <?php endif; ?>
             </select>
+
             <label for="accountNumber">Número de Cuenta</label>
             <input placeholder="Número de cuenta" type="text" name="accountNumber" id="accountNumber"/>
+            
             <label for="sinpeNumber">Número de SINPE</label>
-            <input  placeholder="Número de SINPE" type="text" name="sinpeNumber" id="sinpeNumber"/>
+            <input placeholder="Número de SINPE" type="text" name="sinpeNumber" id="sinpeNumber"/>
+            
             <label for="status">Estado</label>
             <select name="status" id="status" required>
                 <option value="1">Activo</option>
                 <option value="0">Inactivo</option>
             </select>
+
             <input type="submit" value="Crear" name="create" id="create"/>
         </form>
     </section>
@@ -61,7 +75,7 @@
                     <th>Número de SINPE</th>
                     <th>Número de cuenta</th>
                     <th>Estado</th>
-                    <th>Acciónes</th>
+                    <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
@@ -70,13 +84,14 @@
                     $all = $paymentTypeBusiness->getAll();
                     $bankAccountFiltered = [];
 
-                    // Filtrar los resultados si se ha realizado una búsqueda
+                    // Filtrar resultados si se ha realizado una búsqueda
                     if (isset($_GET['searchOne'])) {
                         $searchTerm = $_GET['searchOne'];
-                        $bankAccountFiltered  = array_filter($all, function($bankAccount) use ($searchTerm) {
+                        $bankAccountFiltered = array_filter($all, function($bankAccount) use ($searchTerm) {
                             return stripos($bankAccount->getSinpeNumber(), $searchTerm) !== false;
                         });
                     }
+
                     if (count($bankAccountFiltered) > 0) {
                         $all = $bankAccountFiltered;
                     }
@@ -90,8 +105,8 @@
                                 echo '<td><input type="text" name="SinpeNumber" value="' . $current->getSinpeNumber() . '"/></td>';
                                 echo '<td><input type="text" name="AccountNumber" value="' . $current->getAccountNumber() . '"/></td>';
                                 echo '<td><select name="Status" id="Status">
-                                                <option value="1"'.(($current->getStatus() == 1)? ' selected': '').'>Activo</option>
-                                                <option value="0"'.(($current->getStatus() == 0)? ' selected': '').'>Inactivo</option>
+                                                <option value="1"' . (($current->getStatus() == 1) ? ' selected' : '') . '>Activo</option>
+                                                <option value="0"' . (($current->getStatus() == 0) ? ' selected' : '') . '>Inactivo</option>
                                             </select></td>';
                                 echo '<td>';
                                     echo '<input type="submit" value="Actualizar" name="update"/>';
