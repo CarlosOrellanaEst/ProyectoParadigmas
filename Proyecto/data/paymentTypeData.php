@@ -118,6 +118,78 @@ class paymentTypeData extends Data {
         $conn->set_charset('utf8');
     
         $id = $paymentType->getTbPaymentTypeId();
+        $newAccountNumber = mysqli_real_escape_string($conn, $paymentType->getAccountNumber());
+        $newSinpeNumber = mysqli_real_escape_string($conn, $paymentType->getSinpeNumber());
+        $newStatus = mysqli_real_escape_string($conn, $paymentType->getStatus());
+    
+        // Verificar si el número de cuenta ya existe en otro registro
+        $currentAccount = $this->getTbPaymentTypeById($id);
+        if ($currentAccount && $currentAccount->getAccountNumber() !== $newAccountNumber) {
+            if ($this->getTbPaymentTypeByAccountNumber($newAccountNumber)) {
+                mysqli_close($conn);
+                return null; // El número de cuenta ya existe
+            }
+        }
+    
+        // Verificar si el número SINPE ya existe en otro registro (si no está vacío)
+        if (!empty($newSinpeNumber)) {
+            if ($this->getTbPaymentTypeBySinpeNumber($newSinpeNumber)) {
+                mysqli_close($conn);
+                return null; // El número de SINPE ya existe
+            }
+        }
+    
+        // Actualización de la tabla
+        $query = "UPDATE tbpaymenttype 
+          SET tbpaymenttypenumber = '$newAccountNumber', 
+              tbpaymenttypesinpenumber = " . (!empty($newSinpeNumber) ? "'$newSinpeNumber'" : "''") . ", 
+              tbpaymenttypestatus = '$newStatus' 
+          WHERE tbpaymenttypeid = $id";
+    
+        $result = mysqli_query($conn, $query);
+        
+        mysqli_close($conn);
+        return $result;
+    }
+
+    public function getTbPaymentTypeBySinpeNumber($sinpeNumber) {
+        $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
+        if (!$conn) {
+            die("Connection failed: " . mysqli_connect_error());
+        }
+    
+        $conn->set_charset('utf8');
+    
+        // Escapamos el valor para evitar inyección SQL
+        $sinpeNumber = mysqli_real_escape_string($conn, $sinpeNumber);
+    
+        // Consulta para verificar si el número SINPE ya existe
+        $query = "SELECT * FROM tbpaymenttype WHERE tbpaymenttypesinpenumber = '$sinpeNumber' LIMIT 1";
+        $result = mysqli_query($conn, $query);
+    
+        // Si hay un resultado, retornamos ese objeto, de lo contrario, null
+        if ($row = mysqli_fetch_assoc($result)) {
+            // Crear un objeto PaymentType con los datos obtenidos (ajusta según tu clase)
+            $paymentType = new PaymentType($row['tbpaymenttypeid'], 0, $row['tbpaymenttypenumber'], $row['tbpaymenttypesinpenumber'], $row['tbpaymenttypestatus']);
+            mysqli_close($conn);
+            return $paymentType;
+        }
+    
+        mysqli_close($conn);
+        return null; // No existe un registro con ese número SINPE
+    }
+    
+    
+
+    /*public function updateTbPaymentType($paymentType) {
+        $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
+        if (!$conn) {
+            die("Connection failed: " . mysqli_connect_error());
+        }
+    
+        $conn->set_charset('utf8');
+    
+        $id = $paymentType->getTbPaymentTypeId();
     
         $newAccountNumber = mysqli_real_escape_string($conn, $paymentType->getAccountNumber());
         $newSinpeNumber = mysqli_real_escape_string($conn, $paymentType->getSinpeNumber());
@@ -139,7 +211,7 @@ class paymentTypeData extends Data {
     
         mysqli_close($conn);
         return $result;
-    }
+    }*/
 
     public function getTbPaymentTypeById($id) {
         $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);

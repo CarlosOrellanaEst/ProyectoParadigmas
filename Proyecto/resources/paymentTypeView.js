@@ -1,8 +1,8 @@
 function confirmAction(event) {
     if (event.submitter && event.submitter.name === 'delete') {
-        return confirm('¿Estás seguro de que deseas eliminar esta cuenta bancaria?');
+        return confirm('¿Estás seguro de que deseas eliminar este registro?');
     } else if (event.submitter && event.submitter.name === 'update'){
-        return confirm('¿Estás seguro de que deseas actualizar esta cuenta bancaria?');
+        return confirm('¿Estás seguro de que deseas actualizar el tipo de pago?');
     }
     return true;
 }
@@ -13,13 +13,13 @@ function showAlertBasedOnURL() {
     if (urlParams.has('success')) {
         switch (urlParams.get('success')) {
             case 'updated':
-                alert('La cuenta bancaria se ha actualizado correctamente.');
+                alert('El tipo de pago se ha actualizado correctamente.');
             break;
             case 'deleted':
-                alert('La cuenta bancaria se ha eliminado correctamente.');
+                alert('El tipo de pago se ha eliminado correctamente.');
             break;
             case 'inserted':
-                alert('La cuenta bancaria se ha ingresado correctamente.');
+                alert('El tipo de pago se ha ingresado correctamente.');
             break;
             default:
             break;
@@ -29,11 +29,17 @@ function showAlertBasedOnURL() {
             case 'dbError':
                 alert('Error interno al realizar la acción.');
             break;
+            case 'accountRequired':
+                alert('El número de cuenta es obligatorio.');
+            break;
+            case 'invalidSinpe':
+                alert('El número de SINPE debe ser numérico.');
+            break;
             case 'emptyField':
                 alert('El campo de texto no debe estar vacío.');
             break;
             case 'numberFormat':
-                alert('No puedes ingresar solo números en el nombre del banco.');
+                alert('No puedes ingresar letras en el número de SINPE.');
             break;
             case 'alreadyexists':
                 alert('El número de cuenta ya existe, ingrese otro.');
