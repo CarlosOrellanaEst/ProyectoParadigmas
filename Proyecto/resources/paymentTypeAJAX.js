@@ -12,7 +12,6 @@ document.addEventListener('DOMContentLoaded', function () {
             ownerId: document.getElementById('ownerId').value,
             accountNumber: document.getElementById('accountNumber').value,
             sinpeNumber: document.getElementById('sinpeNumber').value,
-            status: document.getElementById('status').value,
         };
     
         let xhr = new XMLHttpRequest();
@@ -41,7 +40,7 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         };
         xhr.send('ownerId=' + encodeURIComponent(postData.ownerId) + '&accountNumber=' + encodeURIComponent(postData.accountNumber)
-        + '&sinpeNumber=' + encodeURIComponent(postData.sinpeNumber) + '&status=' + encodeURIComponent(postData.status));
+        + '&sinpeNumber=' + encodeURIComponent(postData.sinpeNumber));
     });
 })
 

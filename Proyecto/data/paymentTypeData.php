@@ -28,7 +28,6 @@ class paymentTypeData extends Data {
         $tbOwnerId = $paymentType->getOwnerId();
         $accountNumber = $paymentType->getAccountNumber();
         $SinpeNumber = $paymentType->getSinpeNumber();
-        $PaymentTypeStatus = $paymentType->getStatus();
         $PaymentTypeId = $paymentType->getTbPaymentTypeId();
 
         $exists = $this->getTbPaymentTypeByAccountNumber($paymentType->getAccountNumber());
@@ -65,7 +64,7 @@ class paymentTypeData extends Data {
                 return ['status' => 'error', 'message' => 'Prepare failed: ' . $conn->error];
             }
 
-            $stmt->bind_param("iissi", $nextId, $tbOwnerId, $accountNumber, $SinpeNumber, $PaymentTypeStatus);
+            $stmt->bind_param("iiss", $nextId, $tbOwnerId, $accountNumber, $SinpeNumber);
             $result = $stmt->execute();
             $stmt->close();
             mysqli_close($conn);

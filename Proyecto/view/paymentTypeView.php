@@ -43,18 +43,12 @@
                     <option value="">No hay propietarios disponibles</option>
                 <?php endif; ?>
             </select>
-
+            <br>
             <label for="accountNumber">Número de Cuenta</label>
-            <input placeholder="Número de cuenta" type="text" name="accountNumber" id="accountNumber"/>
+            <input placeholder="Ingrese el número de cuenta" type="text" name="accountNumber" id="accountNumber"/><br>
             
             <label for="sinpeNumber">Número de SINPE</label>
-            <input placeholder="Número de SINPE" type="text" name="sinpeNumber" id="sinpeNumber"/>
-            
-            <label for="status">Estado</label>
-            <select name="status" id="status" required>
-                <option value="1">Activo</option>
-                <option value="0">Inactivo</option>
-            </select>
+            <input placeholder="Ingrese el número de SINPE" type="text" name="sinpeNumber" id="sinpeNumber"/><br>
 
             <input type="submit" value="Crear" name="create" id="create"/>
         </form>
@@ -62,8 +56,8 @@
     <br>
     <section>
         <form id="formSearchOne" method="get">
-            <label for="searchOne">Buscar por nombre del banco</label>
-            <input type="text" required placeholder="nombre del banco" name="searchOne" id="searchOne">
+            <label for="searchOne">Buscar por número de cuenta</label>
+            <input type="text" required placeholder="Ingrese el número de cuenta" name="searchOne" id="searchOne">
             <input type="submit" value="Buscar"/>
         </form>
         <br>
@@ -87,7 +81,7 @@
                     if (isset($_GET['searchOne'])) {
                         $searchTerm = $_GET['searchOne'];
                         $bankAccountFiltered = array_filter($all, function($bankAccount) use ($searchTerm) {
-                            return stripos($bankAccount->getSinpeNumber(), $searchTerm) !== false;
+                            return stripos($bankAccount->getAccountNumber(), $searchTerm) !== false;
                         });
                     }
 
