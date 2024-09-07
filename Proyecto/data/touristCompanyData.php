@@ -136,7 +136,7 @@ public function getAllTouristCompanies() {
         }
         $conn->set_charset('utf8');
     
-        // Primero, obtener la URL actual de la imagen
+        // Obtener la URL actual de la imagen
         $currentUrlQuery = "SELECT tbtouristcompanyurl FROM tbtouristcompany WHERE tbtouristcompanyid = ?";
         $stmt = $conn->prepare($currentUrlQuery);
         if ($stmt === false) {
@@ -151,19 +151,18 @@ public function getAllTouristCompanies() {
         $stmt->close();
     
         // Extraer datos del objeto TouristCompany
-        $tbtouristcompanylegalname = $touristCompany->getTbtouristcompanylegalname();
-        $tbtouristcompanymagicname = $touristCompany->getTbtouristcompanymagicname();
-        $tbtouristcompanyowner = $touristCompany->getTbtouristcompanyowner();
-        $tbtouristcompanycompanytype = $touristCompany->getTbtouristcompanycompanytype();
-        $tbtouristcompanystatus = $touristCompany->getTbtouristcompanystatus();
+        $tbtouristcompanylegalname = mysqli_real_escape_string($conn, $touristCompany->getTbtouristcompanylegalname());
+        $tbtouristcompanymagicname = mysqli_real_escape_string($conn, $touristCompany->getTbtouristcompanymagicname());
+        $tbtouristcompanyowner = mysqli_real_escape_string($conn, $touristCompany->getTbtouristcompanyowner());
+        $tbtouristcompanycompanytype = mysqli_real_escape_string($conn, $touristCompany->getTbtouristcompanycompanytype());
+        $tbtouristcompanystatus = mysqli_real_escape_string($conn, $touristCompany->getTbtouristcompanystatus());
     
-        // Asumiendo que las URLs de las imágenes están almacenadas como un array en $touristCompany->getTbtouristcompanyurl()
-        // Si no se sube una nueva imagen, usar la URL actual
+        // Manejo de la URL de la imagen
         $tbtouristcompanyurl = $touristCompany->getTbtouristcompanyurl();
         if ($tbtouristcompanyurl === null || empty($tbtouristcompanyurl)) {
-            $tbtouristcompanyurl = $currentUrl;
+            $tbtouristcompanyurl = $currentUrl;  // Mantener la URL actual si no se sube una nueva
         } else {
-            $tbtouristcompanyurl = implode(',', $tbtouristcompanyurl); // Concatenar las URLs de las imágenes
+            $tbtouristcompanyurl = implode(',', $tbtouristcompanyurl);  // Si hay una nueva imagen, concatenar
         }
     
         // Actualización de la consulta

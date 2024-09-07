@@ -98,9 +98,8 @@ if (isset($_POST['create'])) {
 
 // Actualizar una empresa turística existente
 if (isset($_POST['update'])) {
-
     if (isset($_POST['id'], $_POST['ownerId'], $_POST['legalName'], $_POST['magicName'], $_POST['companyType'], $_POST['status'])) {
-        
+
         $id = $_POST['id'];
         $legalName = $_POST['legalName'];
         $magicName = $_POST['magicName'];
@@ -112,7 +111,7 @@ if (isset($_POST['update'])) {
         $photoFileName = '';
         $touristCompanyBusiness = new TouristCompanyBusiness();
         $currentTouristCompany = $touristCompanyBusiness->getById($id);
-        $existingPhotoFileName = $currentTouristCompany->getTbtouristcompanyurl();
+        $existingPhotoFileName = $currentTouristCompany->getTbtouristcompanyurl();  // URL existente
 
         if (isset($_FILES['newImage']) && $_FILES['newImage']['error'] == UPLOAD_ERR_OK) {
             $uploadDir = '../images/';
@@ -123,7 +122,7 @@ if (isset($_POST['update'])) {
 
             if (in_array($fileType, $allowTypes)) {
                 if (move_uploaded_file($_FILES['newImage']['tmp_name'], $targetFilePath)) {
-                    $photoFileName = $fileName;
+                    $photoFileName = $fileName;  // Usar el nombre de archivo nuevo
                 } else {
                     header("location: ../view/touristCompanyView.php?error=uploadFailed");
                     exit();
@@ -133,30 +132,19 @@ if (isset($_POST['update'])) {
                 exit();
             }
         } else {
-            $photoFileName = $existingPhotoFileName;
+            $photoFileName = $existingPhotoFileName;  // Mantener la imagen existente si no se sube una nueva
         }
 
         // Validación básica y actualización
-        if ($ownerId ) {
-            $ownerBusiness = new OwnerBusiness();
-            $owner = $ownerBusiness->getTBOwner($ownerId);
+        if ($ownerId) {
+            $touristCompany = new TouristCompany($id, $legalName, $magicName, $ownerId, $companyTypeId, $photoFileName, $status);
+            $result = $touristCompanyBusiness->update($touristCompany);
 
-            $touristCompanyTypeBusiness = new TouristCompanyTypeBusiness();
-            $companyType = $touristCompanyTypeBusiness->getById($companyTypeId);
-
-            if ($owner && $companyType) {
-                $touristCompany = new TouristCompany($id, $legalName, $magicName, $ownerId, $companyTypeId, $photoFileName, $status);
-                $result = $touristCompanyBusiness->update($touristCompany);
-
-                if ($result) {
-                    header("location: ../view/touristCompanyView.php?success=updated");
-                    exit();
-                } else {
-                    header("location: ../view/touristCompanyView.php?error=updateFailed");
-                    exit();
-                }
+            if ($result) {
+                header("location: ../view/touristCompanyView.php?success=updated");
+                exit();
             } else {
-                header("location: ../view/touristCompanyView.php?error=invalidOwnerOrCompanyType");
+                header("location: ../view/touristCompanyView.php?error=updateFailed");
                 exit();
             }
         } else {
@@ -168,6 +156,7 @@ if (isset($_POST['update'])) {
         exit();
     }
 }
+
 
 // Eliminar una empresa turística
 if (isset($_POST['delete'])) {
