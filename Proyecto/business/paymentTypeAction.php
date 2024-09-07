@@ -65,7 +65,7 @@ if (isset($_POST['update'])) {
         $Status = $_POST['Status'];
         $id = $_POST['tbpaymentTypeid'];
 
-        if (strlen($Bankname) > 0) {
+        if (strlen($SinpeNumber) > 0) {
             if (!is_numeric($SinpeNumber) && is_numeric($AccountNumber) && is_numeric($Status) && is_numeric($id)) {
                 $paymentType = new PaymentType($id, 0, $AccountNumber, $SinpeNumber, $Status);
                 $paymentTypeBusiness = new paymentTypeBusiness();

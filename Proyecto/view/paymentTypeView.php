@@ -12,10 +12,8 @@
     
     <?php
         include '../business/paymentTypeBusiness.php';
-        include '../business/OwnerBusiness.php';
-
-        // Verificar si OwnerBusiness está devolviendo datos
-        $ownerBusiness = new OwnerBusiness();
+        include '../business/ownerBusiness.php';
+        $ownerBusiness = new ownerBusiness();
         $owners = $ownerBusiness->getAllTBOwners();
         if (!$owners || empty($owners)) {
             echo "<script>alert('No se encontraron propietarios.');</script>";
@@ -29,6 +27,7 @@
     <header> 
         <h1>CRUD Tipo de pago</h1>
     </header>
+    
     <section>
         <form method="post" id="formCreate">
             <label for="ownerId">ID del Propietario</label>
