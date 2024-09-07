@@ -175,18 +175,7 @@
                         echo '<input type="hidden" name="photoID" value="' . $current->getTbtouristcompanyid() . '">';
 
                         // Inicio del select para elegir la imagen
-                        echo '<select name="imageIndex">';
-
-                        // Recorremos las URLs de las fotos
-                        foreach ($images as $index => $photo) {
-                            if (trim($photo) !== '5' && !empty(trim($photo))) {
-                                // Mostramos la opción del select para cada imagen válida
-                                echo '<option value="' . $index . '">Imagen ' . ($index + 1) . '</option>';
-                            }
-                        }
-
-                        // Cierre del select y agregamos el botón de submit
-                        echo '</select>';
+                        
                         
 
                         // Cierre del formulario
