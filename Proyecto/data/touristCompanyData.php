@@ -156,7 +156,9 @@ public function getAllTouristCompanies() {
         $tbtouristcompanyowner = mysqli_real_escape_string($conn, $touristCompany->getTbtouristcompanyowner());
         $tbtouristcompanycompanytype = mysqli_real_escape_string($conn, $touristCompany->getTbtouristcompanycompanytype());
         $tbtouristcompanystatus = mysqli_real_escape_string($conn, $touristCompany->getTbtouristcompanystatus());
-    
+        //$tbtouristcompanyurl = mysqli_real_escape_string($conn, $touristCompany->getTbtouristcompanyurl());
+
+
         // Manejo de la URL de la imagen
         $tbtouristcompanyurl = $touristCompany->getTbtouristcompanyurl();
         if ($tbtouristcompanyurl === null || empty($tbtouristcompanyurl)) {

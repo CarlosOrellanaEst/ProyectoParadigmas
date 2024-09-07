@@ -146,36 +146,32 @@
                         echo '</select>';
                         echo '</td>';
                         echo '<td>';
-                        $images = $current->getTbtouristcompanyurl(); // Supongamos que getTbtouristcompanyurl() devuelve un array de URLs
-
-                        // Verificar si $images es un array
-                        if (!empty($images)) {
-                            echo '<div style="white-space: nowrap;">'; // Contenedor en línea para las imágenes
-                            foreach ($images as $image) {
-                                // Limpiar la URL de espacios en blanco
-                                $photoUrl = trim($image);
-                        
-                                // Concatenar la ruta base con la URL de la imagen
-                                $imageUrl = $imageBasePath . htmlspecialchars($photoUrl);
-                        
-                                // Verificar si el archivo existe antes de mostrar la imagen
-                                if (file_exists($imageUrl)) {
-                                    echo '<img src="' . $imageUrl . '" alt="Foto" style="width:50px;height:50px;display:inline-block;">';
-                                } else {
-                                    echo '<img src="../images/default.jpg" alt="Foto" style="width:70px;height:70px;display:inline-block;">'; // Imagen por defecto
-                                }
-                            }
-                            echo '</div>';
-                        } else {
-                            echo 'No hay imágenes';
-                        }
-                        
-                        echo '</td>';
-                        echo '<input type="hidden" name="status" value="1">';
-                        echo '<td>';
                         echo '<input type="hidden" name="id" value="' . htmlspecialchars($current->getTbtouristcompanyid()) . '">';
-                        echo '<input type="file" name="newImage" accept="image/*" /><br />';
-                        echo '<input type="submit" value="Actualizar" name="update" />';
+                        echo '<input type="hidden" name="status" value="1">';
+                        // Mostrar imágenes
+            $images = $current->getTbtouristcompanyurl(); // Supongamos que getTbtouristcompanyurl() devuelve un array de URLs
+            echo '<td>';
+            foreach ($images as $index => $image) {
+                if (!empty($image)) {
+                    echo '<img src="' . $imageBasePath . trim($image) . '" alt="Foto" width="50" height="50" />';
+                }
+            }
+            echo '</td>';
+            
+            // Opciones para actualizar imagen específica
+            echo '<td>';
+            echo '<select name="imageIndex">';
+            foreach ($images as $index => $image) {
+                echo '<option value="' . $index . '">Imagen ' . ($index + 1) . '</option>';
+            }
+            echo '</select>';
+            echo '<input type="file" name="newImage" accept="image/*" />';
+            echo '</td>';
+            
+            // Botones de acciones: Actualizar y Eliminar
+            echo '<td>';
+            echo '<input type="hidden" name="id" value="' . htmlspecialchars($current->getTbtouristcompanyid()) . '">';
+            echo '<input type="submit" value="Actualizar" name="update" />';
                         echo '<input type="submit" value="Eliminar" name="delete"/>';
                         echo '</td>';
                         echo '</form>';

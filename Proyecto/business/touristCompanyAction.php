@@ -98,7 +98,7 @@ if (isset($_POST['create'])) {
 
 // Actualizar una empresa turística existente
 if (isset($_POST['update'])) {
-    if (isset($_POST['id'], $_POST['ownerId'], $_POST['legalName'], $_POST['magicName'], $_POST['companyType'], $_POST['status'])) {
+    if (isset($_POST['id'], $_POST['ownerId'],$_POST['status'])) {
 
         $id = $_POST['id'];
         $legalName = $_POST['legalName'];
