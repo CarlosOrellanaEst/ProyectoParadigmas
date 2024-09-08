@@ -1,18 +1,19 @@
 <?php
 
 include_once 'data.php';
+include '../domain/ServiceCompany.php';
 include '../domain/Service.php';
 
-class ServiceData extends Data {
+class serviceCompanyData extends Data {
 
  // Prepared Statement
-    public function insertTBService($service) {
+    public function insertTBServiceCompany($service) {
         $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
         if (!$conn) {
             return ['status' => 'error', 'message' => 'Connection failed: ' . mysqli_connect_error()];
         }
         $conn->set_charset('utf8');
-        $queryGetLastId = "SELECT MAX(tbserviceid) AS idtbservice FROM tbservice";
+        $queryGetLastId = "SELECT MAX(tbservicecompanyid) AS idTbservicecompany FROM tbservicecompany";
         $idCont = mysqli_query($conn, $queryGetLastId);
         if ($idCont === false) {
             mysqli_close($conn);
@@ -24,24 +25,20 @@ class ServiceData extends Data {
             $nextId = $lastId + 1;
         }
 
-        $name = $service->getNameTBService();
-        $photourl = $service->getPhotoURLTBService();
-        echo($photourl);
-        $exists = $this->getTBServiceByName($service);
+        $touristCompanyId = $service->getTbtouristcompanyid();
+        $idService = implode(",", $service->getTbserviceid());
+        $photosurl = implode(",", $service->getTbservicecompanyURL());
+
         $status = true;
 
-        if ($exists > 0) {
-                mysqli_close($conn);
-                return ['status' => 'error', 'message' => 'El nombre del servicio ya existe.']; 
-        } else {
-            $queryInsert = "INSERT INTO tbservice (tbserviceid, tbservicename, tbphotourls, tbservicestatus) VALUES (?, ?, ?, ?)";
+            $queryInsert = "INSERT INTO tbservicecompany (tbservicecompanyid, tbtouristcompanyid, tbserviceid, tbservicecompanyURL, tbservicetatus) VALUES (?, ?, ?, ?, ?)";
             $stmt = $conn->prepare($queryInsert);
             if ($stmt === false) {
                 mysqli_close($conn);
                 return ['status' => 'error', 'message' => 'Prepare failed: ' . $conn->error];
             }
 
-            $stmt->bind_param("issi", $nextId, $name, $photourl, $status);
+            $stmt->bind_param("iiisi", $nextId, $touristCompanyId, $idService, $photosurl);
             $result = $stmt->execute();
             $stmt->close();
             mysqli_close($conn);
@@ -51,10 +48,10 @@ class ServiceData extends Data {
             } else {
                 return ['status' => 'error', 'message' => 'Falló al agregar el servicio: ' . $conn->error];
             }
-        }
+        
     }
     // lee todos
-    public function getAllTBServices() {
+    public function getAllTBServicesCompany() {
         $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
         if (!$conn) {
             die("Connection failed: " . mysqli_connect_error());
@@ -219,4 +216,35 @@ class ServiceData extends Data {
         mysqli_close($conn);
         return $rollReturn;
     } 
+
+    public function getAllTBServices() {
+        // Establecer conexión con la base de datos
+        $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
+        if (!$conn) {
+            die("Connection failed: " . mysqli_connect_error());
+        }
+        
+        // Establecer el charset
+        $conn->set_charset('utf8');
+        
+        // Consulta para seleccionar todos los servicios que están activos (tbservicetatus = 1)
+        $query = "SELECT * FROM tbservice WHERE tbservicetatus = 1;";
+        $result = mysqli_query($conn, $query);
+        
+        // Crear un array para almacenar los servicios
+        $services = [];
+        
+        // Recorrer los resultados y crear objetos Service para cada fila
+        while ($row = mysqli_fetch_assoc($result)) {
+            $currentService = new Service($row['tbserviceid'], $row['tbservicename'], $row['tbservicedescription'], $row['tbservicetatus']);
+            array_push($services, $currentService);
+        }
+        
+        // Cerrar la conexión
+        mysqli_close($conn);
+        
+        // Devolver la lista de servicios
+        return $services;
+    }
+    
 }

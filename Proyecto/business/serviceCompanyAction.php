@@ -1,6 +1,6 @@
 <?php
 
-include './serviceBusiness.php';
+include './serviceCompanyBusiness.php';
 
 $response = array();
 // para el AJAX de Create
@@ -8,6 +8,7 @@ $response = array();
 if (isset($_POST['create'])) {
     $response = array();
     if (isset($_FILES['images']) && !empty($_FILES['images']['name'][0])) {
+        
         $uploadDir = '../images/services';
         $fileNames = array();
         $allowTypes = array('jpg', 'png', 'jpeg', 'gif');
@@ -46,6 +47,8 @@ if (isset($_POST['create'])) {
         $photoUrls = implode(',', $fileNames);
         echo ($photoUrls);
      //   error_log('File names: ' . implode(',', $fileNames));
+        $nameTBActivity = isset($_POST['nameTBActivity']) ? trim($_POST['nameTBActivity']) : '';
+        $attributeTBActivityArray = isset($_POST['attributeTBActivityArray']) ? explode(',', $_POST['attributeTBActivityArray']) : [];
         $serviceName = $_POST['serviceName'] ?? '';
 
         if (!empty($serviceName)) {

@@ -196,7 +196,20 @@ CREATE TABLE `tbphoto` (
   `tbphotostatus` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+CREATE TABLE `tbservice`(
+  `tbserviceid` int(11) NOT NULL,
+  `tbservicename` varchar (255) NOT NULL,
+  `tbservicedescription` TEXT  NOT NULL,
+  `tbservicetatus` tinyint(1) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+CREATE TABLE `tbservicecompany`(
+  `tbservicecompanyid` int(11) NOT NULL,
+  `tbtouristcompanyid` int(11) NOT NULL,
+  `tbserviceid` int(11) NOT NULL,
+  `tbservicecompanyURL` TEXT  NOT NULL,
+  `tbservicetatus` tinyint(1) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

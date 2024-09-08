@@ -1,23 +1,20 @@
 <?php
 
-include '../data/serviceData.php';
+include '../data/serviceCompanyData.php';
 include 'PhotoBusiness.php';
 
-class ServiceBusiness {
+class serviceCompanyBusiness {
 
-    private $serviceData;
+    private $serviceCompanyData;
 
     public function __construct() {
-        $this->serviceData = new ServiceData();
+        $this->serviceCompanyData = new serviceCompanyData();
     }
-    public function insertTBService($service) {
-        return $this->serviceData->insertTBService($service);
+    public function insertTBServiceCompany($service) {
+        return $this->serviceCompanyData->insertTBServiceCompany($service);
     }
     public function getAllTBServices() {
-        $services = $this->serviceData->getAllTBServices();
-        foreach ($services as $currentService) {
-            
-        }
+        return $this->serviceCompanyData->getAllTBServices();
     }
     /* 
     public function getOneTBService($idService) {
