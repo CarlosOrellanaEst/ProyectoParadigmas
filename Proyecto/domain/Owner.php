@@ -1,7 +1,7 @@
 <?php
 include_once  '../domain/Person.php';
 
-class Owner extends Person{
+class Owner extends User{
      private $idTBOwner;
      private $directionTBOwner;
      private $photoURLTBOwner;

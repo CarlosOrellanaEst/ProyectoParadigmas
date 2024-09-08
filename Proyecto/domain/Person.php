@@ -1,7 +1,6 @@
 <?php
 
 class Person {
-   
     protected $name;
     protected $surnames;
     protected $legalIdentification;
@@ -9,7 +8,6 @@ class Person {
     protected $email;
 
     function __construct($name="", $surnames="", $legalIdentification="", $phone="", $email=""){
-
         $this->name = $name;
         $this->surnames = $surnames;
         $this->legalIdentification = $legalIdentification;

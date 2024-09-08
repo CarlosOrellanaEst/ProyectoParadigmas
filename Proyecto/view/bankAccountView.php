@@ -13,7 +13,11 @@
         include '../business/bankAccountBusiness.php';
         include '../business/ownerBusiness.php';
         $ownerBusiness = new OwnerBusiness();
-        $owners = $ownerBusiness->getAllTBOwners();
+        if (Utils::$userLogged->getUserType() == "Administrador") {
+            $owners = $ownerBusiness->getAllTBOwners();
+        } else if (Utils::$userLogged->getUserType() == "Propietario") {
+            $owners = $ownerBusiness->getTBOwner(Utils::$userLogged->getId); 
+        }
     ?>
     <script src="../resources/bankAccountView.js"></script>
     <script src="../resources/bankAccountAJAX.js"></script>
@@ -21,7 +25,7 @@
 <body>
     <a href="../index.html">← Volver al inicio</a>
     <header> 
-        <h1>CRUD Cuenta de banco</h1>
+        <h1>CRUD Forma de Pago</h1>
     </header>
     <section>
         <form method="post"  id="formCreate" >

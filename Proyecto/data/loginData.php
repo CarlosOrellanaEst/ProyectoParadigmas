@@ -22,10 +22,17 @@ class LoginData extends Data {
             $user->setUserID($row['tbuserid']);
             $user->setUserName($row['tbusername']);
             $user->setUserLastName($row['tbuserlastname']);
-            $user->setPassword($row['tbuserpassword']);
+            $user->setPassword( $row['tbuserpassword']);
             $user->setPhone($row['tbuserphone']);
             $user->setActive($row['tbuserstatus']);
-            $user->setUserType($row['tbusertype']);
+            // podria ser un objeto roll, pero eso necesita el innerjoin con tbroll que quiero evitar por eficiencia
+            if ($row['tbrollid'] == 1) {
+                $user->setUserType("Administrador");
+            } else if ($row['tbrollid'] == 2) {
+                $user->setUserType("Turista");
+            } else if ($row['tbrollid'] == 3) {
+                $user->setUserType("Propietario");
+            }
         } else {
             $user = null;
         }

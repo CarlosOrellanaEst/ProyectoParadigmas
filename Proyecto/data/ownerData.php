@@ -47,7 +47,7 @@ class ownerData extends Data {
                 return ['status' => 'error', 'message' => 'El Email ya existe.'];
             } else {
                 $queryUpdate = "UPDATE tbowner SET tbownername = ?, tbownersurnames = ?, tbownerlegalidentification = ?,
-                tbownerphone = ?, tbownerdirection = ?, tbownerphotourl = ?, tbownerstatus = 1 WHERE tbownerid = ?";
+                tbownerphone = ?, tbownerdirection = ?, tbownerphotourl = ?, tbrollid = 3, tbownerstatus = 1 WHERE tbownerid = ?";
                 $stmt = $conn->prepare($queryUpdate);
                 if ($stmt === false) {
                     mysqli_close($conn);

@@ -30,15 +30,12 @@ document.addEventListener('DOMContentLoaded', function() {
                         if (response.success === true) {
                             document.getElementById('loginForm').reset();
                             if (response.userType === 'Administrador') {
-                                // Redireccionar a la vista de administrador
                                 window.location.href = 'view/adminView.php';
                             } else if (response.userType === 'Turista') {
-                                // Redireccionar a la vista de usuario normal
                                 window.location.href = 'view/touristView.php';
-                            } else if(response.userType === 'Propietario'){
-                                // Redireccionar a la vista de guia
-                                window.location.href = 'view/propietarioView.php';
-                            } else{
+                            } else if(response.userType === 'Propietario') {
+                                window.location.href = 'view/ownerViewSession.php';
+                            } else {
                                 alert('Tipo de usuario desconocido');
                             }
                         } else {

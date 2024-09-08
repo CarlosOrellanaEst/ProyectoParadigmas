@@ -1,22 +1,12 @@
 <?php
-class User {
+class User extends Person{
     private $id;
     private $userName;
-    private $userLastName;
     private $password;
-    private $phone;
     private $active;
     private $userType;
 
-    public function __construct($id = null, $userName = null, $userLastName = null, $password = null, $phone = null, $active = null, $userType = null) {
-        $this->id = $id;
-        $this->userName = $userName;
-        $this->userLastName = $userLastName;
-        $this->password = $password;
-        $this->phone = $phone;
-        $this->active = $active;
-        $this->userType = $userType;
-    }
+    
 
     // Getters
     public function getId() {
