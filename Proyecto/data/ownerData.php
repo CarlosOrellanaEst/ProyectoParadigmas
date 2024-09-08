@@ -4,8 +4,143 @@ include_once 'data.php';
 include_once '../domain/Owner.php';
 
 class ownerData extends Data {
-
+   
     public function insertTBOwner($owner) {
+        $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
+        if (!$conn) {
+            return ['status' => 'error', 'message' => 'Connection failed: ' . mysqli_connect_error()];
+        }
+    
+        $conn->set_charset('utf8');
+    
+        // Obtiene el último id
+        $queryGetLastId = "SELECT MAX(tbownerid) AS idtbowner FROM tbowner";
+        $idCont = mysqli_query($conn, $queryGetLastId);
+        if ($idCont === false) {
+            mysqli_close($conn);
+            return ['status' => 'error', 'message' => 'Failed to get last ID: ' . $conn->error];
+        }
+    
+        $nextId = 1;
+        if ($row = mysqli_fetch_row($idCont)) {
+            $lastId = $row[0] !== null ? (int)trim($row[0]) : 0;
+            $nextId = $lastId + 1;
+        }
+        
+        $name = $owner->getName();
+        $surnames = $owner->getSurnames();
+        $legalIdentification = $owner->getLegalIdentification();
+        $phone = $owner->getPhone();
+        $email = $owner->getEmail();
+        $direction = $owner->getDirectionTBOwner();
+        $photoUrl = $owner->getPhotoURLTBOwner();
+        $statusDelete = true; 
+        
+        $existsEmail = $this->getTBOwnerByEmail($email);
+        $existsPhone = $phone ? $this->getTBOwnerByPhone($phone): false;
+        $existsLegalId = $this->getTBOwnerByLegalId($legalIdentification);
+    
+        // Validaciones de duplicado
+        if ($existsEmail) {
+            $isActive = $this->getTBOwnerExistsIsActive($existsEmail); // Obtener el estado de tbownerstatus
+            if ($isActive == 1) {
+                // Si el estado es 1, no permite registrar
+                mysqli_close($conn);
+                return ['status' => 'error', 'message' => 'El Email ya existe y está activo.'];
+            } else {
+                // Si el estado es 0, permite actualizar el registro existente
+                $queryUpdate = "UPDATE tbowner SET tbownername = ?, tbownersurnames = ?, tbownerlegalidentification = ?, 
+                                tbownerphone = ?, tbownerdirection = ?, tbownerphotourl = ?, tbownerstatus = 1 
+                                WHERE tbownerid = ?";
+                $stmt = $conn->prepare($queryUpdate);
+                if ($stmt === false) {
+                    mysqli_close($conn);
+                    return ['status' => 'error', 'message' => 'Prepare failed: ' . $conn->error];
+                }
+                $stmt->bind_param("ssssssi", $name, $surnames, $legalIdentification, $phone, $direction, $photoUrl, $existsEmail);
+                $result = $stmt->execute();
+                $stmt->close();
+                mysqli_close($conn);
+
+                if ($result) {
+                    return ['status' => 'success', 'message' => 'Propietario actualizado correctamente.'];
+                } else {
+                    return ['status' => 'error', 'message' => 'Falló al actualizar el propietario: ' . $conn->error];
+                }
+            }
+        } elseif ($existsPhone) {
+            if ($this->getTBOwnerExistsIsActive($existsPhone)) {
+                mysqli_close($conn);
+                return ['status' => 'error', 'message' => 'El teléfono ya existe.'];
+            } else {
+                $queryUpdate = "UPDATE tbowner SET tbownername = ?, tbownersurnames = ?, tbownerlegalidentification = ?,
+                tbowneremail = ?, tbownerdirection = ?, tbownerphotourl = ?, tbownerstatus = 1 WHERE tbownerid = ?";
+                $stmt = $conn->prepare($queryUpdate);
+                if ($stmt === false) {
+                    mysqli_close($conn);
+                    return ['status' => 'error', 'message' => 'Prepare failed: ' . $conn->error];
+                }
+                $stmt->bind_param("ssssssi", $name, $surnames, $legalIdentification, $email, $direction, $photoUrl, $existsPhone);
+                $result = $stmt->execute();
+                $stmt->close();
+                mysqli_close($conn);
+    
+                if ($result) {
+                    return ['status' => 'success', 'message' => 'Propietario actualizado correctamente.'];
+                } else {
+                    return ['status' => 'error', 'message' => 'Falló al actualizar el propietario: ' . $conn->error];
+                }
+            }
+        } elseif ($existsLegalId) {
+            $isActive = $this->getTBOwnerExistsIsActive($existsLegalId); // Obtener el estado de tbownerstatus
+            if ($isActive == 1) {
+                // Si el estado es 1, no permite registrar
+                mysqli_close($conn);
+                return ['status' => 'error', 'message' => 'La cédula ya existe y está activa.'];
+            } else {
+                // Si el estado es 0, permite actualizar el registro existente
+                $queryUpdate = "UPDATE tbowner SET tbownername = ?, tbownersurnames = ?, tbownerphone = ?, 
+                                tbowneremail = ?, tbownerdirection = ?, tbownerphotourl = ?, tbownerstatus = 1 
+                                WHERE tbownerid = ?";
+                $stmt = $conn->prepare($queryUpdate);
+                if ($stmt === false) {
+                    mysqli_close($conn);
+                    return ['status' => 'error', 'message' => 'Prepare failed: ' . $conn->error];
+                }
+                $stmt->bind_param("ssssssi", $name, $surnames, $phone, $email, $direction, $photoUrl, $existsLegalId);
+                $result = $stmt->execute();
+                $stmt->close();
+                mysqli_close($conn);
+
+                if ($result) {
+                    return ['status' => 'success', 'message' => 'Propietario actualizado correctamente.'];
+                } else {
+                    return ['status' => 'error', 'message' => 'Falló al actualizar el propietario: ' . $conn->error];
+                }
+            }
+        } else {
+            // Inserción
+            $queryInsert = "INSERT INTO tbowner (tbownerid, tbownername, tbownersurnames, tbownerlegalidentification, tbownerphone, tbowneremail, tbownerdirection, tbownerphotourl, tbownerstatus) 
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            $stmt = $conn->prepare($queryInsert);
+            if ($stmt === false) {
+                mysqli_close($conn);
+                return ['status' => 'error', 'message' => 'Prepare failed: ' . $conn->error];
+            }
+            
+            $stmt->bind_param("isssssssi", $nextId, $name, $surnames, $legalIdentification, $phone, $email, $direction, $photoUrl, $statusDelete);
+            $result = $stmt->execute();
+            $stmt->close();
+            mysqli_close($conn);
+    
+            if ($result) {
+                return ['status' => 'success', 'message' => 'Propietario añadido correctamente.'];
+            } else {
+                return ['status' => 'error', 'message' => 'Falló al agregar el propietario: ' . $conn->error];
+            }
+        }
+    }
+    /*public function insertTBOwner($owner) {
         $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
         if (!$conn) {
             return ['status' => 'error', 'message' => 'Connection failed: ' . mysqli_connect_error()];
@@ -131,8 +266,7 @@ class ownerData extends Data {
                 return ['status' => 'error', 'message' => 'Falló al agregar el propietario: ' . $conn->error];
             }
         }
-    }
-
+    } */
        // lee todos
        public function getAllTBOwner() {
         $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);

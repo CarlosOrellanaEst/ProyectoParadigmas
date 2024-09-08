@@ -114,6 +114,11 @@ if (isset($_POST['update'])) {
         if (!empty($SinpeNumber) && !is_numeric($SinpeNumber)) {
             header("location: ../view/paymentTypeView.php?error=invalidSinpe");
             exit();
+        } else if (!empty($SinpeNumber) && !preg_match('/^\d{8}$/', $SinpeNumber)) {
+            $response['status'] = 'error';
+            $response['message'] = 'Número de teléfono inválido';
+            echo json_encode($response);
+            exit();
         }
 
         // Creamos el objeto PaymentType

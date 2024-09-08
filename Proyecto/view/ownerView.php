@@ -8,6 +8,9 @@
         td, th {
             border-right: 1px solid;
         }
+        .required {
+            color: red;
+        }
     </style>
     <script src="../resources/ownerView.js"></script>
     <script src="../resources/AJAXOwner.js"></script>
@@ -16,31 +19,32 @@
     <header>
         <a href="../index.html">← Volver al inicio</a>
         <h1>CRUD Propietarios</h1>
+        <p><span class="required">*</span> Campos requeridos</p>
     </header>
-    <<form id="formCreate" method="post" enctype="multipart/form-data" action="../business/ownerAction.php">
-            <label for="name">Nombre</label>
-            <input placeholder="nombre" type="text" name="ownerName" id="name"/>
+    <form id="formCreate" method="post" enctype="multipart/form-data" action="../business/ownerAction.php">
+            <label for="name">Nombre </label>
+            <input placeholder="nombre" type="text" name="ownerName" id="name"/><br><br>
             <label for="surnames">Apellidos</label>
-            <input placeholder="apellidos" type="text" name="ownerSurnames" id="surnames"/>
+            <input placeholder="apellidos" type="text" name="ownerSurnames" id="surnames"/><br><br>
             <label for="idType">Tipo de Identificación</label>
             <select name="idType" id="idType">
                 <option value="CR">Cédula Nacional de Costa Rica</option>
                 <option value="foreign">Extranjero</option>
-            </select>
-            <label for="legalIdentification">Identificación Legal</label>
-            <input placeholder="identificacionLegal" type="text" name="ownerLegalIdentification" id="legalIdentification"/>
+            </select><br><br>
+            <label for="legalIdentification">Identificación Legal <span class="required">*</label>
+            <input placeholder="identificacionLegal" type="text" name="ownerLegalIdentification" id="legalIdentification"/><br><br>
             <label for="phone">Teléfono</label>
-            <input placeholder="telefono" type="text" name="ownerPhone" id="phone"/>
-            <label for="email">Correo</label>
-            <input placeholder="correo" type="text" name="ownerEmail" id="email"/>
+            <input placeholder="telefono" type="text" name="ownerPhone" id="phone"/><br><br>
+            <label for="email">Correo <span class="required">*</label>
+            <input placeholder="correo" type="text" name="ownerEmail" id="email"/><br><br>
             <label for="direction">Dirección</label>
-            <input placeholder="direccion" type="text" name="ownerDirection" id="direction"/>
-            <input type="file" name="imagen" id="imagen">
+            <input placeholder="direccion" type="text" name="ownerDirection" id="direction"/><br><br>
+            <input type="file" name="imagen" id="imagen"><br><br>
             <input type="submit" value="Crear" name="create" id="create"/>
         </form>
     </section>
 
-    <br><br>
+    <br>
     <section>
         <form id="formSearchOne" method="get">
             <label for="searchOne">Buscar por nombre</label>

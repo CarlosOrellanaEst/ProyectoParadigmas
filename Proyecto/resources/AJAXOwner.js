@@ -13,34 +13,17 @@ document.addEventListener('DOMContentLoaded', function () {
         const imageFile = document.getElementById('imagen').files[0];
 
         // Validaciones
-        if (ownerName === '') {
-            alert('El nombre del propietario no puede estar vacío.');
-            return;
-        }
-        if (ownerSurnames === '') {
-            alert('Los apellidos del propietario no pueden estar vacíos.');
-            return;
-        }
+        
         if (ownerLegalIdentification === '') {
             alert('La identificación legal no puede estar vacía.');
             return;
         }
-        if (ownerPhone === '') {
-            alert('El número de teléfono no puede estar vacío.');
-            return;
-        }
+        
         if (ownerEmail === '') {
             alert('El correo no puede estar vacío.');
             return;
         }
 
-        // Validación de la imagen
-        if (!imageFile) {
-            alert('Debe seleccionar una imagen.');
-            return;
-        }
-
-       
         const formData = new FormData();
         formData.append('name', document.getElementById('name').value.trim());
         formData.append('surnames', document.getElementById('surnames').value.trim());
@@ -110,28 +93,44 @@ function showAlertBasedOnURL() {
     } else if(urlParams.has('error')) {
         if(paramError === 'alreadyexists') { 
             alert('Error.\nEl correo ya existe');
+        
         }if (paramError === 'phonealreadyexists') {
             alert('Error.\nEl telefono ya existe');
+        
+        }if (paramError === 'invalidName') {
+            alert('Error.\nEl nombre no puede contener números.');
+        
+        }if (paramError === 'invalidSurnames') {
+            alert('Error.\nEl apellido no puede contener números.');
+        
         }if (paramError === 'legalidalreadyexists') {
             alert('Error. La identificacion legal ya existe');
+        
         }  if(paramError === 'invalidFileType') { 
             alert('Error.\nEl formato de la imagen no es valido');
+        
         } if(paramError === 'uploadFailed') { 
             alert('Error.\nNo se subio la imagen');
+        
         } if(paramError === 'invalidCostaRicaId') { 
             alert('Error.\nEl formato de la cedula no es valida. \nFormato valida 9 digitos: "123456789" Sin guiónes ni espacios');
+        
         }if(paramError === 'invalidForeignId') { 
             alert('Error.\nEl formato de la cedula no es valida. \nFormato valido puede ser un número de 8 a 12 dígitos');
+        
         }if(paramError === 'invalidPhone') { 
             alert('Error.\nEl formato del numero de telefono no es valido \nFormato valido 8 digitos: "12345678" Sin guiones ni espacios');
+        
         }if(paramError === 'invalidEmailFormat') { 
             alert('Error.\nEl formato del Email no es valido \nNecesita llevar @ y minimo un número');
+        
         }if(paramError === 'imageUploadFailed') { 
             alert('Error.\nError al subir la imagen');
+        
         }
         if(paramError === 'numberFormat') { 
             alert('Error.\nNo se permiten números en el nombre, ni los apellidos');
-        }else {
+        }else if(paramError === 'error'){
             alert('Error.\nPor favor notificar de este error');
         }
     }
