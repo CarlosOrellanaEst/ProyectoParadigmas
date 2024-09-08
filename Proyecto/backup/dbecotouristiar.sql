@@ -35,26 +35,38 @@
     `tbbankaccountstatus` tinyint(1) NOT NULL,
     `tbbankaccountisactive` int(11) NOT NULL DEFAULT 1
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+    -- --------------------------------------------------------
+  --
+  -- Estructura de tabla para la tabla `tbuser`
+  --
+
+  CREATE TABLE `tbuser` (
+    `tbuserid` int(11) NOT NULL,
+    `tbusername` varchar(255) NOT NULL,
+    `tbusersurnames` varchar(255) NOT NULL,
+    `tbuserlegalidentification` varchar(255) NOT NULL,
+    `tbuserphone` varchar(255) NOT NULL,
+    `tbuseremail` varchar(255) NOT NULL,
+    `tbusernickname` varchar(255) NOT NULL,
+    `tbuserpassword` varchar(255) NOT NULL,
+    `tbrollid` int(11) NOT NULL,
+    `tbuserstatus` tinyint(1) NOT NULL
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
   -- --------------------------------------------------------
   --
   -- Estructura de tabla para la tabla `tbowner`
   --
-
   CREATE TABLE `tbowner` (
     `tbownerid` int(11) NOT NULL,
-    `tbownername` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-    `tbownersurnames` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-    `tbownerlegalidentification` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-    `tbownerphone` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-    `tbowneremail` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+    `tbuserid` int(11) NOT NULL,   
     `tbownerdirection` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
     `tbownerphotourl` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-    `tbrollid` int(11) NOT NULL,
     `tbownerstatus` tinyint(1) NOT NULL
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
   -- --------------------------------------------------------
+
 
   --
   -- Estructura de tabla para la tabla `tbroll`
@@ -67,21 +79,7 @@
     `tbrollstatus` tinyint(1) NOT NULL
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
-  -- --------------------------------------------------------
 
-  --
-  -- Estructura de tabla para la tabla `tbuser`
-  --
-
-  CREATE TABLE `tbuser` (
-    `tbuserid` int(11) NOT NULL,
-    `tbusername` varchar(255) NOT NULL,
-    `tbuserlastname` varchar(255) NOT NULL,
-    `tbuserpassword` varchar(255) NOT NULL,
-    `tbuserphone` varchar(255) NOT NULL,
-    `tbrollid` int(11) NOT NULL,
-    `tbuserstatus` tinyint(1) NOT NULL
-  ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
   -- --------------------------------------------------------	
   -- Estructura de tabla para la tabla `tbtouristcompanytype`
   --
@@ -144,11 +142,11 @@
   -- Volcado de datos para la tabla `tbuser`
   --
 
-  INSERT INTO `tbuser` (`tbuserid`, `tbusername`, `tbuserlastname`, `tbuserpassword`, `tbuserphone`, `tbrollid`, `tbuserstatus`) VALUES
+  INSERT INTO `tbuser` (`tbuserid`, `tbusername`, `tbusersurnames`, `tbuserlegalidentification`, `tbuserphone`, `tbuseremail`, `tbusernickname`, `tbuserpassword`, `tbrollid`, `tbuserstatus`) VALUES
 
-  (1, 'admin', 'admin', '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918', '1234567890', 1, 1),
-  (2, 'propietario', 'propietario', '21be11e996807bcef07a0f66fc1ec17402e138fdda66913814b7c02b32fb24ad', '9876543210', 3, 1),
-  (3, 'turista', 'turista', 'd5672f037da8c5c5c277dca73331af8116f8e6fc5cdc0b4beb9268dd410c78c1', '5432167890', 2, 1);
+  (1, 'admin', 'admin', '123456789', '84004800', 'admin@gmail.com', 'admin',  '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918', 1, 1),
+  (2, 'propietario', 'propietario', '402590268', '89571689', 'propietario@hotmail.com', 'propietario', '21be11e996807bcef07a0f66fc1ec17402e138fdda66913814b7c02b32fb24ad', 3, 1),
+  (3, 'turista', 'turista', '402590269', '86942578', 'turista@gmail.com', 'turista', 'd5672f037da8c5c5c277dca73331af8116f8e6fc5cdc0b4beb9268dd410c78c1', 2, 1);
   COMMIT;
 
   --
@@ -169,12 +167,12 @@
   -- Volcado de datos para la tabla `tbowner`
   --
 
-  INSERT INTO `tbowner` (`tbownerid`, `tbownername`, `tbownersurnames`, `tbownerlegalidentification`, `tbownerphone`, `tbowneremail`, `tbownerdirection`, `tbrollid`, `tbownerstatus`) VALUES
-  (1, 'Carlos', 'González Pérez', '12345678', '555-1234', 'carlos.gonzalez@example.com', 'Calle Falsa 123, Ciudad', 3, 1),
-  (2, 'Ana', 'Martínez López', '87654321', '555-5678', 'ana.martinez@example.com', 'Avenida Siempre Viva 742, Ciudad', 3, 1),
-  (3, 'Luis', 'Ramírez Fernández', '11223344', '555-9101', 'luis.ramirez@example.com', 'Boulevard Libertad 90, Ciudad', 3, 1),
-  (4, 'Marta', 'Cruz García', '44332211', '555-1122', 'marta.cruz@example.com', 'Plaza Mayor 5, Ciudad', 3, 1),
-  (5, 'José', 'Sánchez Romero', '55667788', '555-3344', 'jose.sanchez@example.com', 'Calle de los Naranjos 20, Ciudad', 3, 1);
+  INSERT INTO `tbowner` (`tbownerid`, `tbuserid`, `tbownerdirection`, `tbownerphotourl`, `tbownerstatus`) VALUES
+  (1, 2, 'Calle Falsa 123, Ciudad', '' , 1);
+  -- (2, 'Ana', 'Martínez López', '87654321', '555-5678', 'ana.martinez@example.com', 'Avenida Siempre Viva 742, Ciudad', 3, 1),
+  -- (3, 'Luis', 'Ramírez Fernández', '11223344', '555-9101', 'luis.ramirez@example.com', 'Boulevard Libertad 90, Ciudad', 3, 1),
+  -- (4, 'Marta', 'Cruz García', '44332211', '555-1122', 'marta.cruz@example.com', 'Plaza Mayor 5, Ciudad', 3, 1),
+  -- (5, 'José', 'Sánchez Romero', '55667788', '555-3344', 'jose.sanchez@example.com', 'Calle de los Naranjos 20, Ciudad', 3, 1);
   COMMIT;
 
   --

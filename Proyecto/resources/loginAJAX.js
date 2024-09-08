@@ -2,10 +2,10 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById("loginForm").addEventListener("submit", function(event) {
         event.preventDefault(); // Previene el envío del formulario por defecto
 
-        const userName = document.getElementById("userName").value.trim(); // Obtiene el valor del campo de usuario
+        const nickName = document.getElementById("nickName").value.trim(); // Obtiene el valor del campo de usuario
         const password = document.getElementById("password").value.trim(); // Obtiene el valor del campo de contraseña
 
-        if(userName === ''){
+        if(nickName === ''){
             alert('El usuario no puede estar vacio.');
             return;
         } else if(password === ''){
@@ -14,10 +14,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         const postData = {
-            userName: userName,
+            nickName: nickName,
             password: password
         };
-        console.log(postData.userName+postData.password);
+       console.log(postData.nickName+postData.password);
 
         let xhr = new XMLHttpRequest();    
         xhr.open('POST', 'business/loginAction.php', true);
@@ -50,6 +50,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
         };
-        xhr.send('userName=' + encodeURIComponent(postData.userName) + '&password=' + encodeURIComponent(postData.password));
+        xhr.send('nickName=' + encodeURIComponent(postData.nickName) + '&password=' + encodeURIComponent(postData.password));
     });
 });

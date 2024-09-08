@@ -1,7 +1,7 @@
 <?php
+
 require_once './loginBusiness.php';
 require '../utils/utils.php';
-
 
 session_start();
 
@@ -9,19 +9,20 @@ header('Content-Type: application/json');
 
 $response = array();
 
-if (isset($_POST['userName']) && isset($_POST['password'])) {
-    $username = $_POST['userName'];
+if (isset($_POST['nickName']) && isset($_POST['password'])) {
+    $nickName = $_POST['nickName'];
     $password = $_POST['password'];
+
     $loginBusiness = new LoginBusiness();
-    $user = $loginBusiness->authenticate($username, $password);
-    if ($user) {
+    $user = $loginBusiness->authenticate($nickName, $password);
+    // echo($user);
+    if ($user !== null) {
         $_SESSION['user'] = $user;
         $response['success'] = true;
-        $response['message'] = "Bienvenido";       
+        $response['message'] = "Bienvenido " . $user->getName();       
         $response['userType'] = $user->getUserType();
         Utils::$userLogged = $user;
-   //     echo(Utils::$userLogged->getUserName() . Utils::$userLogged->getPassword() . Utils::$userLogged->getUserType());
-        error_log("User Type: " . $response['userType']);
+   //     error_log("User Type: " . $response['userType']);
     } else {
         $response['success'] = false;
         $response['message'] = "Usuario o contraseña incorrecto";
@@ -33,5 +34,7 @@ if (isset($_POST['userName']) && isset($_POST['password'])) {
 
 echo json_encode($response);
 exit();
+
+?>
 
 

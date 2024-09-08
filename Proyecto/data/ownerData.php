@@ -13,18 +13,30 @@ class ownerData extends Data {
     
         $conn->set_charset('utf8');
     
-        // Obtiene el último id
+        // Obtiene el último id de Owner
         $queryGetLastId = "SELECT MAX(tbownerid) AS idtbowner FROM tbowner";
         $idCont = mysqli_query($conn, $queryGetLastId);
         if ($idCont === false) {
             mysqli_close($conn);
             return ['status' => 'error', 'message' => 'Failed to get last ID: ' . $conn->error];
         }
-    
-        $nextId = 1;
+        $nextIdOwner = 1;
         if ($row = mysqli_fetch_row($idCont)) {
             $lastId = $row[0] !== null ? (int)trim($row[0]) : 0;
-            $nextId = $lastId + 1;
+            $nextIdOwner = $lastId + 1;
+        }
+
+        // Obtiene el último id de User
+        $queryGetLastId = "SELECT MAX(tbuserid) AS idtbuser FROM tbuser";
+        $idCont = mysqli_query($conn, $queryGetLastId);
+        if ($idCont === false) {
+            mysqli_close($conn);
+            return ['status' => 'error', 'message' => 'Failed to get last ID: ' . $conn->error];
+        }
+        $nextIdUser = 1;
+        if ($row = mysqli_fetch_row($idCont)) {
+            $lastId = $row[0] !== null ? (int)trim($row[0]) : 0;
+            $nextIdUser = $lastId + 1;
         }
         
         $name = $owner->getName();
@@ -32,6 +44,8 @@ class ownerData extends Data {
         $legalIdentification = $owner->getLegalIdentification();
         $phone = $owner->getPhone();
         $email = $owner->getEmail();
+        $nickname = $owner->getNickname();
+        $password = $owner->getPassword();
         $direction = $owner->getDirectionTBOwner();
         $photoUrl = $owner->getPhotoURLTBOwner();
         $statusDelete = true; 
@@ -111,30 +125,48 @@ class ownerData extends Data {
                 }
             }
         } else {
-            // Inserción
-            $queryInsert = "INSERT INTO tbowner (tbownerid, tbownername, tbownersurnames, tbownerlegalidentification, tbownerphone, tbowneremail, tbownerdirection, tbownerphotourl, tbownerstatus) 
-                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            $stmt = $conn->prepare($queryInsert);
+            // Inserción en user primero para despues insertar en owner
+            $queryInsertUsers = "INSERT INTO tbuser (tbuserid, tbusername, tbusersurnames, tbuserlegalidentification 	tbuserphone, tbuseremail, tbusernickname, tbuserpassword, tbrollid, tbuserstatus) VALUES (?,?,?,?,?,?,?,?,?,?)";
+            $stmt = $conn->prepare($queryInsertUsers);
             if ($stmt === false) {
                 mysqli_close($conn);
                 return ['status' => 'error', 'message' => 'Prepare failed: ' . $conn->error];
             }
             
-            $stmt->bind_param("isssssssi", $nextId, $name, $surnames, $legalIdentification, $phone, $email, $direction, $photoUrl, $statusDelete);
+            $stmt->bind_param("isssssssii", $nextIdUser, $name, $surnames, $legalIdentification, $phone, $email, $nickname, $password, 3, 1);
             $result = $stmt->execute();
             $stmt->close();
             mysqli_close($conn);
     
+            // si inserta bien en la tabla User, entonces inserta en la tabla owner
             if ($result) {
-                return ['status' => 'success', 'message' => 'Propietario añadido correctamente.'];
+                $queryInsert = "INSERT INTO tbowner (tbownerid, tbuserid, tbownerdirection, tbownerphotourl, tbownerstatus ) 
+                VALUES (?, ?, ?, ?, ?)";
+                $stmt = $conn->prepare($queryInsert);
+                if ($stmt === false) {
+                    mysqli_close($conn);
+                    return ['status' => 'error', 'message' => 'Prepare failed: ' . $conn->error];
+                }
+
+                $stmt->bind_param("iissi", $nextIdOwner, $nextIdUser, $direction, $photoUrl, 1);
+                $result = $stmt->execute();
+                $stmt->close();
+                mysqli_close($conn);
+
+                if ($result) {
+                    return ['status' => 'success', 'message' => 'Propietario añadido correctamente.'];
+                } else {
+                    return ['status' => 'error', 'message' => 'Falló al agregar el propietario: ' . $conn->error];
+                }
             } else {
-                return ['status' => 'error', 'message' => 'Falló al agregar el propietario: ' . $conn->error];
+                return ['status' => 'error', 'message' => 'Falló al agregar el usuario propietario: ' . $conn->error];
             }
+
+
         }
     }
-
        // lee todos
-       public function getAllTBOwner() {
+    public function getAllTBOwner() {
         $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
         if (!$conn) {
             die("Connection failed: " . mysqli_connect_error());
@@ -165,7 +197,7 @@ class ownerData extends Data {
         $result = mysqli_query($conn, $query);
     
         if ($row = mysqli_fetch_assoc($result)) {
-            $ownerReturn = new Owner($row['tbownerid'], $row['tbownername'], $row['tbownersurnames'], $row['tbownerlegalidentification'], $row['tbownerphone'], $row['tbowneremail'], $row['tbownerdirection'], $row['tbownerphotourl'], $row['tbownerstatus']);
+            $ownerReturn = new Owner($row['tbownerid'], $row['tbownerdirection'], $row['tbownerphotourl'], $row['tbownerstatus']);
         } else {
             $ownerReturn = null;
         }
@@ -213,7 +245,6 @@ class ownerData extends Data {
         return $result;
     }
     
-
     public function deleteTBOwner($idOwner) {
         $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
         $conn->set_charset('utf8');
@@ -225,14 +256,14 @@ class ownerData extends Data {
         return $result;
     } 
 
-       public function getTBOwnerByEmail($ownerEmail) {
+    public function getTBOwnerByEmail($ownerEmail) {
         $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
         if (!$conn) {
             die("Connection failed: " . mysqli_connect_error());
         }
         $conn->set_charset('utf8');
     
-        $query = "SELECT * FROM tbowner WHERE tbowneremail= '$ownerEmail'    ";
+        $query = "SELECT * FROM tbuser WHERE tbuseremail= '$ownerEmail'    ";
         $result = mysqli_query($conn, $query);
         
         $row = mysqli_fetch_assoc($result);
@@ -249,7 +280,7 @@ class ownerData extends Data {
         }
         $conn->set_charset('utf8');
     
-        $query = "SELECT * FROM tbowner WHERE tbownerphone= '$ownerPhone'    ";
+        $query = "SELECT * FROM tbuser WHERE tbuserphone= '$ownerPhone'    ";
         $result = mysqli_query($conn, $query);
         
         $row = mysqli_fetch_assoc($result);
@@ -267,7 +298,7 @@ class ownerData extends Data {
         }
         $conn->set_charset('utf8');
     
-        $query = "SELECT * FROM tbowner WHERE tbownerlegalidentification= '$LegalId'    ";
+        $query = "SELECT * FROM tbuser WHERE tbuserlegalidentification= '$LegalId'    ";
         $result = mysqli_query($conn, $query);
         
         $row = mysqli_fetch_assoc($result);
@@ -295,4 +326,24 @@ class ownerData extends Data {
         mysqli_close($conn);
         return $ownerReturn;
     } 
+
+    public function getTBOwnerByUserId($tbuserId) {
+        $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
+        if (!$conn) {
+            die("Connection failed: " . mysqli_connect_error());
+        }
+        $conn->set_charset('utf8');
+    
+        $query = "SELECT * FROM tbowner WHERE tbuserid = $tbuserId";
+        $result = mysqli_query($conn, $query);
+    
+        if ($row = mysqli_fetch_assoc($result)) {
+            $ownerReturn = new Owner($row['tbownerid'], $row['tbuserid'], $row['tbownerdirection'], $row['tbownerphotourl'], $row['tbownerstatus']);
+      //      echo ($row['tbownerid']. $row['tbuserid']. $row['tbownerdirection']. $row['tbownerphotourl']. $row['tbownerstatus']);
+        } else {
+            $ownerReturn = null;
+        }
+        mysqli_close($conn);
+        return $ownerReturn;
+    }
 }
