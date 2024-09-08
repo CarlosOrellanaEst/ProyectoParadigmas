@@ -35,11 +35,20 @@ function showAlertBasedOnURL() {
             case 'invalidSinpe':
                 alert('El número de SINPE debe ser numérico.');
             break;
+            case 'invalidSinpeFormat':
+                alert('El número debe tener 8 digitos.');
+            break;
             case 'emptyField':
                 alert('El campo de texto no debe estar vacío.');
             break;
             case 'numberFormat':
                 alert('No puedes ingresar letras en el número de SINPE.');
+            break;
+            case 'numberFormatBAnkAccount':
+                alert('No puedes ingresar letras en la cuenta de banco');
+            break;
+            case 'sinpeAlreadyExist':
+                alert('El número de SINPE ya existe.');
             break;
             case 'alreadyexists':
                 alert('El número de cuenta ya existe, ingrese otro.');

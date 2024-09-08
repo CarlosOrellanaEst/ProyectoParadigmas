@@ -8,6 +8,9 @@
         td, th {
             border-right: 1px solid;
         }
+        .required {
+            color: red;
+        }
     </style>
     
     <?php
@@ -26,6 +29,7 @@
     <a href="../index.html">← Volver al inicio</a>
     <header> 
         <h1>CRUD Tipo de pago</h1>
+        <p><span class="required">*</span> Campos requeridos</p>
     </header>
     
     <section>
@@ -43,9 +47,9 @@
                     <option value="">No hay propietarios disponibles</option>
                 <?php endif; ?>
             </select>
-            <br>
-            <label for="accountNumber">Número de Cuenta</label>
-            <input placeholder="Ingrese el número de cuenta" type="text" name="accountNumber" id="accountNumber"/><br>
+            <br><br>
+            <label for="accountNumber">Número de Cuenta <span class="required">*</label>
+            <input placeholder="Ingrese el número de cuenta" type="text" name="accountNumber" id="accountNumber"/><br><br>
             
             <label for="sinpeNumber">Número de SINPE</label>
             <input placeholder="Ingrese el número de SINPE" type="text" name="sinpeNumber" id="sinpeNumber"/><br>

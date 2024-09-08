@@ -12,6 +12,9 @@
                 width: 180px;
                 height: 80px;
             }
+            .required {
+            color: red;
+        }
         </style>
         <?php
             include '../business/touristCompanyTypeBusiness.php';
@@ -24,13 +27,14 @@
         <a href="../index.html">← Volver al inicio</a>
         <header> 
             <h1>CRUD Tipo de empresa turística</h1>
+            <p><span class="required">*</span> Campos requeridos</p>
         </header>
         <section>
             <form method="post"  id="formCreate">
-                <label for="name">Nombre de la actividad: </label>
-                <input placeholder="Nombre de la actividad" type="text" name="nameTouristCompanyType" id="name"/>
+                <label for="name">Nombre de la actividad <span class="required">*</label>
+                <input placeholder="Nombre de la actividad" type="text" name="nameTouristCompanyType" id="name"/><br><br>
                 <label for="description">Descripción de la actividad: </label>
-                <input class="text" placeholder="Descripción" type="text" name="description" id="description"/>
+                <input class="text" placeholder="Descripción" type="text" name="description" id="description"/><br>
                 <input type="submit" value="Crear" name="create" id="create"/>
             </form>
         </section>
