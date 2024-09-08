@@ -45,10 +45,10 @@ function showAlertBasedOnURL() {
                 alert('No puedes ingresar letras en el número de SINPE.');
             break;
             case 'numberFormatBAnkAccount':
-                alert('No puedes ingresar letras en la cuenta de banco');
+                alert('La cuenta de banco no cumple con el formato correcto (Ejm: CR12345678901234567890)');
             break;
-            case 'sinpeAlreadyExist':
-                alert('El número de SINPE ya existe.');
+            case 'duplicateEntry':
+                alert('Entrada duplicada.');
             break;
             case 'alreadyexists':
                 alert('El número de cuenta ya existe, ingrese otro.');

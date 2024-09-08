@@ -68,7 +68,7 @@
         <table>
             <thead>
                 <tr>
-                    <th>Id propietario</th>
+                    <th>Owner id</th>
                     <th>Número de SINPE</th>
                     <th>Número de cuenta</th>
                     <th>Estado</th>
