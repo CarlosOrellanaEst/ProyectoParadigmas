@@ -8,6 +8,9 @@
         td, th {
             border-right: 1px solid;
         }
+        .required {
+            color: red;
+        }
     </style>
     
     <?php
@@ -19,13 +22,14 @@
 <body>
     <header> 
         <h1>CRUD Roles</h1>
+        <p><span class="required">*</span> Campos requeridos</p>
     </header>
     <section>
         <form method="post"  id="formCreate" >
-            <label for="name">Nombre</label>
-            <input placeholder="nombre" type="text" name="rollName" id="name"/>
+            <label for="name">Nombre <span class="required">*</label>
+            <input placeholder="nombre" type="text" name="rollName" id="name"/><br><br>
             <label for="description">Descripción</label>
-            <input placeholder="descripción" type="text" name="rollDescription" id="description"/>
+            <input placeholder="descripción" type="text" name="rollDescription" id="description"/><br>
             <input type="submit" value="Crear" name="create" id="create"/>
         </form>
     </section>

@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title>CRUD Empresa turística</title>
+    <style>
+        .required {
+            color: red;
+        }
+    </style>
     <?php
     include_once '../business/touristCompanyBusiness.php';
     include_once '../business/touristCompanyTypeBusiness.php';
@@ -19,19 +24,21 @@
     <script src="../resources/touristCompanyView.js"></script>
 </head>
 <body>
+    <a href="../index.html">← Volver al inicio</a>
     <header>
         <h1>CRUD Empresa turística</h1>
+        <p><span class="required">*</span> Campos requeridos</p>
     </header>
-    <a href="../index.html">← Volver al inicio</a>
+    
 
     <section id="create">
         <form method="post" id="formCreate" action="../business/touristCompanyAction.php" enctype="multipart/form-data">
-            <label for="legalName">Nombre legal: </label>
-            <input placeholder="Nombre legal" type="text" name="legalName" id="legalName" required />
-            <label for="magicName">Nombre mágico: </label>
-            <input placeholder="Nombre mágico" type="text" name="magicName" id="magicName" required />
+            <label for="legalName">Nombre legal <span class="required">*</label>
+            <input placeholder="Nombre legal" type="text" name="legalName" id="legalName" required /><br><br>
+            <label for="magicName">Nombre mágico <span class="required">*</label>
+            <input placeholder="Nombre mágico" type="text" name="magicName" id="magicName" required /><br><br>
 
-            <label for="ownerId">Dueño: </label>
+            <label for="ownerId">Dueño <span class="required">*</label>
             <select name="ownerId" id="ownerId" required>
                 <option value="0">Ninguno</option>
                 <?php foreach ($owners as $owner): ?>
@@ -39,9 +46,9 @@
                         <?php echo htmlspecialchars($owner->getName() . ' ' . $owner->getSurnames()); ?>
                     </option>
                 <?php endforeach; ?>
-            </select>
+            </select><br><br>
 
-            <label for="companyType">Tipo de empresa: </label>
+            <label for="companyType">Tipo de empresa <span class="required">*</label>
             <select name="companyType" id="companyType" required>
                 <option value="0">Ninguno</option>
                 <?php foreach ($touristCompanyTypes as $touristCompanyType): ?>
@@ -49,10 +56,10 @@
                         <?php echo htmlspecialchars($touristCompanyType->getName()); ?>
                     </option>
                 <?php endforeach; ?>
-            </select>
+            </select><br><br>
 
             <label for="imagenes">Imágenes: </label>
-            <input type="file" name="imagenes[]" id="imagenes" multiple />
+            <input type="file" name="imagenes[]" id="imagenes" multiple /><br>
 
             <input type="hidden" id="status" name="status" value="1">
             <input type="submit" value="Crear" name="create" id="create" />

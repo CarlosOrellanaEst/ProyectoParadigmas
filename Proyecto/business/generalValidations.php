@@ -1,7 +1,5 @@
 <?php
 
-include_once '../domain/Owner.php';
-include_once '../domain/PaymentType.php';
 
 class GeneralValidations {
 
@@ -23,7 +21,6 @@ class GeneralValidations {
     
         return true; 
     }
-    
     
     public function validateNumbers($input) {
         $input = trim($input); 
