@@ -34,4 +34,7 @@ class TouristCompanyBusiness {
         return $this->touristCompanyData->getTouristCompanyByName($touristCompanyName);
     }
     
+    public function removeImageFromCompany($companyId, $imageToDelete){
+        return $this->touristCompanyData->removeImageFromCompany($companyId, $imageToDelete);
+    }
 }
