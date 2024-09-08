@@ -136,7 +136,7 @@ public function getAllTouristCompanies() {
         }
         $conn->set_charset('utf8');
     
-        // Primero, obtener la URL actual de la imagen
+        // Obtener la URL actual de la imagen
         $currentUrlQuery = "SELECT tbtouristcompanyurl FROM tbtouristcompany WHERE tbtouristcompanyid = ?";
         $stmt = $conn->prepare($currentUrlQuery);
         if ($stmt === false) {
@@ -151,19 +151,20 @@ public function getAllTouristCompanies() {
         $stmt->close();
     
         // Extraer datos del objeto TouristCompany
-        $tbtouristcompanylegalname = $touristCompany->getTbtouristcompanylegalname();
-        $tbtouristcompanymagicname = $touristCompany->getTbtouristcompanymagicname();
-        $tbtouristcompanyowner = $touristCompany->getTbtouristcompanyowner();
-        $tbtouristcompanycompanytype = $touristCompany->getTbtouristcompanycompanytype();
-        $tbtouristcompanystatus = $touristCompany->getTbtouristcompanystatus();
-    
-        // Asumiendo que las URLs de las imágenes están almacenadas como un array en $touristCompany->getTbtouristcompanyurl()
-        // Si no se sube una nueva imagen, usar la URL actual
+        $tbtouristcompanylegalname = mysqli_real_escape_string($conn, $touristCompany->getTbtouristcompanylegalname());
+        $tbtouristcompanymagicname = mysqli_real_escape_string($conn, $touristCompany->getTbtouristcompanymagicname());
+        $tbtouristcompanyowner = mysqli_real_escape_string($conn, $touristCompany->getTbtouristcompanyowner());
+        $tbtouristcompanycompanytype = mysqli_real_escape_string($conn, $touristCompany->getTbtouristcompanycompanytype());
+        $tbtouristcompanystatus = mysqli_real_escape_string($conn, $touristCompany->getTbtouristcompanystatus());
+        //$tbtouristcompanyurl = mysqli_real_escape_string($conn, $touristCompany->getTbtouristcompanyurl());
+
+
+        // Manejo de la URL de la imagen
         $tbtouristcompanyurl = $touristCompany->getTbtouristcompanyurl();
         if ($tbtouristcompanyurl === null || empty($tbtouristcompanyurl)) {
-            $tbtouristcompanyurl = $currentUrl;
+            $tbtouristcompanyurl = $currentUrl;  // Mantener la URL actual si no se sube una nueva
         } else {
-            $tbtouristcompanyurl = implode(',', $tbtouristcompanyurl); // Concatenar las URLs de las imágenes
+            $tbtouristcompanyurl = implode(',', $tbtouristcompanyurl);  // Si hay una nueva imagen, concatenar
         }
     
         // Actualización de la consulta
@@ -212,7 +213,7 @@ public function getAllTouristCompanies() {
     
             // Separar las URLs si están separadas por comas
             $photoUrls = explode(',', $row['tbtouristcompanyurl']);
-            $company->setPhotoUrls(array_map('trim', $photoUrls)); // Limpiar espacios y establecer URLs
+            $company->setTbtouristcompanyurl(array_map('trim', $photoUrls)); // Limpiar espacios y establecer URLs
             
             $companyReturn = $company;
         } else {
@@ -252,6 +253,30 @@ public function getAllTouristCompanies() {
     
         return $touristCompany;
     }
+
+    public function removeImageFromCompany($companyId, $newImageUrls) {
+        $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
+        if (!$conn) {
+            die("Connection failed: " . mysqli_connect_error());
+        }
+        $conn->set_charset('utf8');
+    
+        // Actualizar la URL en la base de datos
+        $query = "UPDATE tbtouristcompany SET tbtouristcompanyurl=? WHERE tbtouristcompanyid=?";
+        $stmt = $conn->prepare($query);
+        if ($stmt === false) {
+            die("Prepare failed: " . $conn->error);
+        }
+    
+        $stmt->bind_param("si", $newImageUrls, $companyId);
+        $result = $stmt->execute();
+    
+        $stmt->close();
+        mysqli_close($conn);
+    
+        return $result;
+    }
+    
     
    
 

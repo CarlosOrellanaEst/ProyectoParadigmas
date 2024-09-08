@@ -17,7 +17,7 @@
         <a href="../index.html">← Volver al inicio</a>
         <h1>CRUD Propietarios</h1>
     </header>
-    <<form id="formCreate" method="post" enctype="multipart/form-data" action="../business/ownerAction.php">
+    <form id="formCreate" method="post" enctype="multipart/form-data" action="../business/ownerAction.php">
             <label for="name">Nombre</label>
             <input placeholder="nombre" type="text" name="ownerName" id="name"/>
             <label for="surnames">Apellidos</label>
