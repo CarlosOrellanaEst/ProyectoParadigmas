@@ -260,8 +260,42 @@ public function getAllTouristCompanies() {
             die("Connection failed: " . mysqli_connect_error());
         }
         $conn->set_charset('utf8');
+        
+        // Obtener la URL actual de la imagen de la compañía
+        $query = "SELECT tbtouristcompanyurl FROM tbtouristcompany WHERE tbtouristcompanyid=?";
+        $stmt = $conn->prepare($query);
+        if ($stmt === false) {
+            die("Prepare failed: " . $conn->error);
+        }
     
-        // Actualizar la URL en la base de datos
+        $stmt->bind_param("i", $companyId);
+        $stmt->execute();
+        $stmt->bind_result($currentImageUrl);
+        $stmt->fetch();
+        $stmt->close();
+    
+        // Verificar si alguna otra compañía está usando la misma imagen
+        $query = "SELECT COUNT(*) FROM tbtouristcompany WHERE tbtouristcompanyurl=?";
+        $stmt = $conn->prepare($query);
+        if ($stmt === false) {
+            die("Prepare failed: " . $conn->error);
+        }
+    
+        $stmt->bind_param("s", $currentImageUrl);
+        $stmt->execute();
+        $stmt->bind_result($imageCount);
+        $stmt->fetch();
+        $stmt->close();
+    
+        // Si la imagen no está siendo utilizada por ninguna otra compañía y la URL nueva es diferente
+        if ($imageCount == 1 && $currentImageUrl != $newImageUrls && !empty($currentImageUrl)) {
+            $imagePath = '/path/to/images/' . $currentImageUrl; // Ajusta la ruta según tu proyecto
+            if (file_exists($imagePath)) {
+                unlink($imagePath); // Eliminar la imagen del servidor
+            }
+        }
+    
+        // Actualizar la URL en la base de datos después de verificar y eliminar la imagen
         $query = "UPDATE tbtouristcompany SET tbtouristcompanyurl=? WHERE tbtouristcompanyid=?";
         $stmt = $conn->prepare($query);
         if ($stmt === false) {
@@ -270,12 +304,38 @@ public function getAllTouristCompanies() {
     
         $stmt->bind_param("si", $newImageUrls, $companyId);
         $result = $stmt->execute();
-    
         $stmt->close();
+    
         mysqli_close($conn);
     
         return $result;
     }
+    public function isImageInUse($imageUrl) {
+        $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
+        if (!$conn) {
+            die("Connection failed: " . mysqli_connect_error());
+        }
+        $conn->set_charset('utf8');
+        
+        // Consulta para verificar si la imagen está siendo utilizada por otras compañías
+        $query = "SELECT COUNT(*) FROM tbtouristcompany WHERE FIND_IN_SET(?, tbtouristcompanyurl)";
+        $stmt = $conn->prepare($query);
+        if ($stmt === false) {
+            die("Prepare failed: " . $conn->error);
+        }
+    
+        $stmt->bind_param("s", $imageUrl);
+        $stmt->execute();
+        $stmt->bind_result($imageCount);
+        $stmt->fetch();
+        $stmt->close();
+        mysqli_close($conn);
+        
+        return $imageCount > 0; // Devuelve verdadero si la imagen está en uso
+    }
+    
+    
+    
     
     
    

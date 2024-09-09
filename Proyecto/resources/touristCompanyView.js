@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 function confirmAction(event) {
-    if (!confirm("¿Estás seguro de que quieres eliminar esta empresa?")) {
+    if (!confirm("¿Estás seguro de que desea realizar esta accion?")) {
         event.preventDefault(); // Detener la acción si no se confirma
     }
 }
