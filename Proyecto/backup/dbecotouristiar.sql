@@ -125,18 +125,7 @@ COMMIT;
   ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
   -- --------------------------------------------------------
-  --
-  -- Volcado de datos para la tabla `tbbankaccount`
-  --
-
-  -- Inserción de datos en la tabla `tbbankaccount`
-  INSERT INTO `tbbankaccount` (`tbbankaccountid`, `tbbankaccountownerid`, `tbbankaccountnumber`, `tbbankaccountbankname`, `tbbankaccountstatus`, `tbbankaccountisactive`) VALUES
-  (1, 1, '1234567890123456', 'Bank of America', 1, 1),
-  (2, 2, '2345678901234567', 'Chase Bank', 1, 1),
-  (3, 3, '3456789012345678', 'Wells Fargo', 1, 1),
-  (4, 4, '4567890123456789', 'Citibank', 1, 1),
-  (5, 5, '5678901234567890', 'Goldman Sachs', 1, 1);
-  COMMIT;
+ 
 
   -- --------------------------------------------------------
   --

@@ -12,9 +12,12 @@ if (isset($_POST['create'])) {
         // isset($_POST['direction']) &&
         // isset($_POST['idType'])
 
-        isset($_POST['name']) && isset($_POST['surnames']) && isset($_POST['legalIdentification']) &&
-        isset($_POST['phone']) && isset($_POST['email']) && isset($_POST['direction']) &&
-        isset($_FILES['imagen']) && $_FILES['imagen']['error'] == UPLOAD_ERR_OK && isset($_POST['idType'])
+        //isset($_POST['name']) && isset($_POST['surnames']) && 
+        isset($_POST['legalIdentification']) &&
+        //isset($_POST['phone']) && 
+        isset($_POST['email']) 
+        //&& isset($_POST['direction']) &&
+        //isset($_FILES['imagen']) && $_FILES['imagen']['error'] == UPLOAD_ERR_OK && isset($_POST['idType'])
     ) {
         $name = isset($_POST['name']) ? trim($_POST['name']) : '';
         $surnames = isset($_POST['surnames']) ? trim($_POST['surnames']) : '';
