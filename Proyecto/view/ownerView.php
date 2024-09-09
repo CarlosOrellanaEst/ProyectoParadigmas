@@ -107,7 +107,7 @@
                     echo '<td><img src="../images/' . $photoUrl . '" alt="Foto" width="75" height="75" /></td>';
 
                     echo '<td>';
-                    echo '<input type="file" name="newImage" accept="image/*" /><br />';
+                    // echo '<input type="file" name="newImage" accept="image/*" /><br />';
                     echo '<input type="submit" value="Actualizar" name="update" />';
                     echo '<input type="submit" value="Eliminar" name="delete" />';
                     echo '</td>';

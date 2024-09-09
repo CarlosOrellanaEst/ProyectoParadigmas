@@ -8,7 +8,7 @@
 <body>
     <p>PAGINA DE PROPIETARIO.</p>
     <ol>
-        <li><a href="bankAccountView.php">CRUD Cuenta bancaria</a></li>
+        <li><a href="paymentTypeView.php">CRUD Tipo de Pago</a></li>
         <li><a href="ownerView.php">CRUD Propietarios</a></li>
         <li><a href="touristCompanyView.php">CRUD Empresas turísticas</a></li>
         <li><a href="activityView.php">CRUD Actividades</a></li>

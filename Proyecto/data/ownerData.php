@@ -200,8 +200,8 @@ class ownerData extends Data {
         if (!$conn) {
             die("Connection failed: " . mysqli_connect_error());
         }
-        $conn->set_charset('utf8');
-        $query = "SELECT * FROM tbowner INNER JOIN tbuser ON tbowner.tbuserid = tbuser.tbuserid WHERE tbowner.tbownerid = $idTBOwner"; 
+        $conn->set_charset('utf8');  
+        $query = "SELECT * FROM tbowner INNER JOIN tbuser ON tbowner.tbuserid = tbuser.tbuserid WHERE tbownerid = $idTBOwner"; 
     
         // $query = "SELECT * FROM tbowner WHERE tbownerid = $idTBOwner";
         $result = mysqli_query($conn, $query);
