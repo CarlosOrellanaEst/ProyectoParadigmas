@@ -19,30 +19,35 @@
         .attribute-container {
             margin-bottom: 10px;
         }
+        .required {
+            color: red;
+        }
     </style>
     <script src="../resources/activityAJAX.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
 <body>
+     <a href="../index.html">← Volver al inicio</a>
     <header>
         <h1>CRUD Actividades</h1>
-        <a href="../index.html">← Volver al inicio</a>
+        <p><span class="required">*</span> Campos requeridos</p>
+       
     </header>
 
     <section id="create">
         <h2>Crear Actividad</h2>
         <form method="post" id="formCreate" action="../business/activityAction.php">
-        <label for="nameTBActivity">Nombre de la Actividad: </label>
+        <label for="nameTBActivity">Nombre de la Actividad <span class="required">*</label>
         <input placeholder="Nombre de la Actividad" type="text" name="nameTBActivity" id="nameTBActivity" required />
 
             <br><br>
 
             <div id="attributes">
                 <div class="attribute-container">
-                <label for="attribute1">Atributo: </label>
-                <input type="text" name="attributeTBActivityArray[]" id="attribute1" placeholder="Atributo" required />
-                    <label for="dataAttributeTBActivityArray[]">Dato: </label>
+                <label for="attribute1">Atributo <span class="required">*</label>
+                <input type="text" name="attributeTBActivityArray[]" id="attribute1" placeholder="Atributo" required /><br><br>
+                    <label for="dataAttributeTBActivityArray[]">Dato <span class="required">*</label>
                     <input type="text" name="dataAttributeTBActivityArray[]" placeholder="Dato" required />
                 </div>
             </div>

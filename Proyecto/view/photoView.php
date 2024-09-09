@@ -15,8 +15,8 @@
     <!-- Formulario para crear nuevas fotos -->
     <section id="formCreate">
         <form method="post" action="../business/photoAction.php" enctype="multipart/form-data">
-            <label for="imagenes">Selecciona las imágenes (máximo 5):</label>
-            <input type="file" name="imagenes[]" accept="image/*" multiple>
+            <label for="imagenes">Selecciona las imágenes (máximo 5):</label><br>
+            <input type="file" name="imagenes[]" accept="image/*" multiple><br>
             <input type="submit" value="Crear" name="create" id="create"/>
         </form>
     </section>

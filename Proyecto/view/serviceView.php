@@ -8,19 +8,23 @@
         td, th {
             border-right: 1px solid;
         }
+        .required {
+            color: red;
+        }
     </style>
     <script src="../resources/AJAXCreateService.js"></script>
 </head>
 <body>
     <header> 
         <h1>CRUD Servicios</h1>
+        <p><span class="required">*</span> Campos requeridos</p>
     </header>
     <section>
         <form method="POST"  id="formCreate" enctype="multipart/form-data">
-            <label for="serviceName">Nombre del servicio</label>
-            <input placeholder="servicio" type="text" name="serviceName" id="serviceName"/>
-            <label for="images">Selecciona las imágenes del servicio (máximo 5):</label>
-            <input type="file" id="images" name="images[]" accept="image/*" multiple>
+            <label for="serviceName">Nombre del servicio <span class="required">*</label>
+            <input placeholder="servicio" type="text" name="serviceName" id="serviceName"/><br><br>
+            <label for="images">Selecciona las imágenes del servicio (máximo 5):</label><br>
+            <input type="file" id="images" name="images[]" accept="image/*" multiple><br>
 
             <input type="submit" value="Crear" name="create" id="create"/>
         </form>

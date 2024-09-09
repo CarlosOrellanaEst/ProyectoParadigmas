@@ -4,7 +4,7 @@ include_once 'data.php';
 include_once '../domain/Owner.php';
 
 class ownerData extends Data {
-
+   
     public function insertTBOwner($owner) {
         $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
         if (!$conn) {
@@ -162,8 +162,6 @@ class ownerData extends Data {
             } else {
                 return ['status' => 'error', 'message' => 'Falló al agregar el usuario propietario: ' . $conn->error];
             }
-
-
         }
     }
        // lee todos

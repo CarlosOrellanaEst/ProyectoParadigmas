@@ -2,26 +2,26 @@
 
 include_once '../domain/Owner.php';
 
-class BankAccount {
-    private $tbBankAccountId;
+class PaymentType {
+    private $tbPaymentTypeId;
     private $ownerId;
     private $accountNumber;
-    private $bank;
     private $status;
+    private $sinpeNumber;
 
-    public function __construct ($tbBankAccountId, $ownerId, $accountNumber, $bank, $status){
-        $this->tbBankAccountId = $tbBankAccountId;
+    public function __construct ($tbPaymentTypeId, $ownerId, $accountNumber,$sinpeNumber, $status){
+        $this->tbPaymentTypeId = $tbPaymentTypeId;
         $this->ownerId = $ownerId;
         $this->accountNumber = $accountNumber;
-        $this->bank = $bank;
         $this->status = $status;
+        $this->sinpeNumber = $sinpeNumber;
     }
 
-    public function getTbBankAccountId(){
-        return $this->tbBankAccountId;
+    public function getTbPaymentTypeId(){
+        return $this->tbPaymentTypeId;
     }   
-    public function setTbBankAccountId($tbBankAccountId){
-        $this->tbBankAccountId = $tbBankAccountId;
+    public function setTbPaymentTypeId($tbPaymentTypeId){
+        $this->tbPaymentTypeId = $tbPaymentTypeId;
     }
 
     public function getOwnerId() {
@@ -38,17 +38,17 @@ class BankAccount {
         $this->accountNumber = $accountNumber;
     }
 
-    public function getBank(){
-        return $this->bank;
-    }
-    public function setBank($bank){
-        $this->bank = $bank;
-    }
-
     public function getStatus(){
         return $this->status;
     }
     public function setStatus($status){
         $this->status = $status;
+    }
+
+    public function getSinpeNumber(){
+        return $this->sinpeNumber;
+    }
+    public function setSinpeNumber($sinpeNumber){
+        $this->sinpeNumber = $sinpeNumber;
     }
 }
