@@ -16,6 +16,21 @@ class serviceCompanyBusiness {
     public function getAllTBServices() {
         return $this->serviceCompanyData->getAllTBServices();
     }
+    public function getServiceCompany($serviceCompanyId)  {
+        return $this->serviceCompanyData->getServiceCompany($serviceCompanyId) ;
+    }
+    public function getTBService($idService) {
+        return $this->serviceCompanyData->getTBService($idService);
+    }
+    public function getAllTBServiceCompanies(){
+        return $this->serviceCompanyData->getAllTBServiceCompanies();
+    }
+    public function removeImageFromServiceCompany($serviceCompanyId, $newImageUrls){
+        return $this->serviceCompanyData->removeImageFromServiceCompany($serviceCompanyId, $newImageUrls);
+    }
+    public function deleteTBServiceCompany($idService) {
+        return $this->serviceCompanyData->deleteTBServiceCompany($idService);
+    }
     /* 
     public function getOneTBService($idService) {
         return $this->serviceData->getTBRoll($idRoll);
@@ -24,8 +39,6 @@ class serviceCompanyBusiness {
     public function updateTBService($service) {
         return $this->serviceData->updateTBRoll($roll);
     }
-    public function deleteTBService($idService) {
-        return $this->serviceData->deleteTBRoll($idRoll);
-    } */
+     */
     
 }

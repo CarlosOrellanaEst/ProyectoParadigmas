@@ -17,7 +17,7 @@ class ServiceCompany {
 
      // Getters
      public function getTbservicecompanyid() {
-        return $this->tbservicecompanyid;
+        return $this->idTbservicecompany;
     }
 
     public function getTbtouristcompanyid() {
@@ -37,8 +37,8 @@ class ServiceCompany {
     }
 
     // Setters
-    public function setTbservicecompanyid($tbservicecompanyid) {
-        $this->tbservicecompanyid = $tbservicecompanyid;
+    public function setTbservicecompanyid($idTbservicecompany) {
+        $this->idTbservicecompany = $idTbservicecompany;
     }
 
     public function setTbtouristcompanyid($tbtouristcompanyid) {
