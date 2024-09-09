@@ -36,7 +36,7 @@ class LoginData extends Data {
                 $user->setUserType("Propietario");
                 $ownerData = new ownerData();
                 $ownerDB = $ownerData->getTBOwnerByUserId($row['tbuserid']);
-                $finalOwner = new Owner(
+                $finalOwner = new Owner (
                     $ownerDB->getIdTBOwner(),            
                     $ownerDB->getDirectionTBOwner(),
                     $ownerDB->getPhotoURLTBOwner(),

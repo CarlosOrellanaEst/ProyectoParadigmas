@@ -7,7 +7,7 @@ class Owner extends User {
     private $photoURLTBOwner;
     private $statusTBOwner;
 
-    function __construct($idTBOwner = 0, $directionTBOwner = "", $photoURLTBOwner = "", $statusTBOwner = true, $id = 0, $nickname = "", $password = "", $active = false, $userType = "", $name = "", $surnames = "", $legalIdentification = "", $phone = "", $email = "") {
+    function __construct($idTBOwner = 0, $directionTBOwner = "", $photoURLTBOwner = "", $statusTBOwner = true, $id = 0, $nickname = "", $password = "", $active = true, $userType = "", $name = "", $surnames = "", $legalIdentification = "", $phone = "", $email = "") {
         // Llamar al constructor de la clase User
         parent::__construct($id, $nickname, $password, $active, $userType, $name, $surnames, $legalIdentification, $phone, $email);
 
@@ -16,31 +16,9 @@ class Owner extends User {
         $this->photoURLTBOwner = $photoURLTBOwner;
         $this->statusTBOwner = $statusTBOwner;
     }
-    // sobrecarga de constructor. lo ocupamos cuando nos loggeamos
-    
-    // public function __constructFromUser(User $user, $idTBOwner = 0, $directionTBOwner = "", $photoURLTBOwner = "", $statusTBOwner = true) {
-    //     // Llamar al constructor de la clase User con los valores del objeto User
-    //     parent::__construct(
-    //         $user->getId(),
-    //         $user->getNickname(),
-    //         $user->getPassword(),
-    //         $user->getActive(),
-    //         $user->getUserType(),
-    //         $user->getName(),
-    //         $user->getSurnames(),
-    //         $user->getLegalIdentification(),
-    //         $user->getPhone(),
-    //         $user->getEmail()
-    //     );
-
-    //     $this->idTBOwner = $idTBOwner;
-    //     $this->directionTBOwner = $directionTBOwner;
-    //     $this->photoURLTBOwner = $photoURLTBOwner;
-    //     $this->statusTBOwner = $statusTBOwner;
-    // }
 
     public static function fromUser(User $user, $idTBOwner = 0, $directionTBOwner = "", $photoURLTBOwner = "", $statusTBOwner = true) {
-        $owner = new self(
+        $owner = new self (
             $user->getId(),
             $user->getNickname(),
             $user->getPassword(),

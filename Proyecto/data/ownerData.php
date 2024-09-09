@@ -10,7 +10,6 @@ class ownerData extends Data {
         if (!$conn) {
             return ['status' => 'error', 'message' => 'Connection failed: ' . mysqli_connect_error()];
         }
-    
         $conn->set_charset('utf8');
     
         // Obtiene el último id de Owner
@@ -48,7 +47,8 @@ class ownerData extends Data {
         $password = $owner->getPassword();
         $direction = $owner->getDirectionTBOwner();
         $photoUrl = $owner->getPhotoURLTBOwner();
-        $statusDelete = true; 
+        $tbrollid = 3;
+        $tbuserstatus = true; 
         
         $existsEmail = $this->getTBOwnerByEmail($email);
         $existsPhone = $this->getTBOwnerByPhone($phone);
@@ -58,7 +58,7 @@ class ownerData extends Data {
         if ($existsEmail) {
             if ($this->getTBOwnerExistsIsActive($existsEmail)) {
                 mysqli_close($conn);
-                return ['status' => 'error', 'message' => 'El Email ya existe.'];
+                return ['status' => 'error', 'message' => 'Ya existe un usuario con ese email.'];
             } else {
                 $queryUpdate = "UPDATE tbowner SET tbownername = ?, tbownersurnames = ?, tbownerlegalidentification = ?,
                 tbownerphone = ?, tbownerdirection = ?, tbownerphotourl = ?, tbrollid = 3, tbownerstatus = 1 WHERE tbownerid = ?";
@@ -126,17 +126,17 @@ class ownerData extends Data {
             }
         } else {
             // Inserción en user primero para despues insertar en owner
-            $queryInsertUsers = "INSERT INTO tbuser (tbuserid, tbusername, tbusersurnames, tbuserlegalidentification 	tbuserphone, tbuseremail, tbusernickname, tbuserpassword, tbrollid, tbuserstatus) VALUES (?,?,?,?,?,?,?,?,?,?)";
+            $queryInsertUsers = "INSERT INTO tbuser (tbuserid, tbusername, tbusersurnames, tbuserlegalidentification, tbuserphone, tbuseremail, tbusernickname, tbuserpassword, tbrollid, tbuserstatus) VALUES (?,?,?,?,?,?,?,?,?,?)";	
+
             $stmt = $conn->prepare($queryInsertUsers);
             if ($stmt === false) {
                 mysqli_close($conn);
                 return ['status' => 'error', 'message' => 'Prepare failed: ' . $conn->error];
             }
             
-            $stmt->bind_param("isssssssii", $nextIdUser, $name, $surnames, $legalIdentification, $phone, $email, $nickname, $password, 3, 1);
+            $stmt->bind_param("isssssssii", $nextIdUser, $name, $surnames, $legalIdentification, $phone, $email, $nickname, $password, $tbrollid, $tbuserstatus);
             $result = $stmt->execute();
             $stmt->close();
-            mysqli_close($conn);
     
             // si inserta bien en la tabla User, entonces inserta en la tabla owner
             if ($result) {
@@ -148,7 +148,8 @@ class ownerData extends Data {
                     return ['status' => 'error', 'message' => 'Prepare failed: ' . $conn->error];
                 }
 
-                $stmt->bind_param("iissi", $nextIdOwner, $nextIdUser, $direction, $photoUrl, 1);
+                $stmt->bind_param("iissi", $nextIdOwner, $nextIdUser, $direction, $photoUrl, $tbuserstatus);
+                $result = false;
                 $result = $stmt->execute();
                 $stmt->close();
                 mysqli_close($conn);
@@ -172,15 +173,25 @@ class ownerData extends Data {
             die("Connection failed: " . mysqli_connect_error());
         }
         $conn->set_charset('utf8');
-    
-        $query = "SELECT * FROM tbowner WHERE tbownerstatus = 1;";
+
+        $query = "SELECT * FROM tbowner INNER JOIN tbuser ON tbowner.tbuserid = tbuser.tbuserid WHERE tbownerstatus=1 AND tbuserstatus=1;"; 
+        // $query = "SELECT * FROM tbowner WHERE tbownerstatus = 1;";
+        
         $result = mysqli_query($conn, $query);
     
         $owners = [];
         while ($row = mysqli_fetch_assoc($result)) {
-            $currentOwner = new Owner($row['tbownerid'],$row['tbownerdirection'], $row['tbownername'], $row['tbownersurnames'], $row['tbownerlegalidentification'], $row['tbownerphone'], $row['tbowneremail'], $row['tbownerphotourl'], $row['tbownerstatus']);
+            $currentOwner = new Owner( 
+                $row['tbownerid'], $row['tbownerdirection'], $row['tbownerphotourl'], $row['tbownerstatus'], 
+                $row['tbuserid'], $row['tbusernickname'], $row['tbuserpassword'], $row['tbuserstatus'], "Propietario", $row['tbusername'], $row['tbusersurnames'], $row['tbuserlegalidentification'], $row['tbuserphone'], $row['tbuseremail']  
+            );
             array_push($owners, $currentOwner);
         }
+         	 	 	 	 	 	 	 	 	 	
+        // while ($row = mysqli_fetch_assoc($result)) {
+        //     $currentOwner = new Owner($row['tbownerid'],$row['tbownerdirection'], $row['tbownername'], $row['tbownersurnames'], $row['tbownerlegalidentification'], $row['tbownerphone'], $row['tbowneremail'], $row['tbownerphotourl'], $row['tbownerstatus']);
+        //     array_push($owners, $currentOwner);
+        // }
     
         mysqli_close($conn);
         return $owners;
@@ -192,12 +203,16 @@ class ownerData extends Data {
             die("Connection failed: " . mysqli_connect_error());
         }
         $conn->set_charset('utf8');
+        $query = "SELECT * FROM tbowner INNER JOIN tbuser ON tbowner.tbuserid = tbuser.tbuserid WHERE tbowner.tbownerid = $idTBOwner"; 
     
-        $query = "SELECT * FROM tbowner WHERE tbownerid = $idTBOwner";
+        // $query = "SELECT * FROM tbowner WHERE tbownerid = $idTBOwner";
         $result = mysqli_query($conn, $query);
     
         if ($row = mysqli_fetch_assoc($result)) {
-            $ownerReturn = new Owner($row['tbownerid'], $row['tbownerdirection'], $row['tbownerphotourl'], $row['tbownerstatus']);
+            $ownerReturn = new Owner( 
+                $row['tbownerid'], $row['tbownerdirection'], $row['tbownerphotourl'], $row['tbownerstatus'], 
+                $row['tbuserid'], $row['tbusernickname'], $row['tbuserpassword'], $row['tbuserstatus'], "Propietario", $row['tbusername'], $row['tbusersurnames'], $row['tbuserlegalidentification'], $row['tbuserphone'], $row['tbuseremail']  
+            );
         } else {
             $ownerReturn = null;
         }
@@ -213,21 +228,22 @@ class ownerData extends Data {
         }
         $conn->set_charset('utf8');
         
-        $id = $owner->getIdTBOwner();
+        $idUser = $owner->getId();
+        $idOwner = $owner->getIdTBOwner();
         $newName = mysqli_real_escape_string($conn, $owner->getName());
         $newSurnames = mysqli_real_escape_string($conn, $owner->getSurnames());
         $newLegalIdentification = mysqli_real_escape_string($conn, $owner->getLegalIdentification());
         $newPhone = mysqli_real_escape_string($conn, $owner->getPhone());
         $newEmail = mysqli_real_escape_string($conn, $owner->getEmail());
         $newDirection = mysqli_real_escape_string($conn, $owner->getDirectionTBOwner());
-        $newURL = mysqli_real_escape_string($conn, $owner->getPhotoURLTBOwner());
+        // $newURL = mysqli_real_escape_string($conn, $owner->getPhotoURLTBOwner());
     
         // Verificar duplicados
-        $emailQuery = "SELECT * FROM tbowner WHERE tbowneremail = '$newEmail' AND tbownerid != $id";
+        $emailQuery = "SELECT * FROM tbuser WHERE tbuseremail = '$newEmail' AND tbuserid != $idUser";
         $emailResult = mysqli_query($conn, $emailQuery);
-        $phoneQuery = "SELECT * FROM tbowner WHERE tbownerphone = '$newPhone' AND tbownerid != $id";
+        $phoneQuery = "SELECT * FROM tbuser WHERE tbuserphone = '$newPhone' AND tbuserid != $idUser";
         $phoneResult = mysqli_query($conn, $phoneQuery);
-        $legalIdQuery = "SELECT * FROM tbowner WHERE tbownerlegalidentification = '$newLegalIdentification' AND tbownerid != $id";
+        $legalIdQuery = "SELECT * FROM tbuser WHERE tbuserlegalidentification = '$newLegalIdentification' AND tbuserid != $idUser";
         $legalIdResult = mysqli_query($conn, $legalIdQuery);
     
         if (mysqli_num_rows($emailResult) > 0) {
@@ -237,23 +253,46 @@ class ownerData extends Data {
         } else if (mysqli_num_rows($legalIdResult) > 0) {
             $result = "LegalId";
         } else {
-            $query = "UPDATE tbowner SET tbownername = '$newName', tbownersurnames = '$newSurnames', tbownerlegalidentification = '$newLegalIdentification', tbownerphone = '$newPhone', tbowneremail = '$newEmail', tbownerdirection = '$newDirection', tbownerphotourl = '$newURL' WHERE tbownerid = $id";
+            $varReturn = false;
+            $query = "UPDATE tbuser SET tbusername = '$newName', tbusersurnames = '$newSurnames', tbuserlegalidentification = '$newLegalIdentification', tbuserphone = '$newPhone', tbuseremail = '$newEmail' WHERE tbuserid = $idUser";
+            // si actualizamos tbuser, actualizamos los de tbowner
             $result = mysqli_query($conn, $query) ? 1 : "dbError";
+            if ($result==1) {
+                $query = "UPDATE tbowner SET tbownerdirection = '$newDirection' WHERE tbuserid= $idUser";
+                $varReturn = true;
+            }
         }
     
         mysqli_close($conn);
-        return $result;
+        return $varReturn;
     }
     
-    public function deleteTBOwner($idOwner) {
+    public function deleteTBOwner($idOwner, $idUser) {
         $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
         $conn->set_charset('utf8');
+        echo($idOwner.$idUser);
 
-        $queryUpdate = "UPDATE tbowner SET tbownerstatus = 0 where tbownerid=" . $idOwner . ";";
-        $result = mysqli_query($conn, $queryUpdate);
-        mysqli_close($conn);
-
-        return $result;
+        $queryUpdateUser = "UPDATE tbuser SET tbuserstatus = 0 WHERE tbuserid=" . $idUser . ";";
+        $result = mysqli_query($conn, $queryUpdateUser);
+        $varReturn = false;
+        // si elimina de la tabla User, entonces elimina de la tabla owner
+        if ($result) {
+            $varReturn = true;
+            $queryUpdateOwner = "UPDATE tbowner SET tbownerstatus = 0 WHERE tbownerid=" . $idOwner . ";";
+            $result = false;
+            $result = mysqli_query($conn, $queryUpdateOwner);
+            mysqli_close($conn);
+            if ($result) {
+                // return ['status' => 'success', 'message' => 'Propietario eliminado.'];
+                $varReturn = true;
+            } else {
+                // return ['status' => 'error', 'message' => 'Falló al eliminar el propietario: ' . $conn->error];
+            }
+        } 
+        else {
+            // return ['status' => 'error', 'message' => 'Falló al eliminar el propietario: ' . $conn->error];
+        }
+        return $varReturn;
     } 
 
     public function getTBOwnerByEmail($ownerEmail) {

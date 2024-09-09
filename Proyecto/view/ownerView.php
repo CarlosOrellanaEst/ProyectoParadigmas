@@ -83,6 +83,7 @@
                 foreach ($allowners as $current) {
                     echo '<form method="post" action="../business/ownerAction.php" onsubmit="return confirmDelete(event);" enctype="multipart/form-data">';
                     echo '<input type="hidden" name="ownerID" value="' . $current->getIdTBOwner() . '">';
+                    echo '<input type="hidden" name="userID" value="' . $current->getId(). '">';
                     echo '<tr>';
                     echo '<td><input type="text" name="ownerName" value="' . $current->getName() . '"/></td>';
                     echo '<td><input type="text" name="ownerSurnames" value="' . $current->getSurnames() . '"/></td>';

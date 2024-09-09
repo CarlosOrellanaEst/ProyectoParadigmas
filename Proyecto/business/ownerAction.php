@@ -2,7 +2,7 @@
 include './ownerBusiness.php';
 
 if (isset($_POST['create'])) {
-$response = array();
+    $response = array();
 
 
     if (
@@ -10,125 +10,125 @@ $response = array();
     isset($_POST['phone']) && isset($_POST['email']) && isset($_POST['direction']) &&
     isset($_FILES['imagen']) && $_FILES['imagen']['error'] == UPLOAD_ERR_OK && isset($_POST['idType'])
     ) {
+        $name = trim($_POST['name']);
+        $surnames = trim($_POST['surnames']);
+        $legalIdentification = trim($_POST['legalIdentification']);
+        $phone = trim($_POST['phone']);
+        $email = trim($_POST['email']);
+        $direction = trim($_POST['direction']);
+        $idType = trim($_POST['idType']);
 
-    $name = trim($_POST['name']);
-    $surnames = trim($_POST['surnames']);
-    $legalIdentification = trim($_POST['legalIdentification']);
-    $phone = trim($_POST['phone']);
-    $email = trim($_POST['email']);
-    $direction = trim($_POST['direction']);
-    $idType = trim($_POST['idType']);
+        // Configuración para la subida de imágenes
+        $uploadDir = '../images/propietarios';
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0755, true);
+        }
+        $fileName = basename($_FILES['imagen']['name']);
+        $targetFilePath = $uploadDir . $fileName;
 
-    // Configuración para la subida de imágenes
-    $uploadDir = '../images/';
-    $fileName = basename($_FILES['imagen']['name']);
-    $targetFilePath = $uploadDir . $fileName;
+        // Validación del tipo de archivo
+        $fileType = strtolower(pathinfo($targetFilePath, PATHINFO_EXTENSION));
+        $allowTypes = array('jpg', 'png', 'jpeg', 'gif');
 
-    // Validación del tipo de archivo
-    $fileType = strtolower(pathinfo($targetFilePath, PATHINFO_EXTENSION));
-    $allowTypes = array('jpg', 'png', 'jpeg', 'gif');
+        if (in_array($fileType, $allowTypes)) {
+            if (move_uploaded_file($_FILES['imagen']['tmp_name'], $targetFilePath)) {
+                // Imagen subida exitosamente
 
-    if (in_array($fileType, $allowTypes)) {
-        if (move_uploaded_file($_FILES['imagen']['tmp_name'], $targetFilePath)) {
-            // Imagen subida exitosamente
+                // Validación del campo de identificación legal
+                $isValidId = false;
+                if ($idType == 'CR') {
+                    // Validación para cédula nacional de Costa Rica (9 dígitos)
+                    $isValidId = preg_match('/^\d{9}$/', $legalIdentification);
+                    if (!$isValidId) {
+                        $response['status'] = 'error';
+                        $response['message'] = 'Identificación de Costa Rica inválida';
+                        echo json_encode($response);
+                        exit();
+                    }
+                } elseif ($idType == 'foreign') {
+                    // Validación para identificación extranjera (8 a 12 dígitos)
+                    $isValidId = preg_match('/^\d{8,12}$/', $legalIdentification);
+                    if (!$isValidId) {
+                        $response['status'] = 'error';
+                        $response['message'] = 'Identificación extranjera inválida';
+                        echo json_encode($response);
+                        exit();
+                    }
+                }
 
-            // Validación del campo de identificación legal
-            $isValidId = false;
-            if ($idType == 'CR') {
-                // Validación para cédula nacional de Costa Rica (9 dígitos)
-                $isValidId = preg_match('/^\d{9}$/', $legalIdentification);
-                if (!$isValidId) {
+                // Validar que el nombre y apellidos solo contengan letras y espacios
+                if (!preg_match('/^[a-zA-Z\s]+$/', $name) || !preg_match('/^[a-zA-Z\s]+$/', $surnames)) {
                     $response['status'] = 'error';
-                    $response['message'] = 'Identificación de Costa Rica inválida';
+                    $response['message'] = 'El nombre o los apellidos contienen caracteres inválidos';
                     echo json_encode($response);
                     exit();
                 }
-            } elseif ($idType == 'foreign') {
-                // Validación para identificación extranjera (8 a 12 dígitos)
-                $isValidId = preg_match('/^\d{8,12}$/', $legalIdentification);
-                if (!$isValidId) {
+
+                // Validación del número de teléfono (8 dígitos)
+                if (!preg_match('/^\d{8}$/', $phone)) {
                     $response['status'] = 'error';
-                    $response['message'] = 'Identificación extranjera inválida';
+                    $response['message'] = 'Número de teléfono inválido';
                     echo json_encode($response);
                     exit();
                 }
-            }
 
-            // Validar que el nombre y apellidos solo contengan letras y espacios
-            if (!preg_match('/^[a-zA-Z\s]+$/', $name) || !preg_match('/^[a-zA-Z\s]+$/', $surnames)) {
-                $response['status'] = 'error';
-                $response['message'] = 'El nombre o los apellidos contienen caracteres inválidos';
-                echo json_encode($response);
-                exit();
-            }
+                // Validación del correo electrónico
+                if (!preg_match('/^[^\s@]+@[^\s@]+\.[^\s@]+$/', $email)) {
+                    $response['status'] = 'error';
+                    $response['message'] = 'Formato de correo electrónico inválido';
+                    echo json_encode($response);
+                    exit();
+                }
 
-            // Validación del número de teléfono (8 dígitos)
-            if (!preg_match('/^\d{8}$/', $phone)) {
-                $response['status'] = 'error';
-                $response['message'] = 'Número de teléfono inválido';
-                echo json_encode($response);
-                exit();
-            }
-
-            // Validación del correo electrónico
-            if (!preg_match('/^[^\s@]+@[^\s@]+\.[^\s@]+$/', $email)) {
-                $response['status'] = 'error';
-                $response['message'] = 'Formato de correo electrónico inválido';
-                echo json_encode($response);
-                exit();
-            }
-
-            // Validación adicional de campos vacíos
-            if (empty($name)) {
-                $response['status'] = 'error';
-                $response['message'] = 'El nombre del propietario no puede estar vacío';
-            } else {
-                // Crear objeto Owner
-                $owner = new Owner(0, $direction, $name, $surnames, $legalIdentification, $phone, $email, $targetFilePath, 1);
-                $ownerBusiness = new OwnerBusiness();
-                
-                // Llamar al método insertTBOwner
-                $result = $ownerBusiness->insertTBOwner($owner);
-
-                // Verificar el resultado
-                if ($result['status'] === 'success') {
-                    $response['status'] = 'success';
-                    $response['message'] = 'Propietario añadido correctamente';
+                // Validación adicional de campos vacíos
+                if (empty($name)) {
+                    $response['status'] = 'error';
+                    $response['message'] = 'El nombre del propietario no puede estar vacío';
                 } else {
-                    $response['status'] = 'error';
-                    $response['message'] = 'Fallo al agregar el propietario: ' . $result['message'];
+                    // Crear objeto Owner. El nickname y password se settean en el CRUD de registrarse que esta en proceso. Por el momento es el mismo que el nombre
+                    $owner = new Owner(0, $direction, $targetFilePath, 1, 0, $name, $name, 1, "Propietario", $name, $surnames, $legalIdentification, $phone, $email);
+                    $ownerBusiness = new OwnerBusiness();
+                    $result = $ownerBusiness->insertTBOwner($owner);
+
+                    if ($result['status'] === 'success') {
+                        $response['status'] = 'success';
+                        $response['message'] = 'Propietario añadido correctamente';
+                    } else {
+                        $response['status'] = 'error';
+                        $response['message'] = 'Fallo al agregar el propietario: ' . $result['message'];
+                    }
                 }
+            } else {
+                $response['status'] = 'error';
+                $response['message'] = 'Fallo al subir la imagen';
+                error_log(in_array($fileType, $allowTypes));
             }
         } else {
             $response['status'] = 'error';
-            $response['message'] = 'Fallo al subir la imagen';
+            $response['message'] = 'Tipo de archivo no permitido';
         }
+
+        echo json_encode($response);
+        exit();
     } else {
         $response['status'] = 'error';
-        $response['message'] = 'Tipo de archivo no permitido';
-    }
-
-    echo json_encode($response);
-    exit();
-    } else {
-    $response['status'] = 'error';
-    $response['message'] = 'Datos incompletos o inválidos';
-    echo json_encode($response);
-    exit();
+        $response['message'] = 'Datos incompletos o inválidos';
+        echo json_encode($response);
+        exit();
     }
 }
 
 
-
 if (isset($_POST['update'])) {
-    if (isset($_POST['ownerName'], $_POST['ownerSurnames'], $_POST['ownerLegalIdentification'], $_POST['ownerPhone'], $_POST['ownerEmail'], $_POST['ownerDirection'], $_POST['ownerID'], $_POST['idType'])) {
+    if (isset($_POST['ownerName'], $_POST['ownerSurnames'], $_POST['ownerLegalIdentification'], $_POST['ownerPhone'], $_POST['ownerEmail'], $_POST['ownerDirection'], $_POST['ownerID'], $_POST['userID'],  $_POST['idType'])) {
         $name = $_POST['ownerName'];
         $surnames = $_POST['ownerSurnames'];
         $legalIdentification = $_POST['ownerLegalIdentification'];
         $phone = $_POST['ownerPhone'];
         $email = $_POST['ownerEmail'];
         $direction = $_POST['ownerDirection'];
-        $id = $_POST['ownerID'];
+        $idOwner = $_POST['ownerID'];
+        $idUser = $_POST['userID'];
         $idType = $_POST['idType'];
 
         // Variable para almacenar el nombre del archivo de la imagen
@@ -202,7 +202,7 @@ if (isset($_POST['update'])) {
 
         if (strlen($name) > 0 && $isValidId) {
             // Crear objeto Owner con la URL de la imagen (nueva o existente)
-            $owner = new Owner($id, $direction, $name, $surnames, $legalIdentification, $phone, $email, $photoFileName, 1);
+            $owner = new Owner($idOwner, $direction, "", 1, $idUser, "","", true, "Propietario", $name, $surnames, $legalIdentification, $phone, $email);
 
             // Crear instancia de OwnerBusiness
             $ownerBusiness = new OwnerBusiness();
@@ -237,10 +237,12 @@ if (isset($_POST['update'])) {
 
 if (isset($_POST['delete'])) { 
 
-    if (isset($_POST['ownerID'])) {
-        $id = $_POST['ownerID'];
+    if (isset($_POST['ownerID']) && isset($_POST['userID'])) {
+        $idOwner = $_POST['ownerID'];
+        $idUser = $_POST['userID'];
+        echo ("user " . $idUser . " owner " . $idOwner);
         $ownerBusiness = new OwnerBusiness();
-        $result = $ownerBusiness ->deleteTBOwner($id);
+        $result = $ownerBusiness->deleteTBOwner($idOwner, $idUser);
 
         if ($result == 1) {
             header("location: ../view/ownerView.php?success=deleted");
