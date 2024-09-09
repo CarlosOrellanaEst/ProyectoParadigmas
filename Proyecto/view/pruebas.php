@@ -6,7 +6,7 @@
     <title>Empresa Turística</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     
-    <a href="../index.html">← Volver al inicio</a>
+    <a href="adminView.php">← Volver al inicio</a>
     
     <?php 
     include '../business/touristCompanyBusiness.php'; 

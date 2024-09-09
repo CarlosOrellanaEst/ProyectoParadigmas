@@ -24,7 +24,7 @@
         
     </head>
     <body>
-        <a href="../index.html">← Volver al inicio</a>
+        <a href="adminView.php">← Volver al inicio</a>
         <header> 
             <h1>CRUD Tipo de empresa turística</h1>
             <p><span class="required">*</span> Campos requeridos</p>

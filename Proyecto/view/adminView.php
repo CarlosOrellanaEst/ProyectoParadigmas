@@ -14,7 +14,7 @@
         <li><a href="touristCompanyTypeView.php">CRUD Tipo de empresa turística</a></li>
         <li><a href="touristCompanyView.php">CRUD Empresas turísticas</a></li>
         <li><a href="photoView.php">CRUD Fotos</a></li>
-        <li><a href="ActivityView.php">CRUD Actividades</a></li>
+        <li><a href="activityView.php">CRUD Actividades</a></li>
         <li><a href="pruebas.php">Pruebas</a></li>
         <li><a href="serviceView.php">CRUD Servicios</a></li>
     </ol>
