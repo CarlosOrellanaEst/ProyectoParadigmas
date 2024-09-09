@@ -57,15 +57,15 @@ document.addEventListener('DOMContentLoaded', function () {
 
 function confirmAction(event) {
     if (!confirm("¿Estás seguro de que desea realizar esta accion?")) {
-        event.preventDefault(); // Detener la acción si no se confirma
+        event.preventDefault(); 
     }
 }
 
 
 document.getElementById('formCreate').addEventListener('submit', function (e) {
-    e.preventDefault(); // Prevenir recarga de página
+    e.preventDefault(); 
 
-    // Validaciones
+    
     const magicName = document.getElementById('magicName').value.trim();
     const legalName = document.getElementById('legalName').value.trim();
     const owner = document.getElementById('ownerId').value;
@@ -73,14 +73,14 @@ document.getElementById('formCreate').addEventListener('submit', function (e) {
     const images = document.getElementById('imagenes').files;
     const status = document.getElementById('status').value;
     const ownerError = document.getElementById('ownerError');
-    // Validación específica de campos
+   
 
     ownerError.style.display = 'none';
 
-    // Validación
-    if (owner === '0') { // Si el valor seleccionado es "Ninguno"
-        ownerError.style.display = 'inline'; // Mostrar el mensaje de error
-        return; // Detener el envío del formulario
+
+    if (owner === '0') { 
+        ownerError.style.display = 'inline'; 
+        return; 
     }
     
     if (owner === '0') {
@@ -90,7 +90,7 @@ document.getElementById('formCreate').addEventListener('submit', function (e) {
  
 
 
-    // Crear el objeto FormData
+  
     const formData = new FormData();
     formData.append('magicName', magicName);
     formData.append('legalName', legalName);
@@ -98,14 +98,14 @@ document.getElementById('formCreate').addEventListener('submit', function (e) {
     formData.append('companyType', companyType);
     formData.append('status', status);
 
-    // Añadir las imágenes seleccionadas
+   
     for (let i = 0; i < images.length; i++) {
         formData.append('imagenes[]', images[i]);
     }
 
-    formData.append('create', 'create'); // Campo de acción
+    formData.append('create', 'create'); 
 
-    // Configuración de la solicitud AJAX
+  
     let xhr = new XMLHttpRequest();
     xhr.open('POST', '../business/touristCompanyAction.php', true);
     xhr.onreadystatechange = function () {
@@ -116,7 +116,7 @@ document.getElementById('formCreate').addEventListener('submit', function (e) {
                     alert(response.message);
                     document.getElementById('formCreate').reset();
 
-                    // Redirigir después de la inserción exitosa
+                   
                     window.location.href = "touristCompanyView.php?success=inserted";
                 } else {
                     alert('Error: ' + response.message);
@@ -130,6 +130,6 @@ document.getElementById('formCreate').addEventListener('submit', function (e) {
         }
     };
 
-    // Enviar los datos al servidor
+
     xhr.send(formData);
 });

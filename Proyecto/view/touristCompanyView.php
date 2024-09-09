@@ -63,7 +63,7 @@
             </div>
 
             <div class="form-group">
-                <label for="imagenes">Imágenes:</label>
+                <label for="imagenes">Imágenes: <span id="imagenesError" style="color:red; display:none;">*campo obligatorio</span></label>
                 <input type="file" name="imagenes[]" id="imagenes" multiple />
             </div>
 
@@ -106,7 +106,7 @@
                 $alltouristCompanyTypes = $touristCompanyTypeBusiness->getAll();
                 $touristCompanyFiltered = [];
 
-                // Filtrar los resultados si se ha realizado una búsqueda
+                
                 if (isset($_GET['searchOne'])) {
                     $searchTerm = $_GET['searchOne'];
                     $touristCompanyFiltered = array_filter($all, function ($touristCompany) use ($searchTerm) {
@@ -150,8 +150,8 @@
                         echo '<td>';
                         echo '<input type="hidden" name="id" value="' . htmlspecialchars($current->getTbtouristcompanyid()) . '">';
                         echo '<input type="hidden" name="status" value="1">';
-                        // Mostrar imágenes
-                        $images = $current->getTbtouristcompanyurl(); // Supongamos que getTbtouristcompanyurl() devuelve un array de URLs
+                        
+                        $images = $current->getTbtouristcompanyurl(); 
                         echo '<td>';
                         foreach ($images as $index => $image) {
                             if (!empty($image)) {
@@ -160,26 +160,21 @@
                         }
                         echo '</td>';
 
-                        // Opciones para actualizar imagen específica
+                        
                         echo '<td>';
                         echo '<select name="imageIndex">';
                         foreach ($images as $index => $image) {
                             echo '<option value="' . $index . '">Imagen ' . ($index + 1) . '</option>';
                         }
                         echo '</select>';
-                        // echo '<input type="file" name="newImage" accept="image/*" />';
+                        
                         echo '</td>';
 
-                        // Botones de acciones: Actualizar y Eliminar
+                        
                         echo '<form method="post" action="../business/touristCompanyAction.php">';
                         echo '<input type="hidden" name="photoID" value="' . $current->getTbtouristcompanyid() . '">';
 
-                        // Inicio del select para elegir la imagen
-                        
-                        
-
-                        // Cierre del formulario
-                        
+                       
 
                         echo '<td>';
                         echo '<input type="hidden" name="id" value="' . htmlspecialchars($current->getTbtouristcompanyid()) . '">';

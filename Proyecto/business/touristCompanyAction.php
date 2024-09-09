@@ -10,18 +10,16 @@ include_once '../business/photoBusiness.php';
 
 header('Content-Type: application/json');
 
-$response = array();  // Reutilizar una variable para las respuestas
+$response = array();  
 
-// Crear una nueva empresa turística
+
 if (isset($_POST['create'])) {
 
-    // Verificación de las imágenes subidas
     if (isset($_FILES['imagenes']) && !empty($_FILES['imagenes']['name'][0])) {
         $uploadDir = '../images/';
         $fileNames = array();
         $allowTypes = array('jpg', 'png', 'jpeg', 'gif');
 
-        // Límite de cantidad de archivos
         if (count($_FILES['imagenes']['name']) > 5) {
             $response['status'] = 'error';
             $response['message'] = 'Solo se permite subir un máximo de 5 imágenes';
@@ -29,7 +27,6 @@ if (isset($_POST['create'])) {
             exit();
         }
 
-        // Procesar y mover los archivos
         foreach ($_FILES['imagenes']['name'] as $key => $fileName) {
             $targetFilePath = $uploadDir . basename($fileName);
             $fileType = strtolower(pathinfo($targetFilePath, PATHINFO_EXTENSION));
@@ -51,10 +48,8 @@ if (isset($_POST['create'])) {
             }
         }
 
-        // Generar las URLs de las imágenes
         $photoUrls = implode(',', $fileNames);
 
-        // Validación y obtención de datos de la empresa turística
         $legalName = $_POST['legalName'] ?? '';
         $magicName = $_POST['magicName'] ?? '';
         $ownerId = $_POST['ownerId'] ?? 0;
@@ -84,7 +79,7 @@ if (isset($_POST['create'])) {
                 $response = ['status' => 'error', 'message' => 'Propietario o tipo de compañía inválido.'];
             }
         } else {
-            $response = ['status' => 'error', 'message' => 'El campo p ropietario es obligatorio.'];
+            $response = ['status' => 'error', 'message' => 'El campo propietario es obligatorio.'];
         }
 
         echo json_encode($response);
@@ -96,7 +91,7 @@ if (isset($_POST['create'])) {
     }
 }
 
-// Actualizar una empresa turística existente
+
 if (isset($_POST['update'])) {
     if (isset($_POST['id'], $_POST['ownerId'],$_POST['status'])) {
 
@@ -107,11 +102,11 @@ if (isset($_POST['update'])) {
         $companyTypeId = $_POST['companyType'];
         $status = $_POST['status'];
 
-        // Verificar y subir nueva imagen si se ha enviado
+       
         $photoFileName = '';
         $touristCompanyBusiness = new TouristCompanyBusiness();
         $currentTouristCompany = $touristCompanyBusiness->getById($id);
-        $existingPhotoFileName = $currentTouristCompany->getTbtouristcompanyurl();  // URL existente
+        $existingPhotoFileName = $currentTouristCompany->getTbtouristcompanyurl(); 
 
         if (isset($_FILES['newImage']) && $_FILES['newImage']['error'] == UPLOAD_ERR_OK) {
             $uploadDir = '../images/';
@@ -122,7 +117,7 @@ if (isset($_POST['update'])) {
 
             if (in_array($fileType, $allowTypes)) {
                 if (move_uploaded_file($_FILES['newImage']['tmp_name'], $targetFilePath)) {
-                    $photoFileName = $fileName;  // Usar el nombre de archivo nuevo
+                    $photoFileName = $fileName;  
                 } else {
                     header("location: ../view/touristCompanyView.php?error=uploadFailed");
                     exit();
@@ -132,10 +127,9 @@ if (isset($_POST['update'])) {
                 exit();
             }
         } else {
-            $photoFileName = $existingPhotoFileName;  // Mantener la imagen existente si no se sube una nueva
+            $photoFileName = $existingPhotoFileName; 
         }
 
-        // Validación básica y actualización
         if ($ownerId) {
             $touristCompany = new TouristCompany($id, $legalName, $magicName, $ownerId, $companyTypeId, $photoFileName, $status);
             $result = $touristCompanyBusiness->update($touristCompany);
@@ -158,7 +152,7 @@ if (isset($_POST['update'])) {
 }
 
 
-// Eliminar una empresa turística
+
 if (isset($_POST['delete'])) {
 
     if (isset($_POST['id']) && is_numeric($_POST['id'])) {
@@ -181,44 +175,41 @@ if (isset($_POST['delete'])) {
 
 if (isset($_POST['deleteImage'])) {
     $companyId = $_POST['photoID'];
-    $imageIndexToDelete = (int)$_POST['imageIndex']; // Asegúrate de que el índice sea un entero
-    
-    // Obtener las imágenes actuales del registro de la empresa
+    $imageIndexToDelete = (int)$_POST['imageIndex']; 
+
     $touristCompanyBusiness = new TouristCompanyBusiness();
     $currentTouristCompany = $touristCompanyBusiness->getById($companyId);
     
-    // Obtener la lista de imágenes actuales
     $images = $currentTouristCompany->getTbtouristcompanyurl();
 
     
-    // Verificar si el índice de la imagen a eliminar es válido
     if (isset($images[$imageIndexToDelete])) {
-        // Ruta completa del archivo en el servidor
+        
         $filePath = '../images/' . trim($images[$imageIndexToDelete]);
         
-        // Obtener la URL de la imagen que se va a eliminar
+       
         $imageToDelete = trim($images[$imageIndexToDelete]);
         
-        // Eliminar la imagen del array de URLs
+       
         unset($images[$imageIndexToDelete]);
         
-        // Actualizar la lista de imágenes en la base de datos
-        $newImageUrls = implode(',', $images); // Convertir el array de nuevo en string separado por comas
+        
+        $newImageUrls = implode(',', $images); 
         $touristCompanyBusiness->removeImageFromCompany($companyId, $newImageUrls);
         
-        // Verificar si la imagen sigue siendo utilizada por otra compañía
+       
         $imageInUse = $touristCompanyBusiness->isImageInUse($imageToDelete);
         
-        // Solo eliminar la imagen del servidor si no está en uso
+       
         if (!$imageInUse && file_exists($filePath)) {
-            unlink($filePath); // Eliminar la imagen físicamente del servidor
+            unlink($filePath); 
         }
         
-        // Redireccionar o mostrar un mensaje de éxito
+        
         header("location: ../view/touristCompanyView.php?success=imagen_eliminada");
         exit();
     } else {
-        // Redireccionar o mostrar un mensaje de error si el índice es inválido
+        
         header("location: ../view/touristCompanyView.php?error=image_not_found");
         exit();
     }

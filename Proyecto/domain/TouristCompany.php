@@ -8,7 +8,7 @@ class TouristCompany{
     private $tbtouristcompanycompanyType;
     private $tbtouristcompanyurl;
     private $tbtouristcompanystatus;
-    private $photos; // Add the $photos property
+    private $photos; 
 
     public function __construct($tbtouristcompanyid, $tbtouristcompanylegalname, $tbtouristcompanymagicname, $tbtouristcompanyowner, $tbtouristcompanycompanyType, $tbtouristcompanyurl, $tbtouristcompanystatus){
         $this->tbtouristcompanyid = $tbtouristcompanyid;
@@ -18,12 +18,11 @@ class TouristCompany{
         $this->tbtouristcompanycompanyType = $tbtouristcompanycompanyType;
         $this->tbtouristcompanyurl = $tbtouristcompanyurl;
         $this->tbtouristcompanystatus = $tbtouristcompanystatus;
-        $this->photos = []; // Initialize the $photos property as an empty array
+        $this->photos = []; 
         
     }
 
-    
-    // Setters
+
     public function setTbtouristcompanyid($tbtouristcompanyid) {
         $this->tbtouristcompanyid = $tbtouristcompanyid;
     }
@@ -52,7 +51,6 @@ class TouristCompany{
         $this->tbtouristcompanystatus = $tbtouristcompanystatus;
     }
 
-    // Getters
     public function getTbtouristcompanyid() {
         return $this->tbtouristcompanyid;
     }
