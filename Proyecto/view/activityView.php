@@ -66,7 +66,7 @@
             </div>
             <button type="button" id="addAttribute">Agregar otro atributo</button>
             <br><br>
-            <label for="imagenes">Selecciona las imágenes (máximo 5): </label>
+            <label for="imagenes">Selecciona las imágenes (máximo 5): </label><br>
             <input type="file" name="imagenes[]" id="imagenes" multiple />
             <br><br>
             <input type="hidden" id="statusTBActivity" name="statusTBActivity" value="1">
