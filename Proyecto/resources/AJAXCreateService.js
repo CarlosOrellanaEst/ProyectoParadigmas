@@ -1,58 +1,46 @@
 document.addEventListener('DOMContentLoaded', function () {
-    //Create Roll
-    document.getElementById('formCreate').addEventListener('submit', function (e) {
-        e.preventDefault();
-        // Validaciones
-        const serviceName = document.getElementById('serviceName').value.trim();
-        const images = document.getElementById('images').files;
-    
-        if (serviceName === '') {
-            alert('Debe indicar un nombre del servicio');
-            return;
-        }
-    
-        // Datos a enviar   
-        const formData = new FormData();
-        formData.append('serviceName', serviceName);
-/*         formData.append('images', images); */
-        for (let i = 0; i < images.length; i++) {
-            formData.append('images[]', images[i]);
-        }
-        formData.append('create', 'create');
-        
-        // revisando lo que se envia al servidor
-/*         for (const value of formData.values()) {
-            console.log(value);
-        } */
+    document.getElementById('formCreate').addEventListener('submit', function (event) {
+        event.preventDefault();
 
-        // Configuración AJAX
+        const companyID = document.getElementById('companyID').value.trim();
+        const serviceIdInputs = document.querySelectorAll('select[name="serviceId[]"]'); // Capturar todos los select de servicios
+        const servicesIDArray = Array.from(serviceIdInputs).map(input => input.value); // Obtener todos los IDs de servicios seleccionados
+        const images = document.getElementById('imagenes').files;
+
+        const formData = new FormData();
+        formData.append('companyID', companyID);
+
+        // Añadir cada ID de servicio al FormData
+        servicesIDArray.forEach(id => formData.append('serviceId[]', id));
+
+        // Añadir las imágenes al FormData
+        for (let i = 0; i < images.length; i++) {
+            formData.append('imagenes[]', images[i]);
+        }
+
+        formData.append('create', 'create');
+
+        // Enviar los datos con AJAX
         let xhr = new XMLHttpRequest();
-        xhr.open('POST', '../business/serviceAction.php', true);
-    
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === 4) {
-                console.log(xhr.responseText);  // Verificar lo que devuelve el servidor
+        xhr.open('POST', '../business/serviceCompanyAction.php', true);
+        xhr.onload = function () {
+            if (xhr.status >= 200 && xhr.status < 300) {
                 try {
                     let response = JSON.parse(xhr.responseText);
-                    if (xhr.status === 200) {
-                        if (response.status === 'success') {
-                            alert(response.message);
-                            document.getElementById('formCreate').reset();
-                            redirectToCleanURL();
-                            location.reload();
-                        } else {
-                            alert('Error: ' + response.message);
-                        }
+                    if (response.status === 'success') {
+                        alert(response.message);
+                        document.getElementById('formCreate').reset();
+                        location.reload();
                     } else {
-                        alert('HTTP Error: ' + xhr.status);
+                        alert('Error: ' + response.message);
                     }
                 } catch (e) {
-                    console.error('Respuesta JSON inválida:', xhr.responseText);
-                    alert('Error procesando la respuesta del servidor.');
+                    console.error('Error al procesar la respuesta del servidor', e);
                 }
+            } else {
+                console.error('Error en la solicitud', xhr.statusText);
             }
         };
         xhr.send(formData);
     });
-    
-})
+});

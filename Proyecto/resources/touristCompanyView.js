@@ -44,6 +44,9 @@ function showAlertBasedOnURL() {
             case 'updateFailed':
                 alert('Error al actualizar la empresa.');
                 break;
+            case 'companyExists':  
+                alert('Ya existe una empresa turística con el mismo nombre legal y está activa.');
+                break;
             default:
                 alert('Ocurrió un error inesperado.');
                 break;
@@ -54,6 +57,7 @@ function showAlertBasedOnURL() {
 document.addEventListener('DOMContentLoaded', function () {
     showAlertBasedOnURL();
 });
+
 
 function confirmAction(event) {
     if (!confirm("¿Estás seguro de que desea realizar esta accion?")) {

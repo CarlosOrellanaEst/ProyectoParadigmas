@@ -1,43 +1,54 @@
 <?php
 
 class Service {
-    private $idTBService;
-    private $nameTBService;
-    private $photoURLTBServiceArray;
-    private $statusTBService;
+    private $idTbservice;
+    private $tbserviceame;
+    private $tbservicedescription;
+    private $tbservicetatus;
 
-    function __construct($idTBService, $nameTBService, $photoURLTBService, $statusTBService) { 
-        $this->idTBService = $idTBService;
-        $this->nameTBService = $nameTBService;
-        $this->photoURLTBServiceArray = $photoURLTBService;
-        $this->statusTBService = $statusTBService;
-    }
-
-    public function getIdTBService() {
-        return $this->idTBService;
-    }
-    public function getNameTBService() {
-        return $this->nameTBService;
-    }
-    public function getPhotoURLTBService() {
-        return $this->photoURLTBServiceArray;
-    }
-    public function getStatusTBService() {
-        return $this->statusTBService;
+    // Constructor
+    function __construct($idTbservice, $tbservicename, $tbservicedescription, $tbservicetatus) { 
+        $this->idTbservice = $idTbservice;
+        $this->tbservicename = $tbservicename;
+        $this->tbservicedescription = $tbservicedescription;
+        $this->tbservicetatus = $tbservicetatus;
     }
 
-    public function setIdTBService($idTBService) {
-        $this->idTBService = $idTBService;
+    // Getters and Setters
+
+    // idTbservice
+    public function getIdTbservice() {
+        return $this->idTbservice;
     }
-    public function setNameTBService($nameTBService) {
-        $this->nameTBService = $nameTBService;
+
+    public function setIdTbservice($idTbservice) {
+        $this->idTbservice = $idTbservice;
     }
-    public function setPhotoURLTBService($photoURLTBService) {
-        $this->photoURLTBServiceArray = $photoURLTBService;
+
+    // tbservicename
+    public function getTbservicename() {
+        return $this->tbservicename;
     }
-    public function setStatusTBService($statusTBService) {
-        $this->statusTBService = $statusTBService;
+
+    public function setTbservicename($tbservicename) {
+        $this->tbservicename = $tbservicename;
+    }
+
+    // tbservicedescription
+    public function getTbservicedescription() {
+        return $this->tbservicedescription;
+    }
+
+    public function setTbservicedescription($tbservicedescription) {
+        $this->tbservicedescription = $tbservicedescription;
+    }
+
+    // tbservicetatus
+    public function getTbservicetatus() {
+        return $this->tbservicetatus;
+    }
+
+    public function setTbservicetatus($tbservicetatus) {
+        $this->tbservicetatus = $tbservicetatus;
     }
 }
-
-?>
