@@ -109,9 +109,9 @@
                 $ownerBusiness = new OwnerBusiness();
                 $touristCompanyTypeBusiness = new TouristCompanyTypeBusiness();
                 $all = $touristCompanyBusiness->getAll();
-                if (Utils::$userLogged) {
-                    echo (Utils::$userLogged->getUserName());
-                }
+                // if (Utils::$userLogged) {
+                //     echo (Utils::$userLogged->getUserName());
+                // }
                 $allowners = $ownerBusiness->getAllTBOwner();
                 $alltouristCompanyTypes = $touristCompanyTypeBusiness->getAll();
                 $touristCompanyFiltered = [];

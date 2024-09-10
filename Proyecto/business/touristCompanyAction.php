@@ -4,7 +4,7 @@ include_once '../business/touristCompanyBusiness.php';
 include_once '../domain/TouristCompany.php';
 include_once '../domain/Owner.php'; 
 include_once '../domain/TouristCompanyType.php'; 
-include_once '../business/OwnerBusiness.php'; 
+include_once '../business/ownerBusiness.php'; 
 include_once '../business/touristCompanyTypeBusiness.php'; 
 include_once '../business/photoBusiness.php'; 
 
@@ -15,38 +15,40 @@ $response = array();
 
 if (isset($_POST['create'])) {
 
-    if (isset($_FILES['imagenes']) && !empty($_FILES['imagenes']['name'][0])) {
+   /* if (isset($_FILES['imagenes']) && !empty($_FILES['imagenes']['name'][0])) { */
         $uploadDir = '../images/';
         $fileNames = array();
         $allowTypes = array('jpg', 'png', 'jpeg', 'gif');
 
-        if (count($_FILES['imagenes']['name']) > 5) {
-            $response['status'] = 'error';
-            $response['message'] = 'Solo se permite subir un máximo de 5 imágenes';
-            echo json_encode($response);
-            exit();
-        }
-
-        foreach ($_FILES['imagenes']['name'] as $key => $fileName) {
-            $targetFilePath = $uploadDir . basename($fileName);
-            $fileType = strtolower(pathinfo($targetFilePath, PATHINFO_EXTENSION));
-
-            if (in_array($fileType, $allowTypes)) {
-                if (move_uploaded_file($_FILES['imagenes']['tmp_name'][$key], $targetFilePath)) {
-                    $fileNames[] = basename($fileName);
-                } else {
-                    $response['status'] = 'error';
-                    $response['message'] = 'Error al mover la imagen al directorio.';
-                    echo json_encode($response);
-                    exit();
-                }
-            } else {
+        if (isset($_FILES['imagenes']) && empty($_FILES['imagenes']['name'][0])) {
+            if (count($_FILES['imagenes']['name']) > 5) {
                 $response['status'] = 'error';
-                $response['message'] = 'Formato de imagen inválido. Solo se permiten JPG, PNG, JPEG, y GIF.';
+                $response['message'] = 'Solo se permite subir un máximo de 5 imágenes';
                 echo json_encode($response);
                 exit();
             }
+            foreach ($_FILES['imagenes']['name'] as $key => $fileName) {
+                $targetFilePath = $uploadDir . basename($fileName);
+                $fileType = strtolower(pathinfo($targetFilePath, PATHINFO_EXTENSION));
+    
+                if (in_array($fileType, $allowTypes)) {
+                    if (move_uploaded_file($_FILES['imagenes']['tmp_name'][$key], $targetFilePath)) {
+                        $fileNames[] = basename($fileName);
+                    } else {
+                        $response['status'] = 'error';
+                        $response['message'] = 'Error al mover la imagen al directorio.';
+                        echo json_encode($response);
+                        exit();
+                    }
+                } else {
+                    $response['status'] = 'error';
+                    $response['message'] = 'Formato de imagen inválido. Solo se permiten JPG, PNG, JPEG, y GIF.';
+                    echo json_encode($response);
+                    exit();
+                }
+            }
         }
+
 
         $photoUrls = implode(',', $fileNames);
 
@@ -84,11 +86,11 @@ if (isset($_POST['create'])) {
 
         echo json_encode($response);
         exit();
-    } else {
+   /* }  else {
         $response = ['status' => 'error', 'message' => 'No se ha subido ninguna imagen.'];
         echo json_encode($response);
         exit();
-    }
+    } */
 }
 
 
