@@ -4,7 +4,7 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 include_once '../business/activityBusiness.php'; 
-include_once '../domain/activity.php'; 
+include_once '../domain/Activity.php'; 
 
 if (isset($_POST['create'])) {
     $response = array();

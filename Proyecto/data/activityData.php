@@ -1,9 +1,9 @@
 <?php
 
 include_once 'data.php';
-include_once '../domain/activity.php';
+include_once '../domain/Activity.php';
 
-class ActivityData extends Data {
+class activityData extends Data {
 
     public function insertActivity($activity) {
 
@@ -78,7 +78,7 @@ class ActivityData extends Data {
     
         $query = "SELECT * FROM tbactivity WHERE tbactivitystatus = 1;";
         $result = mysqli_query($conn, $query);
-    
+  
         $activities = array();
     
         while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
@@ -224,32 +224,48 @@ class ActivityData extends Data {
         return $activity;
     }
 */
-    public function getActivityByName($activityName) {
-        $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
-        if (!$conn) {
-            die("Connection failed: " . mysqli_connect_error());
-        }
-        $conn->set_charset('utf8mb4');
-
-        $query = "SELECT tbactivityid, tbactivityname, tbactivityatributearray, tbactivitydataarray, tbactivitystatus FROM tbactivity WHERE tbactivityname=?";
-
-        $stmt = $conn->prepare($query);
-        if ($stmt === false) {
-            die("Prepare failed: " . $conn->error);
-        }
-
-        $stmt->bind_param("s", $activityName);
-        $stmt->execute();
-        $stmt->bind_result($tbactivityid, $tbactivityname, $tbactivityatributearray, $tbactivitydataarray, $tbactivitystatus);
-
-        $activity = null;
-        if ($stmt->fetch()) {
-            $activity = new Activity($tbactivityid, $tbactivityname, $tbactivityatributearray, $tbactivitydataarray, $tbactivitystatus);
-        }
-
-        $stmt->close();
-        mysqli_close($conn);
-
-        return $activity;
+public function getActivityByName($activityName) {
+    // Establecer conexión a la base de datos
+    $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
+    if (!$conn) {
+        die("Connection failed: " . mysqli_connect_error());
     }
+    $conn->set_charset('utf8mb4');
+
+    // Consulta SQL que incluye los nuevos campos (tbservicecompanyid, tbactivityurl)
+    $query = "SELECT tbactivityid, tbactivityname, tbservicecompanyid, tbactivityatributearray, tbactivitydataarray, tbactivityurl, tbactivitystatus 
+              FROM tbactivity 
+              WHERE tbactivityname = ?";
+
+    // Preparar la consulta
+    $stmt = $conn->prepare($query);
+    if ($stmt === false) {
+        die("Prepare failed: " . $conn->error);
+    }
+
+    // Vincular el parámetro
+    $stmt->bind_param("s", $activityName);
+    $stmt->execute();
+
+    // Vincular los resultados
+    $stmt->bind_result($tbactivityid, $tbactivityname, $tbservicecompanyid, $tbactivityatributearray, $tbactivitydataarray, $tbactivityurl, $tbactivitystatus);
+
+    // Inicializar la variable $activity
+    $activity = null;
+
+    // Obtener los datos
+    if ($stmt->fetch()) {
+        // Si se encuentra la actividad, se crea una instancia del objeto Activity
+        // Asegúrate de que el constructor de Activity acepte estos parámetros
+        $activity = new Activity($tbactivityid, $tbactivityname, $tbservicecompanyid, $tbactivityatributearray, $tbactivitydataarray, $tbactivityurl, $tbactivitystatus);
+    }
+
+    // Cerrar el statement y la conexión
+    $stmt->close();
+    mysqli_close($conn);
+
+    // Retornar la actividad o null si no se encuentra
+    return $activity;
+}
+
 }

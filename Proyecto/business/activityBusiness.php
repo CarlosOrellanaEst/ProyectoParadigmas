@@ -27,7 +27,7 @@ class ActivityBusiness {
     }
 
     public function getActivityById($id) {
-        return $this->activityData->getActivityById($id);
+        return $this->activityData->getActivityByName($id);
     }
 
     public function getActivityByName($name) {
