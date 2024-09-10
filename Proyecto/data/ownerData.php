@@ -236,26 +236,26 @@ class ownerData extends Data {
         $newDirection = mysqli_real_escape_string($conn, $owner->getDirectionTBOwner());
         $newURL = mysqli_real_escape_string($conn, $owner->getPhotoURLTBOwner());
 
-        /*$emailQuery = "SELECT * FROM tbuser WHERE tbuseremail = '$newEmail' AND tbuserid != $idUser AND tbuserstatus = 0";
+        $emailQuery = "SELECT * FROM tbuser WHERE tbuseremail = '$newEmail' AND tbuserid != $idUser AND tbuserstatus = 1";
         $emailResult = mysqli_query($conn, $emailQuery);
-        $phoneQuery = "SELECT * FROM tbuser WHERE tbuserphone = '$newPhone' AND tbuserid != $idUser AND tbuserstatus = 0";
+        $phoneQuery = "SELECT * FROM tbuser WHERE tbuserphone = '$newPhone' AND tbuserid != $idUser AND tbuserstatus = 1";
         $phoneResult = mysqli_query($conn, $phoneQuery);
-        $legalIdQuery = "SELECT * FROM tbuser WHERE tbuserlegalidentification = '$newLegalIdentification' AND tbuserid != $idUser AND tbuserstatus = 0";
+        $legalIdQuery = "SELECT * FROM tbuser WHERE tbuserlegalidentification = '$newLegalIdentification' AND tbuserid != $idUser AND tbuserstatus = 1";
         $legalIdResult = mysqli_query($conn, $legalIdQuery);
 
 
- */
+ 
 
         // Verificar duplicados
-        $emailQuery = "SELECT * FROM tbuser WHERE tbuseremail = '$newEmail' AND tbuserid != $idUser";
+        /*$emailQuery = "SELECT * FROM tbuser WHERE tbuseremail = '$newEmail' AND tbuserid != $idUser";
         $emailResult = mysqli_query($conn, $emailQuery);
         $phoneQuery = "SELECT * FROM tbuser WHERE tbuserphone = '$newPhone' AND tbuserid != $idUser";
         $phoneResult = mysqli_query($conn, $phoneQuery);
         $legalIdQuery = "SELECT * FROM tbuser WHERE tbuserlegalidentification = '$newLegalIdentification' AND tbuserid != $idUser";
-        $legalIdResult = mysqli_query($conn, $legalIdQuery);
+        $legalIdResult = mysqli_query($conn, $legalIdQuery);*/
     
         $legalIdResult = mysqli_query($conn, $legalIdQuery);
-
+        //$varReturn = false;
         if (mysqli_num_rows($emailResult) > 0) {
             $result = "Email";
         } else if (mysqli_num_rows($phoneResult) > 0) {
@@ -263,18 +263,19 @@ class ownerData extends Data {
         } else if (mysqli_num_rows($legalIdResult) > 0) {
             $result = "LegalId";
         } else {
-            $varReturn = false;
+            //$varReturn = false;
             $query = "UPDATE tbuser SET tbusername = '$newName', tbusersurnames = '$newSurnames', tbuserlegalidentification = '$newLegalIdentification', tbuserphone = '$newPhone', tbuseremail = '$newEmail' WHERE tbuserid = $idUser";
             // si actualizamos tbuser, actualizamos los de tbowner
             $result = mysqli_query($conn, $query) ? 1 : "dbError";
             if ($result==1) {
                 $query = "UPDATE tbowner SET tbownerdirection = '$newDirection' WHERE tbuserid= $idUser";
-                $varReturn = true;
-            }
+                $result = mysqli_query($conn, $query) ? 1 : "dbError";
+               
+            } 
         }
     
         mysqli_close($conn);
-        return $varReturn;
+        return $result;
     }
     
     public function deleteTBOwner($idOwner, $idUser) {
