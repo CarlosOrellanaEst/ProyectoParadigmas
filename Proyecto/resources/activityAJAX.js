@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         if (response.status === 'success') {
                             alert(response.message);
                             document.getElementById('formCreate').reset();
-                            location.reload();
+                            location.reload(); // Recarga la página después de la acción exitosa
                         } else {
                             alert('Error: ' + response.message);
                         }
@@ -77,17 +77,13 @@ document.addEventListener('DOMContentLoaded', function () {
             xhr.onreadystatechange = function () {
                 if (xhr.readyState === 4) {
                     try {
+                        let response = JSON.parse(xhr.responseText);
                         if (xhr.status === 200) {
-                            // Redireccionar o mostrar alertas basado en el tipo de acción
-                            if (actionType === 'update') {
-                                alert("Actividad actualizada correctamente.");
-                                location.reload();
-                            } else if (actionType === 'delete') {
-                                alert("Actividad eliminada correctamente.");
-                                location.reload();
-                            } else if (actionType === 'deleteImage') {
-                                alert("Imagen eliminada correctamente.");
-                                location.reload();
+                            if (response.status === 'success') {
+                                alert(response.message); // Mostrar alerta con el mensaje de éxito
+                                location.reload(); // Recargar la página automáticamente
+                            } else {
+                                alert('Error: ' + response.message); // Manejar el error y mostrar la alerta
                             }
                         } else {
                             alert('Error HTTP: ' + xhr.status);

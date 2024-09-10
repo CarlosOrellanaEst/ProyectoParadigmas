@@ -18,7 +18,7 @@ if (isset($_POST['create'])) {
         // Verificar si se han subido más de 5 imágenes
         if (count($_FILES['imagenes']['name']) > 5) {
             $response['status'] = 'error';
-            $response['message'] = 'Solo se permite subir un máximo de 5 imágenes';
+            $response['message'] = 'Solo se permite subir un máximo de 5 imágenes.';
             echo json_encode($response);
             exit();
         }
@@ -73,6 +73,11 @@ if (isset($_POST['create'])) {
         $result = $activityBusiness->insertActivity($activity);
 
         // Respuesta según el resultado
+        if (is_array($result) && $result['status'] == 'error') {
+            echo json_encode($result); // Enviar mensaje de error si ya existe la actividad
+            exit();
+        }
+
         if ($result) {
             $response = ['status' => 'success', 'message' => 'Actividad insertada correctamente.'];
         } else {
@@ -121,9 +126,14 @@ if (isset($_POST['update'])) {
 
     // Actualizar la actividad en la base de datos
     $activityBusiness = new ActivityBusiness();
-    $activity = new Activity($idTBActivity, $nameTBActivity, $serviceId, $attributeTBActivityArray, $dataAttributeTBActivityArray,  $allImages, 1);
+    $activity = new Activity($idTBActivity, $nameTBActivity, $serviceId, $attributeTBActivityArray, $dataAttributeTBActivityArray, $allImages, 1);
    
     $result = $activityBusiness->updateActivity($activity);
+
+    if (is_array($result) && $result['status'] == 'error') {
+        echo json_encode($result); // Enviar mensaje de error si ya existe la actividad
+        exit();
+    }
 
     if ($result) {
         echo json_encode(['status' => 'success', 'message' => 'Actividad actualizada correctamente.']);
@@ -187,6 +197,3 @@ if (isset($_POST['deleteImage'])) {
     }
     exit();
 }
-
-
-

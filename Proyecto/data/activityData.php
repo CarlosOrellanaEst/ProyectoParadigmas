@@ -6,7 +6,6 @@ include_once '../domain/Activity.php';
 class activityData extends Data {
 
     public function insertActivity($activity) {
-
         $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
         if (!$conn) {
             die("Connection failed: " . mysqli_connect_error());
@@ -14,9 +13,24 @@ class activityData extends Data {
     
         $conn->set_charset('utf8mb4');
     
-        // Verificar si la actividad ya existe
-        if ($this->getActivityByName($activity->getNameTBActivity())) {
-            return null; // La actividad ya existe
+        // Verificar si la actividad ya existe con estado 1
+        $tbactivityname = $activity->getNameTBActivity();
+        $checkQuery = "SELECT COUNT(*) FROM tbactivity WHERE tbactivityname = ? AND tbactivitystatus = 1";
+        $stmtCheck = $conn->prepare($checkQuery);
+        if ($stmtCheck === false) {
+            die("Prepare failed: " . $conn->error);
+        }
+    
+        $stmtCheck->bind_param("s", $tbactivityname);
+        $stmtCheck->execute();
+        $stmtCheck->bind_result($count);
+        $stmtCheck->fetch();
+        $stmtCheck->close();
+    
+        // Si ya existe una actividad con el mismo nombre y estado 1, retornamos un mensaje de error
+        if ($count > 0) {
+            mysqli_close($conn);
+            return ['status' => 'error', 'message' => 'Ya existe una actividad con el mismo nombre y está activa.'];
         }
     
         // Obtener el próximo ID
@@ -28,35 +42,22 @@ class activityData extends Data {
             $nextId = $lastId + 1;
         }
     
-       
         // Insertar la actividad
-        $queryInsert = "INSERT INTO tbactivity (tbactivityid, tbactivityname, tbservicecompanyid, tbactivityatributearray, tbactivitydataarray, tbactivityurl, tbactivitystatus) VALUES (?, ?, ?, ?, ?,?,?)";
+        $queryInsert = "INSERT INTO tbactivity (tbactivityid, tbactivityname, tbservicecompanyid, tbactivityatributearray, tbactivitydataarray, tbactivityurl, tbactivitystatus) 
+                        VALUES (?, ?, ?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($queryInsert);
         if ($stmt === false) {
             die("Prepare failed: " . $conn->error);
         }
     
         $tbactivityid = $nextId;
-        $tbactivityname = $activity->getNameTBActivity();
-        
         $tbServicesid = $activity->getTbservicecompanyid();
-        // Los valores deben estar separados por comas
         $tbactivityatributearray = implode(",", $activity->getAttributeTBActivityArray());
         $tbactivitydataarray = implode(",", $activity->getDataAttributeTBActivityArray());
-        $imageUrls = $activity->getTbactivityURL();
-
-    
-        if (is_array($imageUrls)) {
-            $imageUrlsString = implode(',', $imageUrls);
-        } else {
-            $imageUrlsString = $imageUrls;
-        }
-        
-      
+        $imageUrls = is_array($activity->getTbactivityURL()) ? implode(',', $activity->getTbactivityURL()) : $activity->getTbactivityURL();
         $tbactivitystatus = $activity->getStatusTBActivity();
     
-        // Vinculación de parámetros
-        $stmt->bind_param("isisssi", $tbactivityid, $tbactivityname,$tbServicesid, $tbactivityatributearray, $tbactivitydataarray, $imageUrlsString, $tbactivitystatus);
+        $stmt->bind_param("isisssi", $tbactivityid, $tbactivityname, $tbServicesid, $tbactivityatributearray, $tbactivitydataarray, $imageUrls, $tbactivitystatus);
         $result = $stmt->execute();
     
         if (!$result) {
@@ -68,6 +69,7 @@ class activityData extends Data {
     
         return $result;
     }
+    
     
     public function getAllActivities() {
         $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
@@ -146,6 +148,28 @@ class activityData extends Data {
     
         $conn->set_charset('utf8mb4');
     
+        // Verificar si otra actividad con el mismo nombre ya existe y está activa
+        $tbactivityname = $activity->getNameTBActivity();
+        $tbactivityid = $activity->getIdTBActivity();
+    
+        $checkQuery = "SELECT COUNT(*) FROM tbactivity WHERE tbactivityname = ? AND tbactivityid != ? AND tbactivitystatus = 1";
+        $stmtCheck = $conn->prepare($checkQuery);
+        if ($stmtCheck === false) {
+            die("Prepare failed: " . $conn->error);
+        }
+    
+        $stmtCheck->bind_param("si", $tbactivityname, $tbactivityid);
+        $stmtCheck->execute();
+        $stmtCheck->bind_result($count);
+        $stmtCheck->fetch();
+        $stmtCheck->close();
+    
+        // Si ya existe una actividad con el mismo nombre y estado 1, retornar un mensaje de error
+        if ($count > 0) {
+            mysqli_close($conn);
+            return ['status' => 'error', 'message' => 'Ya existe una actividad con el mismo nombre y está activa.'];
+        }
+    
         // Preparar la consulta de actualización
         $queryUpdate = "UPDATE tbactivity
                         SET tbactivityname = ?, tbservicecompanyid = ?, tbactivityatributearray = ?, tbactivitydataarray = ?, tbactivityurl = ?, tbactivitystatus = ?
@@ -155,30 +179,14 @@ class activityData extends Data {
             die("Prepare failed: " . $conn->error);
         }
     
-        // Obtener los valores del objeto $activity
-        $tbactivityid = $activity->getIdTBActivity(); // ID para actualizar
-        $tbactivityname = $activity->getNameTBActivity();
         $tbServicesid = $activity->getTbservicecompanyid();
-    
-        // Verificar si los atributos son arrays y convertirlos en cadenas separadas por comas
         $tbactivityatributearray = is_array($activity->getAttributeTBActivityArray()) ? implode(",", $activity->getAttributeTBActivityArray()) : '';
         $tbactivitydataarray = is_array($activity->getDataAttributeTBActivityArray()) ? implode(",", $activity->getDataAttributeTBActivityArray()) : '';
-    
-        // Verificar si las URLs son arrays y convertirlas en cadenas separadas por comas
-        $imageUrls = $activity->getTbactivityURL();
-        if (is_array($imageUrls)) {
-            $imageUrlsString = implode(',', $imageUrls);
-        } else {
-            // Si $imageUrls ya es una cadena, úsalo tal como está
-            $imageUrlsString = $imageUrls;
-        }
-    
+        $imageUrls = is_array($activity->getTbactivityURL()) ? implode(',', $activity->getTbactivityURL()) : $activity->getTbactivityURL();
         $tbactivitystatus = $activity->getStatusTBActivity();
     
         // Vinculación de parámetros
-        // "sisssii" porque el nombre es cadena ("s"), el ID del servicio es entero ("i"), y las URLs, atributos y datos son cadenas ("s")
-        $stmt->bind_param("sisssii", $tbactivityname, $tbServicesid, $tbactivityatributearray, $tbactivitydataarray, $imageUrlsString, $tbactivitystatus, $tbactivityid);
-        
+        $stmt->bind_param("sisssii", $tbactivityname, $tbServicesid, $tbactivityatributearray, $tbactivitydataarray, $imageUrls, $tbactivitystatus, $tbactivityid);
         $result = $stmt->execute();
     
         if (!$result) {
@@ -190,6 +198,8 @@ class activityData extends Data {
     
         return $result;
     }
+    
+    
     
     public function getActivityById($id) {
         $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
