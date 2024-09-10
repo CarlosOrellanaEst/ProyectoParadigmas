@@ -168,7 +168,7 @@ CREATE TABLE `tbservice`(
 CREATE TABLE `tbservicecompany`(
   `tbservicecompanyid` int(11) NOT NULL,
   `tbtouristcompanyid` int(11) NOT NULL,
-  `tbserviceid` int(11) NOT NULL,
+  `tbserviceid` TEXT  NOT NULL,
   `tbservicecompanyURL` TEXT  NOT NULL,
   `tbservicetatus` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

@@ -48,7 +48,7 @@ if (isset($_POST['create'])) {
         $serviceIds = isset($_POST['serviceId']) ? $_POST['serviceId'] : array();
 
         // Concatenar IDs de servicios en una cadena separada por comas
-        $serviceIdsString = implode(',', $serviceIds);
+        $serviceIdsString = explode(',', $serviceIds);
 
         if (!empty($companyID) && !empty($serviceIdsString)) {
             // Crear el objeto ServiceCompany con los datos necesarios
@@ -56,7 +56,8 @@ if (isset($_POST['create'])) {
             $serviceBusiness = new serviceCompanyBusiness();
             $result = $serviceBusiness->insertTBServiceCompany($service);
 
-            if ($result == 1) {
+            if ($result['status'] === 'success') {
+                
                 $response = ['status' => 'success', 'message' => 'Servicio agregado correctamente.'];
             } else {
                 $response = ['status' => 'error', 'message' => 'Error en la base de datos.'];
@@ -74,29 +75,30 @@ if (isset($_POST['create'])) {
     }
 } 
 
+
 if (isset($_POST['update'])) {
-    if (isset($_POST['companyId']) && isset($_POST['serviceId']) && isset($_POST['serviceID'])) { // Cambia 'id' por 'serviceID'
+    
         $companyId = $_POST['companyId'];
-        $serviceId = $_POST['serviceId'];
-        $id = $_POST['serviceID']; // Cambia 'id' por 'serviceID'
+        $serviceId = isset($_POST['serviceId']) ? explode(',', $_POST['serviceId']) : [];
+        $serviceCompanyId = $_POST['id'];
 
         // Validación básica
-        if (is_numeric($companyId) && is_numeric($serviceId) && is_numeric($id)) {
-            // Obtener los detalles actuales del servicio
+        if (is_numeric($companyId) && is_numeric($serviceCompanyId)) {
             $serviceCompanyBusiness = new ServiceCompanyBusiness();
-            $currentService = $serviceCompanyBusiness->getServiceCompany($id);
+            $currentService = $serviceCompanyBusiness->getServiceCompany($serviceCompanyId);
 
             if ($currentService) {
-                // Crear la instancia del servicio con los datos actuales
-                $service = new ServiceCompany($id, $companyId, $serviceId, $currentService->getTbservicecompanyURL(), 1);
-
-                // Actualizar los datos del servicio
+                // Asegúrate de obtener la URL de la imagen correctamente
+                $imageUrls = $currentService->getTbservicecompanyURL();
+                $imageUrlsString = is_array($imageUrls) ? implode(',', $imageUrls) : $imageUrls;
+                
+                $service = new ServiceCompany($serviceCompanyId, $companyId, $serviceId, $imageUrlsString, 1);
                 $result = $serviceCompanyBusiness->updateTBServiceCompany($service);
 
                 if ($result['status'] === 'success') {
                     header("Location: ../view/serviceView.php?success=updated");
                     exit();
-                } else if ($result['status'] === 'error' && $result['message'] === 'Service already exists') {
+                } elseif ($result['status'] === 'error' && $result['message'] === 'Service already exists') {
                     header("Location: ../view/serviceView.php?error=alreadyExists");
                     exit();
                 } else {
@@ -111,15 +113,15 @@ if (isset($_POST['update'])) {
             header("Location: ../view/serviceView.php?error=invalidInput");
             exit();
         }
-    } else {
-        header("Location: ../view/serviceView.php?error=missingData");
-        exit();
-    }
+   
 }
 
+
+
+
 if (isset($_POST['delete'])) { 
-    if (isset($_POST['serviceID'])) { // Aquí también aseguramos que use 'serviceID'
-        $id = $_POST['serviceID'];
+    if (isset($_POST['id'])) { // Aquí también aseguramos que use 'serviceID'
+        $id = $_POST['id'];
         $serviceCompanyBusiness = new ServiceCompanyBusiness();
         $result = $serviceCompanyBusiness->deleteTBServiceCompany($id);
 
@@ -136,7 +138,7 @@ if (isset($_POST['delete'])) {
 
 
 if (isset($_POST['deleteImage'])) {
-    $serviceID = $_POST['serviceID'];
+    $serviceID = $_POST['id'];
     $imageIndexToDelete = (int)$_POST['imageIndex']; // Asegúrate de que el índice sea un entero
     
     // Obtener las imágenes actuales del registro de la empresa
@@ -167,11 +169,11 @@ if (isset($_POST['deleteImage'])) {
         $serviceCompanyBusiness->removeImageFromServiceCompany($serviceID, $newImageUrls);
         
         // Redireccionar o mostrar un mensaje de éxito
-        header("Location: ../view/touristCompanyView.php?success=image_deleted");
+        header("Location: ../view/serviceView.php?success=image_deleted");
         exit();
     } else {
         // Redireccionar o mostrar un mensaje de error si el índice es inválido
-        header("Location: ../view/touristCompanyView.php?error=image_not_found");
+        header("Location: ../view/serviceView.php?error=image_not_found");
         exit();
     }
 

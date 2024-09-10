@@ -52,7 +52,7 @@ class serviceCompanyData extends Data {
             $imageUrlsString = $photosUrlsByService;
         }
         $status = 1;
-        $stmt->bind_param("iiisi",$nextId, $touristCompanyId, $idService,  $imageUrlsString, $status);
+        $stmt->bind_param("iissi",$nextId, $touristCompanyId, $idService,  $imageUrlsString, $status);
       
         $result = $stmt->execute();
     
@@ -196,29 +196,42 @@ class serviceCompanyData extends Data {
     }
 
     public function getTBService($idTBService) {
+        // Validar y escapar el parámetro $idTBService para prevenir inyecciones SQL
+        $idTBService = intval($idTBService);
+    
+        // Establecer conexión
         $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
         if (!$conn) {
             die("Connection failed: " . mysqli_connect_error());
         }
         $conn->set_charset('utf8');
         
+        // Preparar la consulta SQL
         $query = "SELECT * FROM tbservice WHERE tbserviceid = $idTBService";
         $result = mysqli_query($conn, $query);
         
+        if ($result === false) {
+            // Manejo de errores en la consulta
+            die("Error en la consulta: " . mysqli_error($conn));
+        }
+        
+        $serviceReturn = null;
         if ($row = mysqli_fetch_assoc($result)) {
+            // Crear el objeto Service si se obtienen resultados
             $serviceReturn = new Service(
                 $row['tbserviceid'], 
                 $row['tbservicename'], 
                 $row['tbservicedescription'], 
                 $row['tbservicetatus']
             );
-        } else {
-            $serviceReturn = null;
         }
         
+        // Cerrar la conexión
         mysqli_close($conn);
+        
         return $serviceReturn;
     }
+    
     
     public function removeImageFromServiceCompany($serviceCompanyId, $newImageUrls) {
         $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
@@ -266,7 +279,7 @@ class serviceCompanyData extends Data {
             return ['status' => 'error', 'message' => 'Prepare failed: ' . $conn->error];
         }
     
-        $stmt->bind_param("iisii", $touristCompanyId, $serviceId, $imageUrlsString, $status, $serviceId);
+        $stmt->bind_param("issii", $touristCompanyId, $serviceId, $imageUrlsString, $status, $serviceId);
         $result = $stmt->execute();
     
         if (!$result) {
@@ -279,7 +292,6 @@ class serviceCompanyData extends Data {
         mysqli_close($conn);
     
         return ['status' => 'success', 'message' => 'Actualizado correctamente.'];
-    }
-    
+    }   
     
 }
