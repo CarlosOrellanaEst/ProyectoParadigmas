@@ -18,14 +18,22 @@
         require '../business/ownerBusiness.php';
         require '../utils/utils.php';
         $ownerBusiness = new ownerBusiness();
-         if (Utils::$userLogged->getUserType() == "Administrador") {
-             $owners = $ownerBusiness->getAllTBOwners();
-             if (!$owners || empty($owners)) {
-                 echo "<script>alert('No se encontraron propietarios.');</script>";
-             }
-         } else if (Utils::$userLogged->getUserType() == "Propietario") {
-             $owners = $ownerBusiness->getTBOwner(Utils::$userLogged); 
-         }
+        if (Utils::getUserLogged()) {
+            if (Utils::getUserLogged()->getUserType() == "Administrador") {
+                $owners = $ownerBusiness->getAllTBOwners();
+               if (!$owners || empty($owners)) {
+                   echo "<script>alert('No se encontraron propietarios.');</script>";
+               }
+            } else if (Utils::getUserLogged()->getUserType() == "Propietario") {
+               // convertir el user de Utils a un Owner. 
+               // Asigno lo de getTBOwnerByUserId a un Owner nuevo y llamo al fromUser de la clase owner para pasarle el user y ahora si tener un owner
+                $owner = $ownerBusiness->getTBOwnerByUserId(Utils::getUserLogged()->getId()); 
+                $owners = new Owner($owner->getIdTBOwner(), $owner->getDirectionTBOwner(), $owner->getPhotoURLTBOwner(), $owner->getStatusTBOwner(), Utils::getUserLogged()->getId(), Utils::getUserLogged()->getNickname(), Utils::getUserLogged()->getPassword(), Utils::getUserLogged()->getActive(), Utils::getUserLogged()->getUserType(), Utils::getUserLogged()->getName(), Utils::getUserLogged()->getSurnames(), Utils::getUserLogged()->getLegalIdentification(), Utils::getUserLogged()->getPhone(), Utils::getUserLogged()->getEmail());
+            }
+        } 
+        else {
+            echo("no esta el usuario loggeado ");
+        }
 
     ?>
     <script src="../resources/paymentTypeView.js"></script>

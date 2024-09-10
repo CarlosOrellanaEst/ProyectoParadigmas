@@ -153,7 +153,7 @@ if (isset($_POST['update'])) {
 
         // Obtener la URL actual de la foto
         $ownerBusiness = new OwnerBusiness();
-        $currentOwner = $ownerBusiness->getTBOwner($id);
+        $currentOwner = $ownerBusiness->getTBOwner($idOwner);
         $existingPhotoFileName = $currentOwner->getPhotoURLTBOwner();
 
         // Verificar si se ha subido una nueva imagen

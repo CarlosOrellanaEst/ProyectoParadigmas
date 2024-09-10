@@ -18,7 +18,10 @@ class OwnerBusiness {
     public function getTBOwner($idOwner) {
         return $this->ownerData->getTBOwner($idOwner);
     }
-
+    public function getTBOwnerByUserId($idUser) {
+        return $this->ownerData->getTBOwnerByUserId($idUser);
+    }
+    
     public function updateTBOwner($owner) {
         return $this->ownerData->updateTBOwner($owner);
     }
