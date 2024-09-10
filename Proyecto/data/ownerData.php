@@ -235,7 +235,17 @@ class ownerData extends Data {
         $newEmail = mysqli_real_escape_string($conn, $owner->getEmail());
         $newDirection = mysqli_real_escape_string($conn, $owner->getDirectionTBOwner());
         $newURL = mysqli_real_escape_string($conn, $owner->getPhotoURLTBOwner());
-    
+
+        /*$emailQuery = "SELECT * FROM tbuser WHERE tbuseremail = '$newEmail' AND tbuserid != $idUser AND tbuserstatus = 0";
+        $emailResult = mysqli_query($conn, $emailQuery);
+        $phoneQuery = "SELECT * FROM tbuser WHERE tbuserphone = '$newPhone' AND tbuserid != $idUser AND tbuserstatus = 0";
+        $phoneResult = mysqli_query($conn, $phoneQuery);
+        $legalIdQuery = "SELECT * FROM tbuser WHERE tbuserlegalidentification = '$newLegalIdentification' AND tbuserid != $idUser AND tbuserstatus = 0";
+        $legalIdResult = mysqli_query($conn, $legalIdQuery);
+
+
+ */
+
         // Verificar duplicados
         $emailQuery = "SELECT * FROM tbuser WHERE tbuseremail = '$newEmail' AND tbuserid != $idUser";
         $emailResult = mysqli_query($conn, $emailQuery);
