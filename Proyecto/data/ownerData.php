@@ -51,7 +51,7 @@ class ownerData extends Data {
         $tbuserstatus = true; 
         
         $existsEmail = $this->getTBOwnerByEmail($email);
-        $existsPhone = $this->getTBOwnerByPhone($phone);
+        $existsPhone = $phone ? $this->getTBOwnerByPhone($phone) : false;
         $existsLegalId = $this->getTBOwnerByLegalId($legalIdentification);
     
         // Validaciones de duplicado

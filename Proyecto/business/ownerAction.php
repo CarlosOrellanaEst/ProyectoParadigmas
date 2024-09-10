@@ -109,7 +109,7 @@ if (isset($_POST['create'])) {
         // Crear objeto Owner
         // $owner = new Owner(0, $direction, $name, $surnames, $legalIdentification, $phone, $email, $targetFilePath, 1);
         $owner = new Owner(0, $direction, $targetFilePath, 1, 0, $name, $name, 1, "Propietario", $name, $surnames, $legalIdentification, $phone, $email);
-        $ownerBusiness = new OwnerBusiness();
+        $ownerBusiness = new ownerBusiness();
         
         // Llamar al método insertTBOwner
         $result = $ownerBusiness->insertTBOwner($owner);
@@ -133,8 +133,9 @@ if (isset($_POST['create'])) {
 }
 
 if (isset($_POST['update'])) {
-    if ( /* isset($_POST['ownerLegalIdentification'], $_POST['ownerEmail'], $_POST['ownerID'], $_POST['idType']) */ 
-        isset($_POST['ownerName'], $_POST['ownerSurnames'], $_POST['ownerLegalIdentification'], $_POST['ownerPhone'], $_POST['ownerEmail'], $_POST['ownerDirection'], $_POST['ownerID'], $_POST['userID'],  $_POST['idType'])
+    if ( /* isset($_POST['ownerLegalIdentification'], $_POST['ownerEmail'], $_POST['ownerID'], $_POST['idType']) 
+        isset($_POST['ownerName'], $_POST['ownerSurnames'], $_POST['ownerLegalIdentification'], $_POST['ownerPhone'], $_POST['ownerEmail'], $_POST['ownerDirection'], $_POST['ownerID'], $_POST['userID'],  $_POST['idType'])*/ 
+        isset($_POST['ownerLegalIdentification'], $_POST['ownerEmail'], $_POST['ownerID'], $_POST['idType'])
         ) 
     {
         $name = $_POST['ownerName'] ?? '';
@@ -228,7 +229,7 @@ if (isset($_POST['update'])) {
             $owner = new Owner($idOwner, $direction, "", 1, $idUser, "","", true, "Propietario", $name, $surnames, $legalIdentification, $phone, $email);
 
             // Crear instancia de OwnerBusiness
-            $ownerBusiness = new OwnerBusiness();
+            $ownerBusiness = new ownerBusiness();
             $result = $ownerBusiness->updateTBOwner($owner);
 
             if ($result == 1) {
