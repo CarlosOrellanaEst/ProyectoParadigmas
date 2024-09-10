@@ -1,5 +1,5 @@
 <?php
-class touristCompany{
+class TouristCompany{
 
     private $tbtouristcompanyid;
     private $tbtouristcompanylegalname;
@@ -8,7 +8,7 @@ class touristCompany{
     private $tbtouristcompanycompanyType;
     private $tbtouristcompanyurl;
     private $tbtouristcompanystatus;
-   
+    private $photos; 
 
     public function __construct($tbtouristcompanyid, $tbtouristcompanylegalname, $tbtouristcompanymagicname, $tbtouristcompanyowner, $tbtouristcompanycompanyType, $tbtouristcompanyurl, $tbtouristcompanystatus){
         $this->tbtouristcompanyid = $tbtouristcompanyid;
@@ -18,11 +18,11 @@ class touristCompany{
         $this->tbtouristcompanycompanyType = $tbtouristcompanycompanyType;
         $this->tbtouristcompanyurl = $tbtouristcompanyurl;
         $this->tbtouristcompanystatus = $tbtouristcompanystatus;
+        $this->photos = []; 
         
     }
 
-    
-    // Setters
+
     public function setTbtouristcompanyid($tbtouristcompanyid) {
         $this->tbtouristcompanyid = $tbtouristcompanyid;
     }
@@ -51,7 +51,6 @@ class touristCompany{
         $this->tbtouristcompanystatus = $tbtouristcompanystatus;
     }
 
-    // Getters
     public function getTbtouristcompanyid() {
         return $this->tbtouristcompanyid;
     }

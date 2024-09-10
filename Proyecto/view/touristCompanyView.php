@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
@@ -20,9 +21,10 @@
     $touristCompanyTypes = $touristCompanyTypeBusiness->getAll();
     $imageBasePath = '../images/';
     ?>
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="../resources/touristCompanyView.js"></script>
+
+
 </head>
+
 <body>
     <a href="adminView.php">← Volver al inicio</a>
     <header>
@@ -32,37 +34,51 @@
     
 
     <section id="create">
-        <form method="post" id="formCreate" action="../business/touristCompanyAction.php" enctype="multipart/form-data">
-            <label for="legalName">Nombre legal <span class="required">*</label>
-            <input placeholder="Nombre legal" type="text" name="legalName" id="legalName" required /><br><br>
-            <label for="magicName">Nombre mágico <span class="required">*</label>
-            <input placeholder="Nombre mágico" type="text" name="magicName" id="magicName" required /><br><br>
+        <form id="formCreate" method="post" action="../business/touristCompanyAction.php" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="legalName">Nombre legal:</label>
+                <input placeholder="Nombre legal" type="text" name="legalName" id="legalName" />
+            </div>
 
-            <label for="ownerId">Dueño <span class="required">*</label>
-            <select name="ownerId" id="ownerId" required>
-                <option value="0">Ninguno</option>
-                <?php foreach ($owners as $owner): ?>
-                    <option value="<?php echo htmlspecialchars($owner->getIdTBOwner()); ?>">
-                        <?php echo htmlspecialchars($owner->getName() . ' ' . $owner->getSurnames()); ?>
-                    </option>
-                <?php endforeach; ?>
-            </select><br><br>
+            <div class="form-group">
+                <label for="magicName">Nombre mágico:</label>
+                <input placeholder="Nombre mágico" type="text" name="magicName" id="magicName" />
+            </div>
 
-            <label for="companyType">Tipo de empresa <span class="required">*</label>
-            <select name="companyType" id="companyType" required>
-                <option value="0">Ninguno</option>
-                <?php foreach ($touristCompanyTypes as $touristCompanyType): ?>
-                    <option value="<?php echo htmlspecialchars($touristCompanyType->getId()); ?>">
-                        <?php echo htmlspecialchars($touristCompanyType->getName()); ?>
-                    </option>
-                <?php endforeach; ?>
-            </select><br><br>
+            <div class="form-group">
+                <label for="ownerId">Dueño: <span id="ownerError" style="color:red; display:none;">*campo obligatorio</span></label>
+                <select name="ownerId" id="ownerId" required>
+                    <option value="0">Ninguno</option>
+                    <?php foreach ($owners as $owner): ?>
+                        <option value="<?php echo htmlspecialchars($owner->getIdTBOwner()); ?>">
+                            <?php echo htmlspecialchars($owner->getName() . ' ' . $owner->getSurnames()); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
 
-            <label for="imagenes">Imágenes: </label>
-            <input type="file" name="imagenes[]" id="imagenes" multiple /><br>
+            <div class="form-group">
+                <label for="companyType">Tipo de empresa:</label>
+                <select name="companyType" id="companyType">
+                    <option value="0">Ninguno</option>
+                    <?php foreach ($touristCompanyTypes as $touristCompanyType): ?>
+                        <option value="<?php echo htmlspecialchars($touristCompanyType->getId()); ?>">
+                            <?php echo htmlspecialchars($touristCompanyType->getName()); ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="imagenes">Imágenes: <span id="imagenesError" style="color:red; display:none;">*campo obligatorio</span></label>
+                <input type="file" name="imagenes[]" id="imagenes" multiple />
+            </div>
 
             <input type="hidden" id="status" name="status" value="1">
-            <input type="submit" value="Crear" name="create" id="create" />
+
+            <div class="form-group">
+                <input type="submit" value="Crear" name="create" id="create" />
+            </div>
         </form>
     </section>
 
@@ -100,10 +116,10 @@
                 $alltouristCompanyTypes = $touristCompanyTypeBusiness->getAll();
                 $touristCompanyFiltered = [];
 
-                // Filtrar los resultados si se ha realizado una búsqueda
+                
                 if (isset($_GET['searchOne'])) {
                     $searchTerm = $_GET['searchOne'];
-                    $touristCompanyFiltered = array_filter($all, function($touristCompany) use ($searchTerm) {
+                    $touristCompanyFiltered = array_filter($all, function ($touristCompany) use ($searchTerm) {
                         return stripos($touristCompany->getTbtouristcompanylegalname(), $searchTerm) !== false;
                     });
                 }
@@ -117,8 +133,8 @@
                         $assignedOwner = $ownerBusiness->getTBOwner($current->getTbtouristcompanyowner());
                         echo '<tr>';
                         echo '<form method="post" action="../business/touristCompanyAction.php" onsubmit="return confirmAction(event);">';
-                        echo '<td><input type="text" name="legalName" value="'. htmlspecialchars($current->getTbtouristcompanylegalname()) .'" required></td>';
-                        echo '<td><input type="text" name="magicName" value="' . htmlspecialchars($current->getTbtouristcompanymagicname()) . '" required></td>';
+                        echo '<td><input type="text" name="legalName" value="' . htmlspecialchars($current->getTbtouristcompanylegalname()) . '" ></td>';
+                        echo '<td><input type="text" name="magicName" value="' . htmlspecialchars($current->getTbtouristcompanymagicname()) . '" ></td>';
                         echo '<td>';
                         echo '<select name="ownerId" required>';
                         foreach ($allowners as $owner) {
@@ -142,39 +158,42 @@
                         echo '</select>';
                         echo '</td>';
                         echo '<td>';
-                        $images = $current->getTbtouristcompanyurl(); // Supongamos que getTbtouristcompanyurl() devuelve un array de URLs
-
-                        // Verificar si $images es un array
-                        if (is_array($images) && !empty($images)) {
-                            echo '<div style="white-space: nowrap;">'; // Contenedor en línea para las imágenes
-                            foreach ($images as $image) {
-                                // Limpiar la URL de espacios en blanco
-                                $photoUrl = trim($image);
+                        echo '<input type="hidden" name="id" value="' . htmlspecialchars($current->getTbtouristcompanyid()) . '">';
+                        echo '<input type="hidden" name="status" value="1">';
                         
-                                // Concatenar la ruta base con la URL de la imagen
-                                $imageUrl = $imageBasePath . htmlspecialchars($photoUrl);
-                        
-                                // Verificar si el archivo existe antes de mostrar la imagen
-                                if (file_exists($imageUrl)) {
-                                    echo '<img src="' . $imageUrl . '" alt="Foto" style="width:50px;height:50px;display:inline-block;">';
-                                } else {
-                                    echo '<img src="../images/default.jpg" alt="Foto" style="width:70px;height:70px;display:inline-block;">'; // Imagen por defecto
-                                }
+                        $images = $current->getTbtouristcompanyurl(); 
+                        echo '<td>';
+                        foreach ($images as $index => $image) {
+                            if (!empty($image)) {
+                                echo '<img src="' . $imageBasePath . trim($image) . '" alt="Foto" width="50" height="50" />';
                             }
-                            echo '</div>';
-                        } else {
-                            echo 'No hay imágenes';
                         }
                         echo '</td>';
-                        echo '<input type="hidden" name="status" value="1">';
+
+                        
+                        echo '<td>';
+                        echo '<select name="imageIndex">';
+                        foreach ($images as $index => $image) {
+                            echo '<option value="' . $index . '">Imagen ' . ($index + 1) . '</option>';
+                        }
+                        echo '</select>';
+                        
+                        echo '</td>';
+
+                        
+                        echo '<form method="post" action="../business/touristCompanyAction.php">';
+                        echo '<input type="hidden" name="photoID" value="' . $current->getTbtouristcompanyid() . '">';
+
+                       
+
                         echo '<td>';
                         echo '<input type="hidden" name="id" value="' . htmlspecialchars($current->getTbtouristcompanyid()) . '">';
                         echo '<input type="submit" value="Actualizar" name="update" />';
                         echo '<input type="submit" value="Eliminar" name="delete"/>';
+                        echo '<input type="submit" value="Eliminar Imagen" name="deleteImage">';
                         echo '</td>';
                         echo '</form>';
                         echo '</tr>';
-                
                     }
                 } else {
                     echo '<tr><td colspan="6">No se encontraron resultados</td></tr>';
@@ -182,11 +201,15 @@
                 ?>
             </tbody>
         </table>
-        <script>
-            document.addEventListener('DOMContentLoaded', function() {
-                showAlertBasedOnURL();
-            });
-        </script>
+
     </section>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            showAlertBasedOnURL();
+        });
+    </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="../resources/touristCompanyView.js"></script>
 </body>
+
 </html>
