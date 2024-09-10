@@ -242,5 +242,44 @@ class serviceCompanyData extends Data {
     
         return $result;
     }
+    public function updateTBServiceCompany($service) {
+        // Conexión a la base de datos
+        $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
+        if (!$conn) {
+            return ['status' => 'error', 'message' => 'Connection failed: ' . mysqli_connect_error()];
+        }
+        $conn->set_charset('utf8');
+    
+        // Obtener valores del objeto $service
+        $serviceId = $service->getTbservicecompanyid();
+        $touristCompanyId = $service->getTbtouristcompanyid();
+        $serviceId = $service->getTbserviceid();
+        $imageUrlsString = is_array($service->getTbservicecompanyURL()) ? implode(',', $service->getTbservicecompanyURL()) : $service->getTbservicecompanyURL();
+        $status = $service->getTbservicetatus();
+    
+        // Consulta para actualizar el registro
+        $queryUpdate = "UPDATE tbservicecompany 
+                        SET tbtouristcompanyid = ?, tbserviceid = ?, tbservicecompanyURL = ?, tbservicetatus = ? 
+                        WHERE tbservicecompanyid = ?";
+        $stmt = $conn->prepare($queryUpdate);
+        if ($stmt === false) {
+            return ['status' => 'error', 'message' => 'Prepare failed: ' . $conn->error];
+        }
+    
+        $stmt->bind_param("iisii", $touristCompanyId, $serviceId, $imageUrlsString, $status, $serviceId);
+        $result = $stmt->execute();
+    
+        if (!$result) {
+            $stmt->close();
+            mysqli_close($conn);
+            return ['status' => 'error', 'message' => 'Execute failed: ' . $stmt->error];
+        }
+    
+        $stmt->close();
+        mysqli_close($conn);
+    
+        return ['status' => 'success', 'message' => 'Actualizado correctamente.'];
+    }
+    
     
 }

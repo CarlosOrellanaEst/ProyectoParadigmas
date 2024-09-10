@@ -74,49 +74,54 @@ if (isset($_POST['create'])) {
     }
 } 
 
-
-
 if (isset($_POST['update'])) {
-    if (isset($_POST['rollName']) && isset($_POST['rollDescription']) && isset($_POST['rollID'])) {
-        $name = $_POST['rollName'];
-        $description = $_POST['rollDescription'];
-        $id = $_POST['rollID'];
+    if (isset($_POST['companyId']) && isset($_POST['serviceId']) && isset($_POST['serviceID'])) { // Cambia 'id' por 'serviceID'
+        $companyId = $_POST['companyId'];
+        $serviceId = $_POST['serviceId'];
+        $id = $_POST['serviceID']; // Cambia 'id' por 'serviceID'
 
-        if (strlen($name) > 0) {
-            if (!is_numeric($name) && !is_numeric($description) && is_numeric($id)) {
-                $roll = new Roll($id, $name, $description);
-                $rollBusiness = new RollBusiness();
-                $result = $rollBusiness->updateTBRoll($roll);
+        // Validación básica
+        if (is_numeric($companyId) && is_numeric($serviceId) && is_numeric($id)) {
+            // Obtener los detalles actuales del servicio
+            $serviceCompanyBusiness = new ServiceCompanyBusiness();
+            $currentService = $serviceCompanyBusiness->getServiceCompany($id);
 
-                if ($result == 1) {
-                    header("location: ../view/rollView.php?success=updated");
+            if ($currentService) {
+                // Crear la instancia del servicio con los datos actuales
+                $service = new ServiceCompany($id, $companyId, $serviceId, $currentService->getTbservicecompanyURL(), 1);
+
+                // Actualizar los datos del servicio
+                $result = $serviceCompanyBusiness->updateTBServiceCompany($service);
+
+                if ($result['status'] === 'success') {
+                    header("Location: ../view/serviceView.php?success=updated");
                     exit();
-                } else if ($result == null) {
-                    header("location: ../view/rollView.php?error=alreadyExists");
+                } else if ($result['status'] === 'error' && $result['message'] === 'Service already exists') {
+                    header("Location: ../view/serviceView.php?error=alreadyExists");
                     exit();
-                 } else {
-                    header("location: ../view/rollView.php?error=dbError");
+                } else {
+                    header("Location: ../view/serviceView.php?error=dbError");
                     exit();
                 }
             } else {
-                header("location: ../view/rollView.php?error=numberFormat");
+                header("Location: ../view/serviceView.php?error=notFound");
                 exit();
             }
         } else {
-            header("location: ../view/rollView.php?error=emptyField");
+            header("Location: ../view/serviceView.php?error=invalidInput");
             exit();
         }
     } else {
-        header("location: ../view/rollView.php?error=error");
+        header("Location: ../view/serviceView.php?error=missingData");
         exit();
     }
 }
 
 if (isset($_POST['delete'])) { 
-    if (isset($_POST['serviceID'])) {
+    if (isset($_POST['serviceID'])) { // Aquí también aseguramos que use 'serviceID'
         $id = $_POST['serviceID'];
-        $serviceCompanyBusiness = new serviceCompanyBusiness();
-        $result = $serviceCompanyBusiness ->deleteTBServiceCompany($id);
+        $serviceCompanyBusiness = new ServiceCompanyBusiness();
+        $result = $serviceCompanyBusiness->deleteTBServiceCompany($id);
 
         if ($result == 1) {
             header("location: ../view/serviceView.php?success=deleted");
@@ -126,8 +131,6 @@ if (isset($_POST['delete'])) {
     } else {
         header("location: ../view/serviceView.php?error=emptyField");
     }
-} else {
-    header("location: ../view/serviceView.php?error=error");
 }
 
 

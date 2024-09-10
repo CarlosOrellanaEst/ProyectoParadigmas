@@ -28,8 +28,9 @@ class ActivityData extends Data {
             $nextId = $lastId + 1;
         }
     
+       
         // Insertar la actividad
-        $queryInsert = "INSERT INTO tbactivity (tbactivityid, tbactivityname, tbactivityatributearray, tbactivitydataarray, tbactivitystatus) VALUES (?, ?, ?, ?, ?)";
+        $queryInsert = "INSERT INTO tbactivity (tbactivityid, tbactivityname, tbservicecompanyid, tbactivityatributearray, tbactivitydataarray, tbactivityurl, tbactivitystatus) VALUES (?, ?, ?, ?, ?,?,?)";
         $stmt = $conn->prepare($queryInsert);
         if ($stmt === false) {
             die("Prepare failed: " . $conn->error);
@@ -38,14 +39,24 @@ class ActivityData extends Data {
         $tbactivityid = $nextId;
         $tbactivityname = $activity->getNameTBActivity();
         
+        $tbServicesid = $activity->getTbservicecompanyid();
         // Los valores deben estar separados por comas
         $tbactivityatributearray = implode(",", $activity->getAttributeTBActivityArray());
         $tbactivitydataarray = implode(",", $activity->getDataAttributeTBActivityArray());
+        $imageUrls = $activity->getTbactivityURL();
+
+    
+        if (is_array($imageUrls)) {
+            $imageUrlsString = implode(',', $imageUrls);
+        } else {
+            $imageUrlsString = $imageUrls;
+        }
         
+      
         $tbactivitystatus = $activity->getStatusTBActivity();
     
         // Vinculación de parámetros
-        $stmt->bind_param("isssi", $tbactivityid, $tbactivityname, $tbactivityatributearray, $tbactivitydataarray, $tbactivitystatus);
+        $stmt->bind_param("isisssi", $tbactivityid, $tbactivityname,$tbServicesid, $tbactivityatributearray, $tbactivitydataarray, $imageUrlsString, $tbactivitystatus);
         $result = $stmt->execute();
     
         if (!$result) {
@@ -87,8 +98,11 @@ class ActivityData extends Data {
                 $row['tbactivityname'],
                 $attributeArray,  // Pasar los arrays de atributos
                 $dataArray,       // Pasar los arrays de datos
+                $row['tbactivityurl'],
                 $row['tbactivitystatus']
             );
+            $photoUrls = explode(',', $row['tbactivityurl']);
+            $activity->setTbactivityURL(array_map('trim', $photoUrls)); 
     
             $activities[] = $activity;
         }
@@ -129,30 +143,47 @@ class ActivityData extends Data {
         if (!$conn) {
             die("Connection failed: " . mysqli_connect_error());
         }
+    
         $conn->set_charset('utf8mb4');
     
-        // Convertir arrays a cadenas separadas por comas
-        $attributes = implode(',', $activity->getAttributeTBActivityArray());
-        $dataAttributes = implode(',', $activity->getDataAttributeTBActivityArray());
-    
-        $query = "UPDATE tbactivity SET tbactivityname=?, tbactivityatributearray=?, tbactivitydataarray=?, tbactivitystatus=? WHERE tbactivityid=?";
-    
-        $stmt = $conn->prepare($query);
+        // Preparar la consulta de actualización
+        $queryUpdate = "UPDATE tbactivity
+                        SET tbactivityname = ?, tbservicecompanyid = ?, tbactivityatributearray = ?, tbactivitydataarray = ?, tbactivityurl = ?, tbactivitystatus = ?
+                        WHERE tbactivityid = ?";
+        $stmt = $conn->prepare($queryUpdate);
         if ($stmt === false) {
             die("Prepare failed: " . $conn->error);
         }
     
-        $tbactivityid = $activity->getIdTBActivity();
+        // Obtener los valores del objeto $activity
+        $tbactivityid = $activity->getIdTBActivity(); // ID para actualizar
         $tbactivityname = $activity->getNameTBActivity();
-        $tbactivityatributearray = $attributes;
-        $tbactivitydataarray = $dataAttributes;
+        $tbServicesid = $activity->getTbservicecompanyid();
+    
+        // Convertir los arrays a cadenas separadas por comas
+        $tbactivityatributearray = explode(",", $activity->getAttributeTBActivityArray());
+        $tbactivitydataarray = explode(",", $activity->getDataAttributeTBActivityArray());
+    
+        $imageUrls = $activity->getTbactivityURL();
+        
+        // Asegúrate de que $imageUrls sea un array antes de usar implode
+        if (is_array($imageUrls)) {
+            $imageUrlsString = implode(',', $imageUrls);
+        } else {
+            // Si $imageUrls no es un array, asegúrate de que sea una cadena
+            $imageUrlsString = $imageUrls;
+        }
+    
         $tbactivitystatus = $activity->getStatusTBActivity();
     
-        $stmt->bind_param("sssii", $tbactivityname, $tbactivityatributearray, $tbactivitydataarray, $tbactivitystatus, $tbactivityid);
-    
+        // Vinculación de parámetros
+        // Nota: El tipo de parámetros en bind_param debe coincidir con los tipos de datos
+        // i: entero, s: cadena
+        $stmt->bind_param("iisssii", $tbactivityname, $tbServicesid, $tbactivityatributearray, $tbactivitydataarray, $imageUrlsString, $tbactivitystatus, $tbactivityid);
         $result = $stmt->execute();
-        if ($result === false) {
-            die("Execute failed: " . $stmt->error);
+    
+        if (!$result) {
+            echo "Execute failed: " . $stmt->error;
         }
     
         $stmt->close();
@@ -161,7 +192,8 @@ class ActivityData extends Data {
         return $result;
     }
     
-
+    
+/*
     public function getActivityById($id) {
         $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
         if (!$conn) {
@@ -191,7 +223,7 @@ class ActivityData extends Data {
 
         return $activity;
     }
-
+*/
     public function getActivityByName($activityName) {
         $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
         if (!$conn) {

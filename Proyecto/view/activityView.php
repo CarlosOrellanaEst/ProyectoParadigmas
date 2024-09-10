@@ -6,6 +6,12 @@
     <title>Gestión de Actividades</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <script src="../resources/activityAJAX.js"></script>
+    <?php
+        include '../business/serviceCompanyBusiness.php';
+        $serviceCompanyBusiness = new serviceCompanyBusiness();
+        $services = $serviceCompanyBusiness->getAllTBServiceCompanies();
+        $imageBasePath = '../images/activity/';
+    ?>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 
@@ -17,11 +23,19 @@
 
     <section id="create">
         <h2>Crear Actividad</h2>
-        <form method="post" id="formCreate" action="../business/activityAction.php">
+        <form method="post" id="formCreate" action="../business/activityAction.php" enctype="multipart/form-data">
             <label for="nameTBActivity">Nombre de la Actividad: </label>
             <input placeholder="Nombre de la Actividad" type="text" name="nameTBActivity" id="nameTBActivity" required />
             <br><br>
-
+            <label for="serviceId1">Servicio: </label>
+            <select name="serviceId" id="serviceId1" required>
+                <?php foreach ($services as $service): ?>
+                    <option value="<?php echo htmlspecialchars($service->getTbservicecompanyid()); ?>">
+                        <?php echo htmlspecialchars($service->getTbservicecompanyid()); ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+            <br><br>
             <div id="attributes">
                 <div>
                     <label for="attribute1">Atributo: </label>
@@ -32,7 +46,9 @@
             </div>
             <button type="button" id="addAttribute">Agregar otro atributo</button>
             <br><br>
-
+            <label for="imagenes">Selecciona las imágenes (máximo 5): </label>
+            <input type="file" name="imagenes[]" id="imagenes" multiple />
+            <br><br>
             <input type="hidden" id="statusTBActivity" name="statusTBActivity" value="1">
             <input type="submit" value="Crear" name="create" id="create" />
         </form>
@@ -53,59 +69,94 @@
             <thead>
                 <tr>
                     <th>Nombre de la Actividad</th>
+                    <th>Servicio</th>
+                    <th>Fotos</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
-                <?php
-                include_once '../business/activityBusiness.php';
+            <?php
+include_once '../business/activityBusiness.php';
+$activityBusiness = new ActivityBusiness();
+$allActivities = $activityBusiness->getAllActivities();
+$activityFiltered = [];
 
-                $activityBusiness = new ActivityBusiness();
-                $allActivities = $activityBusiness->getAllActivities();
-                $activityFiltered = [];
+// Filtrar los resultados si se ha realizado una búsqueda
+if (isset($_GET['searchOne'])) {
+    $searchTerm = $_GET['searchOne'];
+    $activityFiltered = array_filter($allActivities, function ($activity) use ($searchTerm) {
+        return stripos($activity->getNameTBActivity(), $searchTerm) !== false;
+    });
+}
+if (count($activityFiltered) > 0) {
+    $allActivities = $activityFiltered;
+}
 
-                // Filtrar los resultados si se ha realizado una búsqueda
-                if (isset($_GET['searchOne'])) {
-                    $searchTerm = $_GET['searchOne'];
-                    $activityFiltered = array_filter($allActivities, function ($activity) use ($searchTerm) {
-                        return stripos($activity->getNameTBActivity(), $searchTerm) !== false;
-                    });
-                }
-                if (count($activityFiltered) > 0) {
-                    $allActivities = $activityFiltered;
-                }
+if (count($allActivities) > 0) {
+    foreach ($allActivities as $current) {
+        $assignedService = $serviceCompanyBusiness->getServiceCompany($current->getTbservicecompanyid());
+        echo '<tr>'; // Añadir una fila para cada actividad
+        echo '<form method="post" action="../business/activityAction.php" enctype="multipart/form-data" onsubmit="return confirmAction(event);">';
+        echo '<input type="hidden" name="idTBActivity" value="' . $current->getIdTBActivity() . '">';
+        echo '<input type="hidden" name="existingImages" value="' . htmlspecialchars(is_array($current->getTbactivityURL()) ? implode(',', $current->getTbactivityURL()) : $current->getTbactivityURL()) . '">';
 
-                if (count($allActivities) > 0) {
-                    foreach ($allActivities as $current) {
-                        echo '<tr>';
-                        echo '<td>' . htmlspecialchars($current->getNameTBActivity()) . '</td>';
-                        echo '<td>';
-                        echo '<form method="post" action="../business/activityAction.php" onsubmit="return confirmAction(event);">';
-                        echo '<input type="hidden" name="idTBActivity" value="' . $current->getIdTBActivity() . '">';
-                        echo '<input type="text" name="nameTBActivity" value="' . htmlspecialchars($current->getNameTBActivity()) . '">';
-                        echo '<button type="button" class="show-attributes" data-activity-id="' . $current->getIdTBActivity() . '">Mostrar Atributos</button>';
-                        echo '<input type="submit" value="Actualizar" name="update" />';
-                        echo '<input type="submit" value="Eliminar" name="delete"/>';
-                        echo '<div id="attributes-' . $current->getIdTBActivity() . '" class="attributes-table" style="display:none;">';
-                        echo '<table>';
-                        echo '<tr><th>Atributo</th><th>Dato</th></tr>';
+        echo '<td>';
+        echo '<input type="text" name="nameTBActivity" value="' . htmlspecialchars($current->getNameTBActivity()) . '">';
+        echo '</td>';
+        
+        echo '<td>';
+        echo '<select name="serviceId" required>';
+        foreach ($services as $service) {
+            echo '<option value="' . htmlspecialchars($service->getTbservicecompanyid()) . '"';
+            if ($service->getTbservicecompanyid() == $current->getTbservicecompanyid()) {
+                echo ' selected';
+            }
+            echo '>' . htmlspecialchars($service->getTbservicecompanyid()) . '</option>';
+        }
+        echo '</select>';
+        echo '</td>';
+        
+        // Mostrar las imágenes
+        echo '<td>';
+        $urls = $current->getTbactivityURL();
 
-                        foreach ($current->getAttributeTBActivityArray() as $index => $attribute) {
-                            echo '<tr>';
-                            echo '<td><input type="text" name="attributeTBActivityArray[]" value="' . htmlspecialchars($attribute) . '"></td>';
-                            echo '<td><input type="text" name="dataAttributeTBActivityArray[]" value="' . htmlspecialchars($current->getDataAttributeTBActivityArray()[$index]) . '"></td>';
-                            echo '</tr>';
-                        }
-                        echo '</table>';
-                        echo '</div>';
-                        echo '</form>';
-                        echo '</td>';
-                        echo '</tr>';
-                    }
-                } else {
-                    echo '<tr><td colspan="2">No se encontraron resultados</td></tr>';
-                }
-                ?>
+        if (is_string($urls)) {
+            $urls = explode(',', $urls);
+        }
+
+        foreach ($urls as $url) {
+            if (!empty($url)) {
+                $fullImagePath = $imageBasePath . trim($url);
+                echo '<img src="' . htmlspecialchars($fullImagePath) . '" alt="Foto" width="50" height="50" />';
+            }
+        }
+        echo '</td>';
+        
+        echo '<td>';
+        echo '<button type="button" class="show-attributes" data-activity-id="' . $current->getIdTBActivity() . '">Mostrar Atributos</button>';
+        echo '<input type="submit" value="Actualizar" name="update" />';
+        echo '<input type="submit" value="Eliminar" name="delete"/>';
+        echo '<div id="attributes-' . $current->getIdTBActivity() . '" class="attributes-table" style="display:none;">';
+        echo '<table>';
+        echo '<tr><th>Atributo</th><th>Dato</th></tr>';
+
+        foreach ($current->getAttributeTBActivityArray() as $index => $attribute) {
+            echo '<tr>';
+            echo '<td><input type="text" name="attributeTBActivityArray" value="' . htmlspecialchars($attribute) . '"></td>';
+            echo '<td><input type="text" name="dataAttributeTBActivityArray" value="' . htmlspecialchars($current->getDataAttributeTBActivityArray()[$index]) . '"></td>';
+            echo '</tr>';
+        }
+        echo '</table>';
+        echo '</div>';
+        echo '</td>';
+        
+        echo '</form>'; // Cerrar el formulario
+        echo '</tr>'; // Cerrar la fila
+    }
+} else {
+    echo '<tr><td colspan="4">No se encontraron resultados</td></tr>';
+}
+?>
             </tbody>
         </table>
     </section>

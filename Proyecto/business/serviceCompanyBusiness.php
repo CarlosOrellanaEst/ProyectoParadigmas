@@ -31,14 +31,15 @@ class serviceCompanyBusiness {
     public function deleteTBServiceCompany($idService) {
         return $this->serviceCompanyData->deleteTBServiceCompany($idService);
     }
+    public function updateTBServiceCompany($service) {
+        return $this->serviceCompanyData->updateTBServiceCompany($service);
+    }
     /* 
     public function getOneTBService($idService) {
         return $this->serviceData->getTBRoll($idRoll);
     }
 
-    public function updateTBService($service) {
-        return $this->serviceData->updateTBRoll($roll);
-    }
+    
      */
     
 }

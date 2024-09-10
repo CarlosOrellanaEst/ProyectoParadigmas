@@ -211,6 +211,16 @@ CREATE TABLE `tbservicecompany`(
   `tbservicetatus` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+CREATE TABLE `tbactivity` (
+  `tbactivityid` int(11) NOT NULL,
+  `tbactivityname` varchar(255) NOT NULL,
+  `tbservicecompanyid` int(11) NOT NULL,
+  `tbactivityatributearray` varchar(255) NOT NULL,
+  `tbactivitydataarray` varchar(255) NOT NULL,
+  `tbactivityurl` TEXT  NOT NULL,
+  `tbactivitystatus` tinyint(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
