@@ -190,6 +190,62 @@ class paymentTypeData extends Data {
         }
     }*/
     
+    /*public function getAllTbPaymentType() {
+        // Establecer conexión con la base de datos
+        $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
+        
+        // Verificar si la conexión falló
+        if (!$conn) {
+            die("Connection failed: " . mysqli_connect_error());
+        }
+        
+        // Configurar el conjunto de caracteres a utf8
+        $conn->set_charset('utf8');
+    
+        // Definir la consulta SQL
+        $query = "SELECT pt.*, o.tbusername, o.tbusersurnames 
+          FROM tbpaymenttype pt 
+          JOIN tbuser o ON pt.tbownerid = o.tbuserid 
+          WHERE pt.tbpaymenttypeisactive = 1;";
+
+    
+        // Ejecutar la consulta
+        $result = mysqli_query($conn, $query);
+    
+        // Manejar errores en la consulta
+        if (!$result) {
+            die("Error en la consulta: " . mysqli_error($conn));
+        }
+    
+        // Inicializar un array para almacenar los tipos de pago
+        $bankA = [];
+    
+        // Recorrer los resultados obtenidos de la consulta
+        while ($row = mysqli_fetch_assoc($result)) {
+            $sinpeNumber = isset($row['tbpaymenttypesinpenumber']) ? $row['tbpaymenttypesinpenumber'] : null;
+    
+            $currentPaymentType = new PaymentType(
+                $row['tbpaymenttypeid'],
+                $row['tbownerid'],
+                $row['tbpaymenttypenumber'],
+                $sinpeNumber,
+                $row['tbpaymenttypestatus']
+            );
+    
+            $currentPaymentType->setOwnerFullName($row['tbusername'] . ' ' . $row['tbusersurname']);
+    
+            array_push($bankA, $currentPaymentType);
+        }
+    
+        // Cerrar la conexión a la base de datos
+        mysqli_close($conn);
+    
+        // Retornar el array con los tipos de pago
+        return $bankA;
+    }*/
+    
+    
+    
 
     public function getAllTbPaymentType() {
         $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);

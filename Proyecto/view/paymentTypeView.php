@@ -40,7 +40,7 @@
     
     <section>
         <form method="post" id="formCreate">
-            <label for="ownerId">ID del Propietario</label>
+            <label for="ownerId">Propietario</label>
             <select name="ownerId" id="ownerId" required>
                 <!-- Opciones llenadas con PHP -->
                 <?php if (!empty($owners)): ?>

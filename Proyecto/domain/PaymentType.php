@@ -8,6 +8,7 @@ class PaymentType {
     private $accountNumber;
     private $status;
     private $sinpeNumber;
+    private $ownerFullName;
 
     public function __construct ($tbPaymentTypeId, $ownerId, $accountNumber,$sinpeNumber, $status){
         $this->tbPaymentTypeId = $tbPaymentTypeId;
@@ -15,6 +16,14 @@ class PaymentType {
         $this->accountNumber = $accountNumber;
         $this->status = $status;
         $this->sinpeNumber = $sinpeNumber;
+    }
+
+    public function setOwnerFullName($fullName) {
+        $this->ownerFullName = $fullName;
+    }
+
+    public function getOwnerFullName() {
+        return $this->ownerFullName;
     }
 
     public function getTbPaymentTypeId(){
