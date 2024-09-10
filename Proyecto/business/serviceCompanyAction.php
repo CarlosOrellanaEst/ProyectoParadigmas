@@ -5,39 +5,42 @@ if (isset($_POST['create'])) {
     $response = array();
 
     // Verificación de las imágenes subidas
-    if (isset($_FILES['imagenes']) && !empty($_FILES['imagenes']['name'][0])) {
+    //if (isset($_FILES['imagenes']) && !empty($_FILES['imagenes']['name'][0])) {
         $uploadDir = '../images/services/';
         $fileNames = array(); // Array para almacenar nombres de archivos procesados
         $allowTypes = array('jpg', 'png', 'jpeg', 'gif');
 
         // Verificar si se han subido más de 5 imágenes
-        if (count($_FILES['imagenes']['name']) > 5) {
-            $response['status'] = 'error';
-            $response['message'] = 'Solo se permite subir un máximo de 5 imágenes';
-            echo json_encode($response);
-            exit();
-        }
-
-        // Procesar y mover los archivos
-        foreach ($_FILES['imagenes']['name'] as $key => $fileName) {
-            $targetFilePath = $uploadDir . basename($fileName);
-            $fileType = strtolower(pathinfo($targetFilePath, PATHINFO_EXTENSION));
-
-            if (in_array($fileType, $allowTypes)) {
-                if (move_uploaded_file($_FILES['imagenes']['tmp_name'][$key], $targetFilePath)) {
-                    $fileNames[] = basename($fileName);
-                } else {
-                    $response['status'] = 'error';
-                    $response['message'] = 'Error al mover la imagen al directorio.';
-                    echo json_encode($response);
-                    exit();
-                }
-            } else {
+        if (isset($_FILES['imagenes']) && !empty($_FILES['imagenes']['name'][0])){
+            if (count($_FILES['imagenes']['name']) > 5) {
                 $response['status'] = 'error';
-                $response['message'] = 'Formato de imagen inválido. Solo se permiten JPG, PNG, JPEG, y GIF.';
+                $response['message'] = 'Solo se permite subir un máximo de 5 imágenes';
                 echo json_encode($response);
                 exit();
             }
+    
+            // Procesar y mover los archivos
+            foreach ($_FILES['imagenes']['name'] as $key => $fileName) {
+                $targetFilePath = $uploadDir . basename($fileName);
+                $fileType = strtolower(pathinfo($targetFilePath, PATHINFO_EXTENSION));
+    
+                if (in_array($fileType, $allowTypes)) {
+                    if (move_uploaded_file($_FILES['imagenes']['tmp_name'][$key], $targetFilePath)) {
+                        $fileNames[] = basename($fileName);
+                    } else {
+                        $response['status'] = 'error';
+                        $response['message'] = 'Error al mover la imagen al directorio.';
+                        echo json_encode($response);
+                        exit();
+                    }
+                } else {
+                    $response['status'] = 'error';
+                    $response['message'] = 'Formato de imagen inválido. Solo se permiten JPG, PNG, JPEG, y GIF.';
+                    echo json_encode($response);
+                    exit();
+                }
+        }
+        
         }
 
         // Concatenar las URLs de imágenes
@@ -68,11 +71,13 @@ if (isset($_POST['create'])) {
 
         echo json_encode($response);
         exit();
+        /*
     } else {
         $response = ['status' => 'error', 'message' => 'No se han subido imágenes.'];
         echo json_encode($response);
         exit();
     }
+    */
 } 
 
 
