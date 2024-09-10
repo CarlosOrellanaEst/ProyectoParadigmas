@@ -81,7 +81,7 @@ $activityBusiness = new ActivityBusiness();
 $allActivities = $activityBusiness->getAllActivities();
 $activityFiltered = [];
 
-// Filtrar los resultados si se ha realizado una búsqueda
+
 if (isset($_GET['searchOne'])) {
     $searchTerm = $_GET['searchOne'];
     $activityFiltered = array_filter($allActivities, function ($activity) use ($searchTerm) {
@@ -95,7 +95,7 @@ if (count($activityFiltered) > 0) {
 if (count($allActivities) > 0) {
     foreach ($allActivities as $current) {
         $assignedService = $serviceCompanyBusiness->getServiceCompany($current->getTbservicecompanyid());
-        echo '<tr>'; // Añadir una fila para cada actividad
+        echo '<tr>'; 
         echo '<form method="post" action="../business/activityAction.php" enctype="multipart/form-data" onsubmit="return confirmAction(event);">';
         echo '<input type="hidden" name="idTBActivity" value="' . $current->getIdTBActivity() . '">';
         echo '<input type="hidden" name="existingImages" value="' . htmlspecialchars(is_array($current->getTbactivityURL()) ? implode(',', $current->getTbactivityURL()) : $current->getTbactivityURL()) . '">';
@@ -116,7 +116,7 @@ if (count($allActivities) > 0) {
         echo '</select>';
         echo '</td>';
     
-        // Mostrar las imágenes
+   
         echo '<td>';
         $urls = $current->getTbactivityURL();
     
@@ -132,7 +132,7 @@ if (count($allActivities) > 0) {
         }
         echo '</td>';
     
-        // Seleccionar y eliminar una imagen existente
+
         echo '<td>';
         echo '<label for="imageIndex">Eliminar imagen: </label>';
         echo '<select name="imageIndex">';
@@ -144,15 +144,15 @@ if (count($allActivities) > 0) {
         echo '</select>';
         echo '</td>';
     
-        // Acciones: Actualizar, Eliminar la actividad o eliminar la imagen
+
         echo '<td>';
         echo '<input type="submit" value="Actualizar" name="update" />';
         echo '<input type="submit" value="Eliminar" name="delete" />';
         echo '<input type="submit" value="Eliminar Imagen" name="deleteImage" />';
         echo '</td>';
     
-        echo '</form>'; // Cerrar el formulario
-        echo '</tr>'; // Cerrar la fila
+        echo '</form>'; 
+        echo '</tr>';
     }
     
     

@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
 
-    // Crear Actividad (Formulario de creación)
+   
     document.getElementById('formCreate').addEventListener('submit', function (event) {
         event.preventDefault();
 
@@ -37,7 +37,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         if (response.status === 'success') {
                             alert(response.message);
                             document.getElementById('formCreate').reset();
-                            location.reload(); // Recarga la página después de la acción exitosa
+                            location.reload(); 
                         } else {
                             alert('Error: ' + response.message);
                         }
@@ -53,15 +53,15 @@ document.addEventListener('DOMContentLoaded', function () {
         xhr.send(formData);
     });
 
-    // Editar, Eliminar, y Eliminar Imagen para cada actividad
+  
     const forms = document.querySelectorAll('form');
     forms.forEach(function (form) {
 
-        // Evento para actualizar actividad
+
         form.addEventListener('submit', function (event) {
             event.preventDefault();
 
-            const actionType = event.submitter.name; // Saber qué botón fue presionado (update, delete, deleteImage)
+            const actionType = event.submitter.name; 
             const formData = new FormData(form);
 
             if (actionType === 'update') {
@@ -80,10 +80,10 @@ document.addEventListener('DOMContentLoaded', function () {
                         let response = JSON.parse(xhr.responseText);
                         if (xhr.status === 200) {
                             if (response.status === 'success') {
-                                alert(response.message); // Mostrar alerta con el mensaje de éxito
-                                location.reload(); // Recargar la página automáticamente
+                                alert(response.message); 
+                                location.reload();
                             } else {
-                                alert('Error: ' + response.message); // Manejar el error y mostrar la alerta
+                                alert('Error: ' + response.message);
                             }
                         } else {
                             alert('Error HTTP: ' + xhr.status);

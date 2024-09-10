@@ -6,16 +6,16 @@ error_reporting(E_ALL);
 include_once '../business/activityBusiness.php'; 
 include_once '../domain/Activity.php'; 
 
-$response = array(); // Para almacenar la respuesta de cada acción
+$response = array(); 
 
 if (isset($_POST['create'])) {
-    // Verificación de las imágenes subidas
+    
     if (isset($_FILES['imagenes']) && !empty($_FILES['imagenes']['name'][0])) {
         $uploadDir = '../images/activity/';
-        $fileNames = array(); // Array para almacenar nombres de archivos procesados
+        $fileNames = array(); 
         $allowTypes = array('jpg', 'png', 'jpeg', 'gif');
 
-        // Verificar si se han subido más de 5 imágenes
+        
         if (count($_FILES['imagenes']['name']) > 5) {
             $response['status'] = 'error';
             $response['message'] = 'Solo se permite subir un máximo de 5 imágenes.';
@@ -23,7 +23,7 @@ if (isset($_POST['create'])) {
             exit();
         }
 
-        // Procesar y mover los archivos
+     
         foreach ($_FILES['imagenes']['name'] as $key => $fileName) {
             $targetFilePath = $uploadDir . basename($fileName);
             $fileType = strtolower(pathinfo($targetFilePath, PATHINFO_EXTENSION));
@@ -45,16 +45,16 @@ if (isset($_POST['create'])) {
             }
         }
 
-        // Concatenar las URLs de las imágenes
+        
         $photoUrls = implode(',', $fileNames);
 
-        // Validación y obtención de datos
+        
         $nameTBActivity = isset($_POST['nameTBActivity']) ? trim($_POST['nameTBActivity']) : '';
         $serviceID = isset($_POST['serviceId']) ? trim($_POST['serviceId']) : 0;
         $attributeTBActivityArray = isset($_POST['attributeTBActivityArray']) ? explode(',', $_POST['attributeTBActivityArray']) : [];
         $dataAttributeTBActivityArray = isset($_POST['dataAttributeTBActivityArray']) ? explode(',', $_POST['dataAttributeTBActivityArray']) : [];
 
-        // Validar campos obligatorios
+       
         if (empty($nameTBActivity)) {
             echo json_encode(['status' => 'error', 'message' => 'El nombre de la actividad es requerido.']);
             exit();
@@ -65,16 +65,16 @@ if (isset($_POST['create'])) {
             exit();
         }
 
-        // Crear una instancia de Activity con los datos
+    
         $activity = new Activity(0, $nameTBActivity, $serviceID, $attributeTBActivityArray, $dataAttributeTBActivityArray, $photoUrls, 1);
         $activityBusiness = new ActivityBusiness();
 
-        // Insertar la actividad en la base de datos
+       
         $result = $activityBusiness->insertActivity($activity);
 
-        // Respuesta según el resultado
+        
         if (is_array($result) && $result['status'] == 'error') {
-            echo json_encode($result); // Enviar mensaje de error si ya existe la actividad
+            echo json_encode($result); 
             exit();
         }
 
@@ -87,7 +87,7 @@ if (isset($_POST['create'])) {
         echo json_encode($response);
         exit();
     } else {
-        // Error por falta de imágenes
+        
         $response = ['status' => 'error', 'message' => 'No se han subido imágenes.'];
         echo json_encode($response);
         exit();
@@ -103,11 +103,11 @@ if (isset($_POST['update'])) {
     $statusTBActivity = isset($_POST['statusTBActivity']) ? 1 : 0;
     $serviceId = $_POST['serviceId'];
 
-    // Manejar la carga de imágenes
+  
     $existingImages = $_POST['existingImages'] ?? '';
     $uploadedImages = [];
 
-    // Verificar si hay imágenes cargadas
+  
     if (isset($_FILES['imagenes']) && count($_FILES['imagenes']['name']) > 0) {
         for ($i = 0; $i < count($_FILES['imagenes']['name']); $i++) {
             $imageName = $_FILES['imagenes']['name'][$i];
@@ -120,18 +120,17 @@ if (isset($_POST['update'])) {
         }
     }
 
-    // Fusionar imágenes existentes con las nuevas
     $allImages = array_merge(explode(',', $existingImages), $uploadedImages);
-    $allImages = implode(',', array_filter($allImages)); // Eliminar elementos vacíos
+    $allImages = implode(',', array_filter($allImages)); 
 
-    // Actualizar la actividad en la base de datos
+
     $activityBusiness = new ActivityBusiness();
     $activity = new Activity($idTBActivity, $nameTBActivity, $serviceId, $attributeTBActivityArray, $dataAttributeTBActivityArray, $allImages, 1);
    
     $result = $activityBusiness->updateActivity($activity);
 
     if (is_array($result) && $result['status'] == 'error') {
-        echo json_encode($result); // Enviar mensaje de error si ya existe la actividad
+        echo json_encode($result); 
         exit();
     }
 
@@ -159,36 +158,30 @@ if (isset($_POST['delete'])) {
 
 
 if (isset($_POST['deleteImage'])) {
-    $activityId = $_POST['idTBActivity'];  // ID de la actividad
-    $imageIndexToDelete = (int)$_POST['imageIndex'];  // Índice de la imagen a eliminar
+    $activityId = $_POST['idTBActivity']; 
+    $imageIndexToDelete = (int)$_POST['imageIndex'];  
 
     $activityBusiness = new ActivityBusiness();
     $currentActivity = $activityBusiness->getActivityById($activityId);
     
-    // Asumimos que getTbactivityURL() devuelve un array, así que no necesitas hacer explode
-    $images = $currentActivity->getTbactivityURL();  // Obtener las URLs de las imágenes como un array
+    $images = $currentActivity->getTbactivityURL(); 
 
-    // Verificar si el índice de la imagen a eliminar existe
     if (isset($images[$imageIndexToDelete])) {
-        // Obtener la ruta completa de la imagen a eliminar
+        
         $filePath = '../images/activity/' . trim($images[$imageIndexToDelete]);
         
-        // Guardar la imagen que se eliminará
         $imageToDelete = trim($images[$imageIndexToDelete]);
         
-        // Eliminar la imagen del array
         unset($images[$imageIndexToDelete]);
         
-        // Actualizar las URLs de las imágenes en la base de datos
-        $newImageUrls = implode(',', $images);  // Volver a convertir el array a cadena
+        $newImageUrls = implode(',', $images);  
         $activityBusiness->removeImageFromActivity($activityId, $newImageUrls);
         
-        // Verificar si la imagen está en uso por otra actividad
         $imageInUse = $activityBusiness->isImageInUse($imageToDelete);
         
-        // Si la imagen no está en uso y existe en el sistema de archivos, se elimina
+        
         if (!$imageInUse && file_exists($filePath)) {
-            unlink($filePath);  // Eliminar la imagen del servidor
+            unlink($filePath);  
         }
 
         echo json_encode(['status' => 'success', 'message' => 'Imagen eliminada correctamente.']);

@@ -107,7 +107,7 @@ if (isset($_POST['update'])) {
         $currentTouristCompany = $touristCompanyBusiness->getById($id);
         $existingPhotoFileName = $currentTouristCompany->getTbtouristcompanyurl();
 
-        // Manejar la imagen si se ha subido una nueva
+    
         if (isset($_FILES['newImage']) && $_FILES['newImage']['error'] == UPLOAD_ERR_OK) {
             $uploadDir = '../images/';
             $fileName = basename($_FILES['newImage']['name']);
@@ -131,18 +131,18 @@ if (isset($_POST['update'])) {
         }
 
         if ($ownerId) {
-            // Crear objeto TouristCompany con los datos proporcionados
+           
             $touristCompany = new TouristCompany($id, $legalName, $magicName, $ownerId, $companyTypeId, $photoFileName, $status);
             
-            // Llamar al método de actualización
+        
             $result = $touristCompanyBusiness->update($touristCompany);
 
-            // Verificar el resultado devuelto por updateTouristCompany()
+         
             if ($result['status'] === 'success') {
                 header("location: ../view/touristCompanyView.php?success=updated");
                 exit();
             } elseif ($result['status'] === 'error' && strpos($result['message'], 'Ya existe una compañía turística') !== false) {
-                // Mostrar el mensaje de error si ya existe una compañía turística con el mismo nombre legal
+                
                 header("location: ../view/touristCompanyView.php?error=companyExists");
                 exit();
             } else {

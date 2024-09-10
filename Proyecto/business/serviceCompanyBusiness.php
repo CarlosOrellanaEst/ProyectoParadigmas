@@ -34,12 +34,6 @@ class serviceCompanyBusiness {
     public function updateTBServiceCompany($service) {
         return $this->serviceCompanyData->updateTBServiceCompany($service);
     }
-    /* 
-    public function getOneTBService($idService) {
-        return $this->serviceData->getTBRoll($idRoll);
-    }
 
-    
-     */
     
 }

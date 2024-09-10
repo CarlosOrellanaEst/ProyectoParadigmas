@@ -44,7 +44,7 @@ function showAlertBasedOnURL() {
             case 'updateFailed':
                 alert('Error al actualizar la empresa.');
                 break;
-            case 'companyExists':  // Añadido para manejar la empresa duplicada
+            case 'companyExists':  
                 alert('Ya existe una empresa turística con el mismo nombre legal y está activa.');
                 break;
             default:
