@@ -33,7 +33,7 @@ class TouristCompanyData extends Data{
         // Si la compañía ya existe y su estado es 1, retornar un mensaje de error
         if ($count > 0) {
             mysqli_close($conn);
-            return ['status' => 'error', 'message' => 'La compañía turística ya está registrada con estado activo.'];
+            return ['status' => 'error', 'message' => 'La compañía turística ya está registrada'];
         }
     
         // Si no existe, proceder con la inserción
@@ -170,7 +170,7 @@ public function getAllTouristCompanies() {
         // Si otra compañía con el mismo nombre y estado 1 ya existe, retornar un mensaje de error
         if ($count > 0) {
             mysqli_close($conn);
-            return ['status' => 'error', 'message' => 'Ya existe una compañía turística con ese nombre y está activa.'];
+            return ['status' => 'error', 'message' => 'Ya existe una compañía turística con el mismo nombre legal y está activa.'];
         }
     
         // Obtener la URL actual si no se ha proporcionado una nueva
