@@ -1,76 +1,171 @@
 <!DOCTYPE html>
+<html lang="es">
 <head>
-    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <a href="adminView.php">← Volver al inicio</a>
-    <title>CRUD Servicio</title>
+    <meta charset="UTF-8">
+    <title>Gestión de Servicios de Empresas</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-    <style>
-        td, th {
-            border-right: 1px solid;
-        }
-        .required {
-            color: red;
-        }
-    </style>
-    <script src="resources/AJAXCreateService.js"></script>
+    <?php
+        include '../business/serviceCompanyBusiness.php';
+        include '../business/TouristCompanyBusiness.php';
+
+        $serviceCompanyBusiness = new ServiceCompanyBusiness();
+        $services = $serviceCompanyBusiness->getAllTBServices();
+        $touristCompanyBusiness = new TouristCompanyBusiness();
+        $companies = $touristCompanyBusiness->getAll();
+        $imageBasePath = '../images/services/';
+    ?>
+    <script src="../resources/AJAXCreateService.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-    <header> 
-        <h1>CRUD Servicios</h1>
-        <p><span class="required">*</span> Campos requeridos</p>
+    <header>
+        <h1>CRUD Servicios de Empresas</h1>
+        <a href="../index.html">← Volver al inicio</a>
     </header>
-    <section>
-        <form method="POST"  id="formCreate" enctype="multipart/form-data">
-            <label for="serviceName">Nombre del servicio <span class="required">*</label>
-            <input placeholder="servicio" type="text" name="serviceName" id="serviceName"/><br><br>
-            <label for="images">Selecciona las imágenes del servicio (máximo 5):</label><br>
-            <input type="file" id="images" name="images[]" accept="image/*" multiple><br>
 
-            <input type="submit" value="Crear" name="create" id="create"/>
+    <section id="create">
+        <h2>Crear Servicios de Empresa</h2>
+        <form method="post" id="formCreate" action="../business/serviceCompanyAction.php" enctype="multipart/form-data">
+            <label for="companyID">Nombre de la Empresa Turística: </label>
+            <select name="companyID" id="companyID">
+                <?php foreach ($companies as $company): ?>
+                    <option value="<?php echo htmlspecialchars($company->getTbtouristcompanyid()); ?>">
+                        <?php echo htmlspecialchars($company->getTbtouristcompanymagicname()); ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+
+            <br><br>
+
+            <div id="attributes">
+                <div>
+                    <label for="serviceId1">Servicio: </label>
+                    <select name="serviceId[]" id="serviceId1" required>
+                        <?php foreach ($services as $service): ?>
+                            <option value="<?php echo htmlspecialchars($service->getIdTbservice()); ?>">
+                                <?php echo htmlspecialchars($service->getTbservicename()); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+            </div>
+            <button type="button" id="addAttribute">Agregar otro servicio</button>
+            <br>
+
+            <label for="imagenes">Selecciona las imágenes (una por cada servicio): </label>
+            <input type="file" name="imagenes[]" id="imagenes" multiple />
+            <br><br>
+
+            <input type="submit" value="Crear" name="create" id="create" />
         </form>
     </section>
-    <br><br>
+    <hr>
     <section>
-<!--         <table>
+        <h2>Buscar y Editar Servicios</h2>
+        <form id="formSearchOne" method="get">
+            <label for="searchOne">Buscar por nombre: </label>
+            <input type="text" placeholder="Nombre" name="searchOne" id="searchOne">
+            <input type="submit" value="Buscar" />
+        </form>
+        <br>
+        <div id="message" hidden></div>
+        <table>
             <thead>
                 <tr>
-                    <th>Nombre</th>
-                    <th>Descripción</th>
+                    <th>Nombre de la Empresa</th>
+                    <th>Nombre del Servicio</th>
+                    <th>Imágenes</th>
+                    <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
                 <?php
-                 /*    $serviceBusiness = new serviceBusiness();
-                    $allRolls = $rollBusiness->getAllTBRolls();
-                    $rollsFiltered = [];
+                $serviceCompanyBusiness = new ServiceCompanyBusiness();
+                $touristCompanyBusiness = new TouristCompanyBusiness();
+                $allServiceCompanies = $serviceCompanyBusiness->getAllTBServiceCompanies();
+                $allTouristCompanies = $touristCompanyBusiness->getAll();
+                $allServices = $serviceCompanyBusiness->getAllTBServices();
+                $serviceCompanyFiltered = [];
 
-                    // Filtrar los resultados si se ha realizado una búsqueda
-                    if (isset($_GET['searchOne'])) {
-                        $searchTerm = $_GET['searchOne'];
-                        $rollsFiltered  = array_filter($allRolls, function($roll) use ($searchTerm) {
-                            return stripos($roll->getNameTBRoll(), $searchTerm) !== false;
-                        });
-                    }
-                    if (count($rollsFiltered) > 0) {
-                        $allRolls = $rollsFiltered;
-                    }
+                // Filtrar los resultados si se ha realizado una búsqueda
+                if (isset($_GET['searchOne'])) {
+                    $searchTerm = $_GET['searchOne'];
+                    $serviceCompanyFiltered = array_filter($allServiceCompanies, function ($serviceCompany) use ($searchTerm) {
+                        return stripos($serviceCompany->getTbserviceid(), $searchTerm) !== false; // Ajusta según el campo por el que quieras buscar
+                    });
+                }
+                if (count($serviceCompanyFiltered) > 0) {
+                    $allServiceCompanies = $serviceCompanyFiltered;
+                }
 
-                    foreach ($allRolls as $current) {
-                        echo '<form method="post" action="../business/rollAction.php" onsubmit="return confirmDelete(event);">';
-                        echo '<input type="hidden" name="rollID" value="' . $current->getIdTBRoll() . '">';
+                if (count($allServiceCompanies) > 0) {
+                    foreach ($allServiceCompanies as $current) {
+                        $assignedCompany = $touristCompanyBusiness->getById($current->getTbtouristcompanyid());
+                        $assignedService = $serviceCompanyBusiness->getTBService($current->getTbserviceid());
                         echo '<tr>';
-                            echo '<td><input type="text" name="rollName" value="' . $current->getNameTBRoll() . '"/></td>';
-                            echo '<td><input type="text" name="rollDescription" value="' . $current->getDescriptionTBRoll() . '"/></td>';
-                            echo '<td>';
-                                echo '<input type="submit" value="Actualizar" name="update"/>';
-                                echo '<input type="submit" value="Eliminar" name="delete"/>';
-                            echo '</td>';
+                        echo '<form method="post" action="../business/serviceCompanyAction.php" enctype="multipart/form-data">';
+                        
+                        // Combobox para seleccionar la empresa
+                        echo '<td>';
+                        echo '<select name="companyId" required>';
+                        foreach ($allTouristCompanies as $company) {
+                            echo '<option value="' . htmlspecialchars($company->getTbtouristcompanyid()) . '"';
+                            if ($company->getTbtouristcompanyid() == $current->getTbtouristcompanyid()) {
+                                echo ' selected';
+                            }
+                            echo '>' . htmlspecialchars($company->getTbtouristcompanylegalname()) . '</option>';
+                        }
+                        echo '</select>';
+                        echo '</td>';
+
+                        // Combo para seleccionar el servicio
+                        echo '<td>';
+                        echo '<select name="serviceId" required>';
+                        foreach ($allServices as $service) {
+                            echo '<option value="' . htmlspecialchars($service->getIdTbservice()) . '"';
+                            if ($service->getIdTbservice() == $current->getTbserviceid()) {
+                                echo ' selected';
+                            }
+                            echo '>' . htmlspecialchars($service->getTbservicename()) . '</option>';
+                        }
+                        echo '</select>';
+                        echo '</td>';
+
+                        // Mostrar las imágenes
+                        $urls = explode(',', $current->getTbservicecompanyURL());
+                        echo '<td>';
+                        foreach ($urls as $url) {
+                            if (!empty($url)) {
+                                echo '<img src="' . $imageBasePath . trim($url) . '" alt="Foto" width="50" height="50" />';
+                            }
+                        }
+                        echo '</td>';
+
+                        // Seleccionar la imagen para eliminar
+                        echo '<td>';
+                        echo '<select name="imageIndex">';
+                        foreach ($urls as $index => $url) {
+                            echo '<option value="' . $index . '">Imagen ' . ($index + 1) . '</option>';
+                        }
+                        echo '</select>';
+                        echo '</td>';
+
+                        // Botones de acciones: Actualizar y Eliminar
+                        echo '<input type="hidden" name="serviceID" value="' . htmlspecialchars($current->getTbservicecompanyid()) . '">';
+                        echo '<td>';
+                        echo '<input type="submit" value="Actualizar" name="update" />';
+                        echo '<input type="submit" value="Eliminar" name="delete" />';
+                        echo '<input type="submit" value="Eliminar Imagen" name="deleteImage" />';
+                        echo '</td>';
+                        echo '</form>';
                         echo '</tr>';
-                        echo '</form>'; 
-                    }*/
+                    }
+                } else {
+                    echo '<tr><td colspan="4">No se encontraron resultados.</td></tr>';
+                }
                 ?>
             </tbody>
-        </table> -->
+        </table>
     </section>
 </body>
 </html>

@@ -1,10 +1,9 @@
-//Evento de create
+
 document.addEventListener('DOMContentLoaded', function () {
     
     document.getElementById('formCreate').addEventListener('submit', function (e) {
         e.preventDefault();
 
-        // Obtener los valores del formulario
         const ownerName = document.getElementById('name').value.trim();
         const ownerSurnames = document.getElementById('surnames').value.trim();
         const ownerLegalIdentification = document.getElementById('legalIdentification').value.trim();
@@ -12,8 +11,6 @@ document.addEventListener('DOMContentLoaded', function () {
         const ownerEmail = document.getElementById('email').value.trim();
         const imageFile = document.getElementById('imagen').files[0];
 
-        // Validaciones
-        
         if (ownerLegalIdentification === '') {
             alert('La identificación legal no puede estar vacía.');
             return;
@@ -68,7 +65,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
-//Evento de eliminar
 function confirmDelete(event) {
     if (event.submitter && event.submitter.name === 'delete') {
         return confirm('¿Estás seguro de que deseas eliminar este dueño?');
@@ -76,7 +72,6 @@ function confirmDelete(event) {
     return true;
 }
 
-//Evento de actuallizar
 function showAlertBasedOnURL() {
     const urlParams = new URLSearchParams(window.location.search);
     const paramSuccess = urlParams.get('success');
@@ -143,7 +138,7 @@ function redirectToCleanURL() {
 
 window.onload = function () {
     showAlertBasedOnURL();
-    redirectToCleanURL(); // Esto limpiará la URL después de mostrar los mensajes de alerta.
+    redirectToCleanURL();
 };
 
 window.onload = showAlertBasedOnURL;

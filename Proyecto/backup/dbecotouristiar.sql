@@ -158,7 +158,30 @@ COMMIT;
   (5, 'Actividades Recreativas', 'Organización de actividades recreativas y eventos para turistas.', 1);
   COMMIT;
 
+CREATE TABLE `tbservice`(
+  `tbserviceid` int(11) NOT NULL,
+  `tbservicename` varchar (255) NOT NULL,
+  `tbservicedescription` TEXT  NOT NULL,
+  `tbservicetatus` tinyint(1) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+CREATE TABLE `tbservicecompany`(
+  `tbservicecompanyid` int(11) NOT NULL,
+  `tbtouristcompanyid` int(11) NOT NULL,
+  `tbserviceid` int(11) NOT NULL,
+  `tbservicecompanyURL` TEXT  NOT NULL,
+  `tbservicetatus` tinyint(1) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE `tbactivity` (
+  `tbactivityid` int(11) NOT NULL,
+  `tbactivityname` varchar(255) NOT NULL,
+  `tbservicecompanyid` int(11) NOT NULL,
+  `tbactivityatributearray` varchar(255) NOT NULL,
+  `tbactivitydataarray` varchar(255) NOT NULL,
+  `tbactivityurl` TEXT  NOT NULL,
+  `tbactivitystatus` tinyint(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
   --
   -- Volcado de datos para la tabla `tbowner`

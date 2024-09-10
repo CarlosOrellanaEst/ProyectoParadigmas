@@ -33,4 +33,12 @@ class ActivityBusiness {
     public function getActivityByName($name) {
         return $this->activityData->getActivityByName($name);
     }
+
+    public function removeImageFromActivity($activityId, $newImageUrls){
+        return $this->activityData->removeImageFromActivity($activityId, $newImageUrls);
+    }
+
+    public function isImageInUse($imageToDelete){
+        return $this->activityData->isImageInUse($imageToDelete);
+    }
 }

@@ -1,25 +1,39 @@
 <?php
 
 include_once 'data.php';
-include_once '../domain/activity.php';
+include_once '../domain/Activity.php';
 
-class ActivityData extends Data {
+class activityData extends Data {
 
     public function insertActivity($activity) {
-
         $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
         if (!$conn) {
             die("Connection failed: " . mysqli_connect_error());
         }
-
+    
         $conn->set_charset('utf8mb4');
+    
 
-        // Verificar si la actividad ya existe
-        if ($this->getActivityByName($activity->getNameTBActivity())) {
-            return null; // La actividad ya existe
+        $tbactivityname = $activity->getNameTBActivity();
+        $checkQuery = "SELECT COUNT(*) FROM tbactivity WHERE tbactivityname = ? AND tbactivitystatus = 1";
+        $stmtCheck = $conn->prepare($checkQuery);
+        if ($stmtCheck === false) {
+            die("Prepare failed: " . $conn->error);
         }
+    
+        $stmtCheck->bind_param("s", $tbactivityname);
+        $stmtCheck->execute();
+        $stmtCheck->bind_result($count);
+        $stmtCheck->fetch();
+        $stmtCheck->close();
+    
 
-        // Obtener el próximo ID
+        if ($count > 0) {
+            mysqli_close($conn);
+            return ['status' => 'error', 'message' => 'Ya existe una actividad con el mismo nombre y está activa.'];
+        }
+    
+   
         $queryGetLastId = "SELECT MAX(tbactivityid) AS tbactivityid FROM tbactivity";
         $idCont = mysqli_query($conn, $queryGetLastId);
         $nextId = 1;
@@ -27,33 +41,35 @@ class ActivityData extends Data {
             $lastId = $row[0] !== null ? (int)trim($row[0]) : 0;
             $nextId = $lastId + 1;
         }
-
-        // Insertar la actividad
-        $queryInsert = "INSERT INTO tbactivity (tbactivityid, tbactivityname, tbactivityatributearray, tbactivitydataarray, tbactivitystatus) VALUES (?, ?, ?, ?, ?)";
+  
+        $queryInsert = "INSERT INTO tbactivity (tbactivityid, tbactivityname, tbservicecompanyid, tbactivityatributearray, tbactivitydataarray, tbactivityurl, tbactivitystatus) 
+                        VALUES (?, ?, ?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($queryInsert);
         if ($stmt === false) {
             die("Prepare failed: " . $conn->error);
         }
-
+    
         $tbactivityid = $nextId;
-        $tbactivityname = $activity->getNameTBActivity();
-        $tbactivityatributearray = $activity->getAttributeTBActivityArray();
-        $tbactivitydataarray = $activity->getDataAttributeTBActivityArray();
+        $tbServicesid = $activity->getTbservicecompanyid();
+        $tbactivityatributearray = implode(",", $activity->getAttributeTBActivityArray());
+        $tbactivitydataarray = implode(",", $activity->getDataAttributeTBActivityArray());
+        $imageUrls = is_array($activity->getTbactivityURL()) ? implode(',', $activity->getTbactivityURL()) : $activity->getTbactivityURL();
         $tbactivitystatus = $activity->getStatusTBActivity();
-
-        $stmt->bind_param("isssi", $tbactivityid, $tbactivityname, $tbactivityatributearray, $tbactivitydataarray, $tbactivitystatus);
+    
+        $stmt->bind_param("isisssi", $tbactivityid, $tbactivityname, $tbServicesid, $tbactivityatributearray, $tbactivitydataarray, $imageUrls, $tbactivitystatus);
         $result = $stmt->execute();
-
+    
         if (!$result) {
             echo "Execute failed: " . $stmt->error;
         }
-
+    
         $stmt->close();
         mysqli_close($conn);
-
+    
         return $result;
     }
-
+    
+    
     public function getAllActivities() {
         $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
         if (!$conn) {
@@ -63,27 +79,31 @@ class ActivityData extends Data {
     
         $query = "SELECT * FROM tbactivity WHERE tbactivitystatus = 1;";
         $result = mysqli_query($conn, $query);
-    
+  
         $activities = array();
     
         while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
-            // Decodificar JSON a array de PHP
-            $attributeArray = json_decode($row['tbactivityatributearray'], true);
-            $dataArray = json_decode($row['tbactivitydataarray'], true);
+           
+            $attributeArray = explode(',', $row['tbactivityatributearray']);
+            $dataArray = explode(',', $row['tbactivitydataarray']);
     
-            // Verificar si la decodificación fue exitosa
-            if ($attributeArray === null || $dataArray === null) {
-                // Manejar el error según sea necesario
-                continue; // O podrías lanzar una excepción
+            
+            if (count($attributeArray) !== count($dataArray)) {
+               
+                continue;
             }
     
+
             $activity = new Activity(
                 $row['tbactivityid'],
                 $row['tbactivityname'],
-                $attributeArray,  // Pasar los arrays decodificados
-                $dataArray,       // Pasar los arrays decodificados
+                $attributeArray, 
+                $dataArray,       
+                $row['tbactivityurl'],
                 $row['tbactivitystatus']
             );
+            $photoUrls = explode(',', $row['tbactivityurl']);
+            $activity->setTbactivityURL(array_map('trim', $photoUrls)); 
     
             $activities[] = $activity;
         }
@@ -92,6 +112,7 @@ class ActivityData extends Data {
     
         return $activities;
     }
+    
     
 
     public function deleteActivity($id) {
@@ -123,90 +144,218 @@ class ActivityData extends Data {
         if (!$conn) {
             die("Connection failed: " . mysqli_connect_error());
         }
+    
         $conn->set_charset('utf8mb4');
-
-        $query = "UPDATE tbactivity SET tbactivityname=?, tbactivityatributearray=?, tbactivitydataarray=?, tbactivitystatus=? WHERE tbactivityid=?";
-
-        $stmt = $conn->prepare($query);
+    
+   
+        $tbactivityname = $activity->getNameTBActivity();
+        $tbactivityid = $activity->getIdTBActivity();
+    
+        $checkQuery = "SELECT COUNT(*) FROM tbactivity WHERE tbactivityname = ? AND tbactivityid != ? AND tbactivitystatus = 1";
+        $stmtCheck = $conn->prepare($checkQuery);
+        if ($stmtCheck === false) {
+            die("Prepare failed: " . $conn->error);
+        }
+    
+        $stmtCheck->bind_param("si", $tbactivityname, $tbactivityid);
+        $stmtCheck->execute();
+        $stmtCheck->bind_result($count);
+        $stmtCheck->fetch();
+        $stmtCheck->close();
+    
+ 
+        if ($count > 0) {
+            mysqli_close($conn);
+            return ['status' => 'error', 'message' => 'Ya existe una actividad con el mismo nombre y está activa.'];
+        }
+   
+        $queryUpdate = "UPDATE tbactivity
+                        SET tbactivityname = ?, tbservicecompanyid = ?, tbactivityatributearray = ?, tbactivitydataarray = ?, tbactivityurl = ?, tbactivitystatus = ?
+                        WHERE tbactivityid = ?";
+        $stmt = $conn->prepare($queryUpdate);
         if ($stmt === false) {
             die("Prepare failed: " . $conn->error);
         }
-
-        if ($this->getActivityByName($activity->getNameTBActivity())->getNameTBActivity() === $activity->getNameTBActivity()) {
-            $tbactivityid = $activity->getIdTBActivity();
-            $tbactivityname = $activity->getNameTBActivity();
-            $tbactivityatributearray = $activity->getAttributeTBActivityArray();
-            $tbactivitydataarray = $activity->getDataAttributeTBActivityArray();
-            $tbactivitystatus = $activity->getStatusTBActivity();
-
-            $stmt->bind_param("sssii", $tbactivityname, $tbactivityatributearray, $tbactivitydataarray, $tbactivitystatus, $tbactivityid);
-
-            $result = $stmt->execute();
-        } else {
-            return $result = null;
+    
+        $tbServicesid = $activity->getTbservicecompanyid();
+        $tbactivityatributearray = is_array($activity->getAttributeTBActivityArray()) ? implode(",", $activity->getAttributeTBActivityArray()) : '';
+        $tbactivitydataarray = is_array($activity->getDataAttributeTBActivityArray()) ? implode(",", $activity->getDataAttributeTBActivityArray()) : '';
+        $imageUrls = is_array($activity->getTbactivityURL()) ? implode(',', $activity->getTbactivityURL()) : $activity->getTbactivityURL();
+        $tbactivitystatus = $activity->getStatusTBActivity();
+   
+        $stmt->bind_param("sisssii", $tbactivityname, $tbServicesid, $tbactivityatributearray, $tbactivitydataarray, $imageUrls, $tbactivitystatus, $tbactivityid);
+        $result = $stmt->execute();
+    
+        if (!$result) {
+            echo "Execute failed: " . $stmt->error;
         }
+    
         $stmt->close();
         mysqli_close($conn);
-
+    
         return $result;
     }
-
+    
+    
+    
     public function getActivityById($id) {
         $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
         if (!$conn) {
             die("Connection failed: " . mysqli_connect_error());
         }
         $conn->set_charset('utf8mb4');
-
-        $query = "SELECT * FROM tbactivity WHERE tbactivityid=?";
-
+   
+        $query = "SELECT tbactivityid, tbactivityname, tbservicecompanyid, tbactivityatributearray, tbactivitydataarray, tbactivityurl, tbactivitystatus 
+                  FROM tbactivity 
+                  WHERE tbactivityid = ? AND tbactivitystatus = 1";
+    
         $stmt = $conn->prepare($query);
         if ($stmt === false) {
             die("Prepare failed: " . $conn->error);
         }
-
+    
         $stmt->bind_param("i", $id);
-
         $stmt->execute();
-
-        $stmt->bind_result($tbactivityid, $tbactivityname, $tbactivityatributearray, $tbactivitydataarray, $tbactivitystatus);
-
-        $stmt->fetch();
-
-        $activity = new Activity($tbactivityid, $tbactivityname, $tbactivityatributearray, $tbactivitydataarray, $tbactivitystatus);
-
-        $stmt->close();
-        mysqli_close($conn);
-
-        return $activity;
-    }
-
-    public function getActivityByName($activityName) {
-        $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
-        if (!$conn) {
-            die("Connection failed: " . mysqli_connect_error());
-        }
-        $conn->set_charset('utf8mb4');
-
-        $query = "SELECT tbactivityid, tbactivityname, tbactivityatributearray, tbactivitydataarray, tbactivitystatus FROM tbactivity WHERE tbactivityname=?";
-
-        $stmt = $conn->prepare($query);
-        if ($stmt === false) {
-            die("Prepare failed: " . $conn->error);
-        }
-
-        $stmt->bind_param("s", $activityName);
-        $stmt->execute();
-        $stmt->bind_result($tbactivityid, $tbactivityname, $tbactivityatributearray, $tbactivitydataarray, $tbactivitystatus);
-
+    
+        $stmt->bind_result($tbactivityid, $tbactivityname, $tbservicecompanyid, $tbactivityatributearray, $tbactivitydataarray, $tbactivityurl, $tbactivitystatus);
+    
+    
         $activity = null;
+    
         if ($stmt->fetch()) {
-            $activity = new Activity($tbactivityid, $tbactivityname, $tbactivityatributearray, $tbactivitydataarray, $tbactivitystatus);
+
+            $attributeArray = explode(',', $tbactivityatributearray);
+            $dataArray = explode(',', $tbactivitydataarray);
+            $urlArray = explode(',', $tbactivityurl);
+    
+            if (count($attributeArray) === count($dataArray)) {
+                $activity = new Activity(
+                    $tbactivityid, 
+                    $tbactivityname, 
+                    $tbservicecompanyid, 
+                    $attributeArray, 
+                    $dataArray, 
+                    $urlArray, 
+                    $tbactivitystatus
+                );
+            }
         }
 
         $stmt->close();
         mysqli_close($conn);
+    
 
         return $activity;
     }
+    
+
+public function getActivityByName($activityName) {
+
+    $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
+    if (!$conn) {
+        die("Connection failed: " . mysqli_connect_error());
+    }
+    $conn->set_charset('utf8mb4');
+
+
+    $query = "SELECT tbactivityid, tbactivityname, tbservicecompanyid, tbactivityatributearray, tbactivitydataarray, tbactivityurl, tbactivitystatus 
+              FROM tbactivity 
+              WHERE tbactivityname = ?";
+
+
+    $stmt = $conn->prepare($query);
+    if ($stmt === false) {
+        die("Prepare failed: " . $conn->error);
+    }
+
+
+    $stmt->bind_param("s", $activityName);
+    $stmt->execute();
+
+
+    $stmt->bind_result($tbactivityid, $tbactivityname, $tbservicecompanyid, $tbactivityatributearray, $tbactivitydataarray, $tbactivityurl, $tbactivitystatus);
+
+    $activity = null;
+
+
+    if ($stmt->fetch()) {
+
+        $activity = new Activity($tbactivityid, $tbactivityname, $tbservicecompanyid, $tbactivityatributearray, $tbactivitydataarray, $tbactivityurl, $tbactivitystatus);
+    }
+
+    $stmt->close();
+    mysqli_close($conn);
+
+    return $activity;
+}
+
+public function removeImageFromActivity($activityId, $newImageUrls){
+  
+    $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
+    if (!$conn) {
+        die("Connection failed: " . mysqli_connect_error());
+    }
+    $conn->set_charset('utf8mb4');
+
+    if (is_array($newImageUrls)) {
+        $newImageUrlsString = implode(',', $newImageUrls);
+    } else {
+     
+        $newImageUrlsString = $newImageUrls;
+    }
+
+   
+    $query = "UPDATE tbactivity SET tbactivityurl = ? WHERE tbactivityid = ?";
+
+ 
+    $stmt = $conn->prepare($query);
+    if ($stmt === false) {
+        die("Prepare failed: " . $conn->error);
+    }
+
+    $stmt->bind_param("si", $newImageUrlsString, $activityId);
+    $result = $stmt->execute();
+
+  
+    $stmt->close();
+    mysqli_close($conn);
+
+
+    return $result;
+}
+
+
+public function isImageInUse($imageToDelete){
+  
+    $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
+    if (!$conn) {
+        die("Connection failed: " . mysqli_connect_error());
+    }
+    $conn->set_charset('utf8mb4');
+
+    
+    $query = "SELECT COUNT(*) FROM tbactivity WHERE tbactivityurl LIKE ?";
+
+    $stmt = $conn->prepare($query);
+    if ($stmt === false) {
+        die("Prepare failed: " . $conn->error);
+    }
+
+    $stmt->bind_param("s", $imageToDelete);
+    $stmt->execute();
+
+
+    $stmt->bind_result($count);
+
+
+    $stmt->fetch();
+
+
+    $stmt->close();
+    mysqli_close($conn);
+
+    
+    return $count > 0;
+}
+
 }

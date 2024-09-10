@@ -60,7 +60,6 @@
                         $all = $touristCompanyTypeBusiness->getAll();
                         $companyTypeFiltered = [];
 
-                        // Filtrar los resultados si se ha realizado una búsqueda
                         if (isset($_GET['searchOne'])) {
                             $searchTerm = $_GET['searchOne'];
                             $companyTypeFiltered  = array_filter($all, function($touristCompanyTypeBusiness) use ($searchTerm) {

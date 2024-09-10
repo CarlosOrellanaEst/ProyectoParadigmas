@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function () { 
-    //Create Roll
     document.getElementById('formCreate').addEventListener('submit', function (e) {
         e.preventDefault();
     
@@ -25,7 +24,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         if (response.status === 'success') {
                             alert(response.message);
                             document.getElementById('formCreate').reset();
-                            redirectToCleanURL(); // Redirigir a la URL limpia después de crear una cuenta.
+                            redirectToCleanURL();
                             location.reload();
                         } else {
                             alert('Error: ' + response.message);
@@ -51,5 +50,5 @@ function redirectToCleanURL() {
 
 window.onload = function () {
     showAlertBasedOnURL();
-    redirectToCleanURL(); // Esto limpiará la URL después de mostrar los mensajes de alerta.
+    redirectToCleanURL();
 };

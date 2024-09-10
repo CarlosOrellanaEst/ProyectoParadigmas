@@ -73,7 +73,6 @@
                 $allowners = $ownerBusiness->getAllTBOwner();
                 $ownersFiltered = [];
 
-                // Filtrar los resultados si se ha realizado una búsqueda
                 if (isset($_GET['searchOne'])) {
                     $searchTerm = $_GET['searchOne'];
                     $ownersFiltered = array_filter($allowners, function ($owner) use ($searchTerm) {
@@ -102,7 +101,6 @@
                     echo '<td><input type="text" name="ownerEmail" value="' . $current->getEmail() . '"/></td>';
                     echo '<td><input type="text" name="ownerDirection" value="' . $current->getDirectionTBOwner() . '"/></td>';
 
-                    // Mostrar la imagen
                     $photoUrl = $current->getPhotoURLTBOwner();
                     echo '<td><img src="../images/' . $photoUrl . '" alt="Foto" width="75" height="75" /></td>';
 

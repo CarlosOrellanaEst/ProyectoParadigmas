@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function () { 
-    //Create Roll
     document.getElementById('formCreate').addEventListener('submit', function (e) {
         e.preventDefault();
     
@@ -49,5 +48,5 @@ function redirectToCleanURL() {
 
 window.onload = function () {
     showAlertBasedOnURL();
-    redirectToCleanURL(); // Esto limpiará la URL después de mostrar los mensajes de alerta.
+    redirectToCleanURL(); 
 };
