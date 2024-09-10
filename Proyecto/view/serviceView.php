@@ -32,7 +32,7 @@
     <section id="create">
         <h2>Crear Servicio</h2>
         <form method="post" id="formCreate" action="../business/serviceCompanyAction.php" enctype="multipart/form-data">
-            <label for="companyID">Nombre de la Empresa Turística: </label>
+            <label for="companyID">Nombre de la Empresa Turística <span class="required">*</label>
             <select name="companyID" id="companyID" required>
                 <?php foreach ($companies as $company): ?>
                     <option value="<?php echo htmlspecialchars($company->getTbtouristcompanyid()); ?>">
@@ -57,7 +57,7 @@
             <button type="button" id="addService">Agregar otro servicio</button>
             <br>
 
-            <label for="imagenes">Selecciona las imágenes (una por cada servicio): <span class="required">*</label>
+            <label for="imagenes">Selecciona las imágenes (una por cada servicio)</label><br>
             <input type="file" name="imagenes[]" id="imagenes" multiple />
             <br><br>
 
