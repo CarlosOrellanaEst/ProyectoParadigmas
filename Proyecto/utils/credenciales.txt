@@ -1,0 +1,13 @@
+Datos de inicio de sesion:
+
+Admin
+usuario: admin
+contrasenia:admin
+
+Propietario
+usuario: propietario
+contrasenia: propietario
+
+Turista
+usuario:turista
+contrasenia:turista
