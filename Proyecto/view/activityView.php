@@ -44,7 +44,7 @@
     <section id="create">
         <h2>Crear Actividad</h2>
         <form method="post" id="formCreate" action="../business/activityAction.php" enctype="multipart/form-data">
-            <label for="nameTBActivity">Nombre de la Actividad: </label>
+            <label for="nameTBActivity">Nombre de la Actividad <span class="required">*</label>
             <input placeholder="Nombre de la Actividad" type="text" name="nameTBActivity" id="nameTBActivity" required />
             <br><br>
             <label for="serviceId1">Servicio: </label>
@@ -59,9 +59,9 @@
             <div id="attributes">
                 <div>
                     <label for="attribute1">Atributo: </label>
-                    <input type="text" name="attributeTBActivityArray" id="attribute1" placeholder="Atributo" required />
+                    <input type="text" name="attributeTBActivityArray" id="attribute1" placeholder="Atributo"  />
                     <label for="dataAttributeTBActivityArray">Dato: </label>
-                    <input type="text" name="dataAttributeTBActivityArray" placeholder="Dato" required />
+                    <input type="text" name="dataAttributeTBActivityArray" placeholder="Dato"  />
                 </div>
             </div>
             <button type="button" id="addAttribute">Agregar otro atributo</button>

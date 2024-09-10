@@ -5,6 +5,11 @@
     <title>Gestión de Servicios</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <script src="../resources/AJAXCreateService.js"></script>
+    <style>
+        .required {
+            color: red;
+        }
+    </style>
     <?php
         include '../business/serviceCompanyBusiness.php';
         include '../business/TouristCompanyBusiness.php';
@@ -18,9 +23,10 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
+    <a href="adminView.php">← Volver al inicio</a>
     <header>
         <h1>CRUD Servicios</h1>
-        <a href="../index.html">← Volver al inicio</a>
+        <p><span class="required">*</span> Campos requeridos</p>
     </header>
 
     <section id="create">
@@ -38,7 +44,7 @@
 
             <div id="servicesContainer">
                 <div>
-                    <label for="serviceId1">Servicio: </label>
+                    <label for="serviceId1">Servicio <span class="required">*</label>
                     <select name="serviceId" id="serviceId1" required>
                         <?php foreach ($services as $service): ?>
                             <option value="<?php echo htmlspecialchars($service->getIdTbservice()); ?>">
@@ -51,7 +57,7 @@
             <button type="button" id="addService">Agregar otro servicio</button>
             <br>
 
-            <label for="imagenes">Selecciona las imágenes (una por cada servicio): </label>
+            <label for="imagenes">Selecciona las imágenes (una por cada servicio): <span class="required">*</label>
             <input type="file" name="imagenes[]" id="imagenes" multiple />
             <br><br>
 
