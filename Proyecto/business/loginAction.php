@@ -21,7 +21,7 @@ if (isset($_POST['nickName']) && isset($_POST['password'])) {
         $response['success'] = true;
         $response['message'] = "Bienvenido " . $user->getName();       
         $response['userType'] = $user->getUserType();
-        Utils::$userLogged = $user;
+        Utils::setUserLogged($user);
    //     error_log("User Type: " . $response['userType']);
     } else {
         $response['success'] = false;

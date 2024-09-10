@@ -19,6 +19,16 @@ class User extends Person{
         $this->userType = $userType;
     }
 
+    // Constructor sin parámetros
+    function User() {
+        parent::__construct();
+        $this->id = 0;
+        $this->nickname = "";
+        $this->password = "";
+        $this->active = false;
+        $this->userType = "";
+    }
+
     // Getters
     public function getId() {
         return $this->id;
@@ -57,5 +67,17 @@ class User extends Person{
     }
     public function setUserType($userType) {
         $this->userType = $userType;
+    }
+    public function __toString() {
+        return "User ID: " . $this->id . "\n" .
+               "Nickname: " . $this->nickname . "\n" .
+               "Password: " . $this->password . "\n" .
+               "Active: " . ($this->active ? "Yes" : "No") . "\n" .
+               "User Type: " . $this->userType . "\n" .
+               "Name: " . $this->getName() . "\n" .
+               "Surnames: " . $this->getSurnames() . "\n" .
+               "Legal Identification: " . $this->getLegalIdentification() . "\n" .
+               "Phone: " . $this->getPhone() . "\n" .
+               "Email: " . $this->getEmail() . "\n";
     }
 }
