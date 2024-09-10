@@ -17,7 +17,7 @@
 </head>
 <body>
     <header>
-        <a href="../index.html">← Volver al inicio</a>
+        <a href="adminView.php">← Volver al inicio</a>
         <h1>CRUD Propietarios</h1>
         <p><span class="required">*</span> Campos requeridos</p>
     </header>
