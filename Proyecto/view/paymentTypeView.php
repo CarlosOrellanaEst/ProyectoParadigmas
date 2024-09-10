@@ -87,7 +87,6 @@
                     $all = $paymentTypeBusiness->getAll();
                     $bankAccountFiltered = [];
 
-                    // Filtrar resultados si se ha realizado una búsqueda
                     if (isset($_GET['searchOne'])) {
                         $searchTerm = $_GET['searchOne'];
                         $bankAccountFiltered = array_filter($all, function($bankAccount) use ($searchTerm) {

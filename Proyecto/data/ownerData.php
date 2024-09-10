@@ -12,7 +12,6 @@ class ownerData extends Data {
         }
         $conn->set_charset('utf8');
     
-        // Obtiene el último id de Owner
         $queryGetLastId = "SELECT MAX(tbownerid) AS idtbowner FROM tbowner";
         $idCont = mysqli_query($conn, $queryGetLastId);
         if ($idCont === false) {
@@ -25,7 +24,6 @@ class ownerData extends Data {
             $nextIdOwner = $lastId + 1;
         }
 
-        // Obtiene el último id de User
         $queryGetLastId = "SELECT MAX(tbuserid) AS idtbuser FROM tbuser";
         $idCont = mysqli_query($conn, $queryGetLastId);
         if ($idCont === false) {
@@ -54,7 +52,6 @@ class ownerData extends Data {
         $existsPhone = $phone ? $this->getTBOwnerByPhone($phone) : false;
         $existsLegalId = $this->getTBOwnerByLegalId($legalIdentification);
     
-        // Validaciones de duplicado
         if ($existsEmail) {
             if ($this->getTBOwnerExistsIsActive($existsEmail)) {
                 mysqli_close($conn);
@@ -125,7 +122,6 @@ class ownerData extends Data {
                 }
             }
         } else {
-            // Inserción en user primero para despues insertar en owner
             $queryInsertUsers = "INSERT INTO tbuser (tbuserid, tbusername, tbusersurnames, tbuserlegalidentification, tbuserphone, tbuseremail, tbusernickname, tbuserpassword, tbrollid, tbuserstatus) VALUES (?,?,?,?,?,?,?,?,?,?)";	
 
             $stmt = $conn->prepare($queryInsertUsers);
@@ -138,7 +134,6 @@ class ownerData extends Data {
             $result = $stmt->execute();
             $stmt->close();
     
-            // si inserta bien en la tabla User, entonces inserta en la tabla owner
             if ($result) {
                 $queryInsert = "INSERT INTO tbowner (tbownerid, tbuserid, tbownerdirection, tbownerphotourl, tbownerstatus ) 
                 VALUES (?, ?, ?, ?, ?)";
@@ -164,7 +159,7 @@ class ownerData extends Data {
             }
         }
     }
-       // lee todos
+    
     public function getAllTBOwner() {
         $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
         if (!$conn) {
@@ -173,7 +168,6 @@ class ownerData extends Data {
         $conn->set_charset('utf8');
 
         $query = "SELECT * FROM tbowner INNER JOIN tbuser ON tbowner.tbuserid = tbuser.tbuserid WHERE tbownerstatus=1 AND tbuserstatus=1;"; 
-        // $query = "SELECT * FROM tbowner WHERE tbownerstatus = 1;";
         
         $result = mysqli_query($conn, $query);
     
@@ -185,12 +179,7 @@ class ownerData extends Data {
             );
             array_push($owners, $currentOwner);
         }
-         	 	 	 	 	 	 	 	 	 	
-        // while ($row = mysqli_fetch_assoc($result)) {
-        //     $currentOwner = new Owner($row['tbownerid'],$row['tbownerdirection'], $row['tbownername'], $row['tbownersurnames'], $row['tbownerlegalidentification'], $row['tbownerphone'], $row['tbowneremail'], $row['tbownerphotourl'], $row['tbownerstatus']);
-        //     array_push($owners, $currentOwner);
-        // }
-    
+        
         mysqli_close($conn);
         return $owners;
     } 
@@ -203,7 +192,6 @@ class ownerData extends Data {
         $conn->set_charset('utf8');  
         $query = "SELECT * FROM tbowner INNER JOIN tbuser ON tbowner.tbuserid = tbuser.tbuserid WHERE tbownerid = $idTBOwner"; 
     
-        // $query = "SELECT * FROM tbowner WHERE tbownerid = $idTBOwner";
         $result = mysqli_query($conn, $query);
     
         if ($row = mysqli_fetch_assoc($result)) {
@@ -242,20 +230,9 @@ class ownerData extends Data {
         $phoneResult = mysqli_query($conn, $phoneQuery);
         $legalIdQuery = "SELECT * FROM tbuser WHERE tbuserlegalidentification = '$newLegalIdentification' AND tbuserid != $idUser AND tbuserstatus = 1";
         $legalIdResult = mysqli_query($conn, $legalIdQuery);
-
-
- 
-
-        // Verificar duplicados
-        /*$emailQuery = "SELECT * FROM tbuser WHERE tbuseremail = '$newEmail' AND tbuserid != $idUser";
-        $emailResult = mysqli_query($conn, $emailQuery);
-        $phoneQuery = "SELECT * FROM tbuser WHERE tbuserphone = '$newPhone' AND tbuserid != $idUser";
-        $phoneResult = mysqli_query($conn, $phoneQuery);
-        $legalIdQuery = "SELECT * FROM tbuser WHERE tbuserlegalidentification = '$newLegalIdentification' AND tbuserid != $idUser";
-        $legalIdResult = mysqli_query($conn, $legalIdQuery);*/
     
         $legalIdResult = mysqli_query($conn, $legalIdQuery);
-        //$varReturn = false;
+       
         if (mysqli_num_rows($emailResult) > 0) {
             $result = "Email";
         } else if (mysqli_num_rows($phoneResult) > 0) {
@@ -263,9 +240,8 @@ class ownerData extends Data {
         } else if (mysqli_num_rows($legalIdResult) > 0) {
             $result = "LegalId";
         } else {
-            //$varReturn = false;
             $query = "UPDATE tbuser SET tbusername = '$newName', tbusersurnames = '$newSurnames', tbuserlegalidentification = '$newLegalIdentification', tbuserphone = '$newPhone', tbuseremail = '$newEmail' WHERE tbuserid = $idUser";
-            // si actualizamos tbuser, actualizamos los de tbowner
+           
             $result = mysqli_query($conn, $query) ? 1 : "dbError";
             if ($result==1) {
                 $query = "UPDATE tbowner SET tbownerdirection = '$newDirection' WHERE tbuserid= $idUser";
@@ -286,7 +262,6 @@ class ownerData extends Data {
         $queryUpdateUser = "UPDATE tbuser SET tbuserstatus = 0 WHERE tbuserid=" . $idUser . ";";
         $result = mysqli_query($conn, $queryUpdateUser);
         $varReturn = false;
-        // si elimina de la tabla User, entonces elimina de la tabla owner
         if ($result) {
             $varReturn = true;
             $queryUpdateOwner = "UPDATE tbowner SET tbownerstatus = 0 WHERE tbownerid=" . $idOwner . ";";
@@ -323,6 +298,7 @@ class ownerData extends Data {
         mysqli_close($conn);
         return $ownerReturn;
     } 
+
     public function getTBOwnerByPhone($ownerPhone) {
         $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
         if (!$conn) {
@@ -389,7 +365,6 @@ class ownerData extends Data {
     
         if ($row = mysqli_fetch_assoc($result)) {
             $ownerReturn = new Owner($row['tbownerid'], $row['tbuserid'], $row['tbownerdirection'], $row['tbownerphotourl'], $row['tbownerstatus']);
-      //      echo ($row['tbownerid']. $row['tbuserid']. $row['tbownerdirection']. $row['tbownerphotourl']. $row['tbownerstatus']);
         } else {
             $ownerReturn = null;
         }

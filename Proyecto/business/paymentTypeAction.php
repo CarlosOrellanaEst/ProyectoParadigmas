@@ -10,7 +10,7 @@ $response = array();
 if (isset($_POST['accountNumber'])) {
     $ownerId = trim($_POST['ownerId']);
     $accountNumber = trim($_POST['accountNumber']);
-    $sinpeNumber = trim($_POST['sinpeNumber']); // número de SINPE
+    $sinpeNumber = trim($_POST['sinpeNumber']); 
 
     $response = [];
     $generalValidations = new generalValidations();
@@ -25,7 +25,6 @@ if (isset($_POST['accountNumber'])) {
         $paymentType = new PaymentType(0, $ownerId, $accountNumber, $sinpeNumber, 1);
         $paymentTypeBusiness = new paymentTypeBusiness();
 
-        // Validar que el número SINPE, si existe, sea válido (opcional)
         if (!empty($sinpeNumber)) {
             if (!is_numeric($sinpeNumber)) {
                 $response['status'] = 'error';
@@ -36,11 +35,9 @@ if (isset($_POST['accountNumber'])) {
             }
         }
 
-        // Si no hubo errores en las validaciones
         if (!isset($response['status'])) {
             $result = $paymentTypeBusiness->insert($paymentType);
 
-            // Verificar el resultado de la inserción y responder
             if ($result['status'] === 'success') {
                 $response['status'] = 'success';
                 $response['message'] = 'Tipo de pago agregado correctamente.';
@@ -70,6 +67,7 @@ if (isset($_POST['delete'])) {
         header("location: ../view/paymentTypeView.php?error=emptyField");
     }
 } 
+
 if (isset($_POST['update'])) {
     if (isset($_POST['SinpeNumber']) && isset($_POST['AccountNumber']) && isset($_POST['Status']) && isset($_POST['tbpaymentTypeid'])) {
         $SinpeNumber = trim($_POST['SinpeNumber']);
@@ -78,19 +76,16 @@ if (isset($_POST['update'])) {
         $id = trim($_POST['tbpaymentTypeid']);
         $generalValidations = new generalValidations();
 
-        // Validación de que el número de cuenta no esté en blanco
         if (empty($AccountNumber)) {
             header("location: ../view/paymentTypeView.php?error=accountRequired");
             exit();
         }
 
-        // Validación de que los campos que deben ser numéricos lo sean
         if ($generalValidations->accountNumberFormat($AccountNumber)) {
             header("location: ../view/paymentTypeView.php?error=numberFormatBAnkAccount");
             exit();
         }
 
-        // Validación de que el SINPE (si no está vacío) sea numérico y tenga exactamente 8 dígitos
         if (!empty($SinpeNumber)) {
             if (!is_numeric($SinpeNumber)) {
                 header("location: ../view/paymentTypeView.php?error=invalidSinpe");
@@ -101,11 +96,9 @@ if (isset($_POST['update'])) {
             }
         }
 
-        // Creamos el objeto PaymentType
         $paymentType = new PaymentType($id, 0, $AccountNumber, $SinpeNumber, $Status);
         $paymentTypeBusiness = new paymentTypeBusiness();
         
-        // Intentamos realizar la actualización
         $result = $paymentTypeBusiness->update($paymentType);
 
         if ($result) {
