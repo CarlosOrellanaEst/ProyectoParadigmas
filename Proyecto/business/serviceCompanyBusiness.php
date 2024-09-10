@@ -1,7 +1,7 @@
 <?php
 
 include '../data/serviceCompanyData.php';
-include 'PhotoBusiness.php';
+include 'photoBusiness.php';
 
 class serviceCompanyBusiness {
 
