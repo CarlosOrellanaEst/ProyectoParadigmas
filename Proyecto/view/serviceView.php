@@ -12,7 +12,7 @@
     </style>
     <?php
         include '../business/serviceCompanyBusiness.php';
-        include '../business/TouristCompanyBusiness.php';
+        include '../business/touristCompanyBusiness.php';
 
         $serviceCompanyBusiness = new ServiceCompanyBusiness();
         $services = $serviceCompanyBusiness->getAllTBServices();
