@@ -160,26 +160,25 @@ class activityData extends Data {
         $tbactivityname = $activity->getNameTBActivity();
         $tbServicesid = $activity->getTbservicecompanyid();
     
-        // Convertir los arrays a cadenas separadas por comas
-        $tbactivityatributearray = explode(",", $activity->getAttributeTBActivityArray());
-        $tbactivitydataarray = explode(",", $activity->getDataAttributeTBActivityArray());
+        // Verificar si los atributos son arrays y convertirlos en cadenas separadas por comas
+        $tbactivityatributearray = is_array($activity->getAttributeTBActivityArray()) ? implode(",", $activity->getAttributeTBActivityArray()) : '';
+        $tbactivitydataarray = is_array($activity->getDataAttributeTBActivityArray()) ? implode(",", $activity->getDataAttributeTBActivityArray()) : '';
     
+        // Verificar si las URLs son arrays y convertirlas en cadenas separadas por comas
         $imageUrls = $activity->getTbactivityURL();
-        
-        // Asegúrate de que $imageUrls sea un array antes de usar implode
         if (is_array($imageUrls)) {
             $imageUrlsString = implode(',', $imageUrls);
         } else {
-            // Si $imageUrls no es un array, asegúrate de que sea una cadena
+            // Si $imageUrls ya es una cadena, úsalo tal como está
             $imageUrlsString = $imageUrls;
         }
     
         $tbactivitystatus = $activity->getStatusTBActivity();
     
         // Vinculación de parámetros
-        // Nota: El tipo de parámetros en bind_param debe coincidir con los tipos de datos
-        // i: entero, s: cadena
-        $stmt->bind_param("iisssii", $tbactivityname, $tbServicesid, $tbactivityatributearray, $tbactivitydataarray, $imageUrlsString, $tbactivitystatus, $tbactivityid);
+        // "sisssii" porque el nombre es cadena ("s"), el ID del servicio es entero ("i"), y las URLs, atributos y datos son cadenas ("s")
+        $stmt->bind_param("sisssii", $tbactivityname, $tbServicesid, $tbactivityatributearray, $tbactivitydataarray, $imageUrlsString, $tbactivitystatus, $tbactivityid);
+        
         $result = $stmt->execute();
     
         if (!$result) {
@@ -191,6 +190,8 @@ class activityData extends Data {
     
         return $result;
     }
+    
+    
     
     
 /*
