@@ -56,11 +56,9 @@ CREATE TABLE `tbpaymenttype` (
 --
 
 INSERT INTO `tbpaymenttype` (`tbpaymenttypeid`, `tbownerid`, `tbpaymenttypenumber`, `tbpaymenttypesinpenumber`, `tbpaymenttypestatus`, `tbpaymenttypeisactive`) VALUES
-(1, 1, '1234567890123456', 'Bank of America', 1, 1),
-(2, 2, '2345678901234567', 'Chase Bank', 1, 1),
-(3, 3, '3456789012345678', 'Wells Fargo', 1, 1),
-(4, 4, '4567890123456789', 'Citibank', 1, 1),
-(5, 5, '5678901234567890', 'Goldman Sachs', 1, 1);
+(1, 1, 'CR47032794263479614763', '84164429', 1, 1),
+(2, 2, 'ES85312543678432678042', '85534938', 1, 1),
+(3, 3, 'CO53268962469513590754', '60191995', 1, 1);
 COMMIT;
 
 
