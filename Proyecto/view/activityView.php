@@ -99,11 +99,11 @@ if (count($allActivities) > 0) {
         echo '<form method="post" action="../business/activityAction.php" enctype="multipart/form-data" onsubmit="return confirmAction(event);">';
         echo '<input type="hidden" name="idTBActivity" value="' . $current->getIdTBActivity() . '">';
         echo '<input type="hidden" name="existingImages" value="' . htmlspecialchars(is_array($current->getTbactivityURL()) ? implode(',', $current->getTbactivityURL()) : $current->getTbactivityURL()) . '">';
-
+    
         echo '<td>';
         echo '<input type="text" name="nameTBActivity" value="' . htmlspecialchars($current->getNameTBActivity()) . '">';
         echo '</td>';
-        
+    
         echo '<td>';
         echo '<select name="serviceId" required>';
         foreach ($services as $service) {
@@ -115,44 +115,47 @@ if (count($allActivities) > 0) {
         }
         echo '</select>';
         echo '</td>';
-        
+    
         // Mostrar las imágenes
         echo '<td>';
         $urls = $current->getTbactivityURL();
-
+    
         if (is_string($urls)) {
             $urls = explode(',', $urls);
         }
-
-        foreach ($urls as $url) {
+    
+        foreach ($urls as $index => $url) {
             if (!empty($url)) {
                 $fullImagePath = $imageBasePath . trim($url);
                 echo '<img src="' . htmlspecialchars($fullImagePath) . '" alt="Foto" width="50" height="50" />';
             }
         }
         echo '</td>';
-        
+    
+        // Seleccionar y eliminar una imagen existente
         echo '<td>';
-        echo '<button type="button" class="show-attributes" data-activity-id="' . $current->getIdTBActivity() . '">Mostrar Atributos</button>';
-        echo '<input type="submit" value="Actualizar" name="update" />';
-        echo '<input type="submit" value="Eliminar" name="delete"/>';
-        echo '<div id="attributes-' . $current->getIdTBActivity() . '" class="attributes-table" style="display:none;">';
-        echo '<table>';
-        echo '<tr><th>Atributo</th><th>Dato</th></tr>';
-
-        foreach ($current->getAttributeTBActivityArray() as $index => $attribute) {
-            echo '<tr>';
-            echo '<td><input type="text" name="attributeTBActivityArray" value="' . htmlspecialchars($attribute) . '"></td>';
-            echo '<td><input type="text" name="dataAttributeTBActivityArray" value="' . htmlspecialchars($current->getDataAttributeTBActivityArray()[$index]) . '"></td>';
-            echo '</tr>';
+        echo '<label for="imageIndex">Eliminar imagen: </label>';
+        echo '<select name="imageIndex">';
+        foreach ($urls as $index => $url) {
+            if (!empty($url)) {
+                echo '<option value="' . $index . '">Imagen ' . ($index + 1) . '</option>';
+            }
         }
-        echo '</table>';
-        echo '</div>';
+        echo '</select>';
         echo '</td>';
-        
+    
+        // Acciones: Actualizar, Eliminar la actividad o eliminar la imagen
+        echo '<td>';
+        echo '<input type="submit" value="Actualizar" name="update" />';
+        echo '<input type="submit" value="Eliminar" name="delete" />';
+        echo '<input type="submit" value="Eliminar Imagen" name="deleteImage" />';
+        echo '</td>';
+    
         echo '</form>'; // Cerrar el formulario
         echo '</tr>'; // Cerrar la fila
     }
+    
+    
 } else {
     echo '<tr><td colspan="4">No se encontraron resultados</td></tr>';
 }

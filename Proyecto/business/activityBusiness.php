@@ -27,10 +27,18 @@ class ActivityBusiness {
     }
 
     public function getActivityById($id) {
-        return $this->activityData->getActivityByName($id);
+        return $this->activityData->getActivityById($id);
     }
 
     public function getActivityByName($name) {
         return $this->activityData->getActivityByName($name);
+    }
+
+    public function removeImageFromActivity($activityId, $newImageUrls){
+        return $this->activityData->removeImageFromActivity($activityId, $newImageUrls);
+    }
+
+    public function isImageInUse($imageToDelete){
+        return $this->activityData->isImageInUse($imageToDelete);
     }
 }

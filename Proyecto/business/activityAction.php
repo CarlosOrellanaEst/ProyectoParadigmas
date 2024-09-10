@@ -6,9 +6,9 @@ error_reporting(E_ALL);
 include_once '../business/activityBusiness.php'; 
 include_once '../domain/Activity.php'; 
 
-if (isset($_POST['create'])) {
-    $response = array();
+$response = array(); // Para almacenar la respuesta de cada acción
 
+if (isset($_POST['create'])) {
     // Verificación de las imágenes subidas
     if (isset($_FILES['imagenes']) && !empty($_FILES['imagenes']['name'][0])) {
         $uploadDir = '../images/activity/';
@@ -76,7 +76,6 @@ if (isset($_POST['create'])) {
         if ($result) {
             $response = ['status' => 'success', 'message' => 'Actividad insertada correctamente.'];
         } else {
-            error_log("Error al insertar actividad");
             $response = ['status' => 'error', 'message' => 'Error al insertar actividad.'];
         }
 
@@ -92,7 +91,6 @@ if (isset($_POST['create'])) {
 
 
 if (isset($_POST['update'])) {
-    // Obtener datos del formulario
     $idTBActivity = $_POST['idTBActivity'];
     $nameTBActivity = $_POST['nameTBActivity'];
     $attributeTBActivityArray = $_POST['attributeTBActivityArray'] ?? [];
@@ -128,13 +126,12 @@ if (isset($_POST['update'])) {
     $result = $activityBusiness->updateActivity($activity);
 
     if ($result) {
-        header("Location: ../view/activityView.php?success=updated");
+        echo json_encode(['status' => 'success', 'message' => 'Actividad actualizada correctamente.']);
     } else {
-        header("Location: ../view/activityView.php?error=updateFailed");
+        echo json_encode(['status' => 'error', 'message' => 'Error al actualizar actividad.']);
     }
+    exit();
 }
-
-
 
 if (isset($_POST['delete'])) {
     $idTBActivity = $_POST['idTBActivity'];
@@ -143,8 +140,53 @@ if (isset($_POST['delete'])) {
     $result = $activityBusiness->deleteActivity($idTBActivity);
 
     if ($result) {
-        echo "Activity deleted successfully";
+        echo json_encode(['status' => 'success', 'message' => 'Actividad eliminada correctamente.']);
     } else {
-        echo "Error deleting activity";
+        echo json_encode(['status' => 'error', 'message' => 'Error al eliminar actividad.']);
     }
+    exit();
 }
+
+
+if (isset($_POST['deleteImage'])) {
+    $activityId = $_POST['idTBActivity'];  // ID de la actividad
+    $imageIndexToDelete = (int)$_POST['imageIndex'];  // Índice de la imagen a eliminar
+
+    $activityBusiness = new ActivityBusiness();
+    $currentActivity = $activityBusiness->getActivityById($activityId);
+    
+    // Asumimos que getTbactivityURL() devuelve un array, así que no necesitas hacer explode
+    $images = $currentActivity->getTbactivityURL();  // Obtener las URLs de las imágenes como un array
+
+    // Verificar si el índice de la imagen a eliminar existe
+    if (isset($images[$imageIndexToDelete])) {
+        // Obtener la ruta completa de la imagen a eliminar
+        $filePath = '../images/activity/' . trim($images[$imageIndexToDelete]);
+        
+        // Guardar la imagen que se eliminará
+        $imageToDelete = trim($images[$imageIndexToDelete]);
+        
+        // Eliminar la imagen del array
+        unset($images[$imageIndexToDelete]);
+        
+        // Actualizar las URLs de las imágenes en la base de datos
+        $newImageUrls = implode(',', $images);  // Volver a convertir el array a cadena
+        $activityBusiness->removeImageFromActivity($activityId, $newImageUrls);
+        
+        // Verificar si la imagen está en uso por otra actividad
+        $imageInUse = $activityBusiness->isImageInUse($imageToDelete);
+        
+        // Si la imagen no está en uso y existe en el sistema de archivos, se elimina
+        if (!$imageInUse && file_exists($filePath)) {
+            unlink($filePath);  // Eliminar la imagen del servidor
+        }
+
+        echo json_encode(['status' => 'success', 'message' => 'Imagen eliminada correctamente.']);
+    } else {
+        echo json_encode(['status' => 'error', 'message' => 'La imagen no fue encontrada.']);
+    }
+    exit();
+}
+
+
+

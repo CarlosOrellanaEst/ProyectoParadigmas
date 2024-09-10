@@ -191,40 +191,64 @@ class activityData extends Data {
         return $result;
     }
     
-    
-    
-    
-/*
     public function getActivityById($id) {
         $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
         if (!$conn) {
             die("Connection failed: " . mysqli_connect_error());
         }
         $conn->set_charset('utf8mb4');
-
-        $query = "SELECT * FROM tbactivity WHERE tbactivityid=?";
-
+    
+        // Consulta para seleccionar la actividad por ID
+        $query = "SELECT tbactivityid, tbactivityname, tbservicecompanyid, tbactivityatributearray, tbactivitydataarray, tbactivityurl, tbactivitystatus 
+                  FROM tbactivity 
+                  WHERE tbactivityid = ? AND tbactivitystatus = 1";
+    
+        // Preparar la consulta
         $stmt = $conn->prepare($query);
         if ($stmt === false) {
             die("Prepare failed: " . $conn->error);
         }
-
+    
+        // Vincular el parámetro
         $stmt->bind_param("i", $id);
-
         $stmt->execute();
-
-        $stmt->bind_result($tbactivityid, $tbactivityname, $tbactivityatributearray, $tbactivitydataarray, $tbactivitystatus);
-
-        $stmt->fetch();
-
-        $activity = new Activity($tbactivityid, $tbactivityname, $tbactivityatributearray, $tbactivitydataarray, $tbactivitystatus);
-
+    
+        // Vincular los resultados
+        $stmt->bind_result($tbactivityid, $tbactivityname, $tbservicecompanyid, $tbactivityatributearray, $tbactivitydataarray, $tbactivityurl, $tbactivitystatus);
+    
+        // Inicializar la variable $activity
+        $activity = null;
+    
+        // Obtener los datos
+        if ($stmt->fetch()) {
+            // Si se encuentra la actividad, crear una instancia del objeto Activity
+            $attributeArray = explode(',', $tbactivityatributearray);
+            $dataArray = explode(',', $tbactivitydataarray);
+            $urlArray = explode(',', $tbactivityurl);
+    
+            // Asegurarse de que los arrays de atributos y datos tengan la misma longitud
+            if (count($attributeArray) === count($dataArray)) {
+                $activity = new Activity(
+                    $tbactivityid, 
+                    $tbactivityname, 
+                    $tbservicecompanyid, 
+                    $attributeArray, 
+                    $dataArray, 
+                    $urlArray, 
+                    $tbactivitystatus
+                );
+            }
+        }
+    
+        // Cerrar el statement y la conexión
         $stmt->close();
         mysqli_close($conn);
-
+    
+        // Retornar la actividad o null si no se encuentra
         return $activity;
     }
-*/
+    
+
 public function getActivityByName($activityName) {
     // Establecer conexión a la base de datos
     $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
@@ -267,6 +291,79 @@ public function getActivityByName($activityName) {
 
     // Retornar la actividad o null si no se encuentra
     return $activity;
+}
+
+public function removeImageFromActivity($activityId, $newImageUrls){
+    // Establecer conexión a la base de datos
+    $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
+    if (!$conn) {
+        die("Connection failed: " . mysqli_connect_error());
+    }
+    $conn->set_charset('utf8mb4');
+
+    // Verificar si $newImageUrls es un array, si es así, convertirlo en cadena
+    if (is_array($newImageUrls)) {
+        $newImageUrlsString = implode(',', $newImageUrls);
+    } else {
+        // Si ya es una cadena, úsalo directamente
+        $newImageUrlsString = $newImageUrls;
+    }
+
+    // Consulta SQL para actualizar la URL de la imagen
+    $query = "UPDATE tbactivity SET tbactivityurl = ? WHERE tbactivityid = ?";
+
+    // Preparar la consulta
+    $stmt = $conn->prepare($query);
+    if ($stmt === false) {
+        die("Prepare failed: " . $conn->error);
+    }
+
+    // Vincular los parámetros
+    $stmt->bind_param("si", $newImageUrlsString, $activityId);
+    $result = $stmt->execute();
+
+    // Cerrar el statement y la conexión
+    $stmt->close();
+    mysqli_close($conn);
+
+    // Retornar el resultado de la operación
+    return $result;
+}
+
+
+public function isImageInUse($imageToDelete){
+    // Establecer conexión a la base de datos
+    $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
+    if (!$conn) {
+        die("Connection failed: " . mysqli_connect_error());
+    }
+    $conn->set_charset('utf8mb4');
+
+    // Consulta SQL para verificar si la imagen está en uso
+    $query = "SELECT COUNT(*) FROM tbactivity WHERE tbactivityurl LIKE ?";
+
+    // Preparar la consulta
+    $stmt = $conn->prepare($query);
+    if ($stmt === false) {
+        die("Prepare failed: " . $conn->error);
+    }
+
+    // Vincular el parámetro
+    $stmt->bind_param("s", $imageToDelete);
+    $stmt->execute();
+
+    // Vincular el resultado
+    $stmt->bind_result($count);
+
+    // Obtener el resultado
+    $stmt->fetch();
+
+    // Cerrar el statement y la conexión
+    $stmt->close();
+    mysqli_close($conn);
+
+    // Retornar true si la imagen está en uso, false si no lo está
+    return $count > 0;
 }
 
 }
