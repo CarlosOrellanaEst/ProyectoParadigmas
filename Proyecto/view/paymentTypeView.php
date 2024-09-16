@@ -17,16 +17,19 @@
         require '../business/paymentTypeBusiness.php';
         require '../business/ownerBusiness.php';
         //require '../utils/utils.php';
-        $ownerBusiness = new ownerBusiness();
-         //if (Utils::$userLogged->getUserType() == "Administrador") {
-             $owners = $ownerBusiness->getAllTBOwners();
-             if (!$owners || empty($owners)) {
-                 echo "<script>alert('No se encontraron propietarios.');</script>";
-             }
-         //} else if (Utils::$userLogged->getUserType() == "Propietario") {
-           //  $owners = $ownerBusiness->getTBOwner(Utils::$userLogged); 
-         //}
 
+        session_start();
+        $userLogged = $_SESSION['userType'];
+        echo ($userLogged);
+        $ownerBusiness = new ownerBusiness();
+         if ($userLogged == "Administrador") {
+            $owners = $ownerBusiness->getAllTBOwners();
+            if (!$owners || empty($owners)) {
+                echo "<script>alert('No se encontraron propietarios.');</script>";
+            }
+         } else if ($userLogged == "Propietario") {
+            $owners = $ownerBusiness->getTBOwner($_SESSION['user']->getId()); 
+         }
     ?>
     <script src="../resources/paymentTypeView.js"></script>
     <script src="../resources/paymentTypeAJAX.js"></script>
