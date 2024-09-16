@@ -81,45 +81,62 @@ if (isset($_POST['create'])) {
 } 
 
 
+
 if (isset($_POST['update'])) {
-    
-        $companyId = $_POST['companyId'];
-        $serviceId = isset($_POST['serviceId']) ? explode(',', $_POST['serviceId']) : [];
-        $serviceCompanyId = $_POST['id'];
+    $companyId = $_POST['companyId'];
+    $serviceIds = isset($_POST['serviceId']) ? $_POST['serviceId'] : [];
+    $serviceCompanyId = $_POST['id'];
 
-        // Validación básica
-        if (is_numeric($companyId) && is_numeric($serviceCompanyId)) {
-            $serviceCompanyBusiness = new ServiceCompanyBusiness();
-            $currentService = $serviceCompanyBusiness->getServiceCompany($serviceCompanyId);
+    // Validación básica
+    if (is_numeric($companyId) && is_numeric($serviceCompanyId)) {
+        $serviceCompanyBusiness = new ServiceCompanyBusiness();
+        $currentService = $serviceCompanyBusiness->getServiceCompany($serviceCompanyId);
 
-            if ($currentService) {
-                // Asegúrate de obtener la URL de la imagen correctamente
-                $imageUrls = $currentService->getTbservicecompanyURL();
-                $imageUrlsString = is_array($imageUrls) ? implode(',', $imageUrls) : $imageUrls;
-                
-                $service = new ServiceCompany($serviceCompanyId, $companyId, $serviceId, $imageUrlsString, 1);
-                $result = $serviceCompanyBusiness->updateTBServiceCompany($service);
+        if ($currentService) {
+            // Procesar imágenes subidas
+            $uploadedImages = [];
+            if (isset($_FILES['imagenes']) && count($_FILES['imagenes']['name']) > 0) {
+                $totalFiles = count($_FILES['imagenes']['name']);
+                for ($i = 0; $i < $totalFiles; $i++) {
+                    $fileName = $_FILES['imagenes']['name'][$i];
+                    $tempName = $_FILES['imagenes']['tmp_name'][$i];
+                    $targetPath = "../images/services/" . basename($fileName);
 
-                if ($result['status'] === 'success') {
-                    header("Location: ../view/serviceView.php?success=updated");
-                    exit();
-                } elseif ($result['status'] === 'error' && $result['message'] === 'Service already exists') {
-                    header("Location: ../view/serviceView.php?error=alreadyExists");
-                    exit();
-                } else {
-                    header("Location: ../view/serviceView.php?error=dbError");
-                    exit();
+                    if (move_uploaded_file($tempName, $targetPath)) {
+                        $uploadedImages[] = $fileName;
+                    }
                 }
+            }
+
+            // Unir las imágenes existentes con las nuevas
+            $existingImages = explode(',', $currentService->getTbservicecompanyURL());
+            $newImageUrls = array_merge($existingImages, $uploadedImages);
+            $imageUrlsString = implode(',', $newImageUrls);
+
+            // Actualizar el registro
+            $service = new ServiceCompany($serviceCompanyId, $companyId, implode(',', $serviceIds), $imageUrlsString, 1);
+            $result = $serviceCompanyBusiness->updateTBServiceCompany($service);
+
+            if ($result['status'] === 'success') {
+                header("Location: ../view/serviceView.php?success=updated");
+                exit();
+            } elseif ($result['status'] === 'error' && $result['message'] === 'Service already exists') {
+                header("Location: ../view/serviceView.php?error=alreadyExists");
+                exit();
             } else {
-                header("Location: ../view/serviceView.php?error=notFound");
+                header("Location: ../view/serviceView.php?error=dbError");
                 exit();
             }
         } else {
-            header("Location: ../view/serviceView.php?error=invalidInput");
+            header("Location: ../view/serviceView.php?error=notFound");
             exit();
         }
-   
+    } else {
+        header("Location: ../view/serviceView.php?error=invalidInput");
+        exit();
+    }
 }
+
 
 
 
@@ -181,5 +198,39 @@ if (isset($_POST['deleteImage'])) {
         header("Location: ../view/serviceView.php?error=image_not_found");
         exit();
     }
+    
+}
 
+
+if (isset($_POST['deleteService'])) {
+    $serviceID = $_POST['id']; // ID del servicio a eliminar
+    $serviceIndexToDelete = (int)$_POST['serviceIndex']; // Índice del servicio a eliminar
+    
+    // Obtener los servicios actuales del registro
+    $serviceCompanyBusiness = new ServiceCompanyBusiness();
+    $currentServiceCompany = $serviceCompanyBusiness->getServiceCompany($serviceID);
+    
+    // Obtener la lista de servicios actuales
+    $services = explode(',', $currentServiceCompany->getTbserviceid());
+    
+    // Verificar si el índice del servicio a eliminar es válido
+    if (isset($services[$serviceIndexToDelete])) {
+        // Eliminar el servicio del array de servicios
+        unset($services[$serviceIndexToDelete]);
+        
+        // Reindexar el array de servicios para evitar índices faltantes
+        $services = array_values($services);
+        
+        // Actualizar la lista de servicios en la base de datos
+        $newServiceIds = implode(',', $services); // Convertir el array de nuevo en string separado por comas
+        $serviceCompanyBusiness->removeServiceFromServiceCompany($serviceID, $newServiceIds);
+        
+        // Redireccionar o mostrar un mensaje de éxito
+        header("Location: ../view/serviceView.php?success=service_deleted");
+        exit();
+    } else {
+        // Redireccionar o mostrar un mensaje de error si el índice es inválido
+        header("Location: ../view/serviceView.php?error=service_not_found");
+        exit();
+    }
 }

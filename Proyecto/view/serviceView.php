@@ -5,11 +5,6 @@
     <title>Gestión de Servicios</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <script src="../resources/AJAXCreateService.js"></script>
-    <style>
-        .required {
-            color: red;
-        }
-    </style>
     <?php
         include '../business/serviceCompanyBusiness.php';
         include '../business/touristCompanyBusiness.php';
@@ -32,7 +27,7 @@
     <section id="create">
         <h2>Crear Servicio</h2>
         <form method="post" id="formCreate" action="../business/serviceCompanyAction.php" enctype="multipart/form-data">
-            <label for="companyID">Nombre de la Empresa Turística <span class="required">*</label>
+            <label for="companyID">Nombre de la Empresa Turística <span class="required">*</span></label>
             <select name="companyID" id="companyID" required>
                 <?php foreach ($companies as $company): ?>
                     <option value="<?php echo htmlspecialchars($company->getTbtouristcompanyid()); ?>">
@@ -43,9 +38,9 @@
             <br><br>
 
             <div id="servicesContainer">
-                <div>
-                    <label for="serviceId1">Servicio <span class="required">*</label>
-                    <select name="serviceId" id="serviceId1" required>
+                <div id="serviceRow1">
+                    <label for="serviceId1">Servicio <span class="required">*</span></label>
+                    <select name="serviceId[]" id="serviceId1" required>
                         <?php foreach ($services as $service): ?>
                             <option value="<?php echo htmlspecialchars($service->getIdTbservice()); ?>">
                                 <?php echo htmlspecialchars($service->getTbservicename()); ?>
@@ -57,14 +52,16 @@
             <button type="button" id="addService">Agregar otro servicio</button>
             <br>
 
-            <label for="imagenes">Selecciona las imágenes (una por cada servicio)</label><br>
+            <label for="imagenes">Selecciona las imágenes (máximo 5 imágenes)</label><br>
             <input type="file" name="imagenes[]" id="imagenes" multiple />
             <br><br>
 
             <input type="submit" value="Crear" name="create" id="create" />
         </form>
     </section>
+
     <hr>
+
     <section>
         <h2>Buscar y Editar Servicios</h2>
         <form id="formSearchOne" method="get">
@@ -74,11 +71,13 @@
         </form>
         <br>
         <div id="message" hidden></div>
-        <table>
+
+        <!-- Tabla para mostrar los resultados -->
+        <table border="1" cellpadding="5" cellspacing="0">
             <thead>
                 <tr>
                     <th>Nombre de la Empresa</th>
-                    <th>Nombre del Servicio</th>
+                    <th>Servicios</th>
                     <th>Imágenes</th>
                     <th>Acciones</th>
                 </tr>
@@ -93,9 +92,10 @@
                 if (isset($_GET['searchOne'])) {
                     $searchTerm = $_GET['searchOne'];
                     $serviceCompanyFiltered = array_filter($allServiceCompanies, function ($serviceCompany) use ($searchTerm) {
-                        return stripos($serviceCompany->getTbserviceid(), $searchTerm) !== false; // Ajusta según el campo por el que quieras buscar
+                        return stripos($serviceCompany->getTbserviceid(), $searchTerm) !== false;
                     });
                 }
+
                 if (count($serviceCompanyFiltered) > 0) {
                     $allServiceCompanies = $serviceCompanyFiltered;
                 }
@@ -103,12 +103,12 @@
                 if (count($allServiceCompanies) > 0) {
                     foreach ($allServiceCompanies as $current) {
                         $assignedCompany = $touristCompanyBusiness->getById($current->getTbtouristcompanyid());
-                        $assignedService = $serviceCompanyBusiness->getTBService($current->getTbserviceid());
+                        
                         echo '<tr>';
                         echo '<form method="post" action="../business/serviceCompanyAction.php" enctype="multipart/form-data">';
                         echo '<input type="hidden" name="id" value="' . htmlspecialchars($current->getTbservicecompanyid()) . '">';
-                        echo '<input type="hidden" name="existingImages" value="' . htmlspecialchars(is_array($current->getTbservicecompanyURL()) ? implode(',', $current->getTbservicecompanyURL()) : $current->getTbservicecompanyURL()) . '">';
-                        // Combobox para seleccionar la empresa
+
+                        // Mostrar nombre de la empresa
                         echo '<td>';
                         echo '<select name="companyId" required>';
                         foreach ($companies as $company) {
@@ -121,40 +121,12 @@
                         echo '</select>';
                         echo '</td>';
 
-                       
-
-                        // Mostrar las imágenes
-                        $urls = explode(',', $current->getTbservicecompanyURL());
+                        // Mostrar servicios en select
                         echo '<td>';
-                        foreach ($urls as $url) {
-                            if (!empty($url)) {
-                                echo '<img src="' . $imageBasePath . trim($url) . '" alt="Foto" width="50" height="50" />';
-                            }
-                        }
-                        echo '</td>';
-
-                        // Seleccionar la imagen para eliminar
-                        echo '<td>';
-                        echo '<select name="imageIndex">';
-                        foreach ($urls as $index => $url) {
-                            echo '<option value="' . $index . '">Imagen ' . ($index + 1) . '</option>';
-                        }
-                        echo '</select>';
-                        echo '</td>';
-
-                        echo '<td>';
-                        echo '<button type="button" class="show-attributes" data-service-company-id="' . $current->getTbservicecompanyid() . '">Mostrar Atributos</button>';
-                        echo '<input type="submit" value="Actualizar" name="update" />';
-                        echo '<input type="submit" value="Eliminar" name="delete"/>';
-                        echo '<input type="submit" value="Eliminar Imagen" name="deleteImage" />';
-                        echo '<div id="attributes-' . $current->getTbservicecompanyid() . '" class="attributes-table" style="display:none;">';
-                        echo '<table>';
-                        echo '<tr><th>Atributo</th></tr>';
                         $serviceIds = explode(',', $current->getTbserviceid());
-                        foreach ($serviceIds  as $index => $serviceId) {
-                            echo '<tr>';
-                            echo '<td>';
-                            echo '<select name="serviceIdInputs" required>';
+                        foreach ($serviceIds as $index => $serviceId) {
+                            echo '<div class="service-row">';
+                            echo '<select name="serviceId[]">';
                             foreach ($services as $service) {
                                 echo '<option value="' . htmlspecialchars($service->getIdTbservice()) . '"';
                                 if ($service->getIdTbservice() == $serviceId) {
@@ -163,14 +135,43 @@
                                 echo '>' . htmlspecialchars($service->getTbservicename()) . '</option>';
                             }
                             echo '</select>';
-                            echo '</td>';
-                            echo '</tr>';
+                           
+                            
+                           
                         }
+                        echo '<select name="serviceIndex">'; 
+                        foreach ($serviceIds as $index => $service) {
+                            echo '<option value="' . $index . '">Servicio ' . ($index + 1) . '</option>';
+                        }
+                        echo '</select>';
                         
-                        echo '</table>';
                         echo '</div>';
                         echo '</td>';
+
+                        // Mostrar las imágenes asociadas
+                        echo '<td>';
+                        $urls = explode(',', $current->getTbservicecompanyURL());
+                        foreach ($urls as $url) {
+                            if (!empty($url)) {
+                                echo '<img src="' . $imageBasePath . trim($url) . '" alt="Imagen" width="50" height="50" />';
+                            }
+                        }
                         
+                        echo '<select name="imageIndex">'; 
+                        foreach ($urls as $index => $url) {
+                            echo '<option value="' . $index . '">Imagen ' . ($index + 1) . '</option>';
+                        }
+                        echo '</select>';
+                        echo '</td>';
+
+                        // Acciones de actualización, eliminación, etc.
+                        echo '<td>';
+                        echo '<input type="submit" value="Actualizar" name="update" />';
+                        echo '<input type="submit" value="Eliminar" name="delete"/>';
+                        echo '<input type="submit" value="Eliminar Imagen" name="deleteImage" />';
+                        echo '<input type="submit" value="Eliminar Servicio" name="deleteService" />';
+                        echo '</td>';
+
                         echo '</form>';
                         echo '</tr>';
                     }
@@ -184,42 +185,33 @@
 
     <script>
        document.addEventListener('DOMContentLoaded', function() {
-    let serviceCount = 1; // Inicializamos el contador de servicios
+           let serviceCount = 1; // Inicializamos el contador de servicios
 
-    document.getElementById('addService').addEventListener('click', function () {
-        if (serviceCount < 7) { // Limitar a 7 servicios
-            serviceCount++;
-            const servicesContainer = document.getElementById('servicesContainer');
-            const newService = document.createElement('div');
-            newService.innerHTML = `
-                <label for="serviceId${serviceCount}">Servicio: </label>
-                <select name="serviceId" id="serviceId${serviceCount}" required>
-                    <?php foreach ($services as $service): ?>
-                        <option value="<?php echo htmlspecialchars($service->getIdTbservice()); ?>">
-                            <?php echo htmlspecialchars($service->getTbservicename()); ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-            `;
-            servicesContainer.appendChild(newService);
-        } else {
-            alert('No puedes agregar más de 7 servicios.');
-        }
-    });
+           document.getElementById('addService').addEventListener('click', function () {
+               if (serviceCount < 7) { // Limitar a 7 servicios
+                   serviceCount++;
+                   const servicesContainer = document.getElementById('servicesContainer');
+                   const newService = document.createElement('div');
+                   newService.id = `serviceRow${serviceCount}`;
+                   newService.innerHTML = `
+                       <label for="serviceId${serviceCount}">Servicio: </label>
+                       <select name="serviceId[]" id="serviceId${serviceCount}" required>
+                           <?php foreach ($services as $service): ?>
+                               <option value="<?php echo htmlspecialchars($service->getIdTbservice()); ?>">
+                                   <?php echo htmlspecialchars($service->getTbservicename()); ?>
+                               </option>
+                           <?php endforeach; ?>
+                       </select>
+                       <button type="button" class="remove-service">Eliminar</button>
+                   `;
+                   servicesContainer.appendChild(newService);
+               } else {
+                   alert('No puedes agregar más de 7 servicios.');
+               }
+           });
 
-    // Manejo del botón para mostrar atributos
-    document.querySelectorAll('.show-attributes').forEach(button => {
-        button.addEventListener('click', function() {
-            const serviceCompanyId = this.getAttribute('data-service-company-id');
-            const attributesDiv = document.getElementById('attributes-' + serviceCompanyId);
-            if (attributesDiv) {
-                attributesDiv.style.display = attributesDiv.style.display === 'none' ? 'block' : 'none';
-            }
-        });
-    });
-});
-
-       
+           
+       });
     </script>
 </body>
 </html>

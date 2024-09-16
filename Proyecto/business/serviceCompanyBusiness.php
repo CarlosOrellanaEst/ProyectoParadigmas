@@ -35,5 +35,7 @@ class serviceCompanyBusiness {
         return $this->serviceCompanyData->updateTBServiceCompany($service);
     }
 
-    
+    public function removeServiceFromServiceCompany($serviceCompanyId, $serviceIdToRemove){
+        return $this->serviceCompanyData->removeServiceFromServiceCompany($serviceCompanyId, $service);
+    }
 }

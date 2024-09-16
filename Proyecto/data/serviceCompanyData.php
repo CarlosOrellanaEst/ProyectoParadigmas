@@ -255,6 +255,7 @@ class serviceCompanyData extends Data {
     
         return $result;
     }
+
     public function updateTBServiceCompany($service) {
         // Conexión a la base de datos
         $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
@@ -264,9 +265,9 @@ class serviceCompanyData extends Data {
         $conn->set_charset('utf8');
     
         // Obtener valores del objeto $service
-        $serviceId = $service->getTbservicecompanyid();
+        $serviceCompanyId = $service->getTbservicecompanyid();
         $touristCompanyId = $service->getTbtouristcompanyid();
-        $serviceId = $service->getTbserviceid();
+        $serviceIds = $service->getTbserviceid(); // Suponiendo que este campo ya es un string con múltiples IDs separados por comas
         $imageUrlsString = is_array($service->getTbservicecompanyURL()) ? implode(',', $service->getTbservicecompanyURL()) : $service->getTbservicecompanyURL();
         $status = $service->getTbservicetatus();
     
@@ -279,7 +280,7 @@ class serviceCompanyData extends Data {
             return ['status' => 'error', 'message' => 'Prepare failed: ' . $conn->error];
         }
     
-        $stmt->bind_param("issii", $touristCompanyId, $serviceId, $imageUrlsString, $status, $serviceId);
+        $stmt->bind_param("issii", $touristCompanyId, $serviceIds, $imageUrlsString, $status, $serviceCompanyId);
         $result = $stmt->execute();
     
         if (!$result) {
@@ -292,6 +293,29 @@ class serviceCompanyData extends Data {
         mysqli_close($conn);
     
         return ['status' => 'success', 'message' => 'Actualizado correctamente.'];
-    }   
+    }
+
+    public function removeServiceFromServiceCompany($serviceCompanyId, $serviceIdToRemove) {
+        $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
+        if (!$conn) {
+            die("Connection failed: " . mysqli_connect_error());
+        }
+        $conn->set_charset('utf8mb4');
     
+        // Actualizar la URL en la base de datos
+        $query = "UPDATE tbservicecompany SET tbserviceid=? WHERE tbservicecompanyid=?";
+        $stmt = $conn->prepare($query);
+        if ($stmt === false) {
+            die("Prepare failed: " . $conn->error);
+        }
+    
+        $stmt->bind_param("si", $serviceIdToRemove, $serviceCompanyId);
+        $result = $stmt->execute();
+    
+        $stmt->close();
+        mysqli_close($conn);
+    
+        return $result;
+    
+}
 }
