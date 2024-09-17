@@ -1,3 +1,31 @@
+<?php
+
+    require '../domain/Owner.php';
+    require '../business/paymentTypeBusiness.php';
+    require '../business/ownerBusiness.php';
+
+    session_start();
+
+    // Incluimos las clases necesarias antes de acceder a la sesión
+
+    // Obtenemos el usuario logueado desde la sesión
+    $userLogged = $_SESSION['user'];
+    $ownerBusiness = new ownerBusiness();
+
+    // Definimos los propietarios en función del tipo de usuario
+    if ($userLogged->getUserType() == "Administrador") {
+        $owners = $ownerBusiness->getAllTBOwners();
+        if (!$owners || empty($owners)) {
+            echo "<script>alert('No se encontraron propietarios.');</script>";
+        }
+    } else if ($userLogged->getUserType() == "Propietario") {
+        $owners = [$userLogged];  // Colocamos al propietario en un array para poder iterarlo
+    }
+
+    // Guardamos la lista de propietarios en la sesión para usarla más adelante
+    $_SESSION['owners'] = $owners;
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -14,22 +42,22 @@
     </style>
     
     <?php
-        require '../business/paymentTypeBusiness.php';
-        require '../business/ownerBusiness.php';
+//         require '../business/paymentTypeBusiness.php';
+//         require '../business/ownerBusiness.php';
 
-        session_start();
-        $userLogged = $_SESSION['user'];
-     //   echo ($userLogged);
-        $ownerBusiness = new ownerBusiness();
-         if ($userLogged->getUserType() == "Administrador") {
-            $owners = $ownerBusiness->getAllTBOwners();
-            if (!$owners || empty($owners)) {
-                echo "<script>alert('No se encontraron propietarios.');</script>";
-            }
-         } else if ($userLogged->getUserType() == "Propietario") {
-            $owners  =  $userLogged;
-   //         echo ($owners);
-         }
+//         session_start();
+//         $userLogged = $_SESSION['user'];
+//      //   echo ($userLogged);
+//         $ownerBusiness = new ownerBusiness();
+//          if ($userLogged->getUserType() == "Administrador") {
+//             $owners = $ownerBusiness->getAllTBOwners();
+//             if (!$owners || empty($owners)) {
+//                 echo "<script>alert('No se encontraron propietarios.');</script>";
+//             }
+//          } else if ($userLogged->getUserType() == "Propietario") {
+//             $owners  =  $userLogged;
+//    //         echo ($owners);
+//          }
     ?>
     <script src="../resources/paymentTypeView.js"></script>
     <script src="../resources/paymentTypeAJAX.js"></script>
@@ -46,12 +74,25 @@
             <label for="ownerId">Propietario</label>
             <select name="ownerId" id="ownerId" required>
                 <?php
-                    session_start();
+                    // session_start();
 
-                    echo '<select>';
+                    // echo '<select>';
+                    // if (!empty($owners)) {
+                    //     foreach ($owners as $owner) {
+                    //       //  echo ($owner->getFullName());
+                    //         echo '<option value="' . htmlspecialchars($owner->getIdTBOwner()) . '">'
+                    //             . htmlspecialchars($owner->getFullName()) 
+                    //             . '</option>';
+                    //     }
+                    // } else {
+                    //     echo '<option value="">No hay propietarios disponibles</option>';
+                    // }
+                    // echo '</select>';
+
+                    $owners = $_SESSION['owners'];  // Recuperar de la sesión
+
                     if (!empty($owners)) {
                         foreach ($owners as $owner) {
-                          //  echo ($owner->getFullName());
                             echo '<option value="' . htmlspecialchars($owner->getIdTBOwner()) . '">'
                                 . htmlspecialchars($owner->getFullName()) 
                                 . '</option>';
@@ -59,7 +100,6 @@
                     } else {
                         echo '<option value="">No hay propietarios disponibles</option>';
                     }
-                    echo '</select>';
                 ?>
             <br><br>
             <label for="accountNumber">Número de Cuenta <span class="required">*</label>
