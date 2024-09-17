@@ -26,7 +26,7 @@ class OwnerBusiness {
         return $this->ownerData->updateTBOwner($owner);
     }
     public function deleteTBOwner($idOwner, $idUser) {
-        echo($idOwner.$idUser);
+     //   echo($idOwner.$idUser);
         return $this->ownerData->deleteTBOwner($idOwner, $idUser);
     }
 

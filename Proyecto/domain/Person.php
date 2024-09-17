@@ -56,4 +56,11 @@ class Person {
         $this->email = $email;
     }
 
+    public function __toString() {
+        return "Nombre: " . $this->name . " " . $this->surnames . "\n" .
+               "Identificación: " . $this->legalIdentification . "\n" .
+               "Teléfono: " . $this->phone . "\n" .
+               "Email: " . $this->email . "\n";
+    }
+
 }

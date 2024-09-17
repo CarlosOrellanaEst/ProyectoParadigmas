@@ -16,19 +16,19 @@
     <?php
         require '../business/paymentTypeBusiness.php';
         require '../business/ownerBusiness.php';
-        //require '../utils/utils.php';
 
         session_start();
-        $userLogged = $_SESSION['userType'];
-        echo ($userLogged);
+        $userLogged = $_SESSION['user'];
+     //   echo ($userLogged);
         $ownerBusiness = new ownerBusiness();
-         if ($userLogged == "Administrador") {
+         if ($userLogged->getUserType() == "Administrador") {
             $owners = $ownerBusiness->getAllTBOwners();
             if (!$owners || empty($owners)) {
                 echo "<script>alert('No se encontraron propietarios.');</script>";
             }
-         } else if ($userLogged == "Propietario") {
-            $owners = $ownerBusiness->getTBOwner($_SESSION['user']->getId()); 
+         } else if ($userLogged->getUserType() == "Propietario") {
+            $owners  =  $userLogged;
+   //         echo ($owners);
          }
     ?>
     <script src="../resources/paymentTypeView.js"></script>
@@ -45,17 +45,22 @@
         <form method="post" id="formCreate">
             <label for="ownerId">Propietario</label>
             <select name="ownerId" id="ownerId" required>
-                <!-- Opciones llenadas con PHP -->
-                <?php if (!empty($owners)): ?>
-                    <?php foreach ($owners as $owner): ?>
-                        <option value="<?php echo htmlspecialchars($owner->getIdTBOwner()); ?>">
-                            <?php echo htmlspecialchars($owner->getName() . ' ' . $owner->getSurnames()); ?>
-                        </option>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <option value="">No hay propietarios disponibles</option>
-                <?php endif; ?>
-            </select>
+                <?php
+                    session_start();
+
+                    echo '<select>';
+                    if (!empty($owners)) {
+                        foreach ($owners as $owner) {
+                          //  echo ($owner->getFullName());
+                            echo '<option value="' . htmlspecialchars($owner->getIdTBOwner()) . '">'
+                                . htmlspecialchars($owner->getFullName()) 
+                                . '</option>';
+                        }
+                    } else {
+                        echo '<option value="">No hay propietarios disponibles</option>';
+                    }
+                    echo '</select>';
+                ?>
             <br><br>
             <label for="accountNumber">Número de Cuenta <span class="required">*</label>
             <input placeholder="Ingrese el número de cuenta" type="text" name="accountNumber" id="accountNumber"/><br><br>

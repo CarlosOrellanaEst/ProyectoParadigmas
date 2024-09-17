@@ -20,6 +20,7 @@ if (isset($_POST['nickName']) && isset($_POST['password'])) {
     // echo($user);
     if ($user !== null) {
         $_SESSION['user'] = $user;
+     //   echo ($_SESSION['user']);
         $response['success'] = true;
         $response['message'] = "Bienvenido " . $user->getName();       
         $response['userType'] = $user->getUserType();
