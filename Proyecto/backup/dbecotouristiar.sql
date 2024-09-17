@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost
--- Tiempo de generación: 17-09-2024 a las 17:07:04
+-- Tiempo de generación: 17-09-2024 a las 17:30:53
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -95,11 +95,11 @@ CREATE TABLE `tbpaymenttype` (
 --
 
 INSERT INTO `tbpaymenttype` (`tbpaymenttypeid`, `tbownerid`, `tbpaymenttypenumber`, `tbpaymenttypesinpenumber`, `tbpaymenttypestatus`, `tbpaymenttypeisactive`) VALUES
-(1, 1, '1234567890123456', 'Bank of America', 1, 1),
-(2, 2, '2345678901234567', 'Chase Bank', 1, 1),
-(3, 3, '3456789012345678', 'Wells Fargo', 1, 1),
-(4, 4, '4567890123456789', 'Citibank', 1, 1),
-(5, 5, '5678901234567890', 'Goldman Sachs', 1, 1),
+(1, 1, 'CR12345678909876543219', '84257618', 1, 1),
+(2, 2, 'CR12345678909876543225', '84257615', 1, 1),
+(3, 3, 'CR12345678909876543296', '84257617', 1, 1),
+(4, 4, 'CR12345678909876543824', '89647812', 1, 1),
+(5, 5, 'CR12345678909876543879', '86237087', 1, 1),
 (6, 1, 'CR12345678909876543210', '', 1, 0),
 (7, 1, 'CR12345678909876543210', '', 1, 0),
 (8, 5, 'CR12345678909876543210', '86237034', 1, 1),
