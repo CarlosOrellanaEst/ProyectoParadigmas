@@ -152,12 +152,15 @@
                     echo '</select>';
                     echo '</td>';
                 
-                    // Atributos y datos
+                    // Atributos y datos (Editable)
                     echo '<td>';
                     $attributeArray = $current->getAttributeTBActivityArray();
                     $dataArray = $current->getDataAttributeTBActivityArray();
                     for ($i = 0; $i < count($attributeArray); $i++) {
-                        echo '<p>Atributo: ' . htmlspecialchars($attributeArray[$i]) . ', Dato: ' . htmlspecialchars($dataArray[$i]) . '</p>';
+                        echo '<div>';
+                        echo '<input type="text" name="attributeTBActivityArray[]" value="' . htmlspecialchars($attributeArray[$i]) . '" placeholder="Atributo" />';
+                        echo '<input type="text" name="dataAttributeTBActivityArray[]" value="' . htmlspecialchars($dataArray[$i]) . '" placeholder="Dato" />';
+                        echo '</div>';
                     }
                     echo '</td>';
                 
@@ -175,7 +178,7 @@
                     }
                     echo '</td>';
                 
-                    // Fecha y hora
+                    // Fecha y hora (Editable)
                     echo '<td>';
                     echo '<input type="datetime-local" name="activityDate" value="' . htmlspecialchars($current->getActivityDate()) . '" />';
                     echo '</td>';
@@ -184,6 +187,13 @@
                     echo '<td>';
                     echo '<input type="submit" value="Actualizar" name="update" />';
                     echo '<input type="submit" value="Eliminar" name="delete" />';
+                    echo '<select name="imageIndex">';
+                    foreach ($urls as $index => $url) {
+                        if (!empty($url)) {
+                            echo '<option value="' . $index . '">Eliminar Imagen ' . ($index + 1) . '</option>';
+                        }
+                    }
+                    echo '</select>';
                     echo '<input type="submit" value="Eliminar Imagen" name="deleteImage" />';
                     echo '</td>';
                 
@@ -203,6 +213,8 @@
             const attributeContainer = document.createElement('div');
             attributeContainer.innerHTML = `
                 <label>Atributo: </label>
+                <input type="text" name="attributeTBActivity
+                                <label>Atributo: </label>
                 <input type="text" name="attributeTBActivityArray[]" placeholder="Atributo" required />
                 <label>Dato: </label>
                 <input type="text" name="dataAttributeTBActivityArray[]" placeholder="Dato" required />

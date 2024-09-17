@@ -52,8 +52,8 @@ if (isset($_POST['create'])) {
         // Capturar los datos del formulario
         $nameTBActivity = isset($_POST['nameTBActivity']) ? trim($_POST['nameTBActivity']) : '';
         $serviceID = isset($_POST['serviceId']) ? trim($_POST['serviceId']) : 0;
-        $attributeTBActivityArray = isset($_POST['attributeTBActivityArray']) ? explode(',', $_POST['attributeTBActivityArray']) : [];
-        $dataAttributeTBActivityArray = isset($_POST['dataAttributeTBActivityArray']) ? explode(',', $_POST['dataAttributeTBActivityArray']) : [];
+        $attributeTBActivityArray = isset($_POST['attributeTBActivityArray']) ? $_POST['attributeTBActivityArray'] : [];
+        $dataAttributeTBActivityArray = isset($_POST['dataAttributeTBActivityArray']) ? $_POST['dataAttributeTBActivityArray'] : [];
         $activityDate = isset($_POST['activityDate']) ? trim($_POST['activityDate']) : date('Y-m-d');  // Fecha actual si no se especifica
 
         // Validaciones de campos obligatorios
@@ -100,8 +100,8 @@ if (isset($_POST['create'])) {
 if (isset($_POST['update'])) {
     $idTBActivity = $_POST['idTBActivity'];
     $nameTBActivity = $_POST['nameTBActivity'];
-    $attributeTBActivityArray = isset($_POST['attributeTBActivityArray']) ? explode(',', $_POST['attributeTBActivityArray']) : [];
-    $dataAttributeTBActivityArray = isset($_POST['dataAttributeTBActivityArray']) ? explode(',', $_POST['dataAttributeTBActivityArray']) : [];
+    $attributeTBActivityArray = isset($_POST['attributeTBActivityArray']) ? $_POST['attributeTBActivityArray'] : [];
+    $dataAttributeTBActivityArray = isset($_POST['dataAttributeTBActivityArray']) ? $_POST['dataAttributeTBActivityArray'] : [];
     $statusTBActivity = isset($_POST['statusTBActivity']) ? 1 : 0;
     $serviceId = $_POST['serviceId'];
     $activityDate = isset($_POST['activityDate']) ? trim($_POST['activityDate']) : date('Y-m-d');
@@ -109,6 +109,11 @@ if (isset($_POST['update'])) {
     // Obtener imágenes existentes y nuevas
     $existingImages = $_POST['existingImages'] ?? '';
     $uploadedImages = [];
+
+    // Verificar si existingImages ya es un array
+    if (is_string($existingImages)) {
+        $existingImages = explode(',', $existingImages);
+    }
 
     if (isset($_FILES['imagenes']) && count($_FILES['imagenes']['name']) > 0) {
         for ($i = 0; $i < count($_FILES['imagenes']['name']); $i++) {
@@ -123,7 +128,7 @@ if (isset($_POST['update'])) {
     }
 
     // Unir las imágenes nuevas con las existentes
-    $allImages = array_merge(explode(',', $existingImages), $uploadedImages);
+    $allImages = array_merge($existingImages, $uploadedImages);
     $allImages = implode(',', array_filter($allImages));
 
     // Crear una instancia de la actividad para actualizar
@@ -170,6 +175,10 @@ if (isset($_POST['deleteImage'])) {
     $currentActivity = $activityBusiness->getActivityById($activityId);
     
     $images = $currentActivity->getTbactivityURL(); 
+
+    if (is_string($images)) {
+        $images = explode(',', $images);
+    }
 
     if (isset($images[$imageIndexToDelete])) {
         
