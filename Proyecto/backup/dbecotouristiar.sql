@@ -30,27 +30,28 @@ SET time_zone = "+00:00";
 CREATE TABLE `tbactivity` (
   `tbactivityid` int(11) NOT NULL,
   `tbactivityname` varchar(255) NOT NULL,
-  `tbservicecompanyid` int(11) NOT NULL,
+  `tbactivityservicecompanyid` int(11) NOT NULL,
   `tbactivityatributearray` varchar(255) NOT NULL,
   `tbactivitydataarray` varchar(255) NOT NULL,
   `tbactivityurl` text NOT NULL,
-  `tbactivitystatus` tinyint(11) NOT NULL
+  `tbactivitystatus` tinyint(4) NOT NULL,
+  `tbactivitydate` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Volcado de datos para la tabla `tbactivity`
 --
 
-INSERT INTO `tbactivity` (`tbactivityid`, `tbactivityname`, `tbservicecompanyid`, `tbactivityatributearray`, `tbactivitydataarray`, `tbactivityurl`, `tbactivitystatus`) VALUES
-(1, 'juegos', 1, '', '', '', 0),
-(2, 'rnhbsg', 2, 'awdfaga,bwsbsb', 'gagag,f', 'foca.jpg,dog.jpg', 0),
-(3, 'vvvvv', 1, '', '', 'Cat03.jpg', 0),
-(4, 'nooooo', 1, '', '', 'IMG_1312.PNG,foca.jpg', 0),
-(5, 'zzzzz', 1, '', '', 'dog.jpg', 1),
-(6, 'Hola', 1, '', '', 'hola.jpg', 0),
-(7, 'zzzzz', 1, '', '', 'foca.jpg', 0),
-(8, 'Turismo', 3, 'Natacion,Estudio,meditacion', '3 metros 15,3 horas,20 min', '', 0),
-(9, 'hhhhh', 1, '', '', '10188600.jpg', 1);
+INSERT INTO `tbactivity` (`tbactivityid`, `tbactivityname`, `tbactivityservicecompanyid`, `tbactivityatributearray`, `tbactivitydataarray`, `tbactivityurl`, `tbactivitystatus`, `tbactivitydate`) VALUES
+(1, 'Walking Tour', 1, 'Location, Duration', 'Park, 2 hours', '10188600.jpg', 1, '2024-09-16 00:00:00'),
+(2, 'Photography Workshop', 2, 'Location, Materials', 'Studio, Cameras', 'foca.jpg', 1, '2024-09-15 00:00:00'),
+(3, 'Cultural Exhibition', 3, 'Location, Art Pieces', 'Gallery, 100 pieces', 'Cat03.jpg', 1, '2024-09-14 00:00:00'),
+(4, 'Wildlife Safari', 4, 'Location, Guide', 'Forest, Expert Guide', 'IMG_1312.PNG', 1, '2024-09-13 00:00:00'),
+(5, 'Cooking Class', 5, 'Location, Chef', 'Kitchen, Famous Chef', 'dog.jpg', 1, '2024-09-12 00:00:00'),
+(6, 'Jijij', 6, 'Hola', 'aaaaaa', 'calavera.jpg', 1, '2024-09-30 04:04:00');
+COMMIT;
+
+
 
 -- --------------------------------------------------------
 

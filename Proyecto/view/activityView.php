@@ -19,8 +19,14 @@
         .attribute-container {
             margin-bottom: 10px;
         }
+
         .required {
             color: red;
+        }
+
+        .datetime-label {
+            display: block;
+            margin-top: 10px;
         }
     </style>
     <script src="../resources/activityAJAX.js"></script>
@@ -34,19 +40,19 @@
 </head>
 
 <body>
-     <a href="adminView.php">← Volver al inicio</a>
+    <a href="adminView.php">← Volver al inicio</a>
     <header>
         <h1>CRUD Actividades</h1>
         <p><span class="required">*</span> Campos requeridos</p>
-       
     </header>
 
     <section id="create">
         <h2>Crear Actividad</h2>
         <form method="post" id="formCreate" action="../business/activityAction.php" enctype="multipart/form-data">
-            <label for="nameTBActivity">Nombre de la Actividad <span class="required">*</label>
+            <label for="nameTBActivity">Nombre de la Actividad <span class="required">*</span></label>
             <input placeholder="Nombre de la Actividad" type="text" name="nameTBActivity" id="nameTBActivity" required />
             <br><br>
+
             <label for="serviceId1">Servicio: </label>
             <select name="serviceId" id="serviceId1" required>
                 <?php foreach ($services as $service): ?>
@@ -56,19 +62,26 @@
                 <?php endforeach; ?>
             </select>
             <br><br>
+
             <div id="attributes">
                 <div>
                     <label for="attribute1">Atributo: </label>
-                    <input type="text" name="attributeTBActivityArray" id="attribute1" placeholder="Atributo"  />
+                    <input type="text" name="attributeTBActivityArray[]" id="attribute1" placeholder="Atributo" />
                     <label for="dataAttributeTBActivityArray">Dato: </label>
-                    <input type="text" name="dataAttributeTBActivityArray" placeholder="Dato"  />
+                    <input type="text" name="dataAttributeTBActivityArray[]" placeholder="Dato" />
                 </div>
             </div>
             <button type="button" id="addAttribute">Agregar otro atributo</button>
             <br><br>
+
+            <label class="datetime-label" for="activityDate">Fecha y Hora de la Actividad: </label>
+            <input type="datetime-local" name="activityDate" id="activityDate" required>
+            <br><br>
+
             <label for="imagenes">Selecciona las imágenes (máximo 5): </label><br>
             <input type="file" name="imagenes[]" id="imagenes" multiple />
             <br><br>
+
             <input type="hidden" id="statusTBActivity" name="statusTBActivity" value="1">
             <input type="submit" value="Crear" name="create" id="create" />
         </form>
@@ -90,96 +103,107 @@
                 <tr>
                     <th>Nombre de la Actividad</th>
                     <th>Servicio</th>
+                    <th>Atributos y Datos</th>
                     <th>Fotos</th>
+                    <th>Fecha y Hora</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
             <?php
-include_once '../business/activityBusiness.php';
-$activityBusiness = new ActivityBusiness();
-$allActivities = $activityBusiness->getAllActivities();
-$activityFiltered = [];
+            include_once '../business/activityBusiness.php';
+            $activityBusiness = new ActivityBusiness();
+            $allActivities = $activityBusiness->getAllActivities();
+            $activityFiltered = [];
 
-
-if (isset($_GET['searchOne'])) {
-    $searchTerm = $_GET['searchOne'];
-    $activityFiltered = array_filter($allActivities, function ($activity) use ($searchTerm) {
-        return stripos($activity->getNameTBActivity(), $searchTerm) !== false;
-    });
-}
-if (count($activityFiltered) > 0) {
-    $allActivities = $activityFiltered;
-}
-
-if (count($allActivities) > 0) {
-    foreach ($allActivities as $current) {
-        $assignedService = $serviceCompanyBusiness->getServiceCompany($current->getTbservicecompanyid());
-        echo '<tr>'; 
-        echo '<form method="post" action="../business/activityAction.php" enctype="multipart/form-data" onsubmit="return confirmAction(event);">';
-        echo '<input type="hidden" name="idTBActivity" value="' . $current->getIdTBActivity() . '">';
-        echo '<input type="hidden" name="existingImages" value="' . htmlspecialchars(is_array($current->getTbactivityURL()) ? implode(',', $current->getTbactivityURL()) : $current->getTbactivityURL()) . '">';
-    
-        echo '<td>';
-        echo '<input type="text" name="nameTBActivity" value="' . htmlspecialchars($current->getNameTBActivity()) . '">';
-        echo '</td>';
-    
-        echo '<td>';
-        echo '<select name="serviceId" required>';
-        foreach ($services as $service) {
-            echo '<option value="' . htmlspecialchars($service->getTbservicecompanyid()) . '"';
-            if ($service->getTbservicecompanyid() == $current->getTbservicecompanyid()) {
-                echo ' selected';
+            if (isset($_GET['searchOne'])) {
+                $searchTerm = $_GET['searchOne'];
+                $activityFiltered = array_filter($allActivities, function ($activity) use ($searchTerm) {
+                    return stripos($activity->getNameTBActivity(), $searchTerm) !== false;
+                });
             }
-            echo '>' . htmlspecialchars($service->getTbservicecompanyid()) . '</option>';
-        }
-        echo '</select>';
-        echo '</td>';
-    
-   
-        echo '<td>';
-        $urls = $current->getTbactivityURL();
-    
-        if (is_string($urls)) {
-            $urls = explode(',', $urls);
-        }
-    
-        foreach ($urls as $index => $url) {
-            if (!empty($url)) {
-                $fullImagePath = $imageBasePath . trim($url);
-                echo '<img src="' . htmlspecialchars($fullImagePath) . '" alt="Foto" width="50" height="50" />';
+            if (count($activityFiltered) > 0) {
+                $allActivities = $activityFiltered;
             }
-        }
-        echo '</td>';
-    
 
-        echo '<td>';
-        echo '<label for="imageIndex">Eliminar imagen: </label>';
-        echo '<select name="imageIndex">';
-        foreach ($urls as $index => $url) {
-            if (!empty($url)) {
-                echo '<option value="' . $index . '">Imagen ' . ($index + 1) . '</option>';
+            if (count($allActivities) > 0) {
+                foreach ($allActivities as $current) {
+                    $assignedService = $serviceCompanyBusiness->getServiceCompany($current->getTbservicecompanyid());
+                    echo '<tr>'; 
+                    echo '<form method="post" action="../business/activityAction.php" enctype="multipart/form-data" onsubmit="return confirmAction(event);">';
+                    echo '<input type="hidden" name="idTBActivity" value="' . $current->getIdTBActivity() . '">';
+                    echo '<input type="hidden" name="existingImages" value="' . htmlspecialchars(is_array($current->getTbactivityURL()) ? implode(',', $current->getTbactivityURL()) : $current->getTbactivityURL()) . '">';
+                
+                    // Nombre de la actividad
+                    echo '<td>';
+                    echo '<input type="text" name="nameTBActivity" value="' . htmlspecialchars($current->getNameTBActivity()) . '">';
+                    echo '</td>';
+                
+                    // Servicio asociado
+                    echo '<td>';
+                    echo '<select name="serviceId" required>';
+                    foreach ($services as $service) {
+                        echo '<option value="' . htmlspecialchars($service->getTbservicecompanyid()) . '"';
+                        if ($service->getTbservicecompanyid() == $current->getTbservicecompanyid()) {
+                            echo ' selected';
+                        }
+                        echo '>' . htmlspecialchars($service->getTbservicecompanyid()) . '</option>';
+                    }
+                    echo '</select>';
+                    echo '</td>';
+                
+                    // Atributos y datos (Editable)
+                    echo '<td>';
+                    $attributeArray = $current->getAttributeTBActivityArray();
+                    $dataArray = $current->getDataAttributeTBActivityArray();
+                    for ($i = 0; $i < count($attributeArray); $i++) {
+                        echo '<div>';
+                        echo '<input type="text" name="attributeTBActivityArray[]" value="' . htmlspecialchars($attributeArray[$i]) . '" placeholder="Atributo" />';
+                        echo '<input type="text" name="dataAttributeTBActivityArray[]" value="' . htmlspecialchars($dataArray[$i]) . '" placeholder="Dato" />';
+                        echo '</div>';
+                    }
+                    echo '</td>';
+                
+                    // Fotos
+                    echo '<td>';
+                    $urls = $current->getTbactivityURL();
+                    if (is_string($urls)) {
+                        $urls = explode(',', $urls);
+                    }
+                    foreach ($urls as $index => $url) {
+                        if (!empty($url)) {
+                            $fullImagePath = $imageBasePath . trim($url);
+                            echo '<img src="' . htmlspecialchars($fullImagePath) . '" alt="Foto" width="50" height="50" />';
+                        }
+                    }
+                    echo '</td>';
+                
+                    // Fecha y hora (Editable)
+                    echo '<td>';
+                    echo '<input type="datetime-local" name="activityDate" value="' . htmlspecialchars($current->getActivityDate()) . '" />';
+                    echo '</td>';
+                
+                    // Acciones
+                    echo '<td>';
+                    echo '<input type="submit" value="Actualizar" name="update" />';
+                    echo '<input type="submit" value="Eliminar" name="delete" />';
+                    echo '<select name="imageIndex">';
+                    foreach ($urls as $index => $url) {
+                        if (!empty($url)) {
+                            echo '<option value="' . $index . '">Eliminar Imagen ' . ($index + 1) . '</option>';
+                        }
+                    }
+                    echo '</select>';
+                    echo '<input type="submit" value="Eliminar Imagen" name="deleteImage" />';
+                    echo '</td>';
+                
+                    echo '</form>'; 
+                    echo '</tr>';
+                }
+            } else {
+                echo '<tr><td colspan="6">No se encontraron resultados</td></tr>';
             }
-        }
-        echo '</select>';
-        echo '</td>';
-    
-
-        echo '<td>';
-        echo '<input type="submit" value="Actualizar" name="update" />';
-        echo '<input type="submit" value="Eliminar" name="delete" />';
-        echo '<input type="submit" value="Eliminar Imagen" name="deleteImage" />';
-        echo '</td>';
-    
-        echo '</form>'; 
-        echo '</tr>';
-    }
-    
-    
-} else {
-    echo '<tr><td colspan="4">No se encontraron resultados</td></tr>';
-}
-?>
+            ?>
             </tbody>
         </table>
     </section>
@@ -189,9 +213,11 @@ if (count($allActivities) > 0) {
             const attributeContainer = document.createElement('div');
             attributeContainer.innerHTML = `
                 <label>Atributo: </label>
-                <input type="text" name="attributeTBActivityArray" placeholder="Atributo" required />
+                <input type="text" name="attributeTBActivity
+                                <label>Atributo: </label>
+                <input type="text" name="attributeTBActivityArray[]" placeholder="Atributo" required />
                 <label>Dato: </label>
-                <input type="text" name="dataAttributeTBActivityArray" placeholder="Dato" required />
+                <input type="text" name="dataAttributeTBActivityArray[]" placeholder="Dato" required />
             `;
             document.getElementById('attributes').appendChild(attributeContainer);
         });
