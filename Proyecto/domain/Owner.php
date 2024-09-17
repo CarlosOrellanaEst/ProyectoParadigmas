@@ -75,4 +75,11 @@ class Owner extends User {
         $this->statusTBOwner = $statusTBOwner;
     }
 
+    public function __toString() {
+        return parent::__toString() . // Llama al toString de User
+               "ID Propietario: " . $this->idTBOwner . "\n" .
+               "Dirección: " . $this->directionTBOwner . "\n" .
+               "Foto URL: " . $this->photoURLTBOwner . "\n" .
+               "Estado: " . ($this->statusTBOwner ? "Activo" : "Inactivo") . "\n";
+    }
 }

@@ -199,6 +199,7 @@ class ownerData extends Data {
                 $row['tbownerid'], $row['tbownerdirection'], $row['tbownerphotourl'], $row['tbownerstatus'], 
                 $row['tbuserid'], $row['tbusernickname'], $row['tbuserpassword'], $row['tbuserstatus'], "Propietario", $row['tbusername'], $row['tbusersurnames'], $row['tbuserlegalidentification'], $row['tbuserphone'], $row['tbuseremail']  
             );
+      //      echo ("\n\n " . $ownerReturn);
         } else {
             $ownerReturn = null;
         }
@@ -364,7 +365,7 @@ class ownerData extends Data {
         $result = mysqli_query($conn, $query);
     
         if ($row = mysqli_fetch_assoc($result)) {
-            $ownerReturn = new Owner($row['tbownerid'], $row['tbuserid'], $row['tbownerdirection'], $row['tbownerphotourl'], $row['tbownerstatus']);
+            $ownerReturn = new Owner($row['tbownerid'], /* $row['tbuserid'], */ $row['tbownerdirection'], $row['tbownerphotourl'], $row['tbownerstatus']);
         } else {
             $ownerReturn = null;
         }
