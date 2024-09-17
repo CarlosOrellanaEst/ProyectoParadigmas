@@ -8,6 +8,7 @@ include_once '../domain/Activity.php';
 
 $response = array(); 
 
+// Crear una nueva actividad
 if (isset($_POST['create'])) {
     
     if (isset($_FILES['imagenes']) && !empty($_FILES['imagenes']['name'][0])) {
@@ -15,7 +16,7 @@ if (isset($_POST['create'])) {
         $fileNames = array(); 
         $allowTypes = array('jpg', 'png', 'jpeg', 'gif');
 
-        
+        // Validación de límite de imágenes (máximo 5)
         if (count($_FILES['imagenes']['name']) > 5) {
             $response['status'] = 'error';
             $response['message'] = 'Solo se permite subir un máximo de 5 imágenes.';
@@ -23,7 +24,7 @@ if (isset($_POST['create'])) {
             exit();
         }
 
-     
+        // Procesar las imágenes
         foreach ($_FILES['imagenes']['name'] as $key => $fileName) {
             $targetFilePath = $uploadDir . basename($fileName);
             $fileType = strtolower(pathinfo($targetFilePath, PATHINFO_EXTENSION));
@@ -45,16 +46,17 @@ if (isset($_POST['create'])) {
             }
         }
 
-        
+        // Convertir los nombres de las imágenes en una cadena separada por comas
         $photoUrls = implode(',', $fileNames);
 
-        
+        // Capturar los datos del formulario
         $nameTBActivity = isset($_POST['nameTBActivity']) ? trim($_POST['nameTBActivity']) : '';
         $serviceID = isset($_POST['serviceId']) ? trim($_POST['serviceId']) : 0;
         $attributeTBActivityArray = isset($_POST['attributeTBActivityArray']) ? explode(',', $_POST['attributeTBActivityArray']) : [];
         $dataAttributeTBActivityArray = isset($_POST['dataAttributeTBActivityArray']) ? explode(',', $_POST['dataAttributeTBActivityArray']) : [];
+        $activityDate = isset($_POST['activityDate']) ? trim($_POST['activityDate']) : date('Y-m-d');  // Fecha actual si no se especifica
 
-       
+        // Validaciones de campos obligatorios
         if (empty($nameTBActivity)) {
             echo json_encode(['status' => 'error', 'message' => 'El nombre de la actividad es requerido.']);
             exit();
@@ -65,14 +67,14 @@ if (isset($_POST['create'])) {
             exit();
         }
 
-    
-        $activity = new Activity(0, $nameTBActivity, $serviceID, $attributeTBActivityArray, $dataAttributeTBActivityArray, $photoUrls, 1);
+        // Crear una nueva instancia de la actividad
+        $activity = new Activity(0, $nameTBActivity, $serviceID, $attributeTBActivityArray, $dataAttributeTBActivityArray, $photoUrls, 1, $activityDate);
         $activityBusiness = new ActivityBusiness();
 
-       
+        // Insertar la actividad
         $result = $activityBusiness->insertActivity($activity);
 
-        
+        // Manejo de respuesta
         if (is_array($result) && $result['status'] == 'error') {
             echo json_encode($result); 
             exit();
@@ -87,27 +89,27 @@ if (isset($_POST['create'])) {
         echo json_encode($response);
         exit();
     } else {
-        
+        // Si no se suben imágenes
         $response = ['status' => 'error', 'message' => 'No se han subido imágenes.'];
         echo json_encode($response);
         exit();
     }
-} 
+}
 
-
+// Actualizar una actividad existente
 if (isset($_POST['update'])) {
     $idTBActivity = $_POST['idTBActivity'];
     $nameTBActivity = $_POST['nameTBActivity'];
-    $attributeTBActivityArray = $_POST['attributeTBActivityArray'] ?? [];
-    $dataAttributeTBActivityArray = $_POST['dataAttributeTBActivityArray'] ?? [];
+    $attributeTBActivityArray = isset($_POST['attributeTBActivityArray']) ? explode(',', $_POST['attributeTBActivityArray']) : [];
+    $dataAttributeTBActivityArray = isset($_POST['dataAttributeTBActivityArray']) ? explode(',', $_POST['dataAttributeTBActivityArray']) : [];
     $statusTBActivity = isset($_POST['statusTBActivity']) ? 1 : 0;
     $serviceId = $_POST['serviceId'];
+    $activityDate = isset($_POST['activityDate']) ? trim($_POST['activityDate']) : date('Y-m-d');
 
-  
+    // Obtener imágenes existentes y nuevas
     $existingImages = $_POST['existingImages'] ?? '';
     $uploadedImages = [];
 
-  
     if (isset($_FILES['imagenes']) && count($_FILES['imagenes']['name']) > 0) {
         for ($i = 0; $i < count($_FILES['imagenes']['name']); $i++) {
             $imageName = $_FILES['imagenes']['name'][$i];
@@ -120,13 +122,15 @@ if (isset($_POST['update'])) {
         }
     }
 
+    // Unir las imágenes nuevas con las existentes
     $allImages = array_merge(explode(',', $existingImages), $uploadedImages);
-    $allImages = implode(',', array_filter($allImages)); 
+    $allImages = implode(',', array_filter($allImages));
 
-
+    // Crear una instancia de la actividad para actualizar
     $activityBusiness = new ActivityBusiness();
-    $activity = new Activity($idTBActivity, $nameTBActivity, $serviceId, $attributeTBActivityArray, $dataAttributeTBActivityArray, $allImages, 1);
-   
+    $activity = new Activity($idTBActivity, $nameTBActivity, $serviceId, $attributeTBActivityArray, $dataAttributeTBActivityArray, $allImages, 1, $activityDate);
+
+    // Actualizar la actividad
     $result = $activityBusiness->updateActivity($activity);
 
     if (is_array($result) && $result['status'] == 'error') {
@@ -142,6 +146,7 @@ if (isset($_POST['update'])) {
     exit();
 }
 
+// Eliminar una actividad
 if (isset($_POST['delete'])) {
     $idTBActivity = $_POST['idTBActivity'];
 
@@ -156,7 +161,7 @@ if (isset($_POST['delete'])) {
     exit();
 }
 
-
+// Eliminar una imagen de una actividad
 if (isset($_POST['deleteImage'])) {
     $activityId = $_POST['idTBActivity']; 
     $imageIndexToDelete = (int)$_POST['imageIndex'];  
@@ -179,7 +184,7 @@ if (isset($_POST['deleteImage'])) {
         
         $imageInUse = $activityBusiness->isImageInUse($imageToDelete);
         
-        
+        // Eliminar la imagen físicamente si ya no está en uso
         if (!$imageInUse && file_exists($filePath)) {
             unlink($filePath);  
         }
