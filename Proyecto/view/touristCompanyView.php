@@ -1,3 +1,25 @@
+<?php
+    require '../domain/Owner.php';
+    require '../business/ownerBusiness.php';
+
+    session_start();
+    $userLogged = $_SESSION['user'];
+    $ownerBusiness = new ownerBusiness();
+
+    // Definimos los propietarios en función del tipo de usuario
+    if ($userLogged->getUserType() == "Administrador") {
+        $owners = $ownerBusiness->getAllTBOwners();
+        if (!$owners || empty($owners)) {
+            echo "<script>alert('No se encontraron propietarios.');</script>";
+        }
+    } else if ($userLogged->getUserType() == "Propietario") {
+        $owners = [$userLogged]; 
+    }
+
+    // Guardamos la lista de propietarios en la sesión para usarla abajo
+    $_SESSION['owners'] = $owners;
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 
@@ -11,22 +33,25 @@
         }
     </style>
     <?php
-    include_once '../business/touristCompanyBusiness.php';
-    include_once '../business/touristCompanyTypeBusiness.php';
-    include_once '../business/ownerBusiness.php';
+        include_once '../business/touristCompanyBusiness.php';
+        include_once '../business/touristCompanyTypeBusiness.php';
+        include_once '../business/ownerBusiness.php';
 
-    $ownerBusiness = new OwnerBusiness();
-    $owners = $ownerBusiness->getAllTBOwner();
-    $touristCompanyTypeBusiness = new TouristCompanyTypeBusiness();
-    $touristCompanyTypes = $touristCompanyTypeBusiness->getAll();
-    $imageBasePath = '../images/';
+        $touristCompanyTypeBusiness = new TouristCompanyTypeBusiness();
+        $touristCompanyTypes = $touristCompanyTypeBusiness->getAll();
+        $imageBasePath = '../images/';
     ?>
-
 
 </head>
 
 <body>
-    <a href="adminView.php">← Volver al inicio</a>
+    <?php
+        if ($userLogged->getUserType() == "Propietario") {
+            echo '<a href="ownerViewSession.php">← Volver al inicio</a>';
+        } else if ($userLogged->getUserType() == "Administrador") {
+            echo '<a href="adminView.php">← Volver al inicio</a>';
+        }
+    ?>
     <header>
         <h1>CRUD Empresa turística</h1>
         <p><span class="required">*</span> Campos requeridos</p>
@@ -108,15 +133,16 @@
                 $touristCompanyBusiness = new TouristCompanyBusiness();
                 $ownerBusiness = new OwnerBusiness();
                 $touristCompanyTypeBusiness = new TouristCompanyTypeBusiness();
-                $all = $touristCompanyBusiness->getAll();
-                // if (Utils::$userLogged) {
-                //     echo (Utils::$userLogged->getUserName());
-                // }
-                $allowners = $ownerBusiness->getAllTBOwner();
+
+                if ($userLogged->getUserType() == "Propietario") {
+                    $all = $touristCompanyBusiness->getAllByOwnerID($userLogged->getIdTBOwner());
+                } else if ($userLogged->getUserType() == "Administrador") {
+                    $all = $touristCompanyBusiness->getAll();
+                }
+
                 $alltouristCompanyTypes = $touristCompanyTypeBusiness->getAll();
                 $touristCompanyFiltered = [];
 
-                
                 if (isset($_GET['searchOne'])) {
                     $searchTerm = $_GET['searchOne'];
                     $touristCompanyFiltered = array_filter($all, function ($touristCompany) use ($searchTerm) {
@@ -137,7 +163,7 @@
                         echo '<td><input type="text" name="magicName" value="' . htmlspecialchars($current->getTbtouristcompanymagicname()) . '" ></td>';
                         echo '<td>';
                         echo '<select name="ownerId" required>';
-                        foreach ($allowners as $owner) {
+                        foreach ($owners as $owner) {
                             echo '<option value="' . htmlspecialchars($owner->getIdTBOwner()) . '"';
                             if ($owner->getIdTBOwner() == $current->getTbtouristcompanyowner()) {
                                 echo ' selected';

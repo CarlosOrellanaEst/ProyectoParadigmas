@@ -113,6 +113,40 @@ public function getAllTouristCompanies() {
     return $touristCompanies;
 }
 
+public function getAllTouristCompaniesByOwnerId($ownerId) {
+    $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
+    if (!$conn) {
+        die("Connection failed: " . mysqli_connect_error());
+    }
+    $conn->set_charset('utf8');
+
+    $ownerId = mysqli_real_escape_string($conn, $ownerId);
+    
+    $query = "SELECT * FROM tbtouristcompany WHERE tbtouristcompanystatus = 1 AND tbtouristcompanyowner = '$ownerId'";
+    $result = mysqli_query($conn, $query);
+
+    $touristCompanies = [];
+    while ($row = mysqli_fetch_assoc($result)) {
+      
+        $company = new TouristCompany(
+            $row['tbtouristcompanyid'],
+            $row['tbtouristcompanylegalname'],
+            $row['tbtouristcompanymagicname'],
+            $row['tbtouristcompanyowner'],
+            $row['tbtouristcompanycompanyType'],
+            $row['tbtouristcompanyurl'], 
+            $row['tbtouristcompanystatus']
+        );
+
+        $photoUrls = explode(',', $row['tbtouristcompanyurl']);
+        $company->setTbtouristcompanyurl(array_map('trim', $photoUrls)); 
+
+        $touristCompanies[] = $company;
+    }
+
+    mysqli_close($conn);
+    return $touristCompanies;
+}
 
 
     public function deleteTouristCompany($id) {

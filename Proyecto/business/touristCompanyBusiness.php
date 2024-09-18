@@ -17,6 +17,10 @@ class TouristCompanyBusiness {
     public function getAll() {
         return $this->touristCompanyData->getAllTouristCompanies();
     }
+    
+    public function getAllByOwnerID($ownerID) {
+        return $this->touristCompanyData->getAllTouristCompaniesByOwnerId($ownerID);
+    }
 
     public function delete($idTouristCompany) {
         return $this->touristCompanyData->deleteTouristCompany($idTouristCompany);

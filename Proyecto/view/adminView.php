@@ -21,7 +21,7 @@
     <?php 
        echo ' <a href="../index.php">Cerrar Sesión</a> ';
        $_SESSION = array();
-       session_destroy();
+    //   session_destroy();
     ?>
 </body>
 </html>
