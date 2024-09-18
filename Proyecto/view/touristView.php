@@ -13,5 +13,10 @@
 <!--         <li><a href="./view/pruebas.php">Pruebas</a></li>
         <li><a href="./view/serviceView.php">CRUD Servicios</a></li> -->
     </ol>
+    <?php 
+       echo ' <a href="../index.php">Cerrar Sesión</a> ';
+       $_SESSION = array();
+       session_destroy();
+    ?>
 </body>
 </html>

@@ -1,14 +1,9 @@
 <?php
-
     require '../domain/Owner.php';
     require '../business/paymentTypeBusiness.php';
     require '../business/ownerBusiness.php';
 
     session_start();
-
-    // Incluimos las clases necesarias antes de acceder a la sesión
-
-    // Obtenemos el usuario logueado desde la sesión
     $userLogged = $_SESSION['user'];
     $ownerBusiness = new ownerBusiness();
 
@@ -19,10 +14,10 @@
             echo "<script>alert('No se encontraron propietarios.');</script>";
         }
     } else if ($userLogged->getUserType() == "Propietario") {
-        $owners = [$userLogged];  // Colocamos al propietario en un array para poder iterarlo
+        $owners = [$userLogged]; 
     }
 
-    // Guardamos la lista de propietarios en la sesión para usarla más adelante
+    // Guardamos la lista de propietarios en la sesión para usarla abajo
     $_SESSION['owners'] = $owners;
 ?>
 
@@ -40,30 +35,19 @@
             color: red;
         }
     </style>
-    
-    <?php
-//         require '../business/paymentTypeBusiness.php';
-//         require '../business/ownerBusiness.php';
 
-//         session_start();
-//         $userLogged = $_SESSION['user'];
-//      //   echo ($userLogged);
-//         $ownerBusiness = new ownerBusiness();
-//          if ($userLogged->getUserType() == "Administrador") {
-//             $owners = $ownerBusiness->getAllTBOwners();
-//             if (!$owners || empty($owners)) {
-//                 echo "<script>alert('No se encontraron propietarios.');</script>";
-//             }
-//          } else if ($userLogged->getUserType() == "Propietario") {
-//             $owners  =  $userLogged;
-//    //         echo ($owners);
-//          }
-    ?>
     <script src="../resources/paymentTypeView.js"></script>
     <script src="../resources/paymentTypeAJAX.js"></script>
 </head>
 <body>
-    <a href="adminView.php">← Volver al inicio</a>
+    <?php
+      //  $userLogged = $_SESSION['user'];
+        if ($userLogged->getUserType() == "Propietario") {
+            echo '<a href="ownerViewSession.php">← Volver al inicio</a>';
+        } else if ($userLogged->getUserType() == "Administrador") {
+            echo '<a href="adminView.php">← Volver al inicio</a>';
+        }
+    ?>
     <header> 
         <h1>CRUD Tipo de pago</h1>
         <p><span class="required">*</span> Campos requeridos</p>
@@ -74,21 +58,6 @@
             <label for="ownerId">Propietario</label>
             <select name="ownerId" id="ownerId" required>
                 <?php
-                    // session_start();
-
-                    // echo '<select>';
-                    // if (!empty($owners)) {
-                    //     foreach ($owners as $owner) {
-                    //       //  echo ($owner->getFullName());
-                    //         echo '<option value="' . htmlspecialchars($owner->getIdTBOwner()) . '">'
-                    //             . htmlspecialchars($owner->getFullName()) 
-                    //             . '</option>';
-                    //     }
-                    // } else {
-                    //     echo '<option value="">No hay propietarios disponibles</option>';
-                    // }
-                    // echo '</select>';
-
                     $owners = $_SESSION['owners'];  // Recuperar de la sesión
 
                     if (!empty($owners)) {
@@ -132,43 +101,74 @@
             <tbody>
                 <?php
                     $paymentTypeBusiness = new paymentTypeBusiness();
-                    $all = $paymentTypeBusiness->getAll();
-                    $bankAccountFiltered = [];
-
-                    if (isset($_GET['searchOne'])) {
-                        $searchTerm = $_GET['searchOne'];
-                        $bankAccountFiltered = array_filter($all, function($bankAccount) use ($searchTerm) {
-                            return stripos($bankAccount->getAccountNumber(), $searchTerm) !== false;
-                        });
-                    }
-
-                    if (count($bankAccountFiltered) > 0) {
-                        $all = $bankAccountFiltered;
-                    }
-
-                    if (count($all) > 0) {
-                        foreach ($all as $current) {
-                            echo '<form method="post" action="../business/paymentTypeAction.php" onsubmit="return confirmAction(event);">';
-                            echo '<input type="hidden" name="tbpaymentTypeid" value="' . $current->getTbPaymentTypeId() . '">';
+                    
+                    if ($userLogged->getUserType() == "Propietario") {
+                        // me traigo todos los metodos de pago pero SOLO del owner loggeado
+                        $all = $paymentTypeBusiness -> getAllByOwnerID($userLogged->getIdTBOwner());
+                        if (count($all) > 0) {
+                            foreach ($all as $current) {
+                                echo '<form method="post" action="../business/paymentTypeAction.php" onsubmit="return confirmAction(event);">';
+                                echo '<input type="hidden" name="tbpaymentTypeid" value="' . $current->getTbPaymentTypeId() . '">';
+                                echo '<tr>';
+                                    echo '<td><input type="text" name="OwnerId" value="' . $current->getOwnerId() . '"/></td>';
+                                    echo '<td><input type="text" name="SinpeNumber" value="' . $current->getSinpeNumber() . '"/></td>';
+                                    echo '<td><input type="text" name="AccountNumber" value="' . $current->getAccountNumber() . '"/></td>';
+                                    echo '<td><select name="Status" id="Status">
+                                                    <option value="1"' . (($current->getStatus() == 1) ? ' selected' : '') . '>Activo</option>
+                                                    <option value="0"' . (($current->getStatus() == 0) ? ' selected' : '') . '>Inactivo</option>
+                                                </select></td>';
+                                    echo '<td>';
+                                        echo '<input type="submit" value="Actualizar" name="update"/>';
+                                        echo '<input type="submit" value="Eliminar" name="delete"/>';
+                                    echo '</td>';
+                                echo '</tr>';
+                                echo '</form>';
+                            }
+                        } else {
                             echo '<tr>';
-                                echo '<td><input type="text" name="OwnerId" value="' . $current->getOwnerId() . '"/></td>';
-                                echo '<td><input type="text" name="SinpeNumber" value="' . $current->getSinpeNumber() . '"/></td>';
-                                echo '<td><input type="text" name="AccountNumber" value="' . $current->getAccountNumber() . '"/></td>';
-                                echo '<td><select name="Status" id="Status">
-                                                <option value="1"' . (($current->getStatus() == 1) ? ' selected' : '') . '>Activo</option>
-                                                <option value="0"' . (($current->getStatus() == 0) ? ' selected' : '') . '>Inactivo</option>
-                                            </select></td>';
-                                echo '<td>';
-                                    echo '<input type="submit" value="Actualizar" name="update"/>';
-                                    echo '<input type="submit" value="Eliminar" name="delete"/>';
-                                echo '</td>';
+                                echo '<td colspan="5" style="text-align: center;">No hay registros</td>';
                             echo '</tr>';
-                            echo '</form>';
                         }
-                    } else {
-                        echo '<tr>';
-                            echo '<td colspan="5" style="text-align: center;">No hay registros</td>';
-                        echo '</tr>';
+                    } 
+                    else {
+                        // pego todo lo de abajo
+                        $all = $paymentTypeBusiness->getAll();
+                        $bankAccountFiltered = [];
+
+                        if (isset($_GET['searchOne'])) {
+                            $searchTerm = $_GET['searchOne'];
+                            $bankAccountFiltered = array_filter($all, function($bankAccount) use ($searchTerm) {
+                                return stripos($bankAccount->getAccountNumber(), $searchTerm) !== false;
+                            });
+                        }
+                        if (count($bankAccountFiltered) > 0) {
+                            $all = $bankAccountFiltered;
+                        }
+
+                        if (count($all) > 0) {
+                            foreach ($all as $current) {
+                                echo '<form method="post" action="../business/paymentTypeAction.php" onsubmit="return confirmAction(event);">';
+                                echo '<input type="hidden" name="tbpaymentTypeid" value="' . $current->getTbPaymentTypeId() . '">';
+                                echo '<tr>';
+                                    echo '<td><input type="text" name="OwnerId" value="' . $current->getOwnerId() . '"/></td>';
+                                    echo '<td><input type="text" name="SinpeNumber" value="' . $current->getSinpeNumber() . '"/></td>';
+                                    echo '<td><input type="text" name="AccountNumber" value="' . $current->getAccountNumber() . '"/></td>';
+                                    echo '<td><select name="Status" id="Status">
+                                                    <option value="1"' . (($current->getStatus() == 1) ? ' selected' : '') . '>Activo</option>
+                                                    <option value="0"' . (($current->getStatus() == 0) ? ' selected' : '') . '>Inactivo</option>
+                                                </select></td>';
+                                    echo '<td>';
+                                        echo '<input type="submit" value="Actualizar" name="update"/>';
+                                        echo '<input type="submit" value="Eliminar" name="delete"/>';
+                                    echo '</td>';
+                                echo '</tr>';
+                                echo '</form>';
+                            }
+                        } else {
+                            echo '<tr>';
+                                echo '<td colspan="5" style="text-align: center;">No hay registros</td>';
+                            echo '</tr>';
+                        }   
                     }
                 ?>
             </tbody>

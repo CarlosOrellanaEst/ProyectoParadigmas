@@ -3,7 +3,7 @@
 require_once './loginBusiness.php';
 require '../utils/utils.php';
 
- session_start(); 
+session_start(); 
 
 header('Content-Type: application/json');
 

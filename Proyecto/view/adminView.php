@@ -18,5 +18,10 @@
         <li><a href="serviceView.php">CRUD Servicios</a></li>
         <li><a href="PlannerView.php">CRUD Planificador</a></li>
     </ol>
+    <?php 
+       echo ' <a href="../index.php">Cerrar Sesión</a> ';
+       $_SESSION = array();
+       session_destroy();
+    ?>
 </body>
 </html>

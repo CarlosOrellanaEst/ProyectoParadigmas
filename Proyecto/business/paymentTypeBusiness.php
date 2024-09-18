@@ -30,5 +30,10 @@ class paymentTypeBusiness {
         return $this->paymentTypeData->getTbPaymentTypeByAccountNumber($idPaymentType);
     }
 
+    public function getAllByOwnerID($ownerID) {
+        return $this->paymentTypeData->getTbPaymentTypeByOwnerID($ownerID);
+    }
+    
+
     
 }
