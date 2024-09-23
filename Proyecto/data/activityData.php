@@ -345,6 +345,135 @@ class activityData extends Data {
 
         return $count > 0;
     }
+
+    // Método para obtener actividades por día
+    public function getActivitiesByDay($date) {
+        $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
+        if (!$conn) {
+            die("Connection failed: " . mysqli_connect_error());
+        }
+        $conn->set_charset('utf8mb4');
+
+        $query = "SELECT * FROM tbactivity WHERE DATE(tbactivitydate) = ? AND tbactivitystatus = 1;";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("s", $date);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        $activities = array();
+
+        while ($row = $result->fetch_assoc()) {
+            $attributeArray = explode(',', $row['tbactivityatributearray']);
+            $dataArray = explode(',', $row['tbactivitydataarray']);
+            $urlArray = explode(',', $row['tbactivityurl']);
+
+            if (count($attributeArray) !== count($dataArray)) {
+                continue;
+            }
+
+            $activity = new Activity(
+                $row['tbactivityid'],
+                $row['tbactivityname'],
+                $row['tbactivityservicecompanyid'],
+                $attributeArray,
+                $dataArray,
+                $urlArray,
+                $row['tbactivitystatus'],
+                $row['tbactivitydate']
+            );
+
+            $activities[] = $activity;
+        }
+
+        mysqli_close($conn);
+        return $activities;
+    }
+
+    // Método para obtener actividades por semana
+    public function getActivitiesByWeek($date) {
+        $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
+        if (!$conn) {
+            die("Connection failed: " . mysqli_connect_error());
+        }
+        $conn->set_charset('utf8mb4');
+
+        $query = "SELECT * FROM tbactivity WHERE YEARWEEK(tbactivitydate, 1) = YEARWEEK(?, 1) AND tbactivitystatus = 1;";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("s", $date);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        $activities = array();
+
+        while ($row = $result->fetch_assoc()) {
+            $attributeArray = explode(',', $row['tbactivityatributearray']);
+            $dataArray = explode(',', $row['tbactivitydataarray']);
+            $urlArray = explode(',', $row['tbactivityurl']);
+
+            if (count($attributeArray) !== count($dataArray)) {
+                continue;
+            }
+
+            $activity = new Activity(
+                $row['tbactivityid'],
+                $row['tbactivityname'],
+                $row['tbactivityservicecompanyid'],
+                $attributeArray,
+                $dataArray,
+                $urlArray,
+                $row['tbactivitystatus'],
+                $row['tbactivitydate']
+            );
+
+            $activities[] = $activity;
+        }
+
+        mysqli_close($conn);
+        return $activities;
+    }
+
+    // Método para obtener actividades por mes
+    public function getActivitiesByMonth($date) {
+        $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
+        if (!$conn) {
+            die("Connection failed: " . mysqli_connect_error());
+        }
+        $conn->set_charset('utf8mb4');
+
+        $query = "SELECT * FROM tbactivity WHERE YEAR(tbactivitydate) = YEAR(?) AND MONTH(tbactivitydate) = MONTH(?) AND tbactivitystatus = 1;";
+        $stmt = $conn->prepare($query);
+        $stmt->bind_param("ss", $date, $date);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        $activities = array();
+
+        while ($row = $result->fetch_assoc()) {
+            $attributeArray = explode(',', $row['tbactivityatributearray']);
+            $dataArray = explode(',', $row['tbactivitydataarray']);
+            $urlArray = explode(',', $row['tbactivityurl']);
+
+            if (count($attributeArray) !== count($dataArray)) {
+                continue;
+            }
+
+            $activity = new Activity(
+                $row['tbactivityid'],
+                $row['tbactivityname'],
+                $row['tbactivityservicecompanyid'],
+                $attributeArray,
+                $dataArray,
+                $urlArray,
+                $row['tbactivitystatus'],
+                $row['tbactivitydate']
+            );
+
+            $activities[] = $activity;
+        }
+
+        mysqli_close($conn);
+        return $activities;
+    }
 }
 
 
