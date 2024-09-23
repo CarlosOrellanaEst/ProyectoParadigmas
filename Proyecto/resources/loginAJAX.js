@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', function() {
             nickName: nickName,
             password: password
         };
-       console.log(postData.nickName+postData.password);
+    //   console.log(postData.nickName+postData.password);
 
         let xhr = new XMLHttpRequest();    
         xhr.open('POST', 'business/loginAction.php', true);

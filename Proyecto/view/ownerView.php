@@ -1,3 +1,25 @@
+<?php
+    require '../domain/Owner.php';
+    require '../business/ownerBusiness.php';
+
+    session_start();
+    $userLogged = $_SESSION['user'];
+    $ownerBusiness = new ownerBusiness();
+
+    // Definimos los propietarios en función del tipo de usuario
+    if ($userLogged->getUserType() == "Administrador") {
+        $owners = $ownerBusiness->getAllTBOwners();
+        if (!$owners || empty($owners)) {
+            echo "<script>alert('No se encontraron propietarios.');</script>";
+        }
+    } else if ($userLogged->getUserType() == "Propietario") {
+        $owners = [$userLogged]; 
+    }
+
+    // Guardamos la lista de propietarios en la sesión para usarla abajo
+    $_SESSION['owners'] = $owners;
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -17,31 +39,42 @@
 </head>
 <body>
     <header>
-        <a href="adminView.php">← Volver al inicio</a>
+        <?php
+            if ($userLogged->getUserType() == "Propietario") {
+                echo '<a href="ownerViewSession.php">← Volver al inicio</a>';
+            } else if ($userLogged->getUserType() == "Administrador") {
+                echo '<a href="adminView.php">← Volver al inicio</a>';
+            }
+        ?>
         <h1>CRUD Propietarios</h1>
         <p><span class="required">*</span> Campos requeridos</p>
     </header>
-    <form id="formCreate" method="post" enctype="multipart/form-data" action="../business/ownerAction.php">
-            <label for="name">Nombre </label>
-            <input placeholder="nombre" type="text" name="ownerName" id="name"/><br><br>
-            <label for="surnames">Apellidos</label>
-            <input placeholder="apellidos" type="text" name="ownerSurnames" id="surnames"/><br><br>
-            <label for="idType">Tipo de Identificación</label>
-            <select name="idType" id="idType">
-                <option value="CR">Cédula Nacional de Costa Rica</option>
-                <option value="foreign">Extranjero</option>
-            </select><br><br>
-            <label for="legalIdentification">Identificación Legal <span class="required">*</label>
-            <input placeholder="identificacionLegal" type="text" name="ownerLegalIdentification" id="legalIdentification"/><br><br>
-            <label for="phone">Teléfono</label>
-            <input placeholder="telefono" type="text" name="ownerPhone" id="phone"/><br><br>
-            <label for="email">Correo <span class="required">*</label>
-            <input placeholder="correo" type="text" name="ownerEmail" id="email"/><br><br>
-            <label for="direction">Dirección</label>
-            <input placeholder="direccion" type="text" name="ownerDirection" id="direction"/><br><br>
-            <input type="file" name="imagen" id="imagen"><br><br>
-            <input type="submit" value="Crear" name="create" id="create"/>
-        </form>
+    <section>
+        <?php
+            if ($userLogged->getUserType() == "Administrador") {
+                echo '<form id="formCreate" method="post" enctype="multipart/form-data" action="../business/ownerAction.php">';
+                echo '<label for="name">Nombre </label>';
+                echo '<input placeholder="nombre" type="text" name="ownerName" id="name"/><br><br>';
+                echo '<label for="surnames">Apellidos</label>';
+                echo '<input placeholder="apellidos" type="text" name="ownerSurnames" id="surnames"/><br><br>';
+                echo '<label for="idType">Tipo de Identificación</label>';
+                echo '<select name="idType" id="idType">';
+                echo '<option value="CR">Cédula Nacional de Costa Rica</option>';
+                echo '<option value="foreign">Extranjero</option>';
+                echo '</select><br><br>';
+                echo '<label for="legalIdentification">Identificación Legal <span class="required">*</span></label>';
+                echo '<input placeholder="identificacionLegal" type="text" name="ownerLegalIdentification" id="legalIdentification"/><br><br>';
+                echo '<label for="phone">Teléfono</label>';
+                echo '<input placeholder="telefono" type="text" name="ownerPhone" id="phone"/><br><br>';
+                echo '<label for="email">Correo <span class="required">*</span></label>';
+                echo '<input placeholder="correo" type="text" name="ownerEmail" id="email"/><br><br>';
+                echo '<label for="direction">Dirección</label>';
+                echo '<input placeholder="direccion" type="text" name="ownerDirection" id="direction"/><br><br>';
+                echo '<input type="file" name="imagen" id="imagen"><br><br>';
+                echo '<input type="submit" value="Crear" name="create" id="create"/>';
+                echo '</form>';
+            }
+        ?>
     </section>
 
     <br>
@@ -68,14 +101,11 @@
             </thead>
             <tbody>
                 <?php
-                include '../business/ownerBusiness.php';
-                $ownerBusiness = new ownerBusiness();
-                $allowners = $ownerBusiness->getAllTBOwner();
                 $ownersFiltered = [];
 
                 if (isset($_GET['searchOne'])) {
                     $searchTerm = $_GET['searchOne'];
-                    $ownersFiltered = array_filter($allowners, function ($owner) use ($searchTerm) {
+                    $ownersFiltered = array_filter($owners, function ($owner) use ($searchTerm) {
                         return stripos($owner->getName(), $searchTerm) !== false;
                     });
                 }
@@ -83,7 +113,7 @@
                     $allowners = $ownersFiltered;
                 }
 
-                foreach ($allowners as $current) {
+                foreach ($owners as $current) {
                     echo '<form method="post" action="../business/ownerAction.php" onsubmit="return confirmDelete(event);" enctype="multipart/form-data">';
                     echo '<input type="hidden" name="ownerID" value="' . $current->getIdTBOwner() . '">';
                     echo '<input type="hidden" name="userID" value="' . $current->getId(). '">';

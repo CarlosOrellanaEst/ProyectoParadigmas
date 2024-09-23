@@ -8,8 +8,9 @@ class Activity {
     private $dataAttributeTBActivityArray;
     private $tbactivityurl;
     private $statusTBActivity;
+    private $activitydate;
 
-    function __construct ($idTBActivity, $nameTBActivity,$tbservicecompanyid, $attributeTBActivityArray,$dataAttributeTBActivityArray, $tbactivityurl, $statusTBActivity=true) { 
+    function __construct ($idTBActivity, $nameTBActivity,$tbservicecompanyid, $attributeTBActivityArray,$dataAttributeTBActivityArray, $tbactivityurl, $statusTBActivity=true, $activitydate) { 
         $this->idTBActivity = $idTBActivity;
         $this->tbservicecompanyid = $tbservicecompanyid;
         $this->nameTBActivity = $nameTBActivity;
@@ -17,7 +18,9 @@ class Activity {
         $this->dataAttributeTBActivityArray = $dataAttributeTBActivityArray;
         $this->tbactivityurl = $tbactivityurl;
         $this->statusTBActivity = $statusTBActivity;
+        $this->activitydate = $activitydate;
     }
+
 // Getters
 public function getIdTBActivity() {
     return $this->idTBActivity;
@@ -45,6 +48,10 @@ public function getTbactivityURL() {
 
 public function getStatusTBActivity() {
     return $this->statusTBActivity;
+}
+
+public function getActivityDate() {
+    return $this->activitydate;
 }
 
 // Setters
@@ -76,4 +83,10 @@ public function setStatusTBActivity($statusTBActivity) {
     $this->statusTBActivity = $statusTBActivity;
 }
 
+public function setActivityDate($activitydate) {
+    $this->activitydate = $activitydate;
+
 }
+
+}
+

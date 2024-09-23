@@ -200,6 +200,30 @@ class paymentTypeData extends Data {
         return null;
     }
 
+    public function getTbPaymentTypeByOwnerID($ownerId) {
+        $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
+        if (!$conn) {
+            die("Connection failed: " . mysqli_connect_error());
+        }
+    
+        $conn->set_charset('utf8');
+    
+        $ownerId = mysqli_real_escape_string($conn, $ownerId);
+    
+        $query = "SELECT * FROM tbpaymenttype WHERE tbownerid = '$ownerId'";
+        $result = mysqli_query($conn, $query);
+    
+        $bankA = [];
+        while ($row = mysqli_fetch_assoc($result)) {
+            $currentPaymentType= new PaymentType($row['tbpaymenttypeid'], $row['tbownerid'], $row['tbpaymenttypenumber'],
+            $row['tbpaymenttypesinpenumber'], $row['tbpaymenttypestatus']);
+            array_push($bankA, $currentPaymentType);
+        }
+
+        mysqli_close($conn);
+        return $bankA;
+    }
+
     public function getTbPaymentTypeById($id) {
         $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
         if (!$conn) {

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost
--- Tiempo de generación: 10-09-2024 a las 09:19:55
+-- Tiempo de generación: 17-09-2024 a las 17:30:53
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -30,27 +30,25 @@ SET time_zone = "+00:00";
 CREATE TABLE `tbactivity` (
   `tbactivityid` int(11) NOT NULL,
   `tbactivityname` varchar(255) NOT NULL,
-  `tbservicecompanyid` int(11) NOT NULL,
+  `tbactivityservicecompanyid` int(11) NOT NULL,
   `tbactivityatributearray` varchar(255) NOT NULL,
   `tbactivitydataarray` varchar(255) NOT NULL,
   `tbactivityurl` text NOT NULL,
-  `tbactivitystatus` tinyint(11) NOT NULL
+  `tbactivitystatus` tinyint(4) NOT NULL,
+  `tbactivitydate` datetime NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Volcado de datos para la tabla `tbactivity`
 --
 
-INSERT INTO `tbactivity` (`tbactivityid`, `tbactivityname`, `tbservicecompanyid`, `tbactivityatributearray`, `tbactivitydataarray`, `tbactivityurl`, `tbactivitystatus`) VALUES
-(1, 'juegos', 1, '', '', '', 0),
-(2, 'rnhbsg', 2, 'awdfaga,bwsbsb', 'gagag,f', 'foca.jpg,dog.jpg', 0),
-(3, 'vvvvv', 1, '', '', 'Cat03.jpg', 0),
-(4, 'nooooo', 1, '', '', 'IMG_1312.PNG,foca.jpg', 0),
-(5, 'zzzzz', 1, '', '', 'dog.jpg', 1),
-(6, 'Hola', 1, '', '', 'hola.jpg', 0),
-(7, 'zzzzz', 1, '', '', 'foca.jpg', 0),
-(8, 'Turismo', 3, 'Natacion,Estudio,meditacion', '3 metros 15,3 horas,20 min', '', 0),
-(9, 'hhhhh', 1, '', '', '10188600.jpg', 1);
+INSERT INTO `tbactivity` (`tbactivityid`, `tbactivityname`, `tbactivityservicecompanyid`, `tbactivityatributearray`, `tbactivitydataarray`, `tbactivityurl`, `tbactivitystatus`, `tbactivitydate`) VALUES
+(1, 'Walking Tour', 1, 'Location, Duration', 'Park, 2 hours', '10188600.jpg', 1, '2024-09-01 15:02:00'),
+(2, 'Photography Workshop', 2, 'Location, Materials', 'Studio, Cameras', 'foca.jpg', 1, '2024-09-15 00:00:00'),
+(3, 'Cultural Exhibition', 3, 'Location, Art Pieces', 'Gallery, 100 pieces', 'Cat03.jpg', 1, '2024-09-14 00:00:00'),
+(4, 'Wildlife Safari', 4, 'Location, Guide', 'Forest, Expert Guide', 'IMG_1312.PNG', 1, '2024-09-13 00:00:00'),
+(5, 'Cooking Class', 5, 'Location, Chef', 'Kitchen, Famous Chef', 'dog.jpg', 1, '2024-09-12 00:00:00'),
+(6, 'PreubaActu', 3, 'Adios', 'Adios', '', 0, '2024-11-20 08:08:00');
 
 -- --------------------------------------------------------
 
@@ -71,7 +69,11 @@ CREATE TABLE `tbowner` (
 --
 
 INSERT INTO `tbowner` (`tbownerid`, `tbuserid`, `tbownerdirection`, `tbownerphotourl`, `tbownerstatus`) VALUES
-(1, 2, 'Calle Falsa 123, Ciudad', '', 1);
+(1, 2, 'Calle Falsa 123, Ciudad', '', 0),
+(2, 4, '', '', 0),
+(3, 5, '', '', 1),
+(4, 6, '', '', 1),
+(5, 7, 'san luis', '', 1);
 
 -- --------------------------------------------------------
 
@@ -93,14 +95,14 @@ CREATE TABLE `tbpaymenttype` (
 --
 
 INSERT INTO `tbpaymenttype` (`tbpaymenttypeid`, `tbownerid`, `tbpaymenttypenumber`, `tbpaymenttypesinpenumber`, `tbpaymenttypestatus`, `tbpaymenttypeisactive`) VALUES
-(1, 1, '1234567890123456', 'Bank of America', 1, 1),
-(2, 2, '2345678901234567', 'Chase Bank', 1, 1),
-(3, 3, '3456789012345678', 'Wells Fargo', 1, 1),
-(4, 4, '4567890123456789', 'Citibank', 1, 1),
-(5, 5, '5678901234567890', 'Goldman Sachs', 1, 1),
+(1, 1, 'CR12345678909876543219', '84257618', 1, 1),
+(2, 2, 'CR12345678909876543225', '84257615', 1, 1),
+(3, 3, 'CR12345678909876543296', '84257617', 1, 1),
+(4, 4, 'CR12345678909876543824', '89647812', 1, 1),
+(5, 5, 'CR12345678909876543879', '86237087', 1, 1),
 (6, 1, 'CR12345678909876543210', '', 1, 0),
-(7, 1, 'CR12345678909876543210', '', 1, 0),
-(8, 5, 'CR12345678909876543210', '86237034', 1, 1);
+(9, 5, 'CR12345678909876543210', '86237034', 1, 1),
+(8, 2, 'CR12345678909876543298', '', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -155,11 +157,14 @@ CREATE TABLE `tbservice` (
 --
 
 INSERT INTO `tbservice` (`tbserviceid`, `tbservicename`, `tbservicedescription`, `tbservicetatus`) VALUES
-(1, 'Consulta General', 'Servicio de consulta médica general para evaluar el estado de salud del paciente.', 1),
-(2, 'Examen de Laboratorio', 'Servicio de análisis de sangre, orina y otros exámenes de laboratorio.', 1),
-(3, 'Vacunación', 'Servicio de vacunación para prevenir enfermedades comunes como la gripe y el tétanos.', 1),
-(4, 'Consulta Pediátrica', 'Consulta especializada en el tratamiento de niños y adolescentes.', 1),
-(5, 'Revisión Dental', 'Servicio de revisión y limpieza dental para mantener una buena salud bucal.', 1);
+(1, 'Senderismo Guiado', 'Exploración de rutas naturales con guías expertos que proporcionan información sobre la flora y fauna local.', 1),
+(2, 'Observación de Aves', 'Actividad que permite a los participantes observar y aprender sobre las diversas especies de aves en su hábitat natural.', 1),
+(3, 'Kayak en Ríos y Lagos', 'Recorridos en kayak por ríos y lagos para disfrutar del paisaje y la vida silvestre desde una perspectiva única.', 1),
+(4, 'Ciclismo de Montaña', 'Rutas de ciclismo por terrenos montañosos que ofrecen vistas impresionantes y un desafío físico.', 1),
+(5, 'Camping Ecológico', 'Experiencia de camping en entornos naturales, con prácticas sostenibles y respeto por el medio ambiente.', 1),
+(6, 'Trekking de Multi-Días', 'Recorridos a pie de varios días por paisajes naturales, con alojamiento en campamentos o refugios ecológicos.', 1),
+(7, 'Paseos en Caballo', 'Recorridos a caballo por áreas naturales, permitiendo una conexión cercana con la naturaleza y los animales.', 1),
+(8, 'Visita a Reservas Naturales', 'Visitas guiadas a reservas naturales protegidas, donde se puede aprender sobre la conservación y biodiversidad.', 1);
 
 -- --------------------------------------------------------
 
@@ -181,7 +186,13 @@ CREATE TABLE `tbservicecompany` (
 
 INSERT INTO `tbservicecompany` (`tbservicecompanyid`, `tbtouristcompanyid`, `tbserviceid`, `tbservicecompanyURL`, `tbservicetatus`) VALUES
 (1, 9, '3,4', '10188600.jpg', 1),
-(2, 8, '4', 'Cat03.jpg', 1);
+(2, 8, '4', 'Cat03.jpg', 1),
+(3, 8, '1', '', 1),
+(4, 8, '1,3', '', 1),
+(5, 9, '6', 'dog.jpg,Cat03.jpg', 1),
+(6, 9, '4', '', 1),
+(7, 9, '7,1,4', '', 1),
+(8, 9, '', 'animals.jpeg', 1);
 
 -- --------------------------------------------------------
 
@@ -211,9 +222,12 @@ INSERT INTO `tbtouristcompany` (`tbtouristcompanyid`, `tbtouristcompanylegalname
 (5, '', '', 1, 0, '', 0),
 (6, 'No', '', 1, 0, 'foca.jpg', 0),
 (7, 'No', '', 2, 0, 'IMG_1312.PNG', 0),
-(8, 'PRUEBAELIMINAR3', 'depende', 2, 1, 'dog.jpg', 1),
-(9, 'EMPRESA2', 'Hola', 3, 4, 'dog.jpg,Cat03.jpg', 1),
-(10, 'EMPRESA1', '', 3, 1, 'IMG_1312.PNG', 1);
+(8, 'PRUEBAELIMINAR3', 'depende', 2, 1, 'dog.jpg', 0),
+(9, 'EMPRESA2', 'Empresachida2', 2, 2, 'dog.jpg', 1),
+(10, 'EMPRESA1', '', 3, 1, 'IMG_1312.PNG', 1),
+(11, '', '', 1, 0, '', 0),
+(12, 'PRUEBAELIMINAR3', '', 1, 1, '', 1),
+(13, 'PRUEBAELIMINAR3', '', 2, 0, '', 0);
 
 -- --------------------------------------------------------
 
@@ -264,8 +278,12 @@ CREATE TABLE `tbuser` (
 
 INSERT INTO `tbuser` (`tbuserid`, `tbusername`, `tbusersurnames`, `tbuserlegalidentification`, `tbuserphone`, `tbuseremail`, `tbusernickname`, `tbuserpassword`, `tbrollid`, `tbuserstatus`) VALUES
 (1, 'admin', 'admin', '123456789', '84004800', 'admin@gmail.com', 'admin', '8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918', 1, 1),
-(2, 'propietario', 'propietario', '402590268', '89571689', 'propietario@hotmail.com', 'propietario', '21be11e996807bcef07a0f66fc1ec17402e138fdda66913814b7c02b32fb24ad', 3, 1),
-(3, 'turista', 'turista', '402590269', '86942578', 'turista@gmail.com', 'turista', 'd5672f037da8c5c5c277dca73331af8116f8e6fc5cdc0b4beb9268dd410c78c1', 2, 1);
+(2, 'propietario', 'propietario', '402590268', '89571689', 'propietario@hotmail.com', 'propietario', '21be11e996807bcef07a0f66fc1ec17402e138fdda66913814b7c02b32fb24ad', 3, 0),
+(3, 'turista', 'turista', '402590269', '86942578', 'turista@gmail.com', 'turista', 'd5672f037da8c5c5c277dca73331af8116f8e6fc5cdc0b4beb9268dd410c78c1', 2, 1),
+(4, 'Daisy', 'Cedenio', '7638223', '87875628', 'prueba@gmail.com', 'Daisy', 'Daisy', 3, 0),
+(5, 'Carlos', 'orellana', '789293819832', '87867234', 'carlos@gmail.com', '', '', 3, 1),
+(6, 'Daisy', 'Cedenoio', '72837823782', '87323223', 'daisy@gmail.com', 'Daisy', 'Daisy', 3, 1),
+(7, 'Glend', 'Rojas', '703040371', '98765432', 'glend@gmail.com', '', '', 3, 1);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

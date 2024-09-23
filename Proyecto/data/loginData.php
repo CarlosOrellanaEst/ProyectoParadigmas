@@ -5,7 +5,7 @@ require_once '../domain/User.php';
 
 class LoginData extends Data {
 
-    public function getUserByUsername($username, $password) { // getUserByNickName deberia ser el nombre del metodo
+    public function getUserByUsername ($username, $password) { // getUserByNickName deberia ser el nombre del metodo
         $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
         $query = "SELECT * FROM tbuser WHERE tbusernickname = ? AND tbuserpassword = ? LIMIT 1";
         $stmt = $conn->prepare($query);
@@ -54,6 +54,7 @@ class LoginData extends Data {
                 );   
                 // asigno que el usuario loggeado es una instancia de propietario
                 $user = $finalOwner;
+        //        echo ($user);
             }
         } else {
             $user = null;
