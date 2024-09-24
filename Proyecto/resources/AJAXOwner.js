@@ -32,7 +32,7 @@ document.addEventListener('DOMContentLoaded', function () {
         formData.append('create', 'create');
 
         let xhr = new XMLHttpRequest();
-        xhr.open('POST', '../business/ownerAction.php', true);
+        xhr.open('POST', './business/ownerAction.php', true);
 
         xhr.onreadystatechange = function () {
             if (xhr.readyState === 4) {
