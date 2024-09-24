@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', function() {
             let userType = document.querySelector('input[name="userType"]:checked').value;
             
             if (userType === 'propietario') {
-                window.location.href = '/registerOwner.php';
+                window.location.href = './registerOwner.php';
             } else if (userType === 'turista') {
                 window.location.href = './view/registerTouristView.php';
             }

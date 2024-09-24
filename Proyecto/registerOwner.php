@@ -20,7 +20,7 @@
         <p><span class="required">*</span> Campos requeridos</p>
     </header>
     
-    <form id="ownerForm" method="post" enctype="multipart/form-data" action="/business/ownerAction.php">
+    <form id="ownerForm" method="post" enctype="multipart/form-data" action="./business/ownerAction.php">
     <label for="name">Nombre </label>
     <input placeholder="nombre" type="text" name="ownerName" id="name" autocomplete="given-name"/><br><br>
 
@@ -57,8 +57,8 @@
     <input type="submit" value="Crear" name="create" id="create"/>
 </form>
 
-    <script src="/resources/ownerView.js"></script>
-    <script src="/resources/AJAXOwner.js"></script>
-    <script src="/resources/register.js"></script> 
+    <script src="./resources/ownerView.js"></script>
+    <script src="./resources/AJAXOwner.js"></script>
+    <script src="./resources/register.js"></script> 
 </body>
 </html>

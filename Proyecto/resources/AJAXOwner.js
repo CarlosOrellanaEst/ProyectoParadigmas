@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     if (xhr.status === 200 && response.status === 'success') {
                         alert(response.message);
                         // Redirigir al index después de éxito
-                        window.location.href = '/index.php'; // Cambia a la página que desees
+                        window.location.href = './index.php'; // Cambia a la página que desees
                     } else {
                         handleErrorResponse(response);
                     }
