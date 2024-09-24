@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (userType === 'propietario') {
                 window.location.href = '/registerOwner.php';
             } else if (userType === 'turista') {
-                window.location.href = '/view/registerTouristView.php';
+                window.location.href = './view/registerTouristView.php';
             }
         });
     }
