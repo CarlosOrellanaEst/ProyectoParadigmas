@@ -38,10 +38,10 @@ if (isset($_POST['create'])) {
 
             if (in_array($fileType, $allowTypes)) {
                 if (!move_uploaded_file($_FILES['imagen']['tmp_name'], $targetFilePath)) {
-                    $response = ['status' => 'error', 'message' => 'Fallo al subir la imagen'];
+                    $response = ['status' => 'error', 'error_code' => 'image_upload_failed', 'message' => 'Fallo al subir la imagen'];
                 }
             } else {
-                $response = ['status' => 'error', 'message' => 'Tipo de archivo no permitido'];
+                $response = ['status' => 'error', 'error_code' => 'invalid_file_type', 'message' => 'Tipo de archivo no permitido'];
             }
         }
 
@@ -50,33 +50,33 @@ if (isset($_POST['create'])) {
         if ($idType == 'CR') {
             $isValidId = preg_match('/^\d{9}$/', $legalIdentification);
             if (!$isValidId) {
-                $response = ['status' => 'error', 'message' => 'Identificación de Costa Rica inválida. Debe contener exactamente 9 dígitos.'];
+                $response = ['status' => 'error', 'error_code' => 'invalid_costa_rica_id', 'message' => 'Identificación de Costa Rica inválida. Debe contener exactamente 9 dígitos.'];
             }
         } elseif ($idType == 'foreign') {
             $isValidId = preg_match('/^\d+$/', $legalIdentification);
             if (!$isValidId) {
-                $response = ['status' => 'error', 'message' => 'Identificación extranjera inválida. Solo se permiten números.'];
+                $response = ['status' => 'error', 'error_code' => 'invalid_foreign_id', 'message' => 'Identificación extranjera inválida. Solo se permiten números.'];
             }
         }
 
         // Validación de nombre
         if (!empty($name) && !preg_match('/^[a-zA-Z\s]+$/', $name)) {
-            $response = ['status' => 'error', 'message' => 'El nombre contiene caracteres inválidos'];
+            $response = ['status' => 'error', 'error_code' => 'invalid_name', 'message' => 'El nombre contiene caracteres inválidos'];
         }
 
         // Validación de apellidos
         if (!empty($surnames) && !preg_match('/^[a-zA-Z\s]+$/', $surnames)) {
-            $response = ['status' => 'error', 'message' => 'Los apellidos contienen caracteres inválidos'];
+            $response = ['status' => 'error', 'error_code' => 'invalid_surnames', 'message' => 'Los apellidos contienen caracteres inválidos'];
         }
 
         // Validación del teléfono (8 dígitos y solo números)
         if (!empty($phone) && !preg_match('/^\d{8}$/', $phone)) {
-            $response = ['status' => 'error', 'message' => 'Número de teléfono inválido. Debe contener exactamente 8 dígitos.'];
+            $response = ['status' => 'error', 'error_code' => 'invalid_phone', 'message' => 'Número de teléfono inválido. Debe contener exactamente 8 dígitos.'];
         }
 
         // Validación del correo
         if (!preg_match('/^[^\s@]+@[^\s@]+\.[^\s@]+$/', $email)) {
-            $response = ['status' => 'error', 'message' => 'Formato de correo electrónico inválido'];
+            $response = ['status' => 'error', 'error_code' => 'invalid_email', 'message' => 'Formato de correo electrónico inválido'];
         }
 
         // Creamos el objeto Owner
@@ -104,16 +104,16 @@ if (isset($_POST['create'])) {
             if ($result['status'] === 'success') {
                 $response = ['status' => 'success', 'message' => 'Propietario añadido correctamente.'];
             } else {
-                $response = ['status' => 'error', 'message' => 'Fallo al agregar el propietario: ' . $result['message']];
+                $response = ['status' => 'error', 'error_code' => 'db_error', 'message' => 'Fallo al agregar el propietario: ' . $result['message']];
             }
         }
     } else {
-        $response = ['status' => 'error', 'message' => 'Datos incompletos o inválidos'];
+        $response = ['status' => 'error', 'error_code' => 'missing_fields', 'message' => 'Datos incompletos o inválidos'];
     }
 
     // Verificar que siempre se esté enviando un JSON
     if (empty($response)) {
-        $response = ['status' => 'error', 'message' => 'Ocurrió un error desconocido'];
+        $response = ['status' => 'error', 'error_code' => 'unknown_error', 'message' => 'Ocurrió un error desconocido'];
     }
 
     // Enviar la respuesta
