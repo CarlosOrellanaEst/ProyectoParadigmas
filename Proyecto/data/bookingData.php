@@ -5,8 +5,8 @@ include_once '../domain/Booking.php';
 
 class bookingData extends Data {
 
-    // Método para insertar una nueva actividad
     public function insertTbBooking($booking) {
+        // Conexión a la base de datos
         $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
         if (!$conn) {
             die("Connection failed: " . mysqli_connect_error());
@@ -14,53 +14,32 @@ class bookingData extends Data {
     
         $conn->set_charset('utf8mb4');
     
-        // Revisión de si ya existe una actividad con el mismo nombre y activa
-        $tbactivityname = $activity->getNameTBActivity();
-        $checkQuery = "SELECT COUNT(*) FROM tbactivity WHERE tbactivityname = ? AND tbactivitystatus = 1";
-        $stmtCheck = $conn->prepare($checkQuery);
-        if ($stmtCheck === false) {
-            die("Prepare failed: " . $conn->error);
-        }
-    
-        $stmtCheck->bind_param("s", $tbactivityname);
-        $stmtCheck->execute();
-        $stmtCheck->bind_result($count);
-        $stmtCheck->fetch();
-        $stmtCheck->close();
-    
-        if ($count > 0) {
-            mysqli_close($conn);
-            return ['status' => 'error', 'message' => 'Ya existe una actividad con el mismo nombre y está activa.'];
-        }
-    
-        // Obtener el último ID
-        $queryGetLastId = "SELECT MAX(tbactivityid) AS tbactivityid FROM tbactivity";
+        // Obtener el último ID de la tabla tbbooking
+        $queryGetLastId = "SELECT MAX(tbbookingid) AS tbbookingid FROM tbbooking";
         $idCont = mysqli_query($conn, $queryGetLastId);
         $nextId = 1;
         if ($row = mysqli_fetch_row($idCont)) {
             $lastId = $row[0] !== null ? (int)trim($row[0]) : 0;
             $nextId = $lastId + 1;
         }
-  
-        // Inserción de la actividad
-        $queryInsert = "INSERT INTO tbactivity (tbactivityid, tbactivityname, tbactivityservicecompanyid, tbactivityatributearray, tbactivitydataarray, tbactivityurl, tbactivitystatus, tbactivitydate) 
-                        VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+    
+        // Inserción en la tabla tbbooking
+        $queryInsert = "INSERT INTO tbbooking (tbbookingid, tbactivityid, tbuserid, tbbookingnumberpersons, tbbookingstatus) 
+                        VALUES (?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($queryInsert);
         if ($stmt === false) {
             die("Prepare failed: " . $conn->error);
         }
     
-        // Preparación de parámetros
-        $tbactivityid = $nextId;
-        $tbServicesid = $activity->getTbservicecompanyid();
-        $tbactivityatributearray = implode(",", $activity->getAttributeTBActivityArray());
-        $tbactivitydataarray = implode(",", $activity->getDataAttributeTBActivityArray());
-        $imageUrls = is_array($activity->getTbactivityURL()) ? implode(',', $activity->getTbactivityURL()) : $activity->getTbactivityURL();
-        $tbactivitystatus = $activity->getStatusTBActivity();
-        $tbactivitydate = $activity->getActivityDate();
+        // Preparación de parámetros para la inserción
+        $tbbookingid = $nextId;
+        $tbactivityid = $booking->getTbactivityid(); // Obtiene el ID de la actividad
+        $tbuserid = $booking->getTbuserid(); // Obtiene el ID del usuario
+        $tbbookingnumberpersons = $booking->getTbbookingNumberPersons(); // Número de personas en la reserva
+        $tbbookingstatus = $booking->getTbbookingStatus(); // Estado de la reserva
     
         // Bindeo de parámetros e inserción
-        $stmt->bind_param("isisssis", $tbactivityid, $tbactivityname, $tbServicesid, $tbactivityatributearray, $tbactivitydataarray, $imageUrls, $tbactivitystatus, $tbactivitydate);
+        $stmt->bind_param("iiiii", $tbbookingid, $tbactivityid, $tbuserid, $tbbookingnumberpersons, $tbbookingstatus);
         $result = $stmt->execute();
     
         if (!$result) {
@@ -72,4 +51,5 @@ class bookingData extends Data {
     
         return $result;
     }
+    
 }
