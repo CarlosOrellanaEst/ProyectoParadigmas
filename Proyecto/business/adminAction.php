@@ -1,5 +1,5 @@
 <?php
-include_once './touristBusiness.php';
+include_once './adminBusiness.php';
 include_once '../domain/User.php';
 
 if (isset($_POST['create'])) {
@@ -35,7 +35,7 @@ if (isset($_POST['create'])) {
         } elseif ($idType == 'foreign') {
             $isValidId = preg_match('/^\d+$/', $touristLegalIdentification);
             if (!$isValidId) {
-                header("Location: ../view/registerTouristView.php?error=invalidForeignId");
+                header("Location: ../view/registerAdminView.php?error=invalidForeignId");
                 exit();
             }
         }
@@ -84,9 +84,9 @@ if (isset($_POST['create'])) {
         $encryptedPassword = password_hash($touristPassword, PASSWORD_BCRYPT);
         
         $user = new User(0, $touristNickName, $encryptedPassword, true, "Turista", $touristName, $touristSurnames, $touristLegalIdentification, $touristPhone, $touristEmail);
-        $touristBusiness = new touristBusiness();
+        $adminBusiness = new adminBusiness();
         
-        $result = $touristBusiness->insertTBUser($user);
+        $result = $adminBusiness->insertTBUser($user);
 
         /*try {
             $result = $touristBusiness->insertTBUser($user);
