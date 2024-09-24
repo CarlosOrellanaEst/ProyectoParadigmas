@@ -29,7 +29,7 @@
             </div> -->
             <div>
                 <label for = "register">¿No tienes cuenta?</label>     
-                <a href="/selectRegister.php">Registrarse</a>
+                <a href="./selectRegister.php">Registrarse</a>
 
 
             </div>
