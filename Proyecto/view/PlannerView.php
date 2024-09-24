@@ -1,3 +1,25 @@
+<?php
+    require '../domain/Owner.php';
+    require '../business/ownerBusiness.php';
+
+    session_start();
+    $userLogged = $_SESSION['user'];
+    
+    $ownerBusiness = new ownerBusiness();
+
+    // Definimos los propietarios en función del tipo de usuario
+    if ($userLogged->getUserType() == "Administrador") {
+        $owners = $ownerBusiness->getAllTBOwners();
+        if (!$owners || empty($owners)) {
+            echo "<script>alert('No se encontraron propietarios.');</script>";
+        }
+    } else if ($userLogged->getUserType() == "Propietario") {
+        $owners = [$userLogged]; 
+    }
+
+    // Guardamos la lista de propietarios en la sesión para usarla abajo
+    $_SESSION['owners'] = $owners;
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -38,7 +60,7 @@
     ?>
 </head>
 <body>
-
+<a href="adminView.php">← Volver al inicio</a>
 <h2>Actividades Activas</h2>
 
 <!-- Filtro por fecha -->
@@ -67,6 +89,7 @@
             <th>Datos</th>
             <th>Imágenes</th>
             <th>Fecha de Actividad</th>
+            <th>Reservar</th>
         </tr>
     </thead>
     <tbody>
@@ -98,6 +121,7 @@
                         </ul>
                     </td>
                     <td><?php echo htmlspecialchars($activity->getActivityDate()); ?></td>
+<<<<<<< HEAD
 <<<<<<< Updated upstream
 =======
                     <td>
@@ -110,11 +134,22 @@
 
                     </td>
 >>>>>>> Stashed changes
+=======
+                    <td>
+                        <!-- Formulario para reservar la actividad -->
+                        <form action="reserveActivity.php" method="POST">
+                            <input type="hidden" name="activityId" value="<?php echo htmlspecialchars($activity->getIdTBActivity()); ?>">
+                            <label for="numPersons">Cantidad de personas:</label>
+                            <input type="number" name="numPersons" min="1" required>
+                            <button type="submit">Reservar</button>
+                        </form>
+                    </td>
+>>>>>>> develop
                 </tr>
             <?php endforeach; ?>
         <?php else: ?>
             <tr>
-                <td colspan="7">No hay actividades activas disponibles.</td>
+                <td colspan="8">No hay actividades activas disponibles.</td>
             </tr>
         <?php endif; ?>
     </tbody>
