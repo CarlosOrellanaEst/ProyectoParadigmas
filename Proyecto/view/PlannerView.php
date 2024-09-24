@@ -98,6 +98,18 @@
                         </ul>
                     </td>
                     <td><?php echo htmlspecialchars($activity->getActivityDate()); ?></td>
+<<<<<<< Updated upstream
+=======
+                    <td>
+                    <form action="reserveActivity.php" method="POST">
+                        <input type="hidden" name="activityId" value="<?php echo htmlspecialchars($activity->getIdTBActivity()); ?>">
+                        <label for="numPersons">Cantidad de personas:</label>
+                        <input type="number" name="numPersons" min="1" required>
+                        <input type="submit" value="Crear" name="create" id="create" />
+                    </form>
+
+                    </td>
+>>>>>>> Stashed changes
                 </tr>
             <?php endforeach; ?>
         <?php else: ?>

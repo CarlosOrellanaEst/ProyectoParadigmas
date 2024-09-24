@@ -50,6 +50,7 @@ class bookingData extends Data {
             die("Prepare failed: " . $conn->error);
         }
     
+<<<<<<< Updated upstream
         // Preparación de parámetros
         $tbactivityid = $nextId;
         $tbServicesid = $activity->getTbservicecompanyid();
@@ -61,15 +62,25 @@ class bookingData extends Data {
     
         // Bindeo de parámetros e inserción
         $stmt->bind_param("isisssis", $tbactivityid, $tbactivityname, $tbServicesid, $tbactivityatributearray, $tbactivitydataarray, $imageUrls, $tbactivitystatus, $tbactivitydate);
-        $result = $stmt->execute();
+=======
+        $tbbookingid = $nextId;
+        $tbactivityid = $booking->getTbactivityid();
+        $tbuserid = $booking->getTbuserid();
+        $tbbookingnumberpersons = $booking->getTbbookingNumberPersons();
+        $tbbookingstatus = $booking->getTbbookingStatus();
     
-        if (!$result) {
-            echo "Execute failed: " . $stmt->error;
-        }
+        $stmt->bind_param("iiiii", $tbbookingid, $tbactivityid, $tbuserid, $tbbookingnumberpersons, $tbbookingstatus);
+>>>>>>> Stashed changes
+        $result = $stmt->execute();
     
         $stmt->close();
         mysqli_close($conn);
     
         return $result;
     }
+<<<<<<< Updated upstream
+=======
+    
+    
+>>>>>>> Stashed changes
 }
