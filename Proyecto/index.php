@@ -27,6 +27,12 @@
 <!--             <div>
                 <a href="/forgot_password.php">¿Olvidaste tu contraseña?</a>
             </div> -->
+            <div>
+                <label for = "register">¿No tienes cuenta?</label>     
+                <a href="/selectRegister.php">Registrarse</a>
+
+
+            </div>
         </form>
     </div>
     <script src="resources/loginAJAX.js"></script>
