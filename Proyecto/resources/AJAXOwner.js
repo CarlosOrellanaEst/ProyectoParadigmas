@@ -44,10 +44,9 @@ document.addEventListener('DOMContentLoaded', function () {
                         if (response.status === 'success') {
                             alert(response.message);
                             document.getElementById('formCreate').reset();
-                            location.reload();
-                            redirectToCleanURL();
-
-                        } else {
+                            window.location.href = '/index.php';  // Redirigir al index para que se loguee
+                        }
+                         else {
                             alert('Error: ' + response.message);
                         }
                     } else {

@@ -5,6 +5,7 @@ header('Content-Type: application/json');
 
 if (isset($_POST['create'])) {
     $response = array();
+
     if (
         isset($_POST['ownerLegalIdentification']) && // Verificamos que el campo 'ownerLegalIdentification' esté presente
         isset($_POST['ownerEmail']) && // Verificamos que el campo 'ownerEmail' esté presente
@@ -124,9 +125,9 @@ if (isset($_POST['create'])) {
         $result = $ownerBusiness->insertTBOwner($owner);
 
         if ($result['status'] === 'success') {
-            header('Content-Type: application/json');
-            echo json_encode(['status' => 'success', 'message' => 'Prueba exitosa']);
-            $response['message'] = 'Propietario añadido correctamente';
+
+             header("Location: /index.php");
+            $response= ['status' => 'success','message' => 'Propietario añadido correctamente.'];
         } else {
             $response['status'] = 'error';
             $response['message'] = 'Fallo al agregar el propietario: ' . $result['message'];
@@ -136,7 +137,7 @@ if (isset($_POST['create'])) {
         $response['message'] = 'Datos incompletos o inválidos';
     }
 
-    echo json_encode($response);
+    json_encode($response);
     exit();
 }
 
