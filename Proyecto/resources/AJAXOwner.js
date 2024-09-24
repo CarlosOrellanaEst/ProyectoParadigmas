@@ -13,6 +13,12 @@ document.addEventListener('DOMContentLoaded', function () {
         const imageFile = document.getElementById('imagen').files[0];
         const idType = document.getElementById('idType').value;
 
+        // Validación de campo obligatorio para el nombre
+        if (ownerName === "") {
+            alert('El campo "Nombre" es requerido.');
+            return;
+        }
+
         // Validación de que las contraseñas coinciden
         if (password !== confirmPassword) {
             alert('Las contraseñas no coinciden.');
