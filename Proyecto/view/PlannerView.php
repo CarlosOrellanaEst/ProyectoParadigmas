@@ -3,10 +3,7 @@
     require '../business/ownerBusiness.php';
 
     session_start();
-   
     $userLogged = $_SESSION['user'];
-    $userId = $userLogged->getUserId(); // Llamada al método que devuelve el ID del usuario
-
     $ownerBusiness = new ownerBusiness();
 
     // Definimos los propietarios en función del tipo de usuario
@@ -36,7 +33,7 @@
         $filterType = isset($_POST['filterType']) ? $_POST['filterType'] : '';
         $filterDate = isset($_POST['filterDate']) ? $_POST['filterDate'] : '';
 
-        // Función para validar la fecha
+        // Verificamos si la fecha tiene un formato válido (YYYY-MM-DD)
         function isValidDate($date) {
             return (DateTime::createFromFormat('Y-m-d', $date) !== false);
         }
@@ -46,6 +43,7 @@
             echo "<script>alert('Fecha inválida, por favor selecciona una fecha válida.');</script>";
             $activities = [];
         } else {
+            // Filtramos las actividades según el tipo de filtro seleccionado
             if ($filterType === 'day') {
                 $activities = $activityBusiness->getActivitiesByDay($filterDate);
             } elseif ($filterType === 'week') {
@@ -53,22 +51,18 @@
             } elseif ($filterType === 'month') {
                 $activities = $activityBusiness->getActivitiesByMonth($filterDate);
             } else {
-                $activities = $activityBusiness->getAllActivities();
+                $activities = $activityBusiness->getAllActivities();  // Si no hay filtro, muestra todas las actividades
             }
         }
 
-        // Ruta base para imágenes
-        $imageBasePath = '../images/activity/';
-        
-        // Obtener el ID del usuario en sesión
-        $userLogged = $_SESSION['user'];
-        $userId = $userLogged->getUserId();
+        $imageBasePath = '../images/activity/';  // Ruta base para las imágenes
     ?>
 </head>
 <body>
 
 <h2>Actividades Activas</h2>
 
+<!-- Filtro por fecha -->
 <form method="POST" action="">
     <label for="filterType">Filtrar por:</label>
     <select name="filterType" id="filterType">
@@ -83,6 +77,7 @@
     <button type="submit">Filtrar</button>
 </form>
 
+<!-- Tabla de actividades -->
 <table>
     <thead>
         <tr>
@@ -93,7 +88,6 @@
             <th>Datos</th>
             <th>Imágenes</th>
             <th>Fecha de Actividad</th>
-            <th>Reservar</th>
         </tr>
     </thead>
     <tbody>
@@ -125,21 +119,11 @@
                         </ul>
                     </td>
                     <td><?php echo htmlspecialchars($activity->getActivityDate()); ?></td>
-                    <td>
-                        <!-- Formulario para realizar la reserva -->
-                        <form method="POST" action="reserveAction.php">
-                            <input type="hidden" name="activityId" value="<?php echo $activity->getIdTBActivity(); ?>">
-                            <input type="hidden" name="userId" value="<?php echo $userId; ?>">
-                            <label for="quantity">Cantidad:</label>
-                            <input type="number" name="quantity" min="1" required>
-                            <button type="submit">Reservar</button>
-                        </form>
-                    </td>
                 </tr>
             <?php endforeach; ?>
         <?php else: ?>
             <tr>
-                <td colspan="8">No hay actividades activas disponibles.</td>
+                <td colspan="7">No hay actividades activas disponibles.</td>
             </tr>
         <?php endif; ?>
     </tbody>
