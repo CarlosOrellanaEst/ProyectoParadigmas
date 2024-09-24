@@ -200,6 +200,16 @@ INSERT INTO `tbservicecompany` (`tbservicecompanyid`, `tbtouristcompanyid`, `tbs
 -- Estructura de tabla para la tabla `tbtouristcompany`
 --
 
+CREATE TABLE `tbbooking` (
+  `tbbookingid` int(11) NOT NULL,
+  `tbactivityid` int(11) NOT NULL,
+  `tbuserid` int(11) NOT NULL,
+  `tbbookingnumberpersons` int(11) NOT NULL,
+  `tbbookingstatus` tinyint(1) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+
 CREATE TABLE `tbtouristcompany` (
   `tbtouristcompanyid` int(11) NOT NULL,
   `tbtouristcompanylegalname` varchar(255) NOT NULL,
