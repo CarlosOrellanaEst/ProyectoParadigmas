@@ -56,6 +56,18 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
+function showAlertBasedOnURL() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const paramSuccess = urlParams.get('success');
+    const paramError = urlParams.get('error');
+
+    if (urlParams.has('success')) {
+        if (paramSuccess && urlParams.get('success') === 'inserted') {
+            alert('Se ha creado con éxito.');
+        } 
+    } 
+}
+
 // Función para manejar los errores devueltos por el servidor
 function handleErrorResponse(response) {
     switch (response.error_code) {

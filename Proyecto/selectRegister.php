@@ -19,5 +19,6 @@
 
     <!-- Incluir el archivo register.js -->
     <script src="resources/register.js"></script>
+    
 </body>
 </html>

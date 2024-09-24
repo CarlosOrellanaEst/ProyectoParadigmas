@@ -35,7 +35,6 @@
             </div>
         </form>
     </div>
-    <a href="./view/registerTouristView.php">Registrarse como turista.</a> 
     <script src="resources/loginAJAX.js"></script>
 </body>
 </html>
