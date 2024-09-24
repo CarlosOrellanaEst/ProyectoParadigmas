@@ -57,9 +57,8 @@
     <input type="submit" value="Crear" name="create" id="create"/>
 </form>
 
-    <!-- Cargar los scripts al final del body para asegurarse de que el DOM esté listo -->
     <script src="/resources/ownerView.js"></script>
     <script src="/resources/AJAXOwner.js"></script>
-    <script src="/resources/register.js"></script> <!-- Asegúrate de que el script está cargado aquí -->
+    <script src="/resources/register.js"></script> 
 </body>
 </html>
