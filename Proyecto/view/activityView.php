@@ -68,6 +68,8 @@
             echo '<a href="ownerViewSession.php">← Volver al inicio</a>';
         } else if ($userLogged->getUserType() == "Administrador") {
             echo '<a href="adminView.php">← Volver al inicio</a>';
+        } else if ($userLogged->getUserType() == "Turista") {
+            echo '<a href="touristView.php">← Volver al inicio</a>';
         }
     ?>
     <header>
@@ -77,6 +79,9 @@
 
     <section id="create">
         <h2>Crear Actividad</h2>
+        <?php 
+            if ($userLogged->getUserType() == "Administrador" || $userLogged->getUserType() == "Propietario") {
+        ?>
         <form method="post" id="formCreate" action="../business/activityAction.php" enctype="multipart/form-data">
             <label for="nameTBActivity">Nombre de la Actividad <span class="required">*</span></label>
             <input placeholder="Nombre de la Actividad" type="text" name="nameTBActivity" id="nameTBActivity" required />
@@ -85,6 +90,7 @@
             <label for="serviceId1">Servicio: </label>
             <select name="serviceId" id="serviceId1" required>
                 <?php foreach ($services as $service): ?>
+                    <!-- deberia salir el nombre del servicio... Hay que arreglar la consulta de la BD (cambiar a join) -->
                     <option value="<?php echo htmlspecialchars($service->getTbservicecompanyid()); ?>">
                         <?php echo htmlspecialchars($service->getTbservicecompanyid()); ?>
                     </option>
@@ -114,6 +120,10 @@
             <input type="hidden" id="statusTBActivity" name="statusTBActivity" value="1">
             <input type="submit" value="Crear" name="create" id="create" />
         </form>
+        <?php 
+            } 
+        ?>
+
     </section>
 
     <hr>
@@ -214,16 +224,19 @@
                 
                     // Acciones
                     echo '<td>';
-                    echo '<input type="submit" value="Actualizar" name="update" />';
-                    echo '<input type="submit" value="Eliminar" name="delete" />';
-                    echo '<select name="imageIndex">';
-                    foreach ($urls as $index => $url) {
-                        if (!empty($url)) {
-                            echo '<option value="' . $index . '">Eliminar Imagen ' . ($index + 1) . '</option>';
+                    if ($userLogged->getUserType() == "Administrador" || $userLogged->getUserType() == "Propietario") { 
+                        echo '<input type="submit" value="Actualizar" name="update" />';
+                        echo '<input type="submit" value="Eliminar" name="delete" />';
+                        echo '<select name="imageIndex">';
+                        foreach ($urls as $index => $url) {
+                            if (!empty($url)) {
+                                echo '<option value="' . $index . '">Eliminar Imagen ' . ($index + 1) . '</option>';
+                            }
                         }
+                        echo '</select>';
+                        echo '<input type="submit" value="Eliminar Imagen" name="deleteImage" />';
                     }
-                    echo '</select>';
-                    echo '<input type="submit" value="Eliminar Imagen" name="deleteImage" />';
+
                     echo '</td>';
                 
                     echo '</form>'; 

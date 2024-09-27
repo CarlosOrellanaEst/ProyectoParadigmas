@@ -205,7 +205,7 @@
                         }
                         echo '</td>';
 
-                        
+                        /*    
                         echo '<td>';
                         echo '<select name="imageIndex">';
                         foreach ($images as $index => $image) {
@@ -214,21 +214,27 @@
                         echo '</select>';
                         
                         echo '</td>';
-
+                        */
                         
                         echo '<form method="post" action="../business/touristCompanyAction.php">';
                         echo '<input type="hidden" name="photoID" value="' . $current->getTbtouristcompanyid() . '">';
 
-
                         echo '<td>';
                         echo '<input type="hidden" name="id" value="' . htmlspecialchars($current->getTbtouristcompanyid()) . '">';
-                        if ($userLogged->getUserType() == "Administrador" || $userLogged->getUserType() == "Propietario") {
+                        if ($userLogged->getUserType() == "Administrador" || $userLogged->getUserType() == "Propietario") {                             
+                            // lo que esta comentado justo 8 lineas arriba (le quite ese <td> extra. es innecesario.)
+                            echo '<select name="imageIndex">';
+                            foreach ($images as $index => $image) {
+                                echo '<option value="' . $index . '">Imagen ' . ($index + 1) . '</option>';
+                            }
+                            echo '</select>';                            
+                            
                             echo '<input type="submit" value="Actualizar" name="update" />';
                             echo '<input type="submit" value="Eliminar" name="delete"/>';
                             echo '<input type="submit" value="Eliminar Imagen" name="deleteImage">';
                         }
-
                         echo '</td>';
+
                         echo '</form>';
                         echo '</tr>';
                     }
