@@ -7,7 +7,7 @@
     $ownerBusiness = new ownerBusiness();
 
     // Definimos los propietarios en función del tipo de usuario
-    if ($userLogged->getUserType() == "Administrador") {
+    if ($userLogged->getUserType() == "Administrador" || $userLogged->getUserType() == "Turista") {
         $owners = $ownerBusiness->getAllTBOwners();
         if (!$owners || empty($owners)) {
             echo "<script>alert('No se encontraron propietarios.');</script>";
@@ -50,6 +50,8 @@
             echo '<a href="ownerViewSession.php">← Volver al inicio</a>';
         } else if ($userLogged->getUserType() == "Administrador") {
             echo '<a href="adminView.php">← Volver al inicio</a>';
+        } else if ($userLogged->getUserType() == "Turista") {
+            echo '<a href="touristView.php">← Volver al inicio</a>';
         }
     ?>
     <header>
@@ -59,52 +61,59 @@
     
 
     <section id="create">
-        <form id="formCreate" method="post" action="../business/touristCompanyAction.php" enctype="multipart/form-data">
-            <div class="form-group">
-                <label for="legalName">Nombre legal:</label>
-                <input placeholder="Nombre legal" type="text" name="legalName" id="legalName" />
-            </div>
+        <?php 
+            if ($userLogged->getUserType() == "Administrador" || $userLogged->getUserType() == "Propietario") {
+        ?>
+            <form id="formCreate" method="post" action="../business/touristCompanyAction.php" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="legalName">Nombre legal:</label>
+                    <input placeholder="Nombre legal" type="text" name="legalName" id="legalName" />
+                </div>
 
-            <div class="form-group">
-                <label for="magicName">Nombre mágico:</label>
-                <input placeholder="Nombre mágico" type="text" name="magicName" id="magicName" />
-            </div>
+                <div class="form-group">
+                    <label for="magicName">Nombre mágico:</label>
+                    <input placeholder="Nombre mágico" type="text" name="magicName" id="magicName" />
+                </div>
 
-            <div class="form-group">
-                <label for="ownerId">Dueño: <span id="ownerError" style="color:red; display:none;">*campo obligatorio</span></label>
-                <select name="ownerId" id="ownerId" required>
-                    <option value="0">Ninguno</option>
-                    <?php foreach ($owners as $owner): ?>
-                        <option value="<?php echo htmlspecialchars($owner->getIdTBOwner()); ?>">
-                            <?php echo htmlspecialchars($owner->getName() . ' ' . $owner->getSurnames()); ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
+                <div class="form-group">
+                    <label for="ownerId">Dueño: <span id="ownerError" style="color:red; display:none;">*campo obligatorio</span></label>
+                    <select name="ownerId" id="ownerId" required>
+                        <option value="0">Ninguno</option>
+                        <?php foreach ($owners as $owner): ?>
+                            <option value="<?php echo htmlspecialchars($owner->getIdTBOwner()); ?>">
+                                <?php echo htmlspecialchars($owner->getName() . ' ' . $owner->getSurnames()); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
 
-            <div class="form-group">
-                <label for="companyType">Tipo de empresa:</label>
-                <select name="companyType" id="companyType">
-                    <option value="0">Ninguno</option>
-                    <?php foreach ($touristCompanyTypes as $touristCompanyType): ?>
-                        <option value="<?php echo htmlspecialchars($touristCompanyType->getId()); ?>">
-                            <?php echo htmlspecialchars($touristCompanyType->getName()); ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
+                <div class="form-group">
+                    <label for="companyType">Tipo de empresa:</label>
+                    <select name="companyType" id="companyType">
+                        <option value="0">Ninguno</option>
+                        <?php foreach ($touristCompanyTypes as $touristCompanyType): ?>
+                            <option value="<?php echo htmlspecialchars($touristCompanyType->getId()); ?>">
+                                <?php echo htmlspecialchars($touristCompanyType->getName()); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
 
-            <div class="form-group">
-                <label for="imagenes">Imágenes: <span id="imagenesError" style="color:red; display:none;">*campo obligatorio</span></label>
-                <input type="file" name="imagenes[]" id="imagenes" multiple />
-            </div>
+                <div class="form-group">
+                    <label for="imagenes">Imágenes: <span id="imagenesError" style="color:red; display:none;">*campo obligatorio</span></label>
+                    <input type="file" name="imagenes[]" id="imagenes" multiple />
+                </div>
 
-            <input type="hidden" id="status" name="status" value="1">
+                <input type="hidden" id="status" name="status" value="1">
 
-            <div class="form-group">
-                <input type="submit" value="Crear" name="create" id="create" />
-            </div>
+                <div class="form-group">
+                    <input type="submit" value="Crear" name="create" id="create" />
+                </div>
         </form>
+        <?php 
+            } 
+        ?>
+
     </section>
 
     <br>
@@ -136,22 +145,22 @@
 
                 if ($userLogged->getUserType() == "Propietario") {
                     $all = $touristCompanyBusiness->getAllByOwnerID($userLogged->getIdTBOwner());
-                } else if ($userLogged->getUserType() == "Administrador") {
+                } else if ($userLogged->getUserType() == "Administrador" || $userLogged->getUserType() == "Turista")  {
                     $all = $touristCompanyBusiness->getAll();
                 }
 
                 $alltouristCompanyTypes = $touristCompanyTypeBusiness->getAll();
                 $touristCompanyFiltered = [];
 
-                if (isset($_GET['searchOne'])) {
-                    $searchTerm = $_GET['searchOne'];
-                    $touristCompanyFiltered = array_filter($all, function ($touristCompany) use ($searchTerm) {
-                        return stripos($touristCompany->getTbtouristcompanylegalname(), $searchTerm) !== false;
-                    });
-                }
-                if (count($touristCompanyFiltered) > 0) {
-                    $all = $touristCompanyFiltered;
-                }
+                // if (isset($_GET['searchOne'])) {
+                //     $searchTerm = $_GET['searchOne'];
+                //     $touristCompanyFiltered = array_filter($all, function ($touristCompany) use ($searchTerm) {
+                //         return stripos($touristCompany->getTbtouristcompanylegalname(), $searchTerm) !== false;
+                //     });
+                // }
+                // if (count($touristCompanyFiltered) > 0) {
+                //     $all = $touristCompanyFiltered;
+                // }
 
                 if (count($all) > 0) {
                     foreach ($all as $current) {
@@ -210,13 +219,15 @@
                         echo '<form method="post" action="../business/touristCompanyAction.php">';
                         echo '<input type="hidden" name="photoID" value="' . $current->getTbtouristcompanyid() . '">';
 
-                       
 
                         echo '<td>';
                         echo '<input type="hidden" name="id" value="' . htmlspecialchars($current->getTbtouristcompanyid()) . '">';
-                        echo '<input type="submit" value="Actualizar" name="update" />';
-                        echo '<input type="submit" value="Eliminar" name="delete"/>';
-                        echo '<input type="submit" value="Eliminar Imagen" name="deleteImage">';
+                        if ($userLogged->getUserType() == "Administrador" || $userLogged->getUserType() == "Propietario") {
+                            echo '<input type="submit" value="Actualizar" name="update" />';
+                            echo '<input type="submit" value="Eliminar" name="delete"/>';
+                            echo '<input type="submit" value="Eliminar Imagen" name="deleteImage">';
+                        }
+
                         echo '</td>';
                         echo '</form>';
                         echo '</tr>';
