@@ -1,0 +1,23 @@
+<!-- CHAT GPT. FUNCIONA -->
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Mapa con lugar estándar</title>
+  <!-- Cargar la API de Google Maps de manera asíncrona con callback -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCRQx6ssQ25Ezy99nFNHJYSCVIpE9JeAUI&libraries=marker&callback=initMap&loading=async" defer></script>
+</head>
+<body>
+  <section>
+    <input type="number" id="latitud" disabled>
+    <input type="number" id="longitud" disabled>
+  </section>
+  <div id="map" style="height: 500px; width: 100%;"></div>
+  
+  <!-- Script con la lógica del mapa -->
+  <script src="script.js" defer></script>
+</body>
+</html>
+
+
+
