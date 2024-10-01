@@ -127,6 +127,16 @@
             <input type="number" id="longitude">
             <br><br>
             
+            <form action="">    
+                <label for="inputLatitud">Ingrese la Latitud</label>
+                <input type="number" id="inputLatitud" placeholder="Latitud">
+                <label for="inputLongitud">Ingrese la Longitud</label>
+                <input type="number" id="inputLongitud" placeholder="Longitud">
+                <button type="button" onclick="geocodeAddress()">Buscar en Mapa</button>
+            </form>
+
+            <br><br>
+            
             <input type="hidden" id="statusTBActivity" name="statusTBActivity" value="1">
             <input type="submit" value="Crear" name="create" id="create" />
         </form>
