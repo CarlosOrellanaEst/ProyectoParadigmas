@@ -123,8 +123,9 @@
             <div id="map" style="height: 500px; width: 100%;">
             </div>
             <br><br>
-            <input type="number" id="latitude">
-            <input type="number" id="longitude">
+            <input type="text" style="display:none;" name="latitude" id="latitude">
+            <input type="text" style="display:none;" name="longitude" id="longitude">
+
             <br><br>
             
             <input type="hidden" id="statusTBActivity" name="statusTBActivity" value="1">

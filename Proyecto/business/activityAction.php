@@ -56,6 +56,10 @@ if (isset($_POST['create'])) {
         $dataAttributeTBActivityArray = isset($_POST['dataAttributeTBActivityArray']) ? $_POST['dataAttributeTBActivityArray'] : [];
         $activityDate = isset($_POST['activityDate']) ? trim($_POST['activityDate']) : date('Y-m-d');  // Fecha actual si no se especifica
 
+        // Nuevas implementaciones: Captura de latitud y longitud
+        $latitude = isset($_POST['latitude']) ? floatval($_POST['latitude']) : null;
+        $longitude = isset($_POST['longitude']) ? floatval($_POST['longitude']) : null;
+
         // Validaciones de campos obligatorios
         if (empty($nameTBActivity)) {
             echo json_encode(['status' => 'error', 'message' => 'El nombre de la actividad es requerido.']);
@@ -67,8 +71,13 @@ if (isset($_POST['create'])) {
             exit();
         }
 
-        // Crear una nueva instancia de la actividad
-        $activity = new Activity(0, $nameTBActivity, $serviceID, $attributeTBActivityArray, $dataAttributeTBActivityArray, $photoUrls, 1, $activityDate);
+        if (empty($latitude) || empty($longitude)) {
+            echo json_encode(['status' => 'error', 'message' => 'Las coordenadas de latitud y longitud son requeridas.']);
+            exit();
+        }
+
+        // Crear una nueva instancia de la actividad con latitud y longitud
+        $activity = new Activity(0, $nameTBActivity, $serviceID, $attributeTBActivityArray, $dataAttributeTBActivityArray, $photoUrls, 1, $activityDate, $latitude, $longitude);
         $activityBusiness = new ActivityBusiness();
 
         // Insertar la actividad
@@ -96,6 +105,7 @@ if (isset($_POST['create'])) {
     }
 }
 
+
 // Actualizar una actividad existente
 if (isset($_POST['update'])) {
     $idTBActivity = $_POST['idTBActivity'];
@@ -105,6 +115,16 @@ if (isset($_POST['update'])) {
     $statusTBActivity = isset($_POST['statusTBActivity']) ? 1 : 0;
     $serviceId = $_POST['serviceId'];
     $activityDate = isset($_POST['activityDate']) ? trim($_POST['activityDate']) : date('Y-m-d');
+
+    // Nuevas implementaciones: Captura de latitud y longitud
+    $latitude = isset($_POST['latitude']) ? floatval($_POST['latitude']) : null;
+    $longitude = isset($_POST['longitude']) ? floatval($_POST['longitude']) : null;
+
+    // Validar que latitud y longitud estén presentes
+    if (empty($latitude) || empty($longitude)) {
+        echo json_encode(['status' => 'error', 'message' => 'Las coordenadas de latitud y longitud son requeridas.']);
+        exit();
+    }
 
     // Obtener imágenes existentes y nuevas
     $existingImages = $_POST['existingImages'] ?? '';
@@ -133,7 +153,7 @@ if (isset($_POST['update'])) {
 
     // Crear una instancia de la actividad para actualizar
     $activityBusiness = new ActivityBusiness();
-    $activity = new Activity($idTBActivity, $nameTBActivity, $serviceId, $attributeTBActivityArray, $dataAttributeTBActivityArray, $allImages, 1, $activityDate);
+    $activity = new Activity($idTBActivity, $nameTBActivity, $serviceId, $attributeTBActivityArray, $dataAttributeTBActivityArray, $allImages, 1, $activityDate, $latitude, $longitude);
 
     // Actualizar la actividad
     $result = $activityBusiness->updateActivity($activity);
@@ -150,6 +170,7 @@ if (isset($_POST['update'])) {
     }
     exit();
 }
+
 
 // Eliminar una actividad
 if (isset($_POST['delete'])) {
