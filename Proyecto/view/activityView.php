@@ -60,6 +60,9 @@
         $imageBasePath = '../images/activity/';
     ?>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCRQx6ssQ25Ezy99nFNHJYSCVIpE9JeAUI&libraries=marker&callback=initMap&loading=async" defer></script>
+
 </head>
 
 <body>
@@ -117,6 +120,13 @@
             <input type="file" name="imagenes[]" id="imagenes" multiple />
             <br><br>
 
+            <div id="map" style="height: 500px; width: 100%;">
+            </div>
+            <br><br>
+            <input type="number" id="latitude">
+            <input type="number" id="longitude">
+            <br><br>
+            
             <input type="hidden" id="statusTBActivity" name="statusTBActivity" value="1">
             <input type="submit" value="Crear" name="create" id="create" />
         </form>
@@ -273,6 +283,9 @@
             $('#attributes-' + activityId).toggle();
         });
     </script>
+
+    <!-- Script con la lógica del mapa -->
+    <script src="../resources/maps.js" defer ></script>
 </body>
 
 </html>

@@ -1,3 +1,4 @@
+
 function initMap() {
     var lugarEstandar = { lat: 10.3193683, lng: -83.9231164 }; 
 
@@ -18,11 +19,9 @@ function initMap() {
       var clickedLocation = event.latLng;
 
       marker.position = clickedLocation;
-  
       // Mostrar las coordenadas en un campo de input
-      document.getElementById('latitud').value = clickedLocation.lat();
-      document.getElementById('longitud').value = clickedLocation.lng();
-
+      document.getElementById('latitude').value = clickedLocation.lat();
+      document.getElementById('longitude').value = clickedLocation.lng();
     });
   }
   
