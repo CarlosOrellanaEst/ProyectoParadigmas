@@ -7,8 +7,10 @@ document.addEventListener('DOMContentLoaded', function () {
         const nameTBActivity = document.getElementById('nameTBActivity').value;
         const serviceID = document.getElementById('serviceId1').value;
 
-        const attributeInputs = document.querySelectorAll('input[name="attributeTBActivityArray[]"]');
-        const dataInputs = document.querySelectorAll('input[name="dataAttributeTBActivityArray[]"]');
+        let attributeInputs = [];
+        let dataInputs = [];
+        attributeInputs = document.querySelectorAll('input[name="attributeTBActivityArray[]"]');
+        dataInputs = document.querySelectorAll('input[name="dataAttributeTBActivityArray[]"]');
 
         const attributeTBActivityArray = Array.from(attributeInputs).map(input => input.value).join(',');
         const dataAttributeTBActivityArray = Array.from(dataInputs).map(input => input.value).join(',');
@@ -40,7 +42,7 @@ document.addEventListener('DOMContentLoaded', function () {
         xhr.open('POST', '../business/activityAction.php', true);
         xhr.onreadystatechange = function () {
             if (xhr.readyState === 4) {
-  
+                console.log('Respuesta completa:', xhr.responseText); // Agrega esto para inspeccionar la respuesta
                 try {
                     let response = JSON.parse(xhr.responseText);
                     if (xhr.status === 200) {
@@ -60,6 +62,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 }
             }
         };
+        
         xhr.send(formData);
     });
 
@@ -91,6 +94,8 @@ document.addEventListener('DOMContentLoaded', function () {
                         if (xhr.status === 200) {
                             if (response.status === 'success') {
                                 alert(response.message); 
+                                document.getElementById('formCreate').reset();
+
                                 location.reload();
                             } else {
                                 alert('Error: ' + response.message);

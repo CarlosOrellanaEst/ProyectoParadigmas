@@ -55,7 +55,7 @@ if (isset($_POST['create'])) {
         $attributeTBActivityArray = isset($_POST['attributeTBActivityArray']) ? $_POST['attributeTBActivityArray'] : '';
         $dataAttributeTBActivityArray = isset($_POST['dataAttributeTBActivityArray']) ? $_POST['dataAttributeTBActivityArray'] : '';
         $activityDate = isset($_POST['activityDate']) ? trim($_POST['activityDate']) : date('Y-m-d H:i:s');  // Fecha actual si no se especifica
-        var_dump($activityDate);  // Verifica que el valor esté en el formato correcto
+  
 
         // Nuevas implementaciones: Captura de latitud y longitud
         $latitude = isset($_POST['latitude']) ? floatval($_POST['latitude']) : null;
@@ -100,7 +100,6 @@ if (isset($_POST['create'])) {
         exit();
     } else {
         // Si no se suben imágenes
-        var_dump($result); 
         $response = ['status' => 'error', 'message' => 'No se han subido imágenes.'];
         echo json_encode($response);
         exit();
