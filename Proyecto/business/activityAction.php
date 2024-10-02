@@ -52,9 +52,10 @@ if (isset($_POST['create'])) {
         // Capturar los datos del formulario
         $nameTBActivity = isset($_POST['nameTBActivity']) ? trim($_POST['nameTBActivity']) : '';
         $serviceID = isset($_POST['serviceId']) ? trim($_POST['serviceId']) : 0;
-        $attributeTBActivityArray = isset($_POST['attributeTBActivityArray']) ? $_POST['attributeTBActivityArray'] : [];
-        $dataAttributeTBActivityArray = isset($_POST['dataAttributeTBActivityArray']) ? $_POST['dataAttributeTBActivityArray'] : [];
-        $activityDate = isset($_POST['activityDate']) ? trim($_POST['activityDate']) : date('Y-m-d');  // Fecha actual si no se especifica
+        $attributeTBActivityArray = isset($_POST['attributeTBActivityArray']) ? $_POST['attributeTBActivityArray'] : '';
+        $dataAttributeTBActivityArray = isset($_POST['dataAttributeTBActivityArray']) ? $_POST['dataAttributeTBActivityArray'] : '';
+        $activityDate = isset($_POST['activityDate']) ? trim($_POST['activityDate']) : date('Y-m-d H:i:s');  // Fecha actual si no se especifica
+        var_dump($activityDate);  // Verifica que el valor esté en el formato correcto
 
         // Nuevas implementaciones: Captura de latitud y longitud
         $latitude = isset($_POST['latitude']) ? floatval($_POST['latitude']) : null;
@@ -99,6 +100,7 @@ if (isset($_POST['create'])) {
         exit();
     } else {
         // Si no se suben imágenes
+        var_dump($result); 
         $response = ['status' => 'error', 'message' => 'No se han subido imágenes.'];
         echo json_encode($response);
         exit();
@@ -114,7 +116,8 @@ if (isset($_POST['update'])) {
     $dataAttributeTBActivityArray = isset($_POST['dataAttributeTBActivityArray']) ? $_POST['dataAttributeTBActivityArray'] : [];
     $statusTBActivity = isset($_POST['statusTBActivity']) ? 1 : 0;
     $serviceId = $_POST['serviceId'];
-    $activityDate = isset($_POST['activityDate']) ? trim($_POST['activityDate']) : date('Y-m-d');
+    $activityDate = isset($_POST['activityDate']) ? trim($_POST['activityDate']) : date('Y-m-d H:i:s');
+
 
     // Nuevas implementaciones: Captura de latitud y longitud
     $latitude = isset($_POST['latitude']) ? floatval($_POST['latitude']) : null;

@@ -7,19 +7,28 @@ document.addEventListener('DOMContentLoaded', function () {
         const nameTBActivity = document.getElementById('nameTBActivity').value;
         const serviceID = document.getElementById('serviceId1').value;
 
-        const attributeInputs = document.querySelectorAll('input[name="attributeTBActivityArray"]');
-        const dataInputs = document.querySelectorAll('input[name="dataAttributeTBActivityArray"]');
+        const attributeInputs = document.querySelectorAll('input[name="attributeTBActivityArray[]"]');
+        const dataInputs = document.querySelectorAll('input[name="dataAttributeTBActivityArray[]"]');
 
         const attributeTBActivityArray = Array.from(attributeInputs).map(input => input.value).join(',');
         const dataAttributeTBActivityArray = Array.from(dataInputs).map(input => input.value).join(',');
 
         const images = document.getElementById('imagenes').files;
 
+        const latitude = document.getElementById('latitude').value;
+        const longitude = document.getElementById('longitude').value;
+        const activityDate = document.getElementById('activityDate').value.replace('T', ' ') + ':00'; // Asegura el formato correcto
+
+
+
         const formData = new FormData();
         formData.append('nameTBActivity', nameTBActivity);
         formData.append('serviceId', serviceID);
         formData.append('attributeTBActivityArray', attributeTBActivityArray);
-        formData.append('dataAttributeTBActivityArray', dataAttributeTBActivityArray);
+        formData.append('dataAttributeTBActivityArray', dataAttributeTBActivityArray);  
+        formData.append('latitude', latitude);
+        formData.append('longitude', longitude);
+        formData.append('activityDate', activityDate);
 
         for (let i = 0; i < images.length; i++) {
             formData.append('imagenes[]', images[i]);
@@ -31,6 +40,7 @@ document.addEventListener('DOMContentLoaded', function () {
         xhr.open('POST', '../business/activityAction.php', true);
         xhr.onreadystatechange = function () {
             if (xhr.readyState === 4) {
+  
                 try {
                     let response = JSON.parse(xhr.responseText);
                     if (xhr.status === 200) {

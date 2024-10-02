@@ -266,8 +266,6 @@
             const attributeContainer = document.createElement('div');
             attributeContainer.innerHTML = `
                 <label>Atributo: </label>
-                <input type="text" name="attributeTBActivity
-                                <label>Atributo: </label>
                 <input type="text" name="attributeTBActivityArray[]" placeholder="Atributo" required />
                 <label>Dato: </label>
                 <input type="text" name="dataAttributeTBActivityArray[]" placeholder="Dato" required />
