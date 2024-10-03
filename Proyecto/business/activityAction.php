@@ -52,6 +52,7 @@ if (isset($_POST['create'])) {
         // Capturar los datos del formulario
         $nameTBActivity = isset($_POST['nameTBActivity']) ? trim($_POST['nameTBActivity']) : '';
         $serviceID = isset($_POST['serviceId']) ? trim($_POST['serviceId']) : 0;
+
         $attributeTBActivityArray = isset($_POST['attributeTBActivityArray']) ? $_POST['attributeTBActivityArray'] : '';
         $dataAttributeTBActivityArray = isset($_POST['dataAttributeTBActivityArray']) ? $_POST['dataAttributeTBActivityArray'] : '';
         $activityDate = isset($_POST['activityDate']) ? trim($_POST['activityDate']) : date('Y-m-d H:i:s');  // Fecha actual si no se especifica
