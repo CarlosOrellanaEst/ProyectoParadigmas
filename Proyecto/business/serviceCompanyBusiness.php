@@ -36,6 +36,6 @@ class serviceCompanyBusiness {
     }
 
     public function removeServiceFromServiceCompany($serviceCompanyId, $serviceIdToRemove){
-        return $this->serviceCompanyData->removeServiceFromServiceCompany($serviceCompanyId, $service);
+        return $this->serviceCompanyData->removeServiceFromServiceCompany($serviceCompanyId, $serviceIdToRemove);
     }
 }

@@ -45,7 +45,7 @@ class activityData extends Data
         }
     
         // Inserción de la actividad
-        $queryInsert = "INSERT INTO tbactivity (tbactivityid, tbactivityname, tbactivityservicecompanyid, tbactivityatributearray, tbactivitydataarray, tbactivityurl, tbactivitystatus, tbactivitydate, latitude, longitude) 
+        $queryInsert = "INSERT INTO tbactivity (tbactivityid, tbactivityname, tbactivityservicecompanyid, tbactivityatributearray, tbactivitydataarray, tbactivityurl, tbactivitystatus, tbactivitydate, tbactivitylatitude	, tbactivitylongitude) 
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($queryInsert);
         if ($stmt === false) {
@@ -83,46 +83,62 @@ class activityData extends Data
 
     // Método para obtener todas las actividades activas
     public function getAllActivities()
-    {
-        $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
-        if (!$conn) {
-            die("Connection failed: " . mysqli_connect_error());
-        }
-        $conn->set_charset('utf8mb4');
-
-        $query = "SELECT * FROM tbactivity WHERE tbactivitystatus = 1;";
-        $result = mysqli_query($conn, $query);
-
-        $activities = array();
-
-        while ($row = mysqli_fetch_array($result, MYSQLI_ASSOC)) {
-            $attributeArray = explode(',', $row['tbactivityatributearray']);
-            $dataArray = explode(',', $row['tbactivitydataarray']);
-            $urlArray = explode(',', $row['tbactivityurl']);
-
-            if (count($attributeArray) !== count($dataArray)) {
-                continue;
-            }
-
-            $activity = new Activity(
-                $row['tbactivityid'],
-                $row['tbactivityname'],
-                $row['tbactivityservicecompanyid'],
-                $attributeArray,
-                $dataArray,
-                $urlArray,
-                $row['tbactivitystatus'],
-                $row['tbactivitydate'],
-                $row['latitude'],
-                $row['longitude']
-            );
-
-            $activities[] = $activity;
-        }
-
-        mysqli_close($conn);
-        return $activities;
+{
+    // Conexión a la base de datos
+    $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
+    if (!$conn) {
+        die("Connection failed: " . mysqli_connect_error());
     }
+
+    $conn->set_charset('utf8mb4');
+
+    // Consulta para obtener todas las actividades
+    $query = "SELECT tbactivityid, tbactivityname, tbactivityservicecompanyid, tbactivityatributearray, tbactivitydataarray, tbactivityurl, tbactivitystatus, tbactivitydate, tbactivitylatitude, tbactivitylongitude FROM tbactivity";
+    $result = mysqli_query($conn, $query);
+
+    if (!$result) {
+        echo "Query failed: " . mysqli_error($conn);
+        mysqli_close($conn);
+        return null;
+    }
+
+    // Array para almacenar las actividades
+    $activities = [];
+
+    // Recorrer los resultados
+    while ($row = mysqli_fetch_assoc($result)) {
+        // Convertir los atributos de cadena a arrays
+        $atributearray = explode(',', $row['tbactivityatributearray']);
+        $dataarray = explode(',', $row['tbactivitydataarray']);
+        $urls = explode(',', $row['tbactivityurl']);
+        
+        // Crear un objeto de actividad o array asociativo
+        $activity = [
+            'tbactivityid' => $row['tbactivityid'],
+            'tbactivityname' => $row['tbactivityname'],
+            'tbactivityservicecompanyid' => $row['tbactivityservicecompanyid'],
+            'tbactivityatributearray' => $atributearray,
+            'tbactivitydataarray' => $dataarray,
+            'tbactivityurl' => $urls,
+            'tbactivitystatus' => $row['tbactivitystatus'],
+            'tbactivitydate' => $row['tbactivitydate'],
+            'tbactivitylatitude' => $row['tbactivitylatitude'],
+            'tbactivitylongitude' => $row['tbactivitylongitude']
+        ];
+
+        // Añadir la actividad al array
+        $activities[] = $activity;
+    }
+
+    // Cerrar la conexión
+    mysqli_free_result($result);
+    mysqli_close($conn);
+
+    return $activities;
+}
+
+    
+
 
     // Método para eliminar una actividad (marcar como inactiva)
     public function deleteActivity($id)
@@ -181,7 +197,7 @@ class activityData extends Data
 
         // Actualización de la actividad con latitud y longitud
         $queryUpdate = "UPDATE tbactivity
-                    SET tbactivityname = ?, tbactivityservicecompanyid = ?, tbactivityatributearray = ?, tbactivitydataarray = ?, tbactivityurl = ?, tbactivitystatus = ?, tbactivitydate = ?, latitude = ?, longitude = ?
+                    SET tbactivityname = ?, tbactivityservicecompanyid = ?, tbactivityatributearray = ?, tbactivitydataarray = ?, tbactivityurl = ?, tbactivitystatus = ?, tbactivitydate = ?, tbactivitylatitude = ?, tbactivitylongitude = ?
                     WHERE tbactivityid = ?";
         $stmt = $conn->prepare($queryUpdate);
         if ($stmt === false) {
@@ -221,7 +237,7 @@ class activityData extends Data
         $conn->set_charset('utf8mb4');
 
         // Consulta que ahora incluye latitud y longitud
-        $query = "SELECT tbactivityid, tbactivityname, tbactivityservicecompanyid, tbactivityatributearray, tbactivitydataarray, tbactivityurl, tbactivitystatus, tbactivitydate, latitude, longitude 
+        $query = "SELECT tbactivityid, tbactivityname, tbactivityservicecompanyid, tbactivityatributearray, tbactivitydataarray, tbactivityurl, tbactivitystatus, tbactivitydate, tbactivitylatitude, tbactivitylongitude 
               FROM tbactivity 
               WHERE tbactivityid = ? AND tbactivitystatus = 1";
         $stmt = $conn->prepare($query);
@@ -275,7 +291,7 @@ class activityData extends Data
         $conn->set_charset('utf8mb4');
 
         // Consulta que ahora incluye latitud y longitud
-        $query = "SELECT tbactivityid, tbactivityname, tbactivityservicecompanyid, tbactivityatributearray, tbactivitydataarray, tbactivityurl, tbactivitystatus, tbactivitydate, latitude, longitude 
+        $query = "SELECT tbactivityid, tbactivityname, tbactivityservicecompanyid, tbactivityatributearray, tbactivitydataarray, tbactivityurl, tbactivitystatus, tbactivitydate, tbactivitylatitude, tbactivitylongitude 
               FROM tbactivity 
               WHERE tbactivityname = ? AND tbactivitystatus = 1";
 
@@ -410,8 +426,8 @@ class activityData extends Data
                 $urlArray,
                 $row['tbactivitystatus'],
                 $row['tbactivitydate'],
-                $row['latitude'],  // Incluye latitud
-                $row['longitude']  // Incluye longitud
+                $row['tbactivitylatitude'],  // Incluye latitud
+                $row['tbactivitylongitude']  // Incluye longitud
             );
 
             $activities[] = $activity;
@@ -457,8 +473,8 @@ class activityData extends Data
                 $urlArray,
                 $row['tbactivitystatus'],
                 $row['tbactivitydate'],
-                $row['latitude'],  // Incluye latitud
-                $row['longitude']  // Incluye longitud
+                $row['tbactivitylatitude'],  // Incluye latitud
+                $row['tbactivitylongitude']  // Incluye longitud
             );
 
             $activities[] = $activity;
@@ -504,8 +520,8 @@ class activityData extends Data
                 $urlArray,
                 $row['tbactivitystatus'],
                 $row['tbactivitydate'],
-                $row['latitude'],  // Incluye latitud
-                $row['longitude']  // Incluye longitud
+                $row['tbactivitylatitude'],  // Incluye latitud
+                $row['tbactivitylongitude']  // Incluye longitud
             );
 
             $activities[] = $activity;
