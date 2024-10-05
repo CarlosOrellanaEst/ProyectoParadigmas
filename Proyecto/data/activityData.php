@@ -166,65 +166,70 @@ class activityData extends Data
 
     // Método para actualizar una actividad
     public function updateActivity($activity)
-    {
-        $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
-        if (!$conn) {
-            die("Connection failed: " . mysqli_connect_error());
-        }
+{
+    // Conexión a la base de datos
+    $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
+    if (!$conn) {
+        die("Connection failed: " . mysqli_connect_error());
+    }
 
-        $conn->set_charset('utf8mb4');
+    $conn->set_charset('utf8mb4');
 
-        // Revisión de duplicados
-        $tbactivityname = $activity->getNameTBActivity();
-        $tbactivityid = $activity->getIdTBActivity();
+    // Revisión de duplicados
+    $tbactivityname = $activity->getNameTBActivity();
+    $tbactivityid = $activity->getIdTBActivity();
 
-        $checkQuery = "SELECT COUNT(*) FROM tbactivity WHERE tbactivityname = ? AND tbactivityid != ? AND tbactivitystatus = 1";
-        $stmtCheck = $conn->prepare($checkQuery);
-        if ($stmtCheck === false) {
-            die("Prepare failed: " . $conn->error);
-        }
+    $checkQuery = "SELECT COUNT(*) FROM tbactivity WHERE tbactivityname = ? AND tbactivityid != ? AND tbactivitystatus = 1";
+    $stmtCheck = $conn->prepare($checkQuery);
+    if ($stmtCheck === false) {
+        die("Prepare failed: " . $conn->error);
+    }
 
-        $stmtCheck->bind_param("si", $tbactivityname, $tbactivityid);
-        $stmtCheck->execute();
-        $stmtCheck->bind_result($count);
-        $stmtCheck->fetch();
-        $stmtCheck->close();
+    $stmtCheck->bind_param("si", $tbactivityname, $tbactivityid);
+    $stmtCheck->execute();
+    $stmtCheck->bind_result($count);
+    $stmtCheck->fetch();
+    $stmtCheck->close();
 
-        if ($count > 0) {
-            mysqli_close($conn);
-            return ['status' => 'error', 'message' => 'Ya existe una actividad con el mismo nombre y está activa.'];
-        }
+    if ($count > 0) {
+        mysqli_close($conn);
+        return false; // Si existe una actividad con el mismo nombre activa, devolvemos false
+    }
 
-        // Actualización de la actividad con latitud y longitud
-        $queryUpdate = "UPDATE tbactivity
-                    SET tbactivityname = ?, tbactivityservicecompanyid = ?, tbactivityatributearray = ?, tbactivitydataarray = ?, tbactivityurl = ?, tbactivitystatus = ?, tbactivitydate = ?, tbactivitylatitude = ?, tbactivitylongitude = ?
-                    WHERE tbactivityid = ?";
-        $stmt = $conn->prepare($queryUpdate);
-        if ($stmt === false) {
-            die("Prepare failed: " . $conn->error);
-        }
+    // Actualización de la actividad con latitud y longitud
+    $queryUpdate = "UPDATE tbactivity
+                SET tbactivityname = ?, tbactivityservicecompanyid = ?, tbactivityatributearray = ?, tbactivitydataarray = ?, tbactivityurl = ?, tbactivitystatus = ?, tbactivitydate = ?, tbactivitylatitude = ?, tbactivitylongitude = ?
+                WHERE tbactivityid = ?";
+    $stmt = $conn->prepare($queryUpdate);
+    if ($stmt === false) {
+        die("Prepare failed: " . $conn->error);
+    }
 
-        $tbServicesid = $activity->getTbservicecompanyid();
-        $tbactivityatributearray = is_array($activity->getAttributeTBActivityArray()) ? implode(",", $activity->getAttributeTBActivityArray()) : '';
-        $tbactivitydataarray = is_array($activity->getDataAttributeTBActivityArray()) ? implode(",", $activity->getDataAttributeTBActivityArray()) : '';
-        $imageUrls = is_array($activity->getTbactivityURL()) ? implode(',', $activity->getTbactivityURL()) : $activity->getTbactivityURL();
-        $tbactivitystatus = $activity->getStatusTBActivity();
-        $tbactivitydate = $activity->getActivityDate();
-        $latitude = $activity->getLatitude();
-        $longitude = $activity->getLongitude();
+    $tbServicesid = $activity->getTbservicecompanyid();
+    $tbactivityatributearray = is_array($activity->getAttributeTBActivityArray()) ? implode(",", $activity->getAttributeTBActivityArray()) : '';
+    $tbactivitydataarray = is_array($activity->getDataAttributeTBActivityArray()) ? implode(",", $activity->getDataAttributeTBActivityArray()) : '';
+    $imageUrls = is_array($activity->getTbactivityURL()) ? implode(',', $activity->getTbactivityURL()) : $activity->getTbactivityURL();
+    $tbactivitystatus = $activity->getStatusTBActivity();
+    $tbactivitydate = $activity->getActivityDate();
+    $latitude = $activity->getLatitude();
+    $longitude = $activity->getLongitude();
 
-        $stmt->bind_param("sisssissddi", $tbactivityname, $tbServicesid, $tbactivityatributearray, $tbactivitydataarray, $imageUrls, $tbactivitystatus, $tbactivitydate, $latitude, $longitude, $tbactivityid);
-        $result = $stmt->execute();
+    $stmt->bind_param("sisssissddi", $tbactivityname, $tbServicesid, $tbactivityatributearray, $tbactivitydataarray, $imageUrls, $tbactivitystatus, $tbactivitydate, $latitude, $longitude, $tbactivityid);
+    $result = $stmt->execute();
 
-        if (!$result) {
-            echo "Execute failed: " . $stmt->error;
-        }
-
+    if (!$result) {
+        echo "Execute failed: " . $stmt->error;
         $stmt->close();
         mysqli_close($conn);
-
-        return $result;
+        return false; // Si la ejecución falla, devolver false
     }
+
+    $stmt->close();
+    mysqli_close($conn);
+
+    return true; // Si la actualización fue exitosa, devolver true
+}
+
 
 
     // Método para obtener una actividad por su ID
