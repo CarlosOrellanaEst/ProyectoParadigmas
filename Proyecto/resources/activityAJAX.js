@@ -87,6 +87,11 @@ document.addEventListener('DOMContentLoaded', function () {
 
             let xhr = new XMLHttpRequest();
             xhr.open('POST', '../business/activityAction.php', true);
+
+            console.log('Response from server:', xhr.responseText);
+            console.log('Latitude:', formData.get('latitude'));
+            console.log('Longitude:', formData.get('longitude'));
+
             xhr.onreadystatechange = function () {
                 if (xhr.readyState === 4) {
                     try {
