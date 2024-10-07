@@ -69,16 +69,19 @@ CREATE TABLE `tbactivity` (
   `tbactivitylongitude` decimal(12,8) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+INSERT INTO `tbactivity` (`tbactivityid`, `tbactivityname`, `tbactivityservicecompanyid`, `tbactivityatributearray`, `tbactivitydataarray`, `tbactivityurl`, `tbactivitystatus`, `tbactivitydate`, `tbactivitylatitude`, `tbactivitylongitude`)
+VALUES
+(1, 'Senderismo en el Bosque', 2, 'Duración,Distancia', '2 horas,5 km', 'Cat03.jpg,pexels1.jpg', 1, '2024-10-01 09:00:00', 10.12345678, -84.12345678),
+(2, 'Fotografía de Vida Silvestre', 3, 'Duración,Equipo Recomendado', '4 horas,Cámara con zoom', 'daisy.jpg,pexels2.jpg', 1, '2024-10-03 07:30:00', 9.87654321, -83.98765432),
+(3, 'Kayak en el Río', 5, 'Duración,Nivel de Dificultad', '3 horas,Moderado', 'dog.jpg,pexels3.jpg', 1, '2024-10-05 11:00:00', 10.23456789, -84.23456789),
+(4, 'Paseo en Caballo', 4, 'Duración,Tamaño del Grupo', '2 horas,10 personas', 'IMG_1312.PNG,uwu.jpeg', 1, '2024-10-07 08:00:00', 9.12345678, -83.12345678),
+(5, 'Excursión Nocturna', 1, 'Duración,Equipo Necesario', '5 horas,Linterna y repelente', 'miAmigueCarlos.jpg,gerald.jpg', 1, '2024-10-09 18:00:00', 10.56789012, -84.56789012);
+
 --
 -- Volcado de datos para la tabla `tbactivity`
 --
 
-INSERT INTO `tbactivity` (`tbactivityid`, `tbactivityname`, `tbactivityservicecompanyid`, `tbactivityatributearray`, `tbactivitydataarray`, `tbactivityurl`, `tbactivitystatus`, `tbactivitydate`, `tbactivitylatitude`, `tbactivitylongitude`) VALUES
-(1, 'Actividad1', 2, 'Atributo1', 'Dato1,Dato2', 'Screenshot from 2024-09-30 23-29-50.png,Screenshot from 2024-09-30 23-30-22.png,Screenshot from 2024-10-01 00-01-10.png', 1, '2024-10-05 22:40:00', 10.44932456, -83.50708008),
-(2, 'sefsgf', 4, 'fsfs', 'efsgsg,ehgsehsgh', 'Screenshot from 2024-10-01 00-01-10.png', 1, '2024-11-02 22:06:00', 10.41596601, -83.96534510),
-(3, 'Actividad3', 6, 'Prueba loca,Atributo1,fsfs', 'Dataso bro,Dato1,efsgsg', 'Screenshot from 2024-09-30 23-29-50.png,Screenshot from 2024-10-02 15-35-57.png', 1, '2024-10-18 22:22:00', 10.28384253, -83.40065002),
-(4, 'pRUEBA 12312', 7, ',Atributo1,fsfs,Prueba loca,Atributo1,fsfs', ',Dato1,efsgsg,Dataso bro,Dato1,efsgsg', 'Screenshot from 2024-09-30 23-30-22.png', 1, '2024-10-29 15:40:00', 10.25654750, -83.77033777);
-COMMIT;
+
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
