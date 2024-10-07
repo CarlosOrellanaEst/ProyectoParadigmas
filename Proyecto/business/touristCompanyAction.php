@@ -58,6 +58,15 @@ if (isset($_POST['create'])) {
         $companyTypeId = $_POST['companyType'] ?? 0;
         $status = $_POST['status'] ?? '';
 
+        if ($companyTypeId === 'other') {
+            $companyTypeId = $_POST['customCompanyType'] ?? ''; // Verificamos que se envíe el valor personalizado
+            if (empty($companyTypeId)) {
+                // Manejar el error si no se ha proporcionado el valor del tipo personalizado
+                echo json_encode(['status' => 'error', 'message' => 'Debe especificar un tipo de empresa personalizado.']);
+                exit;
+            }
+        }
+
         if ($ownerId) {
             $ownerBusiness = new OwnerBusiness();
             $owner = $ownerBusiness->getTBOwner($ownerId);

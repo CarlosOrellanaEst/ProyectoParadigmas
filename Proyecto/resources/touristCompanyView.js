@@ -77,29 +77,36 @@ document.getElementById('formCreate').addEventListener('submit', function (e) {
     const images = document.getElementById('imagenes').files;
     const status = document.getElementById('status').value;
     const ownerError = document.getElementById('ownerError');
-   
+
+    const customCompanyTypeName = document.getElementById('customCompanyTypeName');
+    const customCompanyType = document.getElementById('customCompanyType').value.trim();
+    const customCompanyTypeError = document.getElementById('customCompanyTypeError');
 
     ownerError.style.display = 'none';
-
+    customCompanyTypeError.style.display = 'none';
 
     if (owner === '0') { 
         ownerError.style.display = 'inline'; 
         return; 
     }
-    
-    if (owner === '0') {
-        alert('Debes seleccionar un propietario.');
+
+    if (companyType === 'other' && customCompanyType === '') {
+        customCompanyTypeError.style.display = 'inline';
         return;
     }
+    
+    
+    /*if (owner === '0') {
+        alert('Debes seleccionar un propietario.');
+        return;
+    }*/
  
 
-
-  
     const formData = new FormData();
     formData.append('magicName', magicName);
     formData.append('legalName', legalName);
     formData.append('ownerId', owner);
-    formData.append('companyType', companyType);
+    formData.append('companyType', companyType === 'other' ? customCompanyType : companyType);
     formData.append('status', status);
 
    

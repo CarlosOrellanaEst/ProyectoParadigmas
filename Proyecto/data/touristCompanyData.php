@@ -4,9 +4,7 @@ include_once 'data.php';
 include_once '../domain/TouristCompany.php'; 
 include_once '../domain/Photo.php'; 
 
-class TouristCompanyData extends Data{
-
-  
+class TouristCompanyData extends Data{  
     public function insertTouristCompany($touristCompany) {
         $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
         if (!$conn) {
