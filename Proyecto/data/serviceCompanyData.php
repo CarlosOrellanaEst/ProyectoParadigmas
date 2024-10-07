@@ -231,6 +231,67 @@ class serviceCompanyData extends Data {
         
         return $serviceReturn;
     }
+
+    public function getTBServices($idsTBService) {
+        // Escapar y validar los ids para prevenir inyecciones SQL
+        $idsArray = explode(',', $idsTBService); // Convertir la cadena de ids en un array
+        $idsArray = array_map('intval', $idsArray); // Asegurarse de que todos los valores sean enteros
+    
+        if (empty($idsArray)) {
+            return null; // Retornar null si no hay ids
+        }
+    
+        // Convertir el array a una cadena separada por comas para la consulta SQL
+        $placeholders = implode(',', array_fill(0, count($idsArray), '?'));
+    
+        // Establecer conexión
+        $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
+        if (!$conn) {
+            throw new Exception("Connection failed: " . mysqli_connect_error());
+        }
+        $conn->set_charset('utf8');
+    
+        // Preparar la consulta SQL usando la cláusula IN con placeholders
+        $query = "SELECT * FROM tbservice WHERE tbserviceid IN ($placeholders)";
+        $stmt = mysqli_prepare($conn, $query);
+        
+        if (!$stmt) {
+            throw new Exception("Error en la preparación de la consulta: " . mysqli_error($conn));
+        }
+    
+        // Enlazar los parámetros para la consulta
+        $types = str_repeat('i', count($idsArray)); // Usamos 'i' para enteros
+        mysqli_stmt_bind_param($stmt, $types, ...$idsArray);
+    
+        // Ejecutar la consulta
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
+    
+        if ($result === false) {
+            throw new Exception("Error en la consulta: " . mysqli_error($conn));
+        }
+    
+        $servicesReturn = [];
+        while ($row = mysqli_fetch_assoc($result)) {
+            // Crear objetos Service y agregarlos al array de retorno
+            $servicesReturn[] = new Service(
+                $row['tbserviceid'], 
+                $row['tbservicename'], 
+                $row['tbservicedescription'], 
+                $row['tbservicestatus']
+            );
+        }   
+        
+        // Cerrar la conexión
+        mysqli_stmt_close($stmt);
+        mysqli_close($conn);
+    
+        return $servicesReturn; // Retornar la lista de servicios
+    }
+    
+    
+
+    
     
     
     public function removeImageFromServiceCompany($serviceCompanyId, $newImageUrls) {

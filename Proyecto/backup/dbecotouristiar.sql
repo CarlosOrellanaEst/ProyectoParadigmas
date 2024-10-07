@@ -27,16 +27,62 @@ SET time_zone = "+00:00";
 -- Estructura de tabla para la tabla `tbactivity`
 --
 
+-- phpMyAdmin SQL Dump
+-- version 5.2.1
+-- https://www.phpmyadmin.net/
+--
+-- Servidor: localhost
+-- Tiempo de generación: 08-10-2024 a las 00:04:26
+-- Versión del servidor: 10.4.32-MariaDB
+-- Versión de PHP: 8.2.12
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+
+--
+-- Base de datos: `dbecotouristiar`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `tbactivity`
+--
+
 CREATE TABLE `tbactivity` (
   `tbactivityid` int(11) NOT NULL,
   `tbactivityname` varchar(255) NOT NULL,
   `tbactivityservicecompanyid` int(11) NOT NULL,
-  `tbactivityatributearray` varchar(255) NOT NULL,
-  `tbactivitydataarray` varchar(255) NOT NULL,
+  `tbactivityatributearray` varchar(1000) DEFAULT NULL,
+  `tbactivitydataarray` varchar(1000) NOT NULL,
   `tbactivityurl` text NOT NULL,
   `tbactivitystatus` tinyint(4) NOT NULL,
-  `tbactivitydate` datetime NOT NULL
+  `tbactivitydate` datetime NOT NULL,
+  `tbactivitylatitude` decimal(12,8) NOT NULL,
+  `tbactivitylongitude` decimal(12,8) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `tbactivity`
+--
+
+INSERT INTO `tbactivity` (`tbactivityid`, `tbactivityname`, `tbactivityservicecompanyid`, `tbactivityatributearray`, `tbactivitydataarray`, `tbactivityurl`, `tbactivitystatus`, `tbactivitydate`, `tbactivitylatitude`, `tbactivitylongitude`) VALUES
+(1, 'Actividad1', 2, 'Atributo1', 'Dato1,Dato2', 'Screenshot from 2024-09-30 23-29-50.png,Screenshot from 2024-09-30 23-30-22.png,Screenshot from 2024-10-01 00-01-10.png', 1, '2024-10-05 22:40:00', 10.44932456, -83.50708008),
+(2, 'sefsgf', 4, 'fsfs', 'efsgsg,ehgsehsgh', 'Screenshot from 2024-10-01 00-01-10.png', 1, '2024-11-02 22:06:00', 10.41596601, -83.96534510),
+(3, 'Actividad3', 6, 'Prueba loca,Atributo1,fsfs', 'Dataso bro,Dato1,efsgsg', 'Screenshot from 2024-09-30 23-29-50.png,Screenshot from 2024-10-02 15-35-57.png', 1, '2024-10-18 22:22:00', 10.28384253, -83.40065002),
+(4, 'pRUEBA 12312', 7, ',Atributo1,fsfs,Prueba loca,Atributo1,fsfs', ',Dato1,efsgsg,Dataso bro,Dato1,efsgsg', 'Screenshot from 2024-09-30 23-30-22.png', 1, '2024-10-29 15:40:00', 10.25654750, -83.77033777);
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 
 --
 -- Volcado de datos para la tabla `tbactivity`

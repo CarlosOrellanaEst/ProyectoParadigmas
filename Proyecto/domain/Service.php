@@ -2,7 +2,7 @@
 
 class Service {
     private $idTbservice;
-    private $tbserviceame;
+    private $tbservicename;
     private $tbservicedescription;
     private $tbservicetatus;
 
