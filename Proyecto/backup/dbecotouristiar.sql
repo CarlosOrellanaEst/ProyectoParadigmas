@@ -313,7 +313,16 @@ INSERT INTO `tbtouristcompanytype` (`tbtouristcompanytypeid`, `tbtouristcompanyt
 (5, 'Actividades Recreativas', 'Organización de actividades recreativas y eventos para turistas.', 1);
 
 -- --------------------------------------------------------
+-- Estructura de tabla para la tabla `tbcustomizedtouristcompanytype`
+--
 
+REATE TABLE `tbcustomizedtouristcompanytype` (
+  `tbcustomizedtouristcompanytypeid` int(11) NOT NULL,
+  `tbownerid` int(11) NOT NULL,
+  `tbcustomizedtouristcompanytypename` varchar(200) NOT NULL,
+  `tbcustomizedtouristcompanytypestatus` int(11) NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+COMMIT;
 --
 -- Estructura de tabla para la tabla `tbuser`
 --

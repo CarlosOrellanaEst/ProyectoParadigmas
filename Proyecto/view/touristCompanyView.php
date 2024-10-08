@@ -97,6 +97,9 @@
                             </option>
                         <?php endforeach; ?>
                     </select>
+                    <!-- Campo oculto para el tipo de empresa personalizado -->
+                    <label for="customCompanyTypeName" style="display: none; margin-top: 10px;"  id="customCompanyTypeName">Nombre: <span id="customCompanyTypeError" style="color:red; display:none;">*Campo obligatorio</span></label>
+                    <input type="text" name="customCompanyType" id="customCompanyType" placeholder="Especifique otro tipo de empresa" style="display: none; margin-top: 10px;" />
                 </div>
 
                 <div class="form-group">
@@ -246,6 +249,19 @@
         </table>
 
     </section>
+    <script>
+        document.getElementById('companyType').addEventListener('change', function () {
+            var customInput = document.getElementById('customCompanyType');
+            var customLabel = document.getElementById('customCompanyTypeName');
+            if (this.value === '0') {
+                customInput.style.display = 'block'; 
+                customLabel.style.display = 'block'; 
+            } else {
+                customInput.style.display = 'none';
+                customLabel.style.display = 'block'; 
+            }
+        });
+    </script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             showAlertBasedOnURL();

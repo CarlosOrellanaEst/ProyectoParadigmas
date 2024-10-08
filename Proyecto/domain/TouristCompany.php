@@ -6,6 +6,7 @@ class TouristCompany{
     private $tbtouristcompanymagicname;
     private $tbtouristcompanyowner;
     private $tbtouristcompanycompanyType;
+    private $tbtouristcompanycustomcompanytype;
     private $tbtouristcompanyurl;
     private $tbtouristcompanystatus;
     private $photos; 
@@ -21,7 +22,6 @@ class TouristCompany{
         $this->photos = []; 
         
     }
-
 
     public function setTbtouristcompanyid($tbtouristcompanyid) {
         $this->tbtouristcompanyid = $tbtouristcompanyid;
@@ -41,6 +41,10 @@ class TouristCompany{
 
     public function setTbtouristcompanycompanyType($tbtouristcompanycompanyType) {
         $this->tbtouristcompanycompanyType = $tbtouristcompanycompanyType;
+    }
+
+    public function setTbtouristcompanycustomcompanyType($tbtouristcompanycustomcompanyType) { // customCompanyType
+        $this->tbtouristcompanycustomcompanytype = $tbtouristcompanycustomcompanyType;
     }
 
     public function setTbtouristcompanyurl($tbtouristcompanyurl) {
@@ -69,6 +73,10 @@ class TouristCompany{
 
     public function getTbtouristcompanycompanyType() {
         return $this->tbtouristcompanycompanyType;
+    }
+
+    public function getTbtouristcompanycustomcompanytype() {
+        return $this->tbtouristcompanycustomcompanytype;
     }
 
     public function getTbtouristcompanyurl() {
