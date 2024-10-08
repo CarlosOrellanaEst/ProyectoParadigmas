@@ -69,7 +69,6 @@ function confirmAction(event) {
 document.getElementById('formCreate').addEventListener('submit', function (e) {
     e.preventDefault(); 
 
-    
     const magicName = document.getElementById('magicName').value.trim();
     const legalName = document.getElementById('legalName').value.trim();
     const owner = document.getElementById('ownerId').value;
@@ -77,24 +76,29 @@ document.getElementById('formCreate').addEventListener('submit', function (e) {
     const images = document.getElementById('imagenes').files;
     const status = document.getElementById('status').value;
     const ownerError = document.getElementById('ownerError');
-   
+
+    const customCompanyTypeName = document.getElementById('customCompanyTypeName');
+    const customCompanyType = document.getElementById('customCompanyType').value.trim();
+    const customCompanyTypeError = document.getElementById('customCompanyTypeError');
 
     ownerError.style.display = 'none';
-
+    customCompanyTypeError.style.display = 'none';
 
     if (owner === '0') { 
         ownerError.style.display = 'inline'; 
         return; 
     }
-    
-    if (owner === '0') {
-        alert('Debes seleccionar un propietario.');
+
+    if (companyType === '0' && customCompanyType === '') {
+        customCompanyTypeError.style.display = 'inline';
         return;
     }
- 
 
+    /*if (owner === '0') {
+        alert('Debes seleccionar un propietario.');
+        return;
+    }*/
 
-  
     const formData = new FormData();
     formData.append('magicName', magicName);
     formData.append('legalName', legalName);
@@ -102,7 +106,10 @@ document.getElementById('formCreate').addEventListener('submit', function (e) {
     formData.append('companyType', companyType);
     formData.append('status', status);
 
-   
+    if (companyType === '0') {
+        formData.append('customCompanyType', customCompanyType);
+    }
+
     for (let i = 0; i < images.length; i++) {
         formData.append('imagenes[]', images[i]);
     }

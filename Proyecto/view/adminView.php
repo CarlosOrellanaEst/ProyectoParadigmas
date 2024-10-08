@@ -7,8 +7,7 @@
 </head>
 <body>
     <p>PAGINA DE ADMIN.</p>
-    <ol>
-        
+    <ol>  
         <li><a href="rollView.php">CRUD Roles</a></li>
         <li><a href="paymentTypeView.php">CRUD Tipo de Pago</a></li>
         <li><a href="ownerView.php">CRUD Propietarios</a></li>
@@ -18,6 +17,7 @@
         <li><a href="serviceView.php">CRUD Servicios</a></li>
         <li><a href="PlannerView.php">CRUD Planificador</a></li>
         <li><a href="registerAdminView.php">Registrar administrador</a></li>
+        <li><a href="pruebaMapaView.html">Prueba Mapa</a></li>
     </ol>
     <?php 
        echo ' <a href="../index.php">Cerrar Sesión</a> ';

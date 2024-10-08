@@ -4,7 +4,7 @@ include_once '../data/activityData.php'; // Ajusta la ruta según tu estructura
 
 class ActivityBusiness {
 
-    private $activityData;
+    public $activityData;
 
     public function __construct() {
         $this->activityData = new ActivityData();

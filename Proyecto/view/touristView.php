@@ -11,7 +11,7 @@
         <li><a href="./view/touristCompanyView.php">CRUD Empresas turísticas</a></li>
         <li><a href="./view/activityView.php">CRUD Actividades</a></li>
       <li><a href="./view/PlannerVIew.php">Pruebas</a></li>
-        <li><a href="./view/serviceView.php">CRUD Servicios</a></li> -->
+        <li><a href="./view/serviceView.php">CRUD Servicios</a></li> 
     </ol>
     <?php 
        echo ' <a href="../index.php">Cerrar Sesión</a> ';

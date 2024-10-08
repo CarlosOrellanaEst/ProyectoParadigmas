@@ -1,24 +1,27 @@
 <?php
-    require '../domain/Owner.php';
-    require '../business/paymentTypeBusiness.php';
-    require '../business/ownerBusiness.php';
+require_once '../domain/Owner.php';
+require_once '../business/paymentTypeBusiness.php';
+require_once '../business/ownerBusiness.php';
+require_once '../business/activityBusiness.php';
+require_once '../business/serviceCompanyBusiness.php';
 
-    session_start();
-    $userLogged = $_SESSION['user'];
-    $ownerBusiness = new ownerBusiness();
 
-    // Definimos los propietarios en función del tipo de usuario
-    if ($userLogged->getUserType() == "Administrador") {
-        $owners = $ownerBusiness->getAllTBOwners();
-        if (!$owners || empty($owners)) {
-            echo "<script>alert('No se encontraron propietarios.');</script>";
-        }
-    } else if ($userLogged->getUserType() == "Propietario") {
-        $owners = [$userLogged]; 
+session_start();
+$userLogged = $_SESSION['user'];
+$ownerBusiness = new ownerBusiness();
+
+// Definimos los propietarios en función del tipo de usuario
+if ($userLogged->getUserType() == "Administrador") {
+    $owners = $ownerBusiness->getAllTBOwners();
+    if (!$owners || empty($owners)) {
+        echo "<script>alert('No se encontraron propietarios.');</script>";
     }
+} else if ($userLogged->getUserType() == "Propietario") {
+    $owners = [$userLogged];
+}
 
-    // Guardamos la lista de propietarios en la sesión para usarla abajo
-    $_SESSION['owners'] = $owners;
+// Guardamos la lista de propietarios en la sesión para usarla abajo
+$_SESSION['owners'] = $owners;
 ?>
 
 <!DOCTYPE html>
@@ -54,21 +57,28 @@
     </style>
     <script src="../resources/activityAJAX.js"></script>
     <?php
-        include '../business/serviceCompanyBusiness.php';
-        $serviceCompanyBusiness = new serviceCompanyBusiness();
-        $services = $serviceCompanyBusiness->getAllTBServiceCompanies();
-        $imageBasePath = '../images/activity/';
+
+    $serviceCompanyBusiness = new serviceCompanyBusiness();
+    $services = $serviceCompanyBusiness->getAllTBServiceCompanies();
+    $imageBasePath = '../images/activity/';
     ?>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <script
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCRQx6ssQ25Ezy99nFNHJYSCVIpE9JeAUI&libraries=marker&callback=initMap&loading=async"
+        defer></script>
+
 </head>
 
 <body>
     <?php
-        if ($userLogged->getUserType() == "Propietario") {
-            echo '<a href="ownerViewSession.php">← Volver al inicio</a>';
-        } else if ($userLogged->getUserType() == "Administrador") {
-            echo '<a href="adminView.php">← Volver al inicio</a>';
-        }
+    if ($userLogged->getUserType() == "Propietario") {
+        echo '<a href="ownerViewSession.php">← Volver al inicio</a>';
+    } else if ($userLogged->getUserType() == "Administrador") {
+        echo '<a href="adminView.php">← Volver al inicio</a>';
+    } else if ($userLogged->getUserType() == "Turista") {
+        echo '<a href="touristView.php">← Volver al inicio</a>';
+    }
     ?>
     <header>
         <h1>CRUD Actividades</h1>
@@ -77,56 +87,78 @@
 
     <section id="create">
         <h2>Crear Actividad</h2>
-        <form method="post" id="formCreate" action="../business/activityAction.php" enctype="multipart/form-data">
-            <label for="nameTBActivity">Nombre de la Actividad <span class="required">*</span></label>
-            <input placeholder="Nombre de la Actividad" type="text" name="nameTBActivity" id="nameTBActivity" required />
-            <br><br>
+        <?php
+        if ($userLogged->getUserType() == "Administrador" || $userLogged->getUserType() == "Propietario") {
+            ?>
+            <form method="post" id="formCreate" action="../business/activityAction.php" enctype="multipart/form-data">
+                <label for="nameTBActivity">Nombre de la Actividad <span class="required">*</span></label>
+                <input placeholder="Nombre de la Actividad" type="text" name="nameTBActivity" id="nameTBActivity"
+                    required />
+                <br><br>
 
-            <label for="serviceId1">Servicio: </label>
-            <select name="serviceId" id="serviceId1" required>
-                <?php foreach ($services as $service): ?>
-                    <option value="<?php echo htmlspecialchars($service->getTbservicecompanyid()); ?>">
-                        <?php echo htmlspecialchars($service->getTbservicecompanyid()); ?>
-                    </option>
-                <?php endforeach; ?>
-            </select>
-            <br><br>
+                <label for="serviceId1">Servicio: </label>
+                <select name="serviceId" id="serviceId1" required>
+                    <?php foreach ($services as $service): ?>
+                        <option value="<?php echo htmlspecialchars($service->getTbservicecompanyid()); ?>">
+                            <?php
 
-            <div id="attributes">
-                <div>
-                    <label for="attribute1">Atributo: </label>
-                    <input type="text" name="attributeTBActivityArray[]" id="attribute1" placeholder="Atributo" />
-                    <label for="dataAttributeTBActivityArray">Dato: </label>
-                    <input type="text" name="dataAttributeTBActivityArray[]" placeholder="Dato" />
+                            $serviceName = $serviceCompanyBusiness->getTBServicesByIds($service->getTbserviceid());
+
+                            echo htmlspecialchars(is_array($serviceName) ? implode(', ', array_map(function ($s) {
+                                return $s->getTbservicename();
+                            }, $serviceName)) : $serviceName);
+                            ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+
+                <br><br>
+
+                <div id="attributes">
+                    <div class="attribute-container">
+                        <label for="attributeTBActivityArray">Atributo: </label>
+                        <input type="text" name="attributeTBActivityArrayFORM" placeholder="Atributo" />
+                        <label for="dataAttributeTBActivityArray">Dato: </label>
+                        <input type="text" name="dataAttributeTBActivityArrayFORM" placeholder="Dato" />
+                    </div>
                 </div>
-            </div>
-            <button type="button" id="addAttribute">Agregar otro atributo</button>
-            <br><br>
 
-            <label class="datetime-label" for="activityDate">Fecha y Hora de la Actividad: </label>
-            <input type="datetime-local" name="activityDate" id="activityDate" required>
-            <br><br>
+                <button type="button" id="addAttribute">Agregar otro atributo</button>
+                <br><br>
 
-            <label for="imagenes">Selecciona las imágenes (máximo 5): </label><br>
-            <input type="file" name="imagenes[]" id="imagenes" multiple />
-            <br><br>
+                <label class="datetime-label" for="activityDate">Fecha y Hora de la Actividad:  <span class="required">*</span></label>
+                <input type="datetime-local" name="activityDate" id="activityDate" required>
+                <br><br>
 
-            <input type="hidden" id="statusTBActivity" name="statusTBActivity" value="1">
-            <input type="submit" value="Crear" name="create" id="create" />
-        </form>
+                <label for="imagenes">Selecciona las imágenes (máximo 5): </label><br>
+                <input type="file" name="imagenes[]" id="imagenes" multiple />
+                <br><br>
+                <span class="required">*</span>Seleccionar una ubicacion diferente a la automatica
+                <div id="map" style="height: 500px; width: 100%;">
+                </div>
+                <br><br>
+                <input type="text" style="display:none;" name="latitude" id="latitude">
+                <input type="text" style="display:none;" name="longitude" id="longitude">
+
+                <br><br>
+
+                <input type="hidden" id="statusTBActivity" name="statusTBActivity" value="1">
+                <input type="submit" value="Crear" name="create" id="create" />
+            </form>
+            <?php
+        }
+        ?>
+
     </section>
 
     <hr>
 
     <section>
-        <h2>Buscar y Editar Actividades</h2>
-        <form id="formSearchOne" method="get">
-            <label for="searchOne">Buscar por nombre: </label>
-            <input type="text" placeholder="Nombre" name="searchOne" id="searchOne">
-            <input type="submit" value="Buscar" />
-        </form>
+
+
         <br>
         <div id="message" hidden></div>
+        <h2>Actividades Registradas</h2>
         <table>
             <thead>
                 <tr>
@@ -135,104 +167,117 @@
                     <th>Atributos y Datos</th>
                     <th>Fotos</th>
                     <th>Fecha y Hora</th>
+                    <th>Longitud</th>
+                    <th>Latitud</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
-            <?php
-            include_once '../business/activityBusiness.php';
-            $activityBusiness = new ActivityBusiness();
-            $allActivities = $activityBusiness->getAllActivities();
-            $activityFiltered = [];
+                <?php
 
-            if (isset($_GET['searchOne'])) {
-                $searchTerm = $_GET['searchOne'];
-                $activityFiltered = array_filter($allActivities, function ($activity) use ($searchTerm) {
-                    return stripos($activity->getNameTBActivity(), $searchTerm) !== false;
-                });
-            }
-            if (count($activityFiltered) > 0) {
-                $allActivities = $activityFiltered;
-            }
+                $activityBusiness = new ActivityBusiness();  // Instancia de la clase ActivityBusiness
+                $allActivities = $activityBusiness->getAllActivities();
+                $activityFiltered = [];
+                if (count($allActivities) > 0) {
+                    foreach ($allActivities as $current) {
+                        $assignedService = $serviceCompanyBusiness->getServiceCompany($current['tbactivityservicecompanyid']);
+                        echo '<tr>';
+                        echo '<form method="post" action="../business/activityAction.php" enctype="multipart/form-data" onsubmit="return confirmAction(event);">';
+                        echo '<input type="hidden" name="idTBActivity" value="' . $current['tbactivityid'] . '">';
+                        echo '<input type="hidden" name="existingImages" value="' . htmlspecialchars(is_array($current['tbactivityurl']) ? implode(',', $current['tbactivityurl']) : $current['tbactivityurl']) . '">';
 
-            if (count($allActivities) > 0) {
-                foreach ($allActivities as $current) {
-                    $assignedService = $serviceCompanyBusiness->getServiceCompany($current->getTbservicecompanyid());
-                    echo '<tr>'; 
-                    echo '<form method="post" action="../business/activityAction.php" enctype="multipart/form-data" onsubmit="return confirmAction(event);">';
-                    echo '<input type="hidden" name="idTBActivity" value="' . $current->getIdTBActivity() . '">';
-                    echo '<input type="hidden" name="existingImages" value="' . htmlspecialchars(is_array($current->getTbactivityURL()) ? implode(',', $current->getTbactivityURL()) : $current->getTbactivityURL()) . '">';
-                
-                    // Nombre de la actividad
-                    echo '<td>';
-                    echo '<input type="text" name="nameTBActivity" value="' . htmlspecialchars($current->getNameTBActivity()) . '">';
-                    echo '</td>';
-                
-                    // Servicio asociado
-                    echo '<td>';
-                    echo '<select name="serviceId" required>';
-                    foreach ($services as $service) {
-                        echo '<option value="' . htmlspecialchars($service->getTbservicecompanyid()) . '"';
-                        if ($service->getTbservicecompanyid() == $current->getTbservicecompanyid()) {
-                            echo ' selected';
+                        // Nombre de la actividad
+                        echo '<td>';
+                        echo '<input type="text" name="nameTBActivity" value="' . htmlspecialchars($current['tbactivityname']) . '">';
+                        echo '</td>';
+
+                        // Servicio asociado
+                        echo '<td>';
+                        echo '<select name="serviceId" required>';
+                        foreach ($services as $service) {
+
+                            $serviceName = $serviceCompanyBusiness->getTBServicesByIds($service->getTbserviceid());
+
+                            echo '<option value="' . htmlspecialchars($service->getTbservicecompanyid()) . '"';
+                            if ($service->getTbservicecompanyid() == $current['tbactivityservicecompanyid']) {
+                                echo ' selected';
+                            }
+                            echo '>' . htmlspecialchars(is_array($serviceName)
+                                ? implode(', ', array_map(function ($s) {
+                                    return $s->getTbservicename();
+                                }, $serviceName))
+                                : $serviceName) . '</option>';
+
                         }
-                        echo '>' . htmlspecialchars($service->getTbservicecompanyid()) . '</option>';
-                    }
-                    echo '</select>';
-                    echo '</td>';
-                
-                    // Atributos y datos (Editable)
-                    echo '<td>';
-                    $attributeArray = $current->getAttributeTBActivityArray();
-                    $dataArray = $current->getDataAttributeTBActivityArray();
-                    for ($i = 0; $i < count($attributeArray); $i++) {
-                        echo '<div>';
-                        echo '<input type="text" name="attributeTBActivityArray[]" value="' . htmlspecialchars($attributeArray[$i]) . '" placeholder="Atributo" />';
-                        echo '<input type="text" name="dataAttributeTBActivityArray[]" value="' . htmlspecialchars($dataArray[$i]) . '" placeholder="Dato" />';
-                        echo '</div>';
-                    }
-                    echo '</td>';
-                
-                    // Fotos
-                    echo '<td>';
-                    $urls = $current->getTbactivityURL();
-                    if (is_string($urls)) {
-                        $urls = explode(',', $urls);
-                    }
-                    foreach ($urls as $index => $url) {
-                        if (!empty($url)) {
-                            $fullImagePath = $imageBasePath . trim($url);
-                            echo '<img src="' . htmlspecialchars($fullImagePath) . '" alt="Foto" width="50" height="50" />';
+                        echo '</select>';
+                        echo '</td>';
+
+                        // Atributos y datos (Editable)
+                        echo '<td>';
+                        $attributeArray = $current['tbactivityatributearray'];
+                        $dataArray = $current['tbactivitydataarray'];
+                        
+                        for ($i = 0; $i < count($attributeArray); $i++) {
+                            echo '<div>';
+                            echo '<input type="text" name="attributeTBActivityArrayTable" value="' . htmlspecialchars($attributeArray[$i]) . '" placeholder="Atributo" />';
+                            echo '<input type="text" name="dataAttributeTBActivityArrayTable" value="' . htmlspecialchars($dataArray[$i]) . '" placeholder="Dato" />';
+                            echo '</div>';
                         }
-                    }
-                    echo '</td>';
-                
-                    // Fecha y hora (Editable)
-                    echo '<td>';
-                    echo '<input type="datetime-local" name="activityDate" value="' . htmlspecialchars($current->getActivityDate()) . '" />';
-                    echo '</td>';
-                
-                    // Acciones
-                    echo '<td>';
-                    echo '<input type="submit" value="Actualizar" name="update" />';
-                    echo '<input type="submit" value="Eliminar" name="delete" />';
-                    echo '<select name="imageIndex">';
-                    foreach ($urls as $index => $url) {
-                        if (!empty($url)) {
-                            echo '<option value="' . $index . '">Eliminar Imagen ' . ($index + 1) . '</option>';
+                        echo '</td>';
+
+                        // Fotos
+                        echo '<td>';
+                        $urls = $current['tbactivityurl'];
+                        if (is_string($urls)) {
+                            $urls = explode(',', $urls);
                         }
+                        foreach ($urls as $index => $url) {
+                            if (!empty($url)) {
+                                $fullImagePath = $imageBasePath . trim($url);
+                                echo '<img src="' . htmlspecialchars($fullImagePath) . '" alt="Foto" width="50" height="50" />';
+                            }
+                        }
+                        echo '</td>';
+
+                        // Fecha y hora (Editable)
+                        echo '<td>';
+                        echo '<input type="datetime-local" name="activityDate" value="' . htmlspecialchars($current['tbactivitydate']) . '" />';
+                        echo '</td>';
+
+                        // Longitud
+                        echo '<td>';
+                        echo '<input type="text" name="longitude" value="' . htmlspecialchars($current['tbactivitylongitude']) . '" />';
+                        echo '</td>';
+
+                        // Latitud
+                        echo '<td>';
+                        echo '<input type="text" name="latitude" value="' . htmlspecialchars($current['tbactivitylatitude']) . '" />';
+                        echo '</td>';
+
+                        // Acciones
+                        echo '<td>';
+                        if ($userLogged->getUserType() == "Administrador" || $userLogged->getUserType() == "Propietario") {
+                            echo '<input type="submit" value="Actualizar" name="update" />';
+                            echo '<input type="submit" value="Eliminar" name="delete" />';
+                            echo '<select name="imageIndex">';
+                            foreach ($urls as $index => $url) {
+                                if (!empty($url)) {
+                                    echo '<option value="' . $index . '">Eliminar Imagen ' . ($index + 1) . '</option>';
+                                }
+                            }
+                            echo '</select>';
+                            echo '<input type="submit" value="Eliminar Imagen" name="deleteImage" />';
+                        }
+
+                        echo '</td>';
+
+                        echo '</form>';
+                        echo '</tr>';
                     }
-                    echo '</select>';
-                    echo '<input type="submit" value="Eliminar Imagen" name="deleteImage" />';
-                    echo '</td>';
-                
-                    echo '</form>'; 
-                    echo '</tr>';
+                } else {
+                    echo '<tr><td colspan="8">No se encontraron resultados</td></tr>';
                 }
-            } else {
-                echo '<tr><td colspan="6">No se encontraron resultados</td></tr>';
-            }
-            ?>
+                ?>
             </tbody>
         </table>
     </section>
@@ -241,12 +286,10 @@
         document.getElementById('addAttribute').addEventListener('click', function () {
             const attributeContainer = document.createElement('div');
             attributeContainer.innerHTML = `
-                <label>Atributo: </label>
-                <input type="text" name="attributeTBActivity
-                                <label>Atributo: </label>
-                <input type="text" name="attributeTBActivityArray[]" placeholder="Atributo" required />
-                <label>Dato: </label>
-                <input type="text" name="dataAttributeTBActivityArray[]" placeholder="Dato" required />
+                <label for="attributeTBActivityArray">Atributo: </label>
+                <input type="text" name="attributeTBActivityArrayFORM" placeholder="Atributo" />
+                <label for="dataAttributeTBActivityArray">Dato: </label>
+                <input type="text" name="dataAttributeTBActivityArrayFORM" placeholder="Dato" />
             `;
             document.getElementById('attributes').appendChild(attributeContainer);
         });
@@ -260,6 +303,9 @@
             $('#attributes-' + activityId).toggle();
         });
     </script>
+
+    <!-- Script con la lógica del mapa -->
+    <script src="../resources/maps.js" defer></script>
 </body>
 
 </html>
