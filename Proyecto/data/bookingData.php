@@ -1,10 +1,8 @@
 <?php
-
 include_once 'data.php';
 include_once '../domain/Booking.php';
 
 class bookingData extends Data {
-
     public function insertTbBooking($booking) {
         // Conexión a la base de datos
         $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
@@ -31,54 +29,26 @@ class bookingData extends Data {
             die("Prepare failed: " . $conn->error);
         }
     
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-        // Preparación de parámetros
-        $tbactivityid = $nextId;
-        $tbServicesid = $activity->getTbservicecompanyid();
-        $tbactivityatributearray = implode(",", $activity->getAttributeTBActivityArray());
-        $tbactivitydataarray = implode(",", $activity->getDataAttributeTBActivityArray());
-        $imageUrls = is_array($activity->getTbactivityURL()) ? implode(',', $activity->getTbactivityURL()) : $activity->getTbactivityURL();
-        $tbactivitystatus = $activity->getStatusTBActivity();
-        $tbactivitydate = $activity->getActivityDate();
-    
-        // Bindeo de parámetros e inserción
-        $stmt->bind_param("isisssis", $tbactivityid, $tbactivityname, $tbServicesid, $tbactivityatributearray, $tbactivitydataarray, $imageUrls, $tbactivitystatus, $tbactivitydate);
-=======
-        $tbbookingid = $nextId;
-        $tbactivityid = $booking->getTbactivityid();
-        $tbuserid = $booking->getTbuserid();
-        $tbbookingnumberpersons = $booking->getTbbookingNumberPersons();
-        $tbbookingstatus = $booking->getTbbookingStatus();
-=======
         // Preparación de parámetros para la inserción
         $tbbookingid = $nextId;
-        $tbactivityid = $booking->getTbactivityid(); // Obtiene el ID de la actividad
-        $tbuserid = $booking->getTbuserid(); // Obtiene el ID del usuario
-        $tbbookingnumberpersons = $booking->getTbbookingNumberPersons(); // Número de personas en la reserva
-        $tbbookingstatus = $booking->getTbbookingStatus(); // Estado de la reserva
-    
-        // Bindeo de parámetros e inserción
+        $tbactivityid = $booking->getIdTBActivity(); // Obtiene el ID de la actividad
+        $tbuserid = $booking->getIdTBUser(); // Obtiene el ID del usuario
+        $tbbookingnumberpersons = $booking->getNumberPersonsTBBooking(); // Número de personas en la reserva
+        $tbbookingstatus = true // Estado de la reserva (true=1, false=0)
+
         $stmt->bind_param("iiiii", $tbbookingid, $tbactivityid, $tbuserid, $tbbookingnumberpersons, $tbbookingstatus);
-        $result = $stmt->execute();
->>>>>>> develop
     
-        $stmt->bind_param("iiiii", $tbbookingid, $tbactivityid, $tbuserid, $tbbookingnumberpersons, $tbbookingstatus);
->>>>>>> Stashed changes
-        $result = $stmt->execute();
-    
+        // Ejecutar la consulta y verificar si tuvo éxito
+        if (!$stmt->execute()) {
+            echo "Error al insertar la reserva: " . $stmt->error;
+            $stmt->close();
+            mysqli_close($conn);
+            return false;
+        }
+        
         $stmt->close();
         mysqli_close($conn);
     
-        return $result;
+        return true;
     }
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-=======
-    
-    
->>>>>>> Stashed changes
-=======
-    
->>>>>>> develop
 }

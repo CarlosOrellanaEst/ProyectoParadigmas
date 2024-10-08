@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
-    
-    document.getElementById('formCreate').addEventListener('submit', function (e) {
+    document.getElementById('ownerForm').addEventListener('submit', function (e) {
         e.preventDefault();
 
         const ownerName = document.getElementById('name').value.trim();
@@ -61,57 +60,3 @@ document.addEventListener('DOMContentLoaded', function () {
         xhr.send(formData);
     });
 });
-
-function showAlertBasedOnURL() {
-    const urlParams = new URLSearchParams(window.location.search);
-    const paramSuccess = urlParams.get('success');
-    const paramError = urlParams.get('error');
-
-    if (urlParams.has('success')) {
-        if (paramSuccess && urlParams.get('success') === 'inserted') {
-            alert('Se ha creado con éxito.');
-        } 
-    } 
-}
-
-// Función para manejar los errores devueltos por el servidor
-function handleErrorResponse(response) {
-    switch (response.error_code) {
-        case 'invalid_name':
-            alert('Error: El nombre contiene caracteres inválidos.');
-            break;
-        case 'invalid_surnames':
-            alert('Error: Los apellidos contienen caracteres inválidos.');
-            break;
-        case 'invalid_costa_rica_id':
-            alert('Error: La identificación de Costa Rica debe contener exactamente 9 dígitos.');
-            break;
-        case 'invalid_foreign_id':
-            alert('Error: La identificación extranjera solo debe contener números.');
-            break;
-        case 'invalid_phone':
-            alert('Error: El número de teléfono debe contener exactamente 8 dígitos.');
-            break;
-        case 'invalid_email':
-            alert('Error: El formato del correo electrónico no es válido.');
-            break;
-        case 'invalid_file_type':
-            alert('Error: El formato de la imagen no es válido.');
-            break;
-        case 'image_upload_failed':
-            alert('Error: Fallo al subir la imagen.');
-            break;
-        case 'db_error':
-            alert('Error: Fallo al agregar el propietario en la base de datos.');
-            break;
-        case 'missing_fields':
-            alert('Error: Datos incompletos o inválidos.');
-            break;
-        case 'unknown_error':
-            alert('Error: Ocurrió un error desconocido.');
-            break;
-        default:
-            alert('Error desconocido: ' + response.message);
-            break;
-    }
-}

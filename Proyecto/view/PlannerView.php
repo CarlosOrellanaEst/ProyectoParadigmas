@@ -9,16 +9,16 @@
 
     // Definimos los propietarios en función del tipo de usuario
     if ($userLogged->getUserType() == "Administrador") {
-        $owners = $ownerBusiness->getAllTBOwners();
-        if (!$owners || empty($owners)) {
+        $users = $ownerBusiness->getAllTBOwners();
+        if (!$users || empty($users)) {
             echo "<script>alert('No se encontraron propietarios.');</script>";
         }
-    } else if ($userLogged->getUserType() == "Propietario") {
-        $owners = [$userLogged]; 
+    } else if ($userLogged->getUserType() == "Turista") {
+        $users = [$userLogged]; 
     }
 
-    // Guardamos la lista de propietarios en la sesión para usarla abajo
-    $_SESSION['owners'] = $owners;
+    // Guardamos la lista de turistas en la sesión para usarla abajo
+    $_SESSION['tourist'] = $users;
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -58,6 +58,7 @@
 
         $imageBasePath = '../images/activity/';  // Ruta base para las imágenes
     ?>
+
 </head>
 <body>
 <a href="adminView.php">← Volver al inicio</a>
@@ -121,30 +122,18 @@
                         </ul>
                     </td>
                     <td><?php echo htmlspecialchars($activity->getActivityDate()); ?></td>
-<<<<<<< HEAD
-<<<<<<< Updated upstream
-=======
-                    <td>
-                    <form action="reserveActivity.php" method="POST">
-                        <input type="hidden" name="activityId" value="<?php echo htmlspecialchars($activity->getIdTBActivity()); ?>">
-                        <label for="numPersons">Cantidad de personas:</label>
-                        <input type="number" name="numPersons" min="1" required>
-                        <input type="submit" value="Crear" name="create" id="create" />
-                    </form>
 
-                    </td>
->>>>>>> Stashed changes
-=======
                     <td>
-                        <!-- Formulario para reservar la actividad -->
-                        <form action="reserveActivity.php" method="POST">
-                            <input type="hidden" name="activityId" value="<?php echo htmlspecialchars($activity->getIdTBActivity()); ?>">
-                            <label for="numPersons">Cantidad de personas:</label>
-                            <input type="number" name="numPersons" min="1" required>
-                            <button type="submit">Reservar</button>
-                        </form>
-                    </td>
->>>>>>> develop
+    <form method="post" action="../business/bookingAction.php">
+        <input type="hidden" name="activityId" value="<?php echo htmlspecialchars($activity->getIdTBActivity()); ?>">
+        <label for="numPersons">Cantidad de personas:</label>
+        <input type="number" name="numPersons" min="1" required>
+        <input type="submit" value="Crear" name="create">
+    </form>
+</td>
+
+
+                    
                 </tr>
             <?php endforeach; ?>
         <?php else: ?>
