@@ -14,8 +14,7 @@ $response = array();
 
 
 if (isset($_POST['create'])) {
-
-   /* if (isset($_FILES['imagenes']) && !empty($_FILES['imagenes']['name'][0])) { */
+    /* if (isset($_FILES['imagenes']) && !empty($_FILES['imagenes']['name'][0])) { */
         $uploadDir = '../images/';
         $fileNames = array();
         $allowTypes = array('jpg', 'png', 'jpeg', 'gif');
@@ -57,6 +56,17 @@ if (isset($_POST['create'])) {
         $ownerId = $_POST['ownerId'] ?? 0;
         $companyTypeId = $_POST['companyType'] ?? 0;
         $status = $_POST['status'] ?? '';
+        $customCompanyType = '';
+
+        if ($companyTypeId === '0') {
+            $customCompanyType = $_POST['customCompanyType'] ?? ''; // Verificamos que se envíe el valor personalizado
+
+            if (empty($customCompanyType)) {
+                // Manejar el error si no se ha proporcionado el valor del tipo personalizado
+                echo json_encode(['status' => 'error', 'message' => 'Debe especificar un tipo de empresa personalizado.']);
+                exit;
+            }
+        }
 
         if ($ownerId) {
             $ownerBusiness = new OwnerBusiness();
@@ -67,6 +77,11 @@ if (isset($_POST['create'])) {
 
             if ($owner && $companyType) {
                 $touristCompany = new TouristCompany(0, $legalName, $magicName, $ownerId, $companyTypeId, $photoUrls, $status);
+
+                if ($companyTypeId === '0') {
+                    $touristCompany->setTbtouristcompanycustomcompanyType($customCompanyType);
+                }
+
                 $touristCompanyBusiness = new TouristCompanyBusiness();
                 $result = $touristCompanyBusiness->insert($touristCompany);
 
@@ -86,7 +101,7 @@ if (isset($_POST['create'])) {
 
         echo json_encode($response);
         exit();
-   /* }  else {
+    /* }  else {
         $response = ['status' => 'error', 'message' => 'No se ha subido ninguna imagen.'];
         echo json_encode($response);
         exit();
@@ -162,11 +177,7 @@ if (isset($_POST['update'])) {
     }
 }
 
-
-
-
 if (isset($_POST['delete'])) {
-
     if (isset($_POST['id']) && is_numeric($_POST['id'])) {
         $id = $_POST['id'];
         $touristCompanyBusiness = new TouristCompanyBusiness();
@@ -226,4 +237,3 @@ if (isset($_POST['deleteImage'])) {
         exit();
     }
 }
-

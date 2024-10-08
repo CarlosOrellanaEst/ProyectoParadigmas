@@ -4,6 +4,7 @@
 
     session_start();
     $userLogged = $_SESSION['user'];
+    
     $ownerBusiness = new ownerBusiness();
 
     // Definimos los propietarios en función del tipo de usuario
@@ -59,7 +60,7 @@
     ?>
 </head>
 <body>
-
+<a href="adminView.php">← Volver al inicio</a>
 <h2>Actividades Activas</h2>
 
 <!-- Filtro por fecha -->
@@ -88,6 +89,7 @@
             <th>Datos</th>
             <th>Imágenes</th>
             <th>Fecha de Actividad</th>
+            <th>Reservar</th>
         </tr>
     </thead>
     <tbody>
@@ -119,11 +121,20 @@
                         </ul>
                     </td>
                     <td><?php echo htmlspecialchars($activity->getActivityDate()); ?></td>
+                    <td>
+                        <!-- Formulario para reservar la actividad -->
+                        <form action="../business/bookingAction.php" method="POST">
+                            <input type="hidden" name="activityId" value="<?php echo htmlspecialchars($activity->getIdTBActivity()); ?>">
+                            <label for="numPersons">Cantidad de personas:</label>
+                            <input type="number" name="numPersons" min="1" required>
+                            <input type="submit" value="Crear" name="create" id="create" />
+                        </form>
+                    </td>
                 </tr>
             <?php endforeach; ?>
         <?php else: ?>
             <tr>
-                <td colspan="7">No hay actividades activas disponibles.</td>
+                <td colspan="8">No hay actividades activas disponibles.</td>
             </tr>
         <?php endif; ?>
     </tbody>

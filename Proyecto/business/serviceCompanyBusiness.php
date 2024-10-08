@@ -22,6 +22,9 @@ class serviceCompanyBusiness {
     public function getTBService($idService) {
         return $this->serviceCompanyData->getTBService($idService);
     }
+    public function getTBServicesByIds($ids) {
+        return $this->serviceCompanyData->getTBServices($ids);
+    }
     public function getAllTBServiceCompanies(){
         return $this->serviceCompanyData->getAllTBServiceCompanies();
     }
@@ -36,6 +39,6 @@ class serviceCompanyBusiness {
     }
 
     public function removeServiceFromServiceCompany($serviceCompanyId, $serviceIdToRemove){
-        return $this->serviceCompanyData->removeServiceFromServiceCompany($serviceCompanyId, $service);
+        return $this->serviceCompanyData->removeServiceFromServiceCompany($serviceCompanyId, $serviceIdToRemove);
     }
 }
