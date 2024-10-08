@@ -19,9 +19,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
         const latitude = document.getElementById('latitude').value;
         const longitude = document.getElementById('longitude').value;
-        const activityDate = document.getElementById('activityDate').value.replace('T', ' ') + ':00'; // Asegura el formato correcto
+        const activityDate = document.getElementById('activityDate').value.replace('T', ' ') + ':00'; 
 
-
+        console.log("attributeTBActivityArray:", attributeTBActivityArray);
+        console.log("dataAttributeTBActivityArray:", dataAttributeTBActivityArray);
 
         const formData = new FormData();
         formData.append('nameTBActivity', nameTBActivity);
@@ -42,7 +43,6 @@ document.addEventListener('DOMContentLoaded', function () {
         xhr.open('POST', '../business/activityAction.php', true);
         xhr.onreadystatechange = function () {
             if (xhr.readyState === 4) {
-                console.log('Respuesta completa:', xhr.responseText); // Agrega esto para inspeccionar la respuesta
                 try {
                     let response = JSON.parse(xhr.responseText);
                     if (xhr.status === 200) {
@@ -88,10 +88,6 @@ document.addEventListener('DOMContentLoaded', function () {
             let xhr = new XMLHttpRequest();
             xhr.open('POST', '../business/activityAction.php', true);
 
-            console.log('Response from server:', xhr.responseText);
-            console.log('Latitude:', formData.get('latitude'));
-            console.log('Longitude:', formData.get('longitude'));
-
             xhr.onreadystatechange = function () {
                 if (xhr.readyState === 4) {
                     try {
@@ -100,7 +96,6 @@ document.addEventListener('DOMContentLoaded', function () {
                             if (response.status === 'success') {
                                 alert(response.message); 
                                 document.getElementById('formCreate').reset();
-
                                 location.reload();
                             } else {
                                 alert('Error: ' + response.message);

@@ -111,8 +111,8 @@ if (isset($_POST['update'])) {
 
     $idTBActivity = $_POST['idTBActivity'];
     $nameTBActivity = $_POST['nameTBActivity'];
-    $attributeTBActivityArray = isset($_POST['attributeTBActivityArray']) ? $_POST['attributeTBActivityArray'] : [];
-    $dataAttributeTBActivityArray = isset($_POST['dataAttributeTBActivityArray']) ? $_POST['dataAttributeTBActivityArray'] : [];
+    $attributeTBActivityArray = isset($_POST['attributeTBActivityArrayTable[]']) ? $_POST['attributeTBActivityArrayTable[]'] : [];
+    $dataAttributeTBActivityArray = isset($_POST['dataAttributeTBActivityArrayTable[]']) ? $_POST['dataAttributeTBActivityArrayTable[]'] : [];
     $statusTBActivity = isset($_POST['statusTBActivity']) ? 1 : 0;
     $serviceId = $_POST['serviceId'];
     $activityDate = isset($_POST['activityDate']) ? trim($_POST['activityDate']) : date('Y-m-d H:i:s');

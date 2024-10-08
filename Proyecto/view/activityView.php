@@ -116,7 +116,7 @@ $_SESSION['owners'] = $owners;
 
                 <div id="attributes">
                     <div class="attribute-container">
-                        <label for="attribute1">Atributo: </label>
+                        <label for="attributeTBActivityArray[]">Atributo: </label>
                         <input type="text" name="attributeTBActivityArray[]" placeholder="Atributo" />
                         <label for="dataAttributeTBActivityArray">Dato: </label>
                         <input type="text" name="dataAttributeTBActivityArray[]" placeholder="Dato" />
@@ -216,10 +216,11 @@ $_SESSION['owners'] = $owners;
                         echo '<td>';
                         $attributeArray = $current['tbactivityatributearray'];
                         $dataArray = $current['tbactivitydataarray'];
+                        
                         for ($i = 0; $i < count($attributeArray); $i++) {
                             echo '<div>';
-                            echo '<input type="text" name="attributeTBActivityArray[]" value="' . htmlspecialchars($attributeArray[$i]) . '" placeholder="Atributo" />';
-                            echo '<input type="text" name="dataAttributeTBActivityArray[]" value="' . htmlspecialchars($dataArray[$i]) . '" placeholder="Dato" />';
+                            echo '<input type="text" name="attributeTBActivityArrayTable[]" value="' . htmlspecialchars($attributeArray[$i]) . '" placeholder="Atributo" />';
+                            echo '<input type="text" name="dataAttributeTBActivityArrayTable[]" value="' . htmlspecialchars($dataArray[$i]) . '" placeholder="Dato" />';
                             echo '</div>';
                         }
                         echo '</td>';
@@ -285,12 +286,10 @@ $_SESSION['owners'] = $owners;
         document.getElementById('addAttribute').addEventListener('click', function () {
             const attributeContainer = document.createElement('div');
             attributeContainer.innerHTML = `
-                <label>Atributo: </label>
-                <input type="text" name="attributeTBActivity
-                                <label>Atributo: </label>
-                <input type="text" name="attributeTBActivityArray[]" placeholder="Atributo" required />
-                <label>Dato: </label>
-                <input type="text" name="dataAttributeTBActivityArray[]" placeholder="Dato" required />
+                <label for="attributeTBActivityArray[]">Atributo: </label>
+                <input type="text" name="attributeTBActivityArray[]" placeholder="Atributo" />
+                <label for="dataAttributeTBActivityArray">Dato: </label>
+                <input type="text" name="dataAttributeTBActivityArray[]" placeholder="Dato" />
             `;
             document.getElementById('attributes').appendChild(attributeContainer);
         });
