@@ -68,47 +68,62 @@ document.addEventListener('DOMContentLoaded', function () {
 
   
     const forms = document.querySelectorAll('form');
-    forms.forEach(function (form) {
+forms.forEach(function (form) {
 
-        form.addEventListener('submit', function (event) {
-            event.preventDefault();
+    form.addEventListener('submit', function (event) {
+        event.preventDefault();
 
-            const actionType = event.submitter.name; 
-            const formData = new FormData(form);
+        const actionType = event.submitter.name; 
+        const formData = new FormData(form);
 
-            if (actionType === 'update') {
-                formData.append('update', 'update');
-            } else if (actionType === 'delete') {
-                formData.append('delete', 'delete');
-            } else if (actionType === 'deleteImage') {
-                formData.append('deleteImage', 'deleteImage');
-            }
+        if (actionType === 'update') {
+            formData.append('update', 'update');
+        } else if (actionType === 'delete') {
+            formData.append('delete', 'delete');
+        } else if (actionType === 'deleteImage') {
+            formData.append('deleteImage', 'deleteImage');
+        }
 
-            let xhr = new XMLHttpRequest();
-            xhr.open('POST', '../business/activityAction.php', true);
+        // Obtener atributos y datos como arrays separados por coma
+        const attributeInputs = form.querySelectorAll('input[name="attributeTBActivityArrayTable"]');
+        const dataInputs = form.querySelectorAll('input[name="dataAttributeTBActivityArrayTable"]');
 
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState === 4) {
-                    try {
-                        let response = JSON.parse(xhr.responseText);
-                        if (xhr.status === 200) {
-                            if (response.status === 'success') {
-                                alert(response.message); 
-                                document.getElementById('formCreate').reset();
-                                location.reload();
-                            } else {
-                                alert('Error: ' + response.message);
-                            }
+        const attributeTBActivityArrayA = Array.from(attributeInputs).map(input => input.value).join(',');
+        const dataAttributeTBActivityArrayA = Array.from(dataInputs).map(input => input.value).join(',');
+
+        // Agregar atributos y datos al FormData
+        formData.append('attributeTBActivityArray', attributeTBActivityArrayA);
+        formData.append('dataAttributeTBActivityArray', dataAttributeTBActivityArrayA);
+
+        console.log('Atributos:', attributeTBActivityArrayA);
+        console.log('Datos:', dataAttributeTBActivityArrayA);
+
+        let xhr = new XMLHttpRequest();
+        xhr.open('POST', '../business/activityAction.php', true);
+
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4) {
+                try {
+                    let response = JSON.parse(xhr.responseText);
+                    if (xhr.status === 200) {
+                        if (response.status === 'success') {
+                            alert(response.message); 
+                            document.getElementById('formCreate').reset();
+                            location.reload();
                         } else {
-                            alert('Error HTTP: ' + xhr.status);
+                            alert('Error: ' + response.message);
                         }
-                    } catch (e) {
-                        console.error('Respuesta JSON inválida:', xhr.responseText);
-                        alert('Error procesando la respuesta del servidor.');
+                    } else {
+                        alert('Error HTTP: ' + xhr.status);
                     }
+                } catch (e) {
+                    console.error('Respuesta JSON inválida:', xhr.responseText);
+                    alert('Error procesando la respuesta del servidor.');
                 }
-            };
-            xhr.send(formData);
-        });
+            }
+        };
+        xhr.send(formData);
     });
+});
+
 });
