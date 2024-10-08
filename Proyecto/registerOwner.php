@@ -21,7 +21,7 @@
     </header>
     
     <form id="ownerForm" method="post" enctype="multipart/form-data" action="./business/ownerAction.php">
-    <label for="name">Nombre </label>
+    <label for="name">Nombre <span class="required">*</span> </label>
     <input placeholder="nombre" type="text" name="ownerName" id="name" autocomplete="given-name"/><br><br>
 
     <label for="surnames">Apellidos</label>

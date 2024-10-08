@@ -8,8 +8,8 @@
 <body>
     <p>PAGINA DE TURISTA.</p>
     <ol>
-        <li><a href="./view/touristCompanyView.php">CRUD Empresas turísticas</a></li>
-        <li><a href="./view/activityView.php">CRUD Actividades</a></li>
+        <li><a href="touristCompanyView.php">Ver Empresas turísticas</a></li>
+        <li><a href="activityView.php">Ver Actividades</a></li>
 <!--         <li><a href="./view/pruebas.php">Pruebas</a></li>
         <li><a href="./view/serviceView.php">CRUD Servicios</a></li> -->
     </ol>
