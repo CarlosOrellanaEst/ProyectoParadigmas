@@ -87,19 +87,6 @@ VALUES
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 
---
--- Volcado de datos para la tabla `tbactivity`
---
-
-INSERT INTO `tbactivity` (`tbactivityid`, `tbactivityname`, `tbactivityservicecompanyid`, `tbactivityatributearray`, `tbactivitydataarray`, `tbactivityurl`, `tbactivitystatus`, `tbactivitydate`) VALUES
-(1, 'Walking Tour', 1, 'Location, Duration', 'Park, 2 hours', '10188600.jpg', 1, '2024-09-01 15:02:00'),
-(2, 'Photography Workshop', 2, 'Location, Materials', 'Studio, Cameras', 'foca.jpg', 1, '2024-09-15 00:00:00'),
-(3, 'Cultural Exhibition', 3, 'Location, Art Pieces', 'Gallery, 100 pieces', 'Cat03.jpg', 1, '2024-09-14 00:00:00'),
-(4, 'Wildlife Safari', 4, 'Location, Guide', 'Forest, Expert Guide', 'IMG_1312.PNG', 1, '2024-09-13 00:00:00'),
-(5, 'Cooking Class', 5, 'Location, Chef', 'Kitchen, Famous Chef', 'dog.jpg', 1, '2024-09-12 00:00:00'),
-(6, 'PreubaActu', 3, 'Adios', 'Adios', '', 0, '2024-11-20 08:08:00');
-
--- --------------------------------------------------------
 
 --
 -- Estructura de tabla para la tabla `tbowner`
