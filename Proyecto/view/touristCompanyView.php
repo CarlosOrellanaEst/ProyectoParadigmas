@@ -96,7 +96,6 @@
                                 <?php echo htmlspecialchars($touristCompanyType->getName()); ?>
                             </option>
                         <?php endforeach; ?>
-                        <option value="other">Otro</option> <!-- Opción "Otro" -->
                     </select>
                     <!-- Campo oculto para el tipo de empresa personalizado -->
                     <label for="customCompanyTypeName" style="display: none; margin-top: 10px;"  id="customCompanyTypeName">Nombre: <span id="customCompanyTypeError" style="color:red; display:none;">*Campo obligatorio</span></label>
@@ -254,7 +253,7 @@
         document.getElementById('companyType').addEventListener('change', function () {
             var customInput = document.getElementById('customCompanyType');
             var customLabel = document.getElementById('customCompanyTypeName');
-            if (this.value === 'other') {
+            if (this.value === '0') {
                 customInput.style.display = 'block'; 
                 customLabel.style.display = 'block'; 
             } else {

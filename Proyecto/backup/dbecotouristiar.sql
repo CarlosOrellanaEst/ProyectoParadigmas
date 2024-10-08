@@ -267,10 +267,11 @@ INSERT INTO `tbtouristcompanytype` (`tbtouristcompanytypeid`, `tbtouristcompanyt
 -- Estructura de tabla para la tabla `tbcustomizedtouristcompanytype`
 --
 
-CREATE TABLE `tbcustomizedtouristcompanytype` (
+REATE TABLE `tbcustomizedtouristcompanytype` (
   `tbcustomizedtouristcompanytypeid` int(11) NOT NULL,
   `tbownerid` int(11) NOT NULL,
-  `tbcustomizedtouristcompanytypename` varchar(200) NOT NULL
+  `tbcustomizedtouristcompanytypename` varchar(200) NOT NULL,
+  `tbcustomizedtouristcompanytypestatus` int(11) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 COMMIT;
 --
