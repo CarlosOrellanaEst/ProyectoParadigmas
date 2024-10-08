@@ -126,14 +126,14 @@ $_SESSION['owners'] = $owners;
                 <button type="button" id="addAttribute">Agregar otro atributo</button>
                 <br><br>
 
-                <label class="datetime-label" for="activityDate">Fecha y Hora de la Actividad: </label>
+                <label class="datetime-label" for="activityDate">Fecha y Hora de la Actividad:  <span class="required">*</span></label>
                 <input type="datetime-local" name="activityDate" id="activityDate" required>
                 <br><br>
 
                 <label for="imagenes">Selecciona las imágenes (máximo 5): </label><br>
                 <input type="file" name="imagenes[]" id="imagenes" multiple />
                 <br><br>
-
+                <span class="required">*</span>Seleccionar una ubicacion diferente a la automatica
                 <div id="map" style="height: 500px; width: 100%;">
                 </div>
                 <br><br>
