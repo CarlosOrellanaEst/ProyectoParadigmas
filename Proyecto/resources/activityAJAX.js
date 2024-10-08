@@ -9,8 +9,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
         let attributeInputs = [];
         let dataInputs = [];
-        attributeInputs = document.querySelectorAll('input[name="attributeTBActivityArray[]"]');
-        dataInputs = document.querySelectorAll('input[name="dataAttributeTBActivityArray[]"]');
+        attributeInputs = document.querySelectorAll('input[name="attributeTBActivityArrayFORM"]');
+        dataInputs = document.querySelectorAll('input[name="dataAttributeTBActivityArrayFORM"]');
 
         const attributeTBActivityArray = Array.from(attributeInputs).map(input => input.value).join(',');
         const dataAttributeTBActivityArray = Array.from(dataInputs).map(input => input.value).join(',');
@@ -69,7 +69,6 @@ document.addEventListener('DOMContentLoaded', function () {
   
     const forms = document.querySelectorAll('form');
     forms.forEach(function (form) {
-
 
         form.addEventListener('submit', function (event) {
             event.preventDefault();

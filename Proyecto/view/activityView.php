@@ -116,10 +116,10 @@ $_SESSION['owners'] = $owners;
 
                 <div id="attributes">
                     <div class="attribute-container">
-                        <label for="attributeTBActivityArray[]">Atributo: </label>
-                        <input type="text" name="attributeTBActivityArray[]" placeholder="Atributo" />
+                        <label for="attributeTBActivityArray">Atributo: </label>
+                        <input type="text" name="attributeTBActivityArrayFORM" placeholder="Atributo" />
                         <label for="dataAttributeTBActivityArray">Dato: </label>
-                        <input type="text" name="dataAttributeTBActivityArray[]" placeholder="Dato" />
+                        <input type="text" name="dataAttributeTBActivityArrayFORM" placeholder="Dato" />
                     </div>
                 </div>
 
@@ -219,8 +219,8 @@ $_SESSION['owners'] = $owners;
                         
                         for ($i = 0; $i < count($attributeArray); $i++) {
                             echo '<div>';
-                            echo '<input type="text" name="attributeTBActivityArrayTable[]" value="' . htmlspecialchars($attributeArray[$i]) . '" placeholder="Atributo" />';
-                            echo '<input type="text" name="dataAttributeTBActivityArrayTable[]" value="' . htmlspecialchars($dataArray[$i]) . '" placeholder="Dato" />';
+                            echo '<input type="text" name="attributeTBActivityArrayTable" value="' . htmlspecialchars($attributeArray[$i]) . '" placeholder="Atributo" />';
+                            echo '<input type="text" name="dataAttributeTBActivityArrayTable" value="' . htmlspecialchars($dataArray[$i]) . '" placeholder="Dato" />';
                             echo '</div>';
                         }
                         echo '</td>';
@@ -286,10 +286,10 @@ $_SESSION['owners'] = $owners;
         document.getElementById('addAttribute').addEventListener('click', function () {
             const attributeContainer = document.createElement('div');
             attributeContainer.innerHTML = `
-                <label for="attributeTBActivityArray[]">Atributo: </label>
-                <input type="text" name="attributeTBActivityArray[]" placeholder="Atributo" />
+                <label for="attributeTBActivityArray">Atributo: </label>
+                <input type="text" name="attributeTBActivityArrayFORM" placeholder="Atributo" />
                 <label for="dataAttributeTBActivityArray">Dato: </label>
-                <input type="text" name="dataAttributeTBActivityArray[]" placeholder="Dato" />
+                <input type="text" name="dataAttributeTBActivityArrayFORM" placeholder="Dato" />
             `;
             document.getElementById('attributes').appendChild(attributeContainer);
         });
