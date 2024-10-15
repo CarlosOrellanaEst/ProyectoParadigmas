@@ -303,7 +303,7 @@ INSERT INTO `tbtouristcompanytype` (`tbtouristcompanytypeid`, `tbtouristcompanyt
 -- Estructura de tabla para la tabla `tbcustomizedtouristcompanytype`
 --
 
-REATE TABLE `tbcustomizedtouristcompanytype` (
+CREATE TABLE `tbcustomizedtouristcompanytype` (
   `tbcustomizedtouristcompanytypeid` int(11) NOT NULL,
   `tbownerid` int(11) NOT NULL,
   `tbcustomizedtouristcompanytypename` varchar(200) NOT NULL,
