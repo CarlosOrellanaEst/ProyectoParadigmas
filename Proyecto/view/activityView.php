@@ -32,28 +32,28 @@ $_SESSION['owners'] = $owners;
     <title>Gestión de Actividades</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <style>
-        td,
-        th {
-            border-right: 1px solid;
-        }
+    td,
+    th {
+        border-right: 1px solid;
+    }
 
-        .text {
-            width: 180px;
-            height: 80px;
-        }
+    .text {
+        width: 180px;
+        height: 80px;
+    }
 
-        .attribute-container {
-            margin-bottom: 10px;
-        }
+    .attribute-container {
+        margin-bottom: 10px;
+    }
 
-        .required {
-            color: red;
-        }
+    .required {
+        color: red;
+    }
 
-        .datetime-label {
-            display: block;
-            margin-top: 10px;
-        }
+    .datetime-label {
+        display: block;
+        margin-top: 10px;
+    }
     </style>
     <script src="../resources/activityAJAX.js"></script>
     <?php
@@ -90,17 +90,17 @@ $_SESSION['owners'] = $owners;
         <?php
         if ($userLogged->getUserType() == "Administrador" || $userLogged->getUserType() == "Propietario") {
             ?>
-            <form method="post" id="formCreate" action="../business/activityAction.php" enctype="multipart/form-data">
-                <label for="nameTBActivity">Nombre de la Actividad <span class="required">*</span></label>
-                <input placeholder="Nombre de la Actividad" type="text" name="nameTBActivity" id="nameTBActivity"
-                    required />
-                <br><br>
+        <form method="post" id="formCreate" action="../business/activityAction.php" enctype="multipart/form-data">
+            <label for="nameTBActivity">Nombre de la Actividad <span class="required">*</span></label>
+            <input placeholder="Nombre de la Actividad" type="text" name="nameTBActivity" id="nameTBActivity"
+                required />
+            <br><br>
 
-                <label for="serviceId1">Servicio: </label>
-                <select name="serviceId" id="serviceId1" required>
-                    <?php foreach ($services as $service): ?>
-                        <option value="<?php echo htmlspecialchars($service->getTbservicecompanyid()); ?>">
-                            <?php
+            <label for="serviceId1">Servicio: </label>
+            <select name="serviceId" id="serviceId1" required>
+                <?php foreach ($services as $service): ?>
+                <option value="<?php echo htmlspecialchars($service->getTbservicecompanyid()); ?>">
+                    <?php
 
                             $serviceName = $serviceCompanyBusiness->getTBServicesByIds($service->getTbserviceid());
 
@@ -108,44 +108,45 @@ $_SESSION['owners'] = $owners;
                                 return $s->getTbservicename();
                             }, $serviceName)) : $serviceName);
                             ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
+                </option>
+                <?php endforeach; ?>
+            </select>
 
-                <br><br>
+            <br><br>
 
-                <div id="attributes">
-                    <div class="attribute-container">
-                        <label for="attributeTBActivityArray">Atributo: </label>
-                        <input type="text" name="attributeTBActivityArrayFORM" placeholder="Atributo" />
-                        <label for="dataAttributeTBActivityArray">Dato: </label>
-                        <input type="text" name="dataAttributeTBActivityArrayFORM" placeholder="Dato" />
-                    </div>
+            <div id="attributes">
+                <div class="attribute-container">
+                    <label for="attributeTBActivityArray">Atributo: </label>
+                    <input type="text" name="attributeTBActivityArrayFORM" placeholder="Atributo" />
+                    <label for="dataAttributeTBActivityArray">Dato: </label>
+                    <input type="text" name="dataAttributeTBActivityArrayFORM" placeholder="Dato" />
                 </div>
+            </div>
 
-                <button type="button" id="addAttribute">Agregar otro atributo</button>
-                <br><br>
+            <button type="button" id="addAttribute">Agregar otro atributo</button>
+            <br><br>
 
-                <label class="datetime-label" for="activityDate">Fecha y Hora de la Actividad:  <span class="required">*</span></label>
-                <input type="datetime-local" name="activityDate" id="activityDate" required>
-                <br><br>
+            <label class="datetime-label" for="activityDate">Fecha y Hora de la Actividad: <span
+                    class="required">*</span></label>
+            <input type="datetime-local" name="activityDate" id="activityDate" required>
+            <br><br>
 
-                <label for="imagenes">Selecciona las imágenes (máximo 5): </label><br>
-                <input type="file" name="imagenes[]" id="imagenes" multiple />
-                <br><br>
-                <span class="required">*</span>Seleccionar una ubicacion diferente a la automatica
-                <div id="map" style="height: 500px; width: 100%;">
-                </div>
-                <br><br>
-                <input type="text" style="display:none;" name="latitude" id="latitude">
-                <input type="text" style="display:none;" name="longitude" id="longitude">
+            <label for="imagenes">Selecciona las imágenes (máximo 5): </label><br>
+            <input type="file" name="imagenes[]" id="imagenes" multiple />
+            <br><br>
+            <span class="required">*</span>Seleccionar una ubicacion diferente a la automatica
+            <div id="map" style="height: 500px; width: 100%;">
+            </div>
+            <br><br>
+            <input type="text" style="display:none;" name="latitude" id="latitude">
+            <input type="text" style="display:none;" name="longitude" id="longitude">
 
-                <br><br>
+            <br><br>
 
-                <input type="hidden" id="statusTBActivity" name="statusTBActivity" value="1">
-                <input type="submit" value="Crear" name="create" id="create" />
-            </form>
-            <?php
+            <input type="hidden" id="statusTBActivity" name="statusTBActivity" value="1">
+            <input type="submit" value="Crear" name="create" id="create" />
+        </form>
+        <?php
         }
         ?>
 
@@ -283,25 +284,25 @@ $_SESSION['owners'] = $owners;
     </section>
 
     <script>
-        document.getElementById('addAttribute').addEventListener('click', function () {
-            const attributeContainer = document.createElement('div');
-            attributeContainer.innerHTML = `
+    document.getElementById('addAttribute').addEventListener('click', function() {
+        const attributeContainer = document.createElement('div');
+        attributeContainer.innerHTML = `
                 <label for="attributeTBActivityArray">Atributo: </label>
                 <input type="text" name="attributeTBActivityArrayFORM" placeholder="Atributo" />
                 <label for="dataAttributeTBActivityArray">Dato: </label>
                 <input type="text" name="dataAttributeTBActivityArrayFORM" placeholder="Dato" />
             `;
-            document.getElementById('attributes').appendChild(attributeContainer);
-        });
+        document.getElementById('attributes').appendChild(attributeContainer);
+    });
 
-        function confirmAction(event) {
-            return confirm('¿Estás seguro de que deseas realizar esta acción?');
-        }
+    function confirmAction(event) {
+        return confirm('¿Estás seguro de que deseas realizar esta acción?');
+    }
 
-        $('.show-attributes').click(function () {
-            var activityId = $(this).data('activity-id');
-            $('#attributes-' + activityId).toggle();
-        });
+    $('.show-attributes').click(function() {
+        var activityId = $(this).data('activity-id');
+        $('#attributes-' + activityId).toggle();
+    });
     </script>
 
     <!-- Script con la lógica del mapa -->

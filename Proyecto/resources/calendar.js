@@ -1,17 +1,6 @@
-
-
-const activities = [
-    { name: 'Tour a la playa', date: '2024-10-17', latitude: 10.3166183, longitude: -83.9221164 },
-    { name: 'Excursión a la montaña', date: '2024-10-18', latitude: 10.3236183, longitude: -83.9321164 },
-    { name: 'Visita a parque nacional', date: '2024-10-19', latitude: 10.3096183, longitude: -83.9121164 },
-    { name: 'Recorrido cultural', date: '2024-10-20', latitude: 10.3196183, longitude: -83.9421164 },
-    { name: 'Aventura en kayak', date: '2024-10-25', latitude: 10.3193683, longitude: -83.9231164 }
-];
-
-let map; // Mapa de Google
-let markers = []; // Almacena los marcadores en el mapa
-let userMarker; // Almacena el marcador del usuario
-let infoWindow; // Almacena la ventana de información
+let map;
+let markers = [];
+let userMarker;
 
 function initMap() {
     const lugarEstandar = { lat: 10.3193683, lng: -83.9231164 };
@@ -21,21 +10,19 @@ function initMap() {
         mapId: 'd54b09205a9c0cf9'
     });
 
-    // Muestra los datos de las actividades por defecto
+    // Mostrar datos de actividades por defecto
     displayActivities(activities);
     activities.forEach(activity => {
-        addMarker(activity); // Agregar marcadores de actividades
+        addMarker(activity);
     });
 
-    // Evento de clic en el mapa
     map.addListener('click', function(event) {
         const clickedLocation = event.latLng;
         document.getElementById('selected-latitude').value = clickedLocation.lat();
         document.getElementById('selected-longitude').value = clickedLocation.lng();
 
-        // Marcar la ubicación seleccionada por el usuario
         if (userMarker) {
-            userMarker.setMap(null); // Eliminar marcador anterior
+            userMarker.setMap(null);
         }
         userMarker = new google.maps.Marker({
             position: clickedLocation,
@@ -43,23 +30,21 @@ function initMap() {
             title: 'Ubicación Seleccionada'
         });
 
-        filterActivities(); // Filtrar actividades después de seleccionar ubicación
+        filterActivities();
     });
-
-    // Inicializar la ventana de información
-    infoWindow = new google.maps.InfoWindow();
 }
 
 function addMarker(activity) {
     const marker = new google.maps.Marker({
-        position: { lat: activity.latitude, lng: activity.longitude },
+        position: { lat: parseFloat(activity.tbactivitylatitude), lng: parseFloat(activity.tbactivitylongitude) },
         map: map,
-        title: activity.name
+        title: activity.tbactivityname
     });
 
-    // Añadir evento de clic al marcador para mostrar información
     marker.addListener('click', function() {
-        infoWindow.setContent(`<div><strong>${activity.name}</strong><br>${activity.date}<br>Lat: ${activity.latitude}<br>Lng: ${activity.longitude}</div>`);
+        const infoWindow = new google.maps.InfoWindow({
+            content: `<div><strong>${activity.tbactivityname}</strong><br>${activity.tbactivitydate}<br>Lat: ${activity.tbactivitylatitude}<br>Lng: ${activity.tbactivitylongitude}</div>`
+        });
         infoWindow.open(map, marker);
     });
 
@@ -79,33 +64,32 @@ function filterActivities() {
     const selectedLongitude = parseFloat(document.getElementById('selected-longitude').value);
     const filterType = document.getElementById('filter-type').value;
 
-    let endDate = new Date(startDate); // Copia la fecha de inicio
+    let endDate = new Date(startDate);
 
-    // Ajustar el rango de fechas según el filtro seleccionado
     if (filterType === 'week') {
-        endDate.setDate(startDate.getDate() + 6); // Incrementa 6 días para la semana
+        endDate.setDate(startDate.getDate() + 6);
     } else if (filterType === 'month') {
-        endDate.setMonth(startDate.getMonth() + 1); // Incrementa un mes
-        endDate.setDate(endDate.getDate() - 1); // Ajusta para incluir todo el mes
+        endDate.setMonth(startDate.getMonth() + 1);
+        endDate.setDate(endDate.getDate() - 1);
     }
 
     const filteredActivities = activities.filter(activity => {
-        const activityDate = new Date(activity.date);
-        const distance = calculateDistance(activity.latitude, activity.longitude, selectedLatitude, selectedLongitude);
+        const activityDate = new Date(activity.tbactivitydate);
+        const distance = calculateDistance(activity.tbactivitylatitude, activity.tbactivitylongitude, selectedLatitude, selectedLongitude);
         const isInRange = distance <= 10; // 10 km de rango
         const isInDateRange = activityDate >= startDate && activityDate <= endDate;
         return isInRange && isInDateRange;
     });
 
-    clearMarkers(); // Limpiar marcadores existentes en el mapa
+    clearMarkers();
     displayActivities(filteredActivities);
     filteredActivities.forEach(activity => {
-        addMarker(activity); // Agregar marcadores de actividades filtradas
+        addMarker(activity);
     });
 }
 
 function calculateDistance(lat1, lon1, lat2, lon2) {
-    const R = 6371; // Radio de la Tierra en km
+    const R = 25000; // Radio de la Tierra en km
     const dLat = (lat2 - lat1) * Math.PI / 180;
     const dLon = (lon2 - lon1) * Math.PI / 180;
     const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
@@ -115,20 +99,51 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
     return R * c;
 }
 
-function displayActivities(activities) {
+function displayActivities(allActivities) {
     const tableBody = document.getElementById('activities-table').querySelector('tbody');
     tableBody.innerHTML = '';
-    activities.forEach(activity => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-            <td>${activity.name}</td>
-            <td>${activity.date}</td>
-            <td>${activity.latitude}</td>
-            <td>${activity.longitude}</td>
-            <td><a href="https://www.google.com/maps/search/?api=1&query=${activity.latitude},${activity.longitude}" target="_blank">Ver ubicación</a></td>
-        `;
-        tableBody.appendChild(row);
-    });
+
+    if (allActivities.length > 0) {
+        allActivities.forEach(activity => {
+            const row = document.createElement('tr');
+
+            const activityName = activity.tbactivityname;
+            const serviceName = activity.serviceName || '';
+            const attributes = activity.tbactivityatributearray.join(', ');
+            const data = activity.tbactivitydataarray.join(', ');
+
+            let photoElements = '';
+            const urls = Array.isArray(activity.tbactivityurl) ? activity.tbactivityurl : activity.tbactivityurl.split(',');
+
+            if (typeof urls === 'string') {
+                urls = [urls];
+            }
+
+            urls.forEach(url => {
+                if (url.trim()) {
+                    photoElements += `<img src="${url.trim()}" alt="Foto" width="50" height="50" />`;
+                }
+            });
+
+            const activityDate = activity.tbactivitydate;
+            const longitude = activity.tbactivitylongitude;
+            const latitude = activity.tbactivitylatitude;
+
+            row.innerHTML = `
+                <td>${activityName}</td>
+                <td>${serviceName}</td>
+                <td>${attributes} - ${data}</td>
+                <td>${photoElements}</td>
+                <td>${activityDate}</td>
+                <td>${longitude}</td>
+                <td>${latitude}</td>
+                <td><a href="https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}" target="_blank">Ver ubicación</a></td>
+            `;
+            tableBody.appendChild(row);
+        });
+    } else {
+        tableBody.innerHTML = '<tr><td colspan="8">No se encontraron resultados</td></tr>';
+    }
 }
 
 document.getElementById('start-date').addEventListener('change', filterActivities);
