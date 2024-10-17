@@ -17,6 +17,7 @@
         <li><a href="serviceView.php">CRUD Servicios</a></li>
         <li><a href="PlannerView.php">CRUD Planificador</a></li>
         <li><a href="registerAdminView.php">Registrar administrador</a></li>
+        <li><a href="calendarView.php">Calendario</a></li>
         <li><a href="pruebaMapaView.html">Prueba Mapa</a></li>
     </ol>
     <?php 
