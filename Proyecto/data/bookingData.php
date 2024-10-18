@@ -41,7 +41,7 @@ class bookingData extends Data {
         $tbbookingconfirmation = $booking->getConfirmation(); // Confirmación de la reserva
     
         // Bindeo de parámetros e inserción
-        $stmt->bind_param("iiiii", $tbbookingid, $tbactivityid, $tbuserid, $tbbookingnumberpersons, $tbbookingstatus);
+        $stmt->bind_param("iiiiisi", $tbbookingid, $tbactivityid, $tbuserid, $tbbookingnumberpersons, $tbbookingstatus, $tbbookingdate, $tbbookingconfirmation);
         $result = $stmt->execute();
     
         if (!$result) {

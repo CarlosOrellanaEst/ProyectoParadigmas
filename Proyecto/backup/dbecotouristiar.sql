@@ -242,9 +242,8 @@ CREATE TABLE `tbbooking` (
   `tbuserid` int(11) NOT NULL,
   `tbbookingnumberpersons` int(11) NOT NULL,
   `tbbookingstatus` tinyint(1) NOT NULL,
-  `tbbookingdate` tinyint(1) NOT NULL,
-  `tbbookingatitude` decimal(12,8) NOT NULL,
-  `tbbookinglongitude` decimal(12,8) NOT NULL
+  `tbbookingdate` date NOT NULL,
+  `tbbookingconfirmation` bit(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 

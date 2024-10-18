@@ -1,41 +1,62 @@
-<?php
-// Obtener los valores de la URL
-$activityName = isset($_GET['name']) ? urldecode($_GET['name']) : '';
-$serviceName = isset($_GET['service']) ? urldecode($_GET['service']) : '';
-$activityDate = isset($_GET['date']) ? urldecode($_GET['date']) : '';
-$latitude = isset($_GET['lat']) ? urldecode($_GET['lat']) : '';
-$longitude = isset($_GET['lng']) ? urldecode($_GET['lng']) : '';
-?>
-
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reserva de Actividad</title>
+    <title>Booking Management with AJAX</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="../resources/bookingAJAX.js"></script>
 </head>
 <body>
+    <h1>Booking Management</h1>
 
-<h2>Formulario de Reserva</h2>
+    <h2>Create Booking</h2>
+    <form id="createBookingForm">
+        <label for="numPersons">Number of Persons:</label>
+        <input type="number" id="numPersons" name="numPersons" required>
+        <br>
+        <input type="radio" id="Confirmado" name="status" value="0" checked style="display:none;">
 
-<form action="submitBooking.php" method="POST">
-    <label for="activity-name">Nombre de la Actividad:</label>
-    <input type="text" id="activity-name" name="activity-name" value="<?php echo htmlspecialchars($activityName); ?>" readonly>
+        <br>
+        <button type="submit">Create Booking</button>
+    </form>
 
-    <label for="service-name">Nombre del Servicio:</label>
-    <input type="text" id="service-name" name="service-name" value="<?php echo htmlspecialchars($serviceName); ?>" readonly>
-
-    <label for="activity-date">Fecha de la Actividad:</label>
-    <input type="text" id="activity-date" name="activity-date" value="<?php echo htmlspecialchars($activityDate); ?>" readonly>
-
-    <label for="latitude">Latitud:</label>
-    <input type="text" id="latitude" name="latitude" value="<?php echo htmlspecialchars($latitude); ?>" readonly>
-
-    <label for="longitude">Longitud:</label>
-    <input type="text" id="longitude" name="longitude" value="<?php echo htmlspecialchars($longitude); ?>" readonly>
-
-    <button type="submit">Confirmar Reserva</button>
-</form>
-
+    <h2>Existing Bookings</h2>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>Booking ID</th>
+                <th>Activity ID</th>
+                <th>User ID</th>
+                <th>Number of Persons</th>
+                <th>Status</th>
+                <th>Booking Date</th>
+                <th>Confirmation</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php
+                include '../business/bookingBusiness.php';
+                $bookingBusiness = new bookingBusiness();
+                $bookings = $bookingBusiness->getAllTbBookings();
+                foreach ($bookings as $booking) {
+                    echo "<tr>";
+                    echo "<td>" . $booking->getIdTBBooking() . "</td>";
+                    echo "<td>" . $booking->getIdTBActivity() . "</td>";
+                    echo "<td>" . $booking->getIdTBUser() . "</td>";
+                    echo "<td>" . $booking->getNumberPersonsTBBooking() . "</td>";
+                    echo "<td>" . ($booking->getStatusTBBooking() ? 'Active' : 'Inactive') . "</td>";
+                    echo "<td>" . $booking->getBookingdate() . "</td>";
+                    echo "<td>" . $booking->getConfirmation() . "</td>";
+                    echo "<td>";
+                    echo "<button class='editBooking' data-id='" . $booking->getIdTBBooking() . "'>Edit</button> ";
+                    echo "<button class='deleteBooking' data-id='" . $booking->getIdTBBooking() . "'>Delete</button>";
+                    echo "</td>";
+                    echo "</tr>";
+                }
+            ?>
+        </tbody>
+    </table>
 </body>
 </html>
