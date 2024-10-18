@@ -10,6 +10,19 @@
 <body>
     <h1>Booking Management</h1>
 
+    <?php 
+        session_start();
+       if (isset($_GET['idTBActivity'])) {
+            // Obtener el idTBActivity y guardarlo en la sesión
+            $_SESSION['idTBActivity'] = $_GET['idTBActivity'];
+        } else {
+            // Si no se pasa el id, puedes manejar el error o redirigir al usuario
+        //    echo "Error: idTBActivity no proporcionado.";
+
+            header("location: ./view/calendarView.php");
+        } 
+    ?>
+
     <h2>Create Booking</h2>
     <form id="createBookingForm">
         <label for="numPersons">Number of Persons:</label>

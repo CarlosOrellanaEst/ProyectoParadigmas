@@ -164,7 +164,9 @@ $_SESSION['owners'] = $owners;
             <br>DAtos: ${activity.tbactivitydataarray}
             <br>Lat: ${activity.tbactivitylatitude}
             <br>Lng: ${activity.tbactivitylongitude}
-            <br><a href="../view/bookingView.php">Reservar</a></div>`
+            <br><a href="bookingView.php?idTBActivity=${activity.tbactivityid}">Reservar</a>
+            </div>
+            `
             });
             infoWindow.open(map, marker);
         });
@@ -290,7 +292,7 @@ $_SESSION['owners'] = $owners;
                 <td>${activity.tbactivitydate}</td>
                 <td>${activity.tbactivitylongitude}</td>
                 <td>${activity.tbactivitylatitude}</td>
-                <td><a href="bookingView.php">Reservar</a>
+                <td><a href="bookingView.php?idTBActivity=${activity.tbactivityid}">Reservar</a></td>
 </td>
             `;
             tableBody.appendChild(row);

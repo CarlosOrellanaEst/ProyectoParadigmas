@@ -33,13 +33,14 @@ class bookingData extends Data {
     
         // Preparación de parámetros para la inserción
         $tbbookingid = $nextId;
-        $tbactivityid = $booking->getTbactivityid(); // Obtiene el ID de la actividad
-        $tbuserid = $booking->getTbuserid(); // Obtiene el ID del usuario
-        $tbbookingnumberpersons = $booking->getTbbookingNumberPersons(); // Número de personas en la reserva
-        $tbbookingstatus = $booking->getTbbookingStatus(); // Estado de la reserva
+        $tbactivityid = $booking->getIdTBActivity(); // Obtiene el ID de la actividad
+        $tbuserid = $booking->getIdTBUser(); // Obtiene el ID del usuario
+        $tbbookingnumberpersons = $booking->getNumberPersonsTBBooking(); // Número de personas en la reserva
+        $tbbookingstatus = $booking->getStatusTBBooking(); // Estado de la reserva
         $tbbookingdate = $booking->getBookingdate(); // Fecha de la reserva
         $tbbookingconfirmation = $booking->getConfirmation(); // Confirmación de la reserva
-    
+
+
         // Bindeo de parámetros e inserción
         $stmt->bind_param("iiiiisi", $tbbookingid, $tbactivityid, $tbuserid, $tbbookingnumberpersons, $tbbookingstatus, $tbbookingdate, $tbbookingconfirmation);
         $result = $stmt->execute();
