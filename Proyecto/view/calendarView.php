@@ -88,7 +88,7 @@ $_SESSION['owners'] = $owners;
                 <th>Fecha y Hora</th>
                 <th>Longitud</th>
                 <th>Latitud</th>
-                <th>Ubicación</th>
+                <th>Reservar</th>
             </tr>
         </thead>
         <tbody>
@@ -264,7 +264,7 @@ $_SESSION['owners'] = $owners;
                     .tbactivityurl.split(',');
 
                 if (typeof urls === 'string') {
-                    urls = [urls]; // Ensure it is an array
+                    urls = [urls]; 
                 }
 
                 urls.forEach(url => {
