@@ -6,12 +6,12 @@ include_once '../domain/Booking.php';
 // Comprobar si se está creando una reserva
 if (isset($_POST['create'])) {
     $activityId = trim($_POST['activityId']) ;
-    $numPersons = trim($_POST['numPersons']) ;
+    $numPeople = trim($_POST['numPersons']) ;
     session_start();
     $userId = $_SESSION['user']->getId();
 
-    if ($activityId > 0 && $numPersons > 0) {
-        $booking = new Booking(0, $activityId, 1, $numPersons, 1);
+    if ($activityId > 0 && $numPersons > 0) { 
+        $booking = new Booking(0, $activityId, $userId, $numPeople, 1, date('Y-m-d H:i:s'), 0); 
         $bookingBusiness = new bookingBusiness();
         $result = $bookingBusiness->insertTbBooking($booking);
 

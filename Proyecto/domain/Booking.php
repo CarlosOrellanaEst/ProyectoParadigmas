@@ -7,18 +7,18 @@ class Booking {
     private $numberPersonsTBBooking;
     private $statusTBBooking;
     private $bookingdate;
-    private $latitude;
-    private $longitude;
+
+    private $confirmation;
     
-    function __construct($idTBBooking, $idTBActivity, $idTBUser, $numberPersonsTBBooking, $statusTBBooking = true, $bookingdate, $latitude = null, $longitude = null) { 
+    function __construct($idTBBooking, $idTBActivity, $idTBUser, $numberPersonsTBBooking, $statusTBBooking = true, $bookingdate, $confirmation) { 
         $this->idTBBooking = $idTBBooking;
         $this->idTBActivity = $idTBActivity;
         $this->idTBUser = $idTBUser;
         $this->numberPersonsTBBooking = $numberPersonsTBBooking;
         $this->statusTBBooking = $statusTBBooking;
         $this->bookingdate = $bookingdate;
-        $this->latitude = $latitude;
-        $this->longitude = $longitude;
+        $this->confirmation = $confirmation;
+
     }
 
     // Getters
@@ -46,12 +46,8 @@ class Booking {
         return $this->bookingdate;
     }
 
-    public function getLatitude() {
-        return $this->latitude;
-    }
-
-    public function getLongitude() {
-        return $this->longitude;
+    public function getConfirmation() {
+        return $this->confirmation;
     }
 
     // Setters
@@ -79,11 +75,9 @@ class Booking {
         $this->bookingdate = $bookingdate;
     }
 
-    public function setLatitude($latitude) {
-        $this->latitude = $latitude;
+    public function setConfirmation($confirmation) {
+        $this->confirmation = $confirmation;
     }
 
-    public function setLongitude($longitude) {
-        $this->longitude = $longitude;
-    }
+
 }

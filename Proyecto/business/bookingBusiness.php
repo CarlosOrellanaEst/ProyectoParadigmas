@@ -13,6 +13,22 @@ class bookingBusiness {
         return $this->bookingData->insertTbBooking($booking);
 
     }
+
+    public function updateTbBooking($booking) {
+        return $this->bookingData->updateTbBooking($booking);
+    }
+
+    public function deleteTbBooking($id) {
+        return $this->bookingData->deleteTbBooking($id);
+    }
+
+    public function getAllTbBookings() {
+        return $this->bookingData->getAllTbBookings();
+    }
+
+    public function getTbBookingById($id) {
+        return $this->bookingData->getTbBookingById($id);
+    }
     
 }
     
