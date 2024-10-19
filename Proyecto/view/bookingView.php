@@ -8,66 +8,64 @@
     <script src="../resources/bookingAJAX.js"></script>
 </head>
 <body>
-    <h1>Booking Management</h1>
+    <h1>Manejo de Reservas</h1>
 
     <?php 
         session_start();
        if (isset($_GET['idTBActivity'])) {
-            // Obtener el idTBActivity y guardarlo en la sesión
+            // Obtener el idTBActivity que viene por parametro en la url y guardarlo en la sesión
             $_SESSION['idTBActivity'] = $_GET['idTBActivity'];
-        } else {
-            // Si no se pasa el id, puedes manejar el error o redirigir al usuario
-        //    echo "Error: idTBActivity no proporcionado.";
-
-            header("location: ./view/calendarView.php");
-        } 
+        }
     ?>
 
-    <h2>Create Booking</h2>
+    <h2>Realizar Reserva</h2>
     <form id="createBookingForm">
-        <label for="numPersons">Number of Persons:</label>
+        <label for="numPersons">Numero de Personas:</label>
         <input type="number" id="numPersons" name="numPersons" required>
         <br>
         <input type="radio" id="Confirmado" name="status" value="0" checked style="display:none;">
 
         <br>
-        <button type="submit">Create Booking</button>
+        <button type="submit">Realizar Reserva</button>
     </form>
 
-    <h2>Existing Bookings</h2>
+    <h2>Reservas</h2>
     <table border="1">
         <thead>
             <tr>
-                <th>Booking ID</th>
-                <th>Activity ID</th>
-                <th>User ID</th>
-                <th>Number of Persons</th>
-                <th>Status</th>
-                <th>Booking Date</th>
-                <th>Confirmation</th>
-                <th>Actions</th>
+                <th>Numero de Personas</th>
+                <th>Fecha Realizada</th>
+                <th>Confirmado</th>
+                <th>Acciones</th>
             </tr>
         </thead>
         <tbody>
             <?php
                 include '../business/bookingBusiness.php';
                 $bookingBusiness = new bookingBusiness();
-                $bookings = $bookingBusiness->getAllTbBookings();
+                $activityId = $_SESSION['idTBActivity'];
+                $bookings = $bookingBusiness->getAllTbBookingsByActivity($activityId);
+               
                 foreach ($bookings as $booking) {
+                        
+                        
+                        echo "<form method='POST' action='../business/bookingAction.php'>";
+        //              echo "<td><input type='hidden' name='idBookingUpdate' value='" . $booking->getIdTBBooking() . "' readonly></td>";
+                        echo '<td><input type="hidden" name="idBookingUpdate" value="' . $booking->getIdTBBooking() . '" readonly></td>';
+                        // echo '<td><span>' . $booking->__toString() . ' </span></td>';
+                        echo "<td><input type='hidden' name='idActivityBookingUpdate' value='" . $booking->getIdTBActivity() . "'></td>";
+                        echo "<td><input type='hidden' name='idUserBookingUpdate' value='" . $booking->getIdTBUser() . "'></td>";
                     echo "<tr>";
-                    echo "<td>" . $booking->getIdTBBooking() . "</td>";
-                    echo "<td>" . $booking->getIdTBActivity() . "</td>";
-                    echo "<td>" . $booking->getIdTBUser() . "</td>";
-                    echo "<td>" . $booking->getNumberPersonsTBBooking() . "</td>";
-                    echo "<td>" . ($booking->getStatusTBBooking() ? 'Active' : 'Inactive') . "</td>";
-                    echo "<td>" . $booking->getBookingdate() . "</td>";
-                    echo "<td>" . $booking->getConfirmation() . "</td>";
-                    echo "<td>";
-                    echo "<button class='editBooking' data-id='" . $booking->getIdTBBooking() . "'>Edit</button> ";
-                    echo "<button class='deleteBooking' data-id='" . $booking->getIdTBBooking() . "'>Delete</button>";
-                    echo "</td>";
+                        echo "<td><input type='number' name='peopleBookingUpdate' value='" . $booking->getNumberPersonsTBBooking() . "'></td>";
+                        echo "<td><input type='date' name='dateBookingUpdate' value='" . $booking->getBookingdate() . "' readonly></td>";
+                        echo "<td><input type='text' name='confirmationBookingUpdate' value='" . $booking->getConfirmation() . "'></td>";
+                        echo "<td>";
+                            echo "<input type='submit' name='update' class='editBooking' data-id='" . $booking->getIdTBBooking() . "' value='actualizar'>";
+                            echo "<button class='deleteBooking' data-id='" . $booking->getIdTBBooking() . "'>Delete</button>";
+                        echo "</td>";
                     echo "</tr>";
                 }
+                echo "</form>";
             ?>
         </tbody>
     </table>

@@ -115,7 +115,7 @@ $_SESSION['owners'] = $owners;
             lng: -83.9231164
         };
         map = new google.maps.Map(document.getElementById('map'), {
-            zoom: 11,
+            zoom: 8,
             center: lugarEstandar,
             mapId: 'd54b09205a9c0cf9'
         });

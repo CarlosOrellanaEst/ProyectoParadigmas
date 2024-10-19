@@ -18,7 +18,6 @@ class Booking {
         $this->statusTBBooking = $statusTBBooking;
         $this->bookingdate = $bookingdate;
         $this->confirmation = $confirmation;
-
     }
 
     // Getters
@@ -79,5 +78,8 @@ class Booking {
         $this->confirmation = $confirmation;
     }
 
+    public function __toString() {
+        return "Booking: " . $this->idTBBooking . " " . $this->idTBActivity . " " . $this->idTBUser . " " . $this->numberPersonsTBBooking . " " . $this->statusTBBooking . " " . $this->bookingdate . " " . $this->confirmation;
+    }
 
 }

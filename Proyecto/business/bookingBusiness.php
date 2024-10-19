@@ -14,7 +14,7 @@ class bookingBusiness {
 
     }
 
-    public function updateTbBooking($booking) {
+    public function updateTbBooking(Booking $booking) {
         return $this->bookingData->updateTbBooking($booking);
     }
 
@@ -28,6 +28,10 @@ class bookingBusiness {
 
     public function getTbBookingById($id) {
         return $this->bookingData->getTbBookingById($id);
+    }
+
+    public function getAllTbBookingsByActivity($activityId) {
+        return $this->bookingData->getAllTbBookingsByActivity($activityId);
     }
     
 }
