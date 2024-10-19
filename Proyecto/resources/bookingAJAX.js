@@ -47,46 +47,51 @@ document.addEventListener('DOMContentLoaded', function () {
         if (e.target && e.target.classList.contains('editBooking')) {
             e.preventDefault();
 
-            const row = e.target.closest('tr');
-            const idBooking = e.target.getAttribute('data-id');
-            const numPeople = row.querySelector('.peopleBookingUpdate').value;
-            const dateBooked = row.querySelector('.dateBookingUpdate').value;
-            const confirmation = row.querySelector('.confirmationBookingUpdate').value;
+            if (confirm('¿Estás seguro de que quieres actualizar esta reserva?')) {
+                const row = e.target.closest('tr');
+                const idBooking = e.target.getAttribute('data-id');
+                const numPeople = row.querySelector('.peopleBookingUpdate').value;
+                const dateBooked = row.querySelector('.dateBookingUpdate').value;
+                const confirmation = row.querySelector('.confirmationBookingUpdate').value;
 
-            const postData = 'update=true&idBookingUpdate=' + encodeURIComponent(idBooking) +
-                '&peopleBookingUpdate=' + encodeURIComponent(numPeople) +
-                '&dateBookingUpdate=' + encodeURIComponent(dateBooked) +
-                '&confirmationBookingUpdate=' + encodeURIComponent(confirmation);
+                const postData = 'update=true&idBookingUpdate=' + encodeURIComponent(idBooking) +
+                    '&peopleBookingUpdate=' + encodeURIComponent(numPeople) +
+                    '&dateBookingUpdate=' + encodeURIComponent(dateBooked) +
+                    '&confirmationBookingUpdate=' + encodeURIComponent(confirmation);
 
-            let xhr = new XMLHttpRequest();
-            xhr.open('POST', '../business/bookingAction.php', true);
-            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState === 4) {
-                    try {
-                        if (xhr.status === 200) {
-                            alert('Reserva actualizada exitosamente.');
-                            location.reload();
-                        } else {
-                            alert('HTTP Error: ' + xhr.status);
+                let xhr = new XMLHttpRequest();
+                xhr.open('POST', '../business/bookingAction.php', true);
+                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+                xhr.onreadystatechange = function () {
+                    if (xhr.readyState === 4) {
+                        try {
+                            if (xhr.status === 200) {
+                                alert('Reserva actualizada exitosamente.');
+                                location.reload();
+                            } else {
+                                alert('HTTP Error: ' + xhr.status);
+                            }
+                        } catch (e) {
+                            console.error('Invalid JSON response:', xhr.responseText);
+                            alert('Error procesando la respuesta del servidor.');
                         }
-                    } catch (e) {
-                        console.error('Invalid JSON response:', xhr.responseText);
-                        alert('Error procesando la respuesta del servidor.');
                     }
-                }
-            };
-            xhr.send(postData);
+                };
+                xhr.send(postData);
+            }
+            else {
+                location.reload();
+            }
         }
-    });
 
-    // Delete Booking Confirmation
-    document.querySelectorAll('.deleteBooking').forEach(function (button) {
-        button.addEventListener('click', function (e) {
+        // Eliminar Reserva con AJAX
+        if (e.target && e.target.classList.contains('deleteBooking')) {
             e.preventDefault();
-            console.log('entra');
+
             if (confirm('¿Estás seguro de que quieres eliminar esta reserva?')) {
-                const bookingId = this.getAttribute('data-id');
+                const bookingId = e.target.getAttribute('data-id');
+                const postData = 'delete=true&tbbookingid=' + encodeURIComponent(bookingId);
+
                 let xhr = new XMLHttpRequest();
                 xhr.open('POST', '../business/bookingAction.php', true);
                 xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
@@ -110,8 +115,8 @@ document.addEventListener('DOMContentLoaded', function () {
                         }
                     }
                 };
-                xhr.send('delete=true&tbbookingid=' + encodeURIComponent(bookingId));
+                xhr.send(postData);
             }
-        });
+        }
     });
 });
