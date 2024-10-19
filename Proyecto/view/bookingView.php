@@ -41,31 +41,27 @@
         </thead>
         <tbody>
             <?php
-                include '../business/bookingBusiness.php';
-                $bookingBusiness = new bookingBusiness();
-                $activityId = $_SESSION['idTBActivity'];
-                $bookings = $bookingBusiness->getAllTbBookingsByActivity($activityId);
-               
-                foreach ($bookings as $booking) {
-                        
-                        
-                        echo "<form method='POST' action='../business/bookingAction.php'>";
-        //              echo "<td><input type='hidden' name='idBookingUpdate' value='" . $booking->getIdTBBooking() . "' readonly></td>";
-                        echo '<td><input type="hidden" name="idBookingUpdate" value="' . $booking->getIdTBBooking() . '" readonly></td>';
-                        // echo '<td><span>' . $booking->__toString() . ' </span></td>';
-                        echo "<td><input type='hidden' name='idActivityBookingUpdate' value='" . $booking->getIdTBActivity() . "'></td>";
-                        echo "<td><input type='hidden' name='idUserBookingUpdate' value='" . $booking->getIdTBUser() . "'></td>";
-                    echo "<tr>";
-                        echo "<td><input type='number' name='peopleBookingUpdate' value='" . $booking->getNumberPersonsTBBooking() . "'></td>";
-                        echo "<td><input type='date' name='dateBookingUpdate' value='" . $booking->getBookingdate() . "' readonly></td>";
-                        echo "<td><input type='text' name='confirmationBookingUpdate' value='" . $booking->getConfirmation() . "'></td>";
-                        echo "<td>";
-                            echo "<input type='submit' name='update' class='editBooking' data-id='" . $booking->getIdTBBooking() . "' value='actualizar'>";
-                            echo "<button class='deleteBooking' data-id='" . $booking->getIdTBBooking() . "'>Delete</button>";
-                        echo "</td>";
-                    echo "</tr>";
-                }
-                echo "</form>";
+                 include '../business/bookingBusiness.php';
+        $bookingBusiness = new bookingBusiness();
+        $activityId = $_SESSION['idTBActivity'];
+        $bookings = $bookingBusiness->getAllTbBookingsByActivity($activityId);
+        
+        foreach ($bookings as $booking) {
+            echo "<tr>";
+            echo "<form method='POST' action='../business/bookingAction.php'>";
+            echo "<td><input type='number' name='peopleBookingUpdate' value='" . $booking->getNumberPersonsTBBooking() . "'></td>";
+            echo "<td><input type='date' name='dateBookingUpdate' value='" . $booking->getBookingdate() . "' readonly></td>";
+            echo "<td><input type='text' name='confirmationBookingUpdate' value='" . $booking->getConfirmation() . "'></td>";
+            echo "<td>";
+            echo "<input type='hidden' name='idBookingUpdate' value='" . $booking->getIdTBBooking() . "' readonly>";
+            echo "<input type='hidden' name='idActivityBookingUpdate' value='" . $booking->getIdTBActivity() . "'>";
+            echo "<input type='hidden' name='idUserBookingUpdate' value='" . $booking->getIdTBUser() . "'>";
+            echo "<input type='submit' name='update' class='editBooking' value='actualizar'>";
+            echo "<button class='deleteBooking' data-id='" . $booking->getIdTBBooking() . "'>Delete</button>";
+            echo "</td>";
+            echo "</form>";
+            echo "</tr>";
+        }
             ?>
         </tbody>
     </table>
