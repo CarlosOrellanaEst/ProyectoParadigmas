@@ -18,7 +18,8 @@
         <li><a href="PlannerView.php">CRUD Planificador</a></li>
         <li><a href="registerAdminView.php">Registrar administrador</a></li>
         <li><a href="calendarView.php">Calendario</a></li>
-        <li><a href="pruebaMapaView.html">Prueba Mapa</a></li>
+        
+        <!-- <li><a href="pruebaMapaView.html">Prueba Mapa</a></li> -->
     </ol>
     <?php 
        echo ' <a href="../index.php">Cerrar Sesión</a> ';

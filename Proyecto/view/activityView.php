@@ -7,7 +7,7 @@ require_once '../business/serviceCompanyBusiness.php';
 
 
 session_start();
-$userLogged = $_SESSION['user'];
+$userLogged = $_SESSION['user'];    
 $ownerBusiness = new ownerBusiness();
 
 // Definimos los propietarios en función del tipo de usuario

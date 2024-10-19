@@ -56,7 +56,15 @@ $_SESSION['owners'] = $owners;
 
 <body>
 
-    <a href="adminView.php">← Volver al inicio</a>
+    <?php
+        if ($userLogged->getUserType() == "Propietario") {
+            echo '<a href="ownerViewSession.php">← Volver al inicio</a>';
+        } else if ($userLogged->getUserType() == "Administrador") {
+            echo '<a href="adminView.php">← Volver al inicio</a>';
+        } else if ($userLogged->getUserType() == "Turista") {
+            echo '<a href="touristView.php">← Volver al inicio</a>';
+        }
+    ?>
     <h2>Calendario de Actividades Turísticas</h2>
 
     <label for="start-date">Fecha de Inicio:</label>

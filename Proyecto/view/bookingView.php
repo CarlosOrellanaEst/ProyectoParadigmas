@@ -1,3 +1,27 @@
+<?php 
+        include '../business/bookingBusiness.php';
+        include '../domain/User.php'; 
+        session_start();
+        $userLogged = $_SESSION['user'];
+
+        if (isset($_GET['idTBActivity'])) {
+            // Obtener el idTBActivity que viene por parametro en la url y guardarlo en la sesión
+            $_SESSION['idTBActivity'] = $_GET['idTBActivity'];
+        }
+
+        $bookingBusiness = new bookingBusiness();
+        $activityId = $_SESSION['idTBActivity'];
+      //  $bookings = $bookingBusiness->getAllTbBookingsByActivity($activityId);
+
+
+        if ($userLogged->getUserType() == "Administrador") {
+            $bookings = $bookingBusiness->getAllTbBookingsByActivity($activityId);
+        } else {
+            $bookings = $bookingBusiness->getAllTbBookingsByUser($userLogged->getId());
+        }
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,15 +32,19 @@
     <script src="../resources/bookingAJAX.js"></script>
 </head>
 <body>
-    <h1>Manejo de Reservas</h1>
-
-    <?php 
-        session_start();
-       if (isset($_GET['idTBActivity'])) {
-            // Obtener el idTBActivity que viene por parametro en la url y guardarlo en la sesión
-            $_SESSION['idTBActivity'] = $_GET['idTBActivity'];
+    <?php
+        if ($userLogged->getUserType() == "Propietario") {
+            echo '<a href="ownerViewSession.php">← Volver al inicio</a>';
+        } else if ($userLogged->getUserType() == "Administrador") {
+            echo '<a href="adminView.php">← Volver al inicio</a>';
+        } else if ($userLogged->getUserType() == "Turista") {
+            echo '<a href="touristView.php">← Volver al inicio</a>';
         }
     ?>
+
+    <h1>Manejo de Reservas</h1>
+
+
 
     <h2>Realizar Reserva</h2>
     <form id="createBookingForm">
@@ -40,11 +68,8 @@
             </tr>
         </thead>
         <tbody>
-            <?php
-                include '../business/bookingBusiness.php';
-                $bookingBusiness = new bookingBusiness();
-                $activityId = $_SESSION['idTBActivity'];
-                $bookings = $bookingBusiness->getAllTbBookingsByActivity($activityId);
+            <?php                  
+  
                 
                 foreach ($bookings as $booking) {
                     echo "<tr>";

@@ -26,6 +26,10 @@ class bookingBusiness {
         return $this->bookingData->getAllTbBookings();
     }
 
+    public function getAllTbBookingsByUser($userid) {
+        return $this->bookingData->getAllTbBookingsByUser($userid);
+    }
+
     public function getTbBookingById($id) {
         return $this->bookingData->getTbBookingById($id);
     }
