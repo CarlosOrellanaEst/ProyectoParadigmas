@@ -48,7 +48,7 @@
         
         foreach ($bookings as $booking) {
             echo "<tr>";
-            echo "<form method='POST' action='../business/bookingAction.php'>";
+            //echo "<form method='POST' action='../business/bookingAction.php'>";
             echo "<td><input type='number' name='peopleBookingUpdate' value='" . $booking->getNumberPersonsTBBooking() . "'></td>";
             echo "<td><input type='date' name='dateBookingUpdate' value='" . $booking->getBookingdate() . "' readonly></td>";
             echo "<td><input type='text' name='confirmationBookingUpdate' value='" . $booking->getConfirmation() . "'></td>";
@@ -56,7 +56,7 @@
             echo "<input type='hidden' name='idBookingUpdate' value='" . $booking->getIdTBBooking() . "' readonly>";
             echo "<input type='hidden' name='idActivityBookingUpdate' value='" . $booking->getIdTBActivity() . "'>";
             echo "<input type='hidden' name='idUserBookingUpdate' value='" . $booking->getIdTBUser() . "'>";
-            echo "<input type='submit' name='update' class='editBooking' value='actualizar'>";
+            echo "<button class='editBooking' data-id '".$booking->getIdTBBooking() ."'>Actualizar</button>";
             echo "<button class='deleteBooking' data-id='" . $booking->getIdTBBooking() . "'>Delete</button>";
             echo "</td>";
             echo "</form>";

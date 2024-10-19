@@ -5,7 +5,7 @@ include_once '../domain/User.php';
 
 session_start();
 
-if (isset($_POST['create'])) {
+    if (isset($_POST['create'])) {
     // recibo el que venia por parametro en la url y lo leo de la sesion
     $activityId = $_SESSION['idTBActivity'];
 
@@ -26,7 +26,7 @@ if (isset($_POST['create'])) {
     } else {
         echo json_encode(['status' => 'error', 'message' => 'Datos invalidos.']);
     }
-}
+    }
 
  if (isset($_POST['update'])) {
      $idBooking = trim($_POST['idBookingUpdate']);
@@ -56,19 +56,20 @@ if (isset($_POST['create'])) {
          header("location: ../view/bookingView.php?error=error");
          exit();
      }
- }
-if (isset($_POST['delete'])) { 
-    if (isset($_POST['tbbookingid'])) {
-        $id = $_POST['tbbookingid'];
-        $bookingBusiness = new bookingBusiness();
-        $result = $bookingBusiness->deleteTbBooking($id);
-
-        if ($result == 1) {
-            header("location: ../view/touristCompanyTypeView.php?success=deleted");
-        } else {
-            header("location: ../view/touristCompanyTypeView.php?error=dbError");
-        }
-    } else {
-        header("location: ../view/touristCompanyTypeView.php?error=emptyField");
     }
-}
+
+    if (isset($_POST['delete'])) { 
+        if (isset($_POST['tbbookingid'])) {
+            $id = $_POST['tbbookingid'];
+            $bookingBusiness = new bookingBusiness();
+            $result = $bookingBusiness->deleteTbBooking($id);
+    
+            if ($result == 1) {
+                echo json_encode(['status' => 'success', 'message' => 'Reserva eliminada exitosamente.']);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Error al eliminar la reserva.']);
+            }
+        } else {
+            echo json_encode(['status' => 'error', 'message' => 'Campo vacío.']);
+        }
+    }
