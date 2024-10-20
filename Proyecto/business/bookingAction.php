@@ -28,35 +28,30 @@ session_start();
     }
     }
 
- if (isset($_POST['update'])) {
-     $idBooking = trim($_POST['idBookingUpdate']);
-     $activityId = trim($_POST['idActivityBookingUpdate']);
-     $numPeople = trim($_POST['peopleBookingUpdate']);
-     $dateBooked = trim($_POST['dateBookingUpdate']);
-     $userId = trim($_POST['idUserBookingUpdate']);
-     $confirmation = trim($_POST['confirmationBookingUpdate']);
+if (isset($_POST['update'])) {
+    $idBooking = trim($_POST['idBookingUpdate']);
+    $activityId = trim($_POST['idActivityBookingUpdate']);
+    $numPeople = trim($_POST['peopleBookingUpdate']);
+    $dateBooked = trim($_POST['dateBookingUpdate']);
+    $userId = trim($_POST['idUserBookingUpdate']);
+    $confirmation = trim($_POST['confirmationBookingUpdate']);
 
-     if ($idBooking > 0 && $activityId > 0 && $numPeople > 0 && $dateBooked != null && $userId > 0 && $confirmation != null) {
-         $booking = new Booking($idBooking, $activityId, $userId, $numPeople, 1, $dateBooked,  $confirmation); 
-        //  echo ($booking -> __toString());
-         $bookingBusiness = new bookingBusiness();
-         $result = $bookingBusiness->updateTbBooking($booking);
+    if ($idBooking > 0 && $activityId > 0 && $numPeople > 0 && $dateBooked != null && $userId > 0 && $confirmation != null) {
+        $booking = new Booking($idBooking, $activityId, $userId, $numPeople, 1, $dateBooked, $confirmation); 
+        $bookingBusiness = new bookingBusiness();
+        $result = $bookingBusiness->updateTbBooking($booking);
 
-         if ($result == 1) {
-            header("location: ../view/bookingView.php?success=updated");
-            exit();
+        if ($result == 1) {
+            echo json_encode(['status' => 'success', 'message' => 'Reserva actualizada exitosamente.']);
         } else if ($result == null) {
-            header("location: ../view/bookingView.php?error=alreadyexists");
-            exit();
+            echo json_encode(['status' => 'error', 'message' => 'La reserva ya existe.']);
         } else {
-            header("location: ../view/bookingView.php?error=dbError");
-            exit();
+            echo json_encode(['status' => 'error', 'message' => 'Error en la base de datos.']);
         }
-     }  else {
-         header("location: ../view/bookingView.php?error=error");
-         exit();
-     }
+    } else {
+        echo json_encode(['status' => 'error', 'message' => 'Datos inválidos.']);
     }
+}
 
     if (isset($_POST['delete'])) { 
         if (isset($_POST['tbbookingid'])) {

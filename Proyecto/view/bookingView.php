@@ -59,31 +59,37 @@
 
     <h2>Reservas</h2>
     <table border="1">
-        <thead>
-            <tr>
-                <th>Numero de Personas</th>
-                <th>Fecha Realizada</th>
-                <th>Confirmado</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php                  
-  
+    <thead>
+        <tr>
+            <th>Numero de Personas</th>
+            <th>Fecha Realizada</th>
+            <th>Confirmado</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        <?php
+            foreach ($bookings as $booking) {
+                echo "<tr>";
+                // Campos visibles en la tabla
+                echo "<td><input type='number' class='peopleBookingUpdate' value='" . $booking->getNumberPersonsTBBooking() . "'></td>";
+                echo "<td><input type='date' class='dateBookingUpdate' value='" . $booking->getBookingdate() . "' readonly></td>";
+                echo "<td><input type='text' class='confirmationBookingUpdate' value='" . $booking->getConfirmation() . "'></td>";
                 
-                foreach ($bookings as $booking) {
-                    echo "<tr>";
-                    echo "<td><input type='number' class='peopleBookingUpdate' value='" . $booking->getNumberPersonsTBBooking() . "'></td>";
-                    echo "<td><input type='date' class='dateBookingUpdate' value='" . $booking->getBookingdate() . "' readonly></td>";
-                    echo "<td><input type='text' class='confirmationBookingUpdate' value='" . $booking->getConfirmation() . "'></td>";
-                    echo "<td>";
-                    echo "<button type='button' class='editBooking' data-id='" . $booking->getIdTBBooking() . "'>Actualizar</button>";
-                    echo "<button type='button' class='deleteBooking' data-id='" . $booking->getIdTBBooking() . "'>Eliminar</button>";
-                    echo "</td>";
-                    echo "</tr>";
-                }
-            ?>
-        </tbody>
-    </table>
+                // Campos ocultos que también deben enviarse
+                echo "<input type='hidden' class='idActivityBookingUpdate' value='" . $booking->getIdTBActivity() . "'>";
+                echo "<input type='hidden' class='idUserBookingUpdate' value='" . $booking->getIdTBUser() . "'>";
+                echo "<input type='hidden' class='statusBookingUpdate' value='" . $booking->getStatusTBBooking() . "'>";
+
+                // Botones de acción
+                echo "<td>";
+                echo "<button type='button' class='editBooking' data-id='" . $booking->getIdTBBooking() . "'>Actualizar</button>";
+                echo "<button type='button' class='deleteBooking' data-id='" . $booking->getIdTBBooking() . "'>Eliminar</button>";
+                echo "</td>";
+                echo "</tr>";
+            }
+        ?>
+    </tbody>
+</table>
 </body>
 </html>

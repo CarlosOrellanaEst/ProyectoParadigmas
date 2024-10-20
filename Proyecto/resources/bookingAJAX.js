@@ -49,15 +49,29 @@ document.addEventListener('DOMContentLoaded', function () {
 
             if (confirm('¿Estás seguro de que quieres actualizar esta reserva?')) {
                 const row = e.target.closest('tr');
+                console.log(row);
                 const idBooking = e.target.getAttribute('data-id');
+                console.log(idBooking);
                 const numPeople = row.querySelector('.peopleBookingUpdate').value;
+                console.log(numPeople);
                 const dateBooked = row.querySelector('.dateBookingUpdate').value;
+                console.log(dateBooked);
                 const confirmation = row.querySelector('.confirmationBookingUpdate').value;
+                console.log(confirmation);
+                const idActivity = row.querySelector('.idActivityBookingUpdate').value;
+                console.log(idActivity);
+                const idUser = row.querySelector('.idUserBookingUpdate').value;
+                console.log(idUser);
+                const status = row.querySelector('.statusBookingUpdate').value;
+                console.log(status);
 
                 const postData = 'update=true&idBookingUpdate=' + encodeURIComponent(idBooking) +
                     '&peopleBookingUpdate=' + encodeURIComponent(numPeople) +
                     '&dateBookingUpdate=' + encodeURIComponent(dateBooked) +
-                    '&confirmationBookingUpdate=' + encodeURIComponent(confirmation);
+                    '&confirmationBookingUpdate=' + encodeURIComponent(confirmation) +
+                    '&idActivityBookingUpdate=' + encodeURIComponent(idActivity) +
+                    '&idUserBookingUpdate=' + encodeURIComponent(idUser) +
+                    '&statusBookingUpdate=' + encodeURIComponent(status);
 
                 let xhr = new XMLHttpRequest();
                 xhr.open('POST', '../business/bookingAction.php', true);
@@ -78,9 +92,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                 };
                 xhr.send(postData);
-            }
-            else {
-                location.reload();
             }
         }
 
