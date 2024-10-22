@@ -3,36 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost
--- Tiempo de generación: 17-09-2024 a las 17:30:53
--- Versión del servidor: 10.4.32-MariaDB
--- Versión de PHP: 8.2.12
-
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
-SET time_zone = "+00:00";
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-
---
--- Base de datos: `dbecotouristiar`
---
-
--- --------------------------------------------------------
-
---
--- Estructura de tabla para la tabla `tbactivity`
---
-
--- phpMyAdmin SQL Dump
--- version 5.2.1
--- https://www.phpmyadmin.net/
---
--- Servidor: localhost
--- Tiempo de generación: 08-10-2024 a las 00:04:26
+-- Tiempo de generación: 22-10-2024 a las 16:36:13
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -69,24 +40,62 @@ CREATE TABLE `tbactivity` (
   `tbactivitylongitude` decimal(12,8) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-INSERT INTO `tbactivity` (`tbactivityid`, `tbactivityname`, `tbactivityservicecompanyid`, `tbactivityatributearray`, `tbactivitydataarray`, `tbactivityurl`, `tbactivitystatus`, `tbactivitydate`, `tbactivitylatitude`, `tbactivitylongitude`)
-VALUES
-(1, 'Senderismo en el Bosque', 2, 'Duración,Distancia', '2 horas,5 km', 'Cat03.jpg,pexels1.jpg', 1, '2024-10-01 09:00:00', 10.12345678, -84.12345678),
-(2, 'Fotografía de Vida Silvestre', 3, 'Duración,Equipo Recomendado', '4 horas,Cámara con zoom', 'daisy.jpg,pexels2.jpg', 1, '2024-10-03 07:30:00', 9.87654321, -83.98765432),
-(3, 'Kayak en el Río', 5, 'Duración,Nivel de Dificultad', '3 horas,Moderado', 'dog.jpg,pexels3.jpg', 1, '2024-10-05 11:00:00', 10.23456789, -84.23456789),
-(4, 'Paseo en Caballo', 4, 'Duración,Tamaño del Grupo', '2 horas,10 personas', 'IMG_1312.PNG,uwu.jpeg', 1, '2024-10-07 08:00:00', 9.12345678, -83.12345678),
-(5, 'Excursión Nocturna', 1, 'Duración,Equipo Necesario', '5 horas,Linterna y repelente', 'miAmigueCarlos.jpg,gerald.jpg', 1, '2024-10-09 18:00:00', 10.56789012, -84.56789012);
-
 --
 -- Volcado de datos para la tabla `tbactivity`
 --
 
+INSERT INTO `tbactivity` (`tbactivityid`, `tbactivityname`, `tbactivityservicecompanyid`, `tbactivityatributearray`, `tbactivitydataarray`, `tbactivityurl`, `tbactivitystatus`, `tbactivitydate`, `tbactivitylatitude`, `tbactivitylongitude`) VALUES
+(1, 'Senderismo en el Bosque', 2, 'Duración,Distancia', '2 horas,5 km', 'Cat03.jpg,pexels1.jpg', 1, '2024-10-01 09:00:00', 10.12345678, -84.12345678),
+(2, 'Fotografía de Vida Silvestre', 3, 'Duración,Equipo Recomendado', '4 horas,Cámara con zoom', 'daisy.jpg,pexels2.jpg', 1, '2024-10-03 07:30:00', 9.87654321, -83.98765432),
+(3, 'Kayak en el Río', 5, 'Duración,Nivel de Dificultad', '3 horas,Moderado', 'dog.jpg,pexels3.jpg', 1, '2024-10-05 11:00:00', 10.23456789, -84.23456789),
+(4, 'Paseo en Caballo', 4, 'Duración,Tamaño del Grupo', '2 horas,10 personas', 'IMG_1312.PNG,uwu.jpeg', 1, '2024-10-07 08:00:00', 9.12345678, -83.12345678),
+(5, 'Excursión Nocturna', 1, 'Duración,Equipo Necesario', '5 horas,Linterna y repelente', 'miAmigueCarlos.jpg,gerald.jpg', 1, '2024-10-09 18:00:00', 10.56789012, -84.56789012),
+(6, 'Prueba', 3, 'a', 'a', 'Screenshot from 2024-09-30 23-29-50.png,Screenshot from 2024-09-30 23-30-22.png,Screenshot from 2024-10-01 00-01-10.png,Screenshot from 2024-10-02 15-23-15.png', 1, '2024-10-17 11:54:00', 10.39097779, -83.74149866);
 
+-- --------------------------------------------------------
 
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+--
+-- Estructura de tabla para la tabla `tbbooking`
+--
 
+CREATE TABLE `tbbooking` (
+  `tbbookingid` int(11) NOT NULL,
+  `tbactivityid` int(11) NOT NULL,
+  `tbuserid` int(11) NOT NULL,
+  `tbbookingnumberpersons` int(11) NOT NULL,
+  `tbbookingstatus` tinyint(1) NOT NULL,
+  `tbbookingdate` date NOT NULL,
+  `tbbookingconfirmation` bit(1) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `tbbooking`
+--
+
+INSERT INTO `tbbooking` (`tbbookingid`, `tbactivityid`, `tbuserid`, `tbbookingnumberpersons`, `tbbookingstatus`, `tbbookingdate`, `tbbookingconfirmation`) VALUES
+(1, 1, 1, 10, 1, '2024-10-19', b'0'),
+(2, 1, 1, 100, 1, '2024-10-19', b'0'),
+(3, 6, 1, 6, 1, '2024-10-19', b'0'),
+(4, 6, 1, 22, 1, '2024-10-19', b'0'),
+(5, 5, 1, 9, 1, '2024-10-19', b'0'),
+(6, 5, 1, 3, 1, '2024-10-19', b'0'),
+(7, 5, 1, 12, 1, '2024-10-19', b'0'),
+(8, 4, 1, 22, 1, '2024-10-19', b'0');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `tbcustomizedtouristcompanytype`
+--
+
+CREATE TABLE `tbcustomizedtouristcompanytype` (
+  `tbcustomizedtouristcompanytypeid` int(11) NOT NULL,
+  `tbownerid` int(11) NOT NULL,
+  `tbcustomizedtouristcompanytypename` varchar(200) NOT NULL,
+  `tbcustomizedtouristcompanytypestatus` int(11) NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
 
 --
 -- Estructura de tabla para la tabla `tbowner`
@@ -236,18 +245,6 @@ INSERT INTO `tbservicecompany` (`tbservicecompanyid`, `tbtouristcompanyid`, `tbs
 -- Estructura de tabla para la tabla `tbtouristcompany`
 --
 
-CREATE TABLE `tbbooking` (
-  `tbbookingid` int(11) NOT NULL,
-  `tbactivityid` int(11) NOT NULL,
-  `tbuserid` int(11) NOT NULL,
-  `tbbookingnumberpersons` int(11) NOT NULL,
-  `tbbookingstatus` tinyint(1) NOT NULL,
-  `tbbookingdate` date NOT NULL,
-  `tbbookingconfirmation` bit(1) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-
-
 CREATE TABLE `tbtouristcompany` (
   `tbtouristcompanyid` int(11) NOT NULL,
   `tbtouristcompanylegalname` varchar(255) NOT NULL,
@@ -302,16 +299,7 @@ INSERT INTO `tbtouristcompanytype` (`tbtouristcompanytypeid`, `tbtouristcompanyt
 (5, 'Actividades Recreativas', 'Organización de actividades recreativas y eventos para turistas.', 1);
 
 -- --------------------------------------------------------
--- Estructura de tabla para la tabla `tbcustomizedtouristcompanytype`
---
 
-CREATE TABLE `tbcustomizedtouristcompanytype` (
-  `tbcustomizedtouristcompanytypeid` int(11) NOT NULL,
-  `tbownerid` int(11) NOT NULL,
-  `tbcustomizedtouristcompanytypename` varchar(200) NOT NULL,
-  `tbcustomizedtouristcompanytypestatus` int(11) NOT NULL DEFAULT 1
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-COMMIT;
 --
 -- Estructura de tabla para la tabla `tbuser`
 --
