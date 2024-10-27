@@ -15,7 +15,7 @@ if (isset($_POST['create'])) {
         $surnames = isset($_POST['ownerSurnames']) ? trim($_POST['ownerSurnames']) : '';
         $legalIdentification = trim($_POST['ownerLegalIdentification']);
         $phone = isset($_POST['ownerPhone']) ? trim($_POST['ownerPhone']) : '';
-        $email = trim($_POST['ownerEmail']);
+        $email = strtolower(trim($_POST['ownerEmail']));
         $direction = isset($_POST['ownerDirection']) ? trim($_POST['ownerDirection']) : '';
         $idType = trim($_POST['idType']);
         $password = trim($_POST['password']);
@@ -46,18 +46,20 @@ if (isset($_POST['create'])) {
 
         $isValidId = false;
         if ($idType == 'CR') {
-            $isValidId = preg_match('/^\d{9}$/', $legalIdentification);
+            $isValidId = preg_match('/^\d{9}$/', $legalIdentification); 
             if (!$isValidId) {
                 echo json_encode(['status' => 'error', 'error_code' => 'invalid_costa_rica_id', 'message' => 'Identificación de Costa Rica inválida. Debe contener exactamente 9 dígitos.']);
                 exit();
             }
         } elseif ($idType == 'foreign') {
-            $isValidId = preg_match('/^\d+$/', $legalIdentification);
+            // Identificación extranjera: permite entre 6 y 12 caracteres, alfanuméricos
+            $isValidId = preg_match('/^[a-zA-Z0-9]{6,12}$/', $legalIdentification);
             if (!$isValidId) {
-                echo json_encode(['status' => 'error', 'error_code' => 'invalid_foreign_id', 'message' => 'Identificación extranjera inválida. Solo se permiten números.']);
+                echo json_encode(['status' => 'error', 'error_code' => 'invalid_foreign_id', 'message' => 'Identificación extranjera inválida. Debe contener entre 6 y 12 caracteres alfanuméricos.']);
                 exit();
             }
         }
+
 
         if (!empty($name) && !preg_match('/^[a-zA-Z\s]+$/', $name)) {
             echo json_encode(['status' => 'error', 'error_code' => 'invalid_name', 'message' => 'El nombre contiene caracteres inválidos']);
@@ -79,7 +81,7 @@ if (isset($_POST['create'])) {
             exit();
         }
 
-        if (empty($response)) { 
+        if (empty($response)) {
             $owner = new Owner(
                 0,
                 $direction,
