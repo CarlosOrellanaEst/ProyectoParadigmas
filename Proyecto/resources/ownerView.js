@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function () {
-    
     document.getElementById('formCreate').addEventListener('submit', function (e) {
         e.preventDefault();
 
@@ -35,13 +34,13 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         const formData = new FormData();
-        formData.append('name', ownerName);
-        formData.append('surnames', ownerSurnames);
-        formData.append('legalIdentification', ownerLegalIdentification);
-        formData.append('phone', ownerPhone);
-        formData.append('email', ownerEmail);
-        formData.append('direction', document.getElementById('direction').value.trim());
-        formData.append('password', password);  // Agregar la contraseña
+        formData.append('ownerName', ownerName);
+        formData.append('ownerSurnames', ownerSurnames);
+        formData.append('ownerLegalIdentification', ownerLegalIdentification);
+        formData.append('ownerPhone', ownerPhone);
+        formData.append('ownerEmail', ownerEmail);
+        formData.append('ownerDirection', document.getElementById('direction').value.trim());
+        formData.append('password', password); 
         formData.append('imagen', imageFile);
         formData.append('idType', document.getElementById('idType').value);
         formData.append('create', 'create');
@@ -57,9 +56,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         if (response.status === 'success') {
                             alert(response.message);
                             document.getElementById('formCreate').reset();
-                            location.reload();
-                            redirectToCleanURL();
-
+                            setTimeout(() => location.reload(), 500); 
                         } else {
                             alert('Error: ' + response.message);
                         }
@@ -74,6 +71,5 @@ document.addEventListener('DOMContentLoaded', function () {
         };
 
         xhr.send(formData);
-    
     });
 });
