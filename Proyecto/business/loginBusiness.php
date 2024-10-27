@@ -9,23 +9,17 @@ class LoginBusiness {
     }
 
     public function authenticate($username, $password) {
-        // Obtener el usuario por nombre de usuario sin verificar la contraseña aún
-        $user = $this->loginData->getUserByUsername($username, $password);
-    
+        $user = $this->loginData->getUserByUsername($username);
       
         if ($user === null) {
             return null;
         }
-    
+      
         // Verificar la contraseña usando password_verify
         if (password_verify($password, $user->getPassword())) {
-            // Devolver el objeto User (Owner, User o Admin) si la contraseña es correcta
             return $user;
         } else {
-            
             return null;
         }
-    }
-    
-    
+    }   
 }

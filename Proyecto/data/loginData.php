@@ -5,14 +5,14 @@ require_once '../domain/User.php';
 
 class LoginData extends Data {
 
-    public function getUserByUsername ($username, $password) { // getUserByNickName deberia ser el nombre del metodo
+    public function getUserByUsername($username) {
         $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
-        $query = "SELECT * FROM tbuser WHERE tbusernickname = ? AND tbuserpassword = ? LIMIT 1";
+        $query = "SELECT * FROM tbuser WHERE tbusernickname = ? LIMIT 1";
         $stmt = $conn->prepare($query);
         if ($stmt === false) {
             die("Prepare failed: " . $conn->error);
         }
-        $stmt->bind_param("ss", $username, $password);
+        $stmt->bind_param("s", $username);
         $stmt->execute();
         $result = $stmt->get_result();
         if ($row = $result->fetch_assoc()) {
@@ -24,15 +24,15 @@ class LoginData extends Data {
             $user->setPhone($row['tbuserphone']);
             $user->setEmail($row['tbuseremail']);
             $user->setNickname($row['tbusernickname']);
-            $user->setPassword($row['tbuserpassword']);
+            $user->setPassword($row['tbuserpassword']); // Guardar el hash de la contraseña
             $user->setActive($row['tbuserstatus']);
-            // podria ser un objeto roll, pero eso necesita el innerjoin con tbroll que quiero evitar
+            
+            // Asignar tipo de usuario según `tbrollid`
             if ($row['tbrollid'] == 1) {
                 $user->setUserType("Administrador");
             } else if ($row['tbrollid'] == 2) {
                 $user->setUserType("Turista");
             } else if ($row['tbrollid'] == 3) {
-                // ir a traerme los de tbowner con el valor de tbuserid
                 $user->setUserType("Propietario");
                 $ownerData = new ownerData();
                 $ownerDB = $ownerData->getTBOwnerByUserId($row['tbuserid']);
@@ -50,11 +50,9 @@ class LoginData extends Data {
                     $user->getSurnames(),
                     $user->getLegalIdentification(),
                     $user->getPhone(),
-                    $user->getEmail(), 
-                );   
-                // asigno que el usuario loggeado es una instancia de propietario
+                    $user->getEmail()
+                );
                 $user = $finalOwner;
-        //        echo ($user);
             }
         } else {
             $user = null;
@@ -62,4 +60,5 @@ class LoginData extends Data {
         $stmt->close();
         return $user;
     }
+    
 }
