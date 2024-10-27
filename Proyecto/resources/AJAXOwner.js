@@ -3,6 +3,7 @@ document.addEventListener("DOMContentLoaded", function () {
     e.preventDefault();
 
     const ownerName = document.getElementById("name").value.trim();
+    const nickName = document.getElementById("nickName").value.trim();
     const ownerSurnames = document.getElementById("surnames").value.trim();
     const ownerLegalIdentification = document
       .getElementById("legalIdentification")
@@ -30,6 +31,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const formData = new FormData();
     formData.append("ownerName", ownerName);
+    formData.append("nickName", nickName);
     formData.append("ownerSurnames", ownerSurnames);
     formData.append("ownerLegalIdentification", ownerLegalIdentification);
     formData.append("ownerPhone", ownerPhone);
@@ -121,7 +123,9 @@ function handleErrorResponse(response) {
     case "missing_fields":
       alert("Error: Datos incompletos o inválidos.");
       break;
-    
+    case "invalid_nickName":
+      alert("Error: El nombre de usuario contiene caracteres inválidos.");
+      break;
     default:
       alert(response.message);
       break;

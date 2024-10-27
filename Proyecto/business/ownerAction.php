@@ -13,6 +13,7 @@ if (isset($_POST['create'])) {
     ) {
         $name = isset($_POST['ownerName']) ? trim($_POST['ownerName']) : '';
         $surnames = isset($_POST['ownerSurnames']) ? trim($_POST['ownerSurnames']) : '';
+        $nickName = isset($_POST['nickName']) ? trim($_POST['nickName']) : '';
         $legalIdentification = trim($_POST['ownerLegalIdentification']);
         $phone = isset($_POST['ownerPhone']) ? trim($_POST['ownerPhone']) : '';
         $email = strtolower(trim($_POST['ownerEmail']));
@@ -82,14 +83,13 @@ if (isset($_POST['create'])) {
             exit();
         }
 
-       
 
 
         if (!preg_match('/^[^\s@]+@[^\s@]+\.[^\s@]+$/', $email)) {
             echo json_encode(['status' => 'error', 'error_code' => 'invalid_email', 'message' => 'Formato de correo electrónico inválido']);
             exit();
         }
-
+        
         if (empty($response)) {
             $owner = new Owner(
                 0,
@@ -97,7 +97,7 @@ if (isset($_POST['create'])) {
                 $targetFilePath,
                 1,
                 0,
-                $name,
+                $nickName,
                 $encryptedPassword,
                 1,
                 "Propietario",
@@ -107,7 +107,7 @@ if (isset($_POST['create'])) {
                 $phone,
                 $email
             );
-
+            error_log("Nickname: " . $nickName);
             $ownerBusiness = new ownerBusiness();
             $result = $ownerBusiness->insertTBOwner($owner);
             if ($result['status'] === 'success') {

@@ -64,6 +64,10 @@ class ownerData extends Data {
             mysqli_close($conn);
             return ['status' => 'error', 'error_code' => 'legal_id_already_registered', 'message' => 'La identificación legal ya está registrada.'];
         }
+        if($this->getOwnerByNickName($nickname)) {
+            mysqli_close($conn);
+            return ['status' => 'error', 'error_code' => 'nickname_already_registered', 'message' => 'El nombre de usuario ya está registrado.'];
+        }
     
         // Inserción de usuario en tbuser
         $queryInsertUsers = "INSERT INTO tbuser (tbuserid, tbusername, tbusersurnames, tbuserlegalidentification, tbuserphone, tbuseremail, tbusernickname, tbuserpassword, tbrollid, tbuserstatus) VALUES (?,?,?,?,?,?,?,?,?,?)";    
@@ -311,6 +315,25 @@ class ownerData extends Data {
     
         if ($row = mysqli_fetch_assoc($result)) {
             $ownerReturn = new Owner($row['tbownerid'], /* $row['tbuserid'], */ $row['tbownerdirection'], $row['tbownerphotourl'], $row['tbownerstatus']);
+        } else {
+            $ownerReturn = null;
+        }
+        mysqli_close($conn);
+        return $ownerReturn;
+    }
+
+    public function getOwnerByNickName($nickName) {
+        $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
+        if (!$conn) {
+            die("Connection failed: " . mysqli_connect_error());
+        }
+        $conn->set_charset('utf8');
+    
+        $query = "SELECT * FROM tbuser WHERE tbusernickname = '$nickName'";
+        $result = mysqli_query($conn, $query);
+    
+        if ($row = mysqli_fetch_assoc($result)) {
+            $ownerReturn = new Owner($row['tbuserid'], $row['tbusernickname'], $row['tbuserpassword'], $row['tbuserstatus']);
         } else {
             $ownerReturn = null;
         }
