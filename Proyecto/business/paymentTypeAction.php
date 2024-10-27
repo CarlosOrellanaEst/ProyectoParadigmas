@@ -12,60 +12,55 @@ if (isset($_POST['accountNumber'])) {
     $accountNumber = trim($_POST['accountNumber']);
     $sinpeNumber = trim($_POST['sinpeNumber']); 
 
-    $response = [];
     $generalValidations = new generalValidations();
 
     if (empty($accountNumber)) {
-        $response['status'] = 'error';
-        $response['message'] = 'El número de cuenta no puede estar vacío.';
+        echo json_encode(['status' => 'error', 'error_code' => 'account_required', 'message' => 'El número de cuenta no puede estar vacío.']);
+        exit();
     } else if ($generalValidations->accountNumberFormat($accountNumber)) {
-        $response['status'] = 'error';
-        $response['message'] = 'La cuenta de banco no cumple con el formato correcto (Ejm: CR12345678901234567890).';
+        echo json_encode(['status' => 'error', 'error_code' => 'invalid_account_format', 'message' => 'La cuenta de banco no cumple con el formato correcto (Ejm: CR12345678901234567890).']);
+        exit();
     } else {
         $paymentType = new PaymentType(0, $ownerId, $accountNumber, $sinpeNumber, 1);
         $paymentTypeBusiness = new paymentTypeBusiness();
 
         if (!empty($sinpeNumber)) {
             if (!is_numeric($sinpeNumber)) {
-                $response['status'] = 'error';
-                $response['message'] = 'El número de SINPE debe ser numérico o puede estar vacío.';
+                echo json_encode(['status' => 'error', 'error_code' => 'invalid_sinpe_number', 'message' => 'El número de SINPE debe ser numérico o puede estar vacío.']);
+                exit();
             } else if (!preg_match('/^\d{8}$/', $sinpeNumber)) {
-                $response['status'] = 'error';
-                $response['message'] = 'El número de SINPE debe contener exactamente 8 dígitos.';
+                echo json_encode(['status' => 'error', 'error_code' => 'invalid_sinpe_format', 'message' => 'El número de SINPE debe contener exactamente 8 dígitos.']);
+                exit();
             }
         }
 
-        if (!isset($response['status'])) {
-            $result = $paymentTypeBusiness->insert($paymentType);
+        // Si no hay errores, proceder a insertar
+        $result = $paymentTypeBusiness->insert($paymentType);
 
-            if ($result['status'] === 'success') {
-                $response['status'] = 'success';
-                $response['message'] = 'Tipo de pago agregado correctamente.';
-            } else if ($result['status'] === 'error') {
-                $response['status'] = 'error';
-                $response['message'] = 'Fallo al agregar el tipo de pago: ' . $result['message'];
-            }
+        if ($result['status'] === 'success') {
+            echo json_encode(['status' => 'success', 'message' => 'Tipo de pago agregado correctamente.']);
+        } else if ($result['status'] === 'error') {
+            echo json_encode(['status' => 'error', 'error_code' => 'db_error', 'message' => 'Fallo al agregar el tipo de pago: ' . $result['message']]);
         }
+        exit();
     }
-
-    echo json_encode($response);
-    exit();
 }
 
 if (isset($_POST['delete'])) { 
     if (isset($_POST['tbpaymentTypeid'])) {
         $id = $_POST['tbpaymentTypeid'];
         $paymentTypeBusiness = new paymentTypeBusiness();
-        $result = $paymentTypeBusiness -> delete($id);
+        $result = $paymentTypeBusiness->delete($id);
 
         if ($result == 1) {
-            header("location: ../view/paymentTypeView.php?success=deleted");
+            echo json_encode(['status' => 'success', 'message' => 'Tipo de pago eliminado correctamente.']);
         } else {
-            header("location: ../view/paymentTypeView.php?error=dbError");
+            echo json_encode(['status' => 'error', 'error_code' => 'db_delete_error', 'message' => 'Error en la base de datos al eliminar el tipo de pago.']);
         }
     } else {
-        header("location: ../view/paymentTypeView.php?error=emptyField");
+        echo json_encode(['status' => 'error', 'error_code' => 'missing_id', 'message' => 'Campo ID vacío.']);
     }
+    exit();
 } 
 
 if (isset($_POST['update'])) {
@@ -77,21 +72,21 @@ if (isset($_POST['update'])) {
         $generalValidations = new generalValidations();
 
         if (empty($AccountNumber)) {
-            header("location: ../view/paymentTypeView.php?error=accountRequired");
+            echo json_encode(['status' => 'error', 'error_code' => 'account_required', 'message' => 'El número de cuenta es obligatorio.']);
             exit();
         }
 
         if ($generalValidations->accountNumberFormat($AccountNumber)) {
-            header("location: ../view/paymentTypeView.php?error=numberFormatBAnkAccount");
+            echo json_encode(['status' => 'error', 'error_code' => 'invalid_account_format', 'message' => 'El número de cuenta bancaria no cumple con el formato correcto.']);
             exit();
         }
 
         if (!empty($SinpeNumber)) {
             if (!is_numeric($SinpeNumber)) {
-                header("location: ../view/paymentTypeView.php?error=invalidSinpe");
+                echo json_encode(['status' => 'error', 'error_code' => 'invalid_sinpe_number', 'message' => 'El número de SINPE debe ser numérico.']);
                 exit();
             } else if (!preg_match('/^\d{8}$/', $SinpeNumber)) {
-                header("location: ../view/paymentTypeView.php?error=invalidSinpeFormat");
+                echo json_encode(['status' => 'error', 'error_code' => 'invalid_sinpe_format', 'message' => 'El número de SINPE debe contener exactamente 8 dígitos.']);
                 exit();
             }
         }
@@ -102,18 +97,14 @@ if (isset($_POST['update'])) {
         $result = $paymentTypeBusiness->update($paymentType);
 
         if ($result) {
-            header("location: ../view/paymentTypeView.php?success=updated");
-            exit();
-        } else if ($result == null){
-            header("location: ../view/paymentTypeView.php?error=duplicateEntry");
-            exit();
+            echo json_encode(['status' => 'success', 'message' => 'Tipo de pago actualizado correctamente.']);
+        } else if ($result == null) {
+            echo json_encode(['status' => 'error', 'error_code' => 'duplicate_entry', 'message' => 'Entrada duplicada en la base de datos.']);
         } else {    
-            header("location: ../view/paymentTypeView.php?error=dbError");
-            exit();
+            echo json_encode(['status' => 'error', 'error_code' => 'db_update_error', 'message' => 'Error en la base de datos al actualizar el tipo de pago.']);
         }
-        
     } else {
-        header("location: ../view/paymentTypeView.php?error=missingFields");
-        exit();
+        echo json_encode(['status' => 'error', 'error_code' => 'missing_fields', 'message' => 'Campos faltantes.']);
     }
+    exit();
 }

@@ -1,16 +1,17 @@
 document.addEventListener('DOMContentLoaded', function () { 
     document.getElementById('formCreate').addEventListener('submit', function (e) {
-        e.preventDefault();
+        e.preventDefault();  // Evita el envío directo del formulario
     
-        const accountNumber = document.getElementById('accountNumber').value.trim();    
-        if (accountNumber === ' ') {
-            alert('El número de cuenta no puede estar vacio.');
+        const accountNumber = document.getElementById('accountNumber').value.trim();
+        if (accountNumber === '') {
+            alert('El número de cuenta no puede estar vacío.');
             return;
         }
+
         const postData = {
             ownerId: document.getElementById('ownerId').value,
-            accountNumber: document.getElementById('accountNumber').value,
-            sinpeNumber: document.getElementById('sinpeNumber').value,
+            accountNumber: accountNumber,
+            sinpeNumber: document.getElementById('sinpeNumber').value
         };
     
         let xhr = new XMLHttpRequest();
@@ -24,31 +25,48 @@ document.addEventListener('DOMContentLoaded', function () {
                         if (response.status === 'success') {
                             alert(response.message);
                             document.getElementById('formCreate').reset();
-                            redirectToCleanURL();
-                            location.reload();
+                            location.reload();  // Recarga la página después de éxito
                         } else {
-                            alert('Error: ' + response.message);
+                            //handleErrorResponse(response);
                         }
                     } else {
                         alert('HTTP Error: ' + xhr.status);
                     }
                 } catch (e) {
-                    console.error('Invalid JSON response:', xhr.responseText);
+                    console.error('Error procesando la respuesta JSON:', xhr.responseText);
                     alert('Error procesando la respuesta del servidor.');
                 }
             }
         };
-        xhr.send('ownerId=' + encodeURIComponent(postData.ownerId) + '&accountNumber=' + encodeURIComponent(postData.accountNumber)
-        + '&sinpeNumber=' + encodeURIComponent(postData.sinpeNumber));
+
+        // Envío de datos en formato URL-encoded
+        xhr.send('ownerId=' + encodeURIComponent(postData.ownerId) + '&accountNumber=' + encodeURIComponent(postData.accountNumber) + '&sinpeNumber=' + encodeURIComponent(postData.sinpeNumber));
     });
-})
+});
 
-function redirectToCleanURL() {
-    const cleanURL = window.location.origin + window.location.pathname;
-    window.history.replaceState({}, document.title, cleanURL);
+// Manejo de errores de respuesta
+function handleErrorResponse(response) {
+    switch (response.error_code) {
+        case 'account_required':
+            alert("Error: El número de cuenta es obligatorio.");
+            break;
+        case 'invalid_sinpe_number':
+            alert("Error: El número de SINPE debe ser numérico.");
+            break;
+        case 'sinpe_format_invalid':
+            alert("Error: El número de SINPE debe tener 8 dígitos.");
+            break;
+        case 'duplicate_entry':
+            alert("Error: Entrada duplicada en la base de datos.");
+            break;
+        case 'db_error':
+            alert("Error: Fallo en la base de datos al realizar la acción.");
+            break;
+        case 'number_format_bank_account':
+            alert("Error: La cuenta de banco no cumple con el formato correcto (Ejm: CR12345678901234567890).");
+            break;
+        default:
+            alert(response.message || "Error desconocido.");
+            break;
+    }
 }
-
-window.onload = function () {
-    showAlertBasedOnURL();
-    redirectToCleanURL();
-};
