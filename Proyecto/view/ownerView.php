@@ -34,8 +34,7 @@
             color: red;
         }
     </style>
-    <script src="../resources/ownerView.js"></script>
-    <script src="../resources/AJAXOwner.js"></script>
+    <script src="../resources/ownerView.js"></script> <!-- Solo se necesita este archivo -->
 </head>
 <body>
     <header>
@@ -52,24 +51,40 @@
     <section>
         <?php
             if ($userLogged->getUserType() == "Administrador") {
-                echo '<form id="formCreate" method="post" enctype="multipart/form-data" action="../business/ownerAction.php">';
+                echo '<form id="formCreate" method="post" enctype="multipart/form-data" onsubmit="return confirmAction(event);">';
                 echo '<label for="name">Nombre </label>';
                 echo '<input placeholder="nombre" type="text" name="ownerName" id="name"/><br><br>';
+
+                echo '<label for="nickName">Nombre de Usuario <span class="required">*</span></label>';
+                echo '<input placeholder="nombre de usuario" type="text" name="ownerNickName" id="nickName" autocomplete="username"/><br><br>';
+
                 echo '<label for="surnames">Apellidos</label>';
                 echo '<input placeholder="apellidos" type="text" name="ownerSurnames" id="surnames"/><br><br>';
+
                 echo '<label for="idType">Tipo de Identificación</label>';
                 echo '<select name="idType" id="idType">';
                 echo '<option value="CR">Cédula Nacional de Costa Rica</option>';
                 echo '<option value="foreign">Extranjero</option>';
                 echo '</select><br><br>';
+
                 echo '<label for="legalIdentification">Identificación Legal <span class="required">*</span></label>';
                 echo '<input placeholder="identificacionLegal" type="text" name="ownerLegalIdentification" id="legalIdentification"/><br><br>';
+
                 echo '<label for="phone">Teléfono</label>';
                 echo '<input placeholder="telefono" type="text" name="ownerPhone" id="phone"/><br><br>';
+
                 echo '<label for="email">Correo <span class="required">*</span></label>';
                 echo '<input placeholder="correo" type="text" name="ownerEmail" id="email"/><br><br>';
+
                 echo '<label for="direction">Dirección</label>';
                 echo '<input placeholder="direccion" type="text" name="ownerDirection" id="direction"/><br><br>';
+
+                echo '<label for="password">Contraseña <span class="required">*</span></label>';
+                echo '<input placeholder="contraseña" type="password" name="password" id="password" autocomplete="new-password"/><br><br>';
+
+                echo '<label for="confirmPassword">Confirmar Contraseña <span class="required">*</span></label>';
+                echo '<input placeholder="confirmar contraseña" type="password" name="confirmPassword" id="confirmPassword" autocomplete="new-password"/><br><br>';
+
                 echo '<input type="file" name="imagen" id="imagen"><br><br>';
                 echo '<input type="submit" value="Crear" name="create" id="create"/>';
                 echo '</form>';
@@ -94,6 +109,7 @@
                     <th>Identificación Legal</th>
                     <th>Teléfono</th>
                     <th>Correo</th>
+                    <th>Nombre de usuario</th>
                     <th>Dirección</th>
                     <th>Foto</th>
                     <th>Acciones</th>
@@ -114,30 +130,32 @@
                 }
 
                 foreach ($owners as $current) {
-                    echo '<form method="post" action="../business/ownerAction.php" onsubmit="return confirmDelete(event);" enctype="multipart/form-data">';
+                    echo '<form method="post" onsubmit="return confirmAction(event);">'; // Eliminamos el atributo action
+
                     echo '<input type="hidden" name="ownerID" value="' . $current->getIdTBOwner() . '">';
-                    echo '<input type="hidden" name="userID" value="' . $current->getId(). '">';
+                    echo '<input type="hidden" name="userID" value="' . $current->getId() . '">';
+                    echo '<input type="hidden" name="password" value="' . $current->getPassword() . '">';
                     echo '<tr>';
                     echo '<td><input type="text" name="ownerName" value="' . $current->getName() . '"/></td>';
                     echo '<td><input type="text" name="ownerSurnames" value="' . $current->getSurnames() . '"/></td>';
                     echo '<td>
-                    <select name="idType">
-                        <option value="CR">Cédula Nacional de Costa Rica</option>
-                        <option value="foreign">Extranjero</option>
-                    </select>
-                </td>';
+                            <select name="idType">
+                                <option value="CR" ' . ($current->getId() == 'CR' ? 'selected' : '') . '>Cédula Nacional de Costa Rica</option>
+                                <option value="foreign" ' . ($current->getId() == 'foreign' ? 'selected' : '') . '>Extranjero</option>
+                            </select>
+                          </td>';
                     echo '<td><input type="text" name="ownerLegalIdentification" value="' . $current->getLegalIdentification() . '"/></td>';
                     echo '<td><input type="text" name="ownerPhone" value="' . $current->getPhone() . '"/></td>';
                     echo '<td><input type="text" name="ownerEmail" value="' . $current->getEmail() . '"/></td>';
+                    echo '<td><input type="text" name="ownerNickName" value="' . $current->getNickName() . '"/></td>';
                     echo '<td><input type="text" name="ownerDirection" value="' . $current->getDirectionTBOwner() . '"/></td>';
 
                     $photoUrl = $current->getPhotoURLTBOwner();
                     echo '<td><img src="../images/' . $photoUrl . '" alt="Foto" width="75" height="75" /></td>';
 
                     echo '<td>';
-                    // echo '<input type="file" name="newImage" accept="image/*" /><br />';
-                    echo '<input type="submit" value="Actualizar" name="update" />';
-                    echo '<input type="submit" value="Eliminar" name="delete" />';
+                    echo '<input type="submit" value="Actualizar" name="update" class="update-button" />';
+                    echo '<input type="submit" value="Eliminar" name="delete" class="delete-button" />';
                     echo '</td>';
                     echo '</tr>';
                     echo '</form>';

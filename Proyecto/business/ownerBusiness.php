@@ -1,5 +1,4 @@
 <?php
-
 include_once '../data/ownerData.php';
 
 class OwnerBusiness {

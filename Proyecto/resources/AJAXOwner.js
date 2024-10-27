@@ -11,9 +11,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const ownerPhone = document.getElementById("phone").value.trim();
     const ownerEmail = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value.trim();
-    const confirmPassword = document
-      .getElementById("confirmPassword")
-      .value.trim();
+    const confirmPassword = document.getElementById("confirmPassword").value.trim();
     const imageFile = document.getElementById("imagen").files[0];
     const idType = document.getElementById("idType").value;
 
@@ -24,10 +22,12 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Validación de que las contraseñas coinciden
+    
     if (password !== confirmPassword) {
       alert("Las contraseñas no coinciden.");
       return;
-    }
+    } 
+      
 
     const formData = new FormData();
     formData.append("ownerName", ownerName);

@@ -64,6 +64,7 @@ class ownerData extends Data {
             mysqli_close($conn);
             return ['status' => 'error', 'error_code' => 'legal_id_already_registered', 'message' => 'La identificación legal ya está registrada.'];
         }
+        
         if($this->getOwnerByNickName($nickname)) {
             mysqli_close($conn);
             return ['status' => 'error', 'error_code' => 'nickname_already_registered', 'message' => 'El nombre de usuario ya está registrado.'];
@@ -163,73 +164,94 @@ class ownerData extends Data {
             die("Connection failed: " . mysqli_connect_error());
         }
         $conn->set_charset('utf8');
-        
+    
+        // Datos de entrada
         $idUser = $owner->getId();
         $idOwner = $owner->getIdTBOwner();
         $newName = mysqli_real_escape_string($conn, $owner->getName());
         $newSurnames = mysqli_real_escape_string($conn, $owner->getSurnames());
+        $newNickName = mysqli_real_escape_string($conn, $owner->getNickName());
         $newLegalIdentification = mysqli_real_escape_string($conn, $owner->getLegalIdentification());
         $newPhone = mysqli_real_escape_string($conn, $owner->getPhone());
         $newEmail = mysqli_real_escape_string($conn, $owner->getEmail());
         $newDirection = mysqli_real_escape_string($conn, $owner->getDirectionTBOwner());
-        $newURL = mysqli_real_escape_string($conn, $owner->getPhotoURLTBOwner());
-
+        $newPassword = $owner->getPassword();
+    
+        // Validaciones de unicidad
         $emailQuery = "SELECT * FROM tbuser WHERE tbuseremail = '$newEmail' AND tbuserid != $idUser AND tbuserstatus = 1";
         $emailResult = mysqli_query($conn, $emailQuery);
-        $phoneQuery = "SELECT * FROM tbuser WHERE tbuserphone = '$newPhone' AND tbuserid != $idUser AND tbuserstatus = 1";
-        $phoneResult = mysqli_query($conn, $phoneQuery);
+        
+        // Solo verifica el teléfono si no está vacío
+        if (!empty($newPhone)) {
+            $phoneQuery = "SELECT * FROM tbuser WHERE tbuserphone = '$newPhone' AND tbuserid != $idUser AND tbuserstatus = 1";
+            $phoneResult = mysqli_query($conn, $phoneQuery);
+        } else {
+            $phoneResult = false;  // Ignora la validación del teléfono
+        }
+    
         $legalIdQuery = "SELECT * FROM tbuser WHERE tbuserlegalidentification = '$newLegalIdentification' AND tbuserid != $idUser AND tbuserstatus = 1";
         $legalIdResult = mysqli_query($conn, $legalIdQuery);
     
-        $legalIdResult = mysqli_query($conn, $legalIdQuery);
-       
         if (mysqli_num_rows($emailResult) > 0) {
             $result = "Email";
-        } else if (mysqli_num_rows($phoneResult) > 0) {
+        } else if ($phoneResult && mysqli_num_rows($phoneResult) > 0) {
             $result = "Phone";
         } else if (mysqli_num_rows($legalIdResult) > 0) {
             $result = "LegalId";
         } else {
-            $query = "UPDATE tbuser SET tbusername = '$newName', tbusersurnames = '$newSurnames', tbuserlegalidentification = '$newLegalIdentification', tbuserphone = '$newPhone', tbuseremail = '$newEmail' WHERE tbuserid = $idUser";
-           
+            // Actualización en tbuser, con contraseña encriptada si se proporciona
+            $query = "UPDATE tbuser SET 
+                        tbusername = '$newName', 
+                        tbusersurnames = '$newSurnames', 
+                        tbusernickname = '$newNickName', 
+                        tbuserlegalidentification = '$newLegalIdentification', 
+                        tbuserphone = '$newPhone', 
+                        tbuseremail = '$newEmail'";
+            if (!empty($newPassword)) {
+                $encryptedPassword = password_hash($newPassword, PASSWORD_BCRYPT);
+                $query .= ", tbuserpassword = '$encryptedPassword'";
+            }
+            $query .= " WHERE tbuserid = $idUser";
+            
             $result = mysqli_query($conn, $query) ? 1 : "dbError";
-            if ($result==1) {
-                $query = "UPDATE tbowner SET tbownerdirection = '$newDirection' WHERE tbuserid= $idUser";
-                $result = mysqli_query($conn, $query) ? 1 : "dbError";
-               
-            } 
+    
+            // Actualización en tbowner si tbuser fue exitoso
+            if ($result == 1) {
+                $queryOwner = "UPDATE tbowner SET tbownerdirection = '$newDirection' WHERE tbuserid = $idUser";
+                $result = mysqli_query($conn, $queryOwner) ? 1 : "dbError";
+            }
         }
     
         mysqli_close($conn);
         return $result;
     }
     
+    
+    
+    
     public function deleteTBOwner($idOwner, $idUser) {
         $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
         $conn->set_charset('utf8');
-        echo($idOwner.$idUser);
-
+    
+        // Actualizar el estado del usuario
         $queryUpdateUser = "UPDATE tbuser SET tbuserstatus = 0 WHERE tbuserid=" . $idUser . ";";
         $result = mysqli_query($conn, $queryUpdateUser);
-        $varReturn = false;
+    
         if ($result) {
-            $varReturn = true;
+            // Actualizar el estado del propietario
             $queryUpdateOwner = "UPDATE tbowner SET tbownerstatus = 0 WHERE tbownerid=" . $idOwner . ";";
-            $result = false;
             $result = mysqli_query($conn, $queryUpdateOwner);
+    
             mysqli_close($conn);
-            if ($result) {
-                // return ['status' => 'success', 'message' => 'Propietario eliminado.'];
-                $varReturn = true;
-            } else {
-                // return ['status' => 'error', 'message' => 'Falló al eliminar el propietario: ' . $conn->error];
-            }
-        } 
-        else {
-            // return ['status' => 'error', 'message' => 'Falló al eliminar el propietario: ' . $conn->error];
+            // Retorna true si ambos queries fueron exitosos
+            return $result ? true : false;
+        } else {
+            mysqli_close($conn);
+            return false;
         }
-        return $varReturn;
-    } 
+    }
+    
+    
 
     public function getTBOwnerByEmail($ownerEmail) {
         $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
