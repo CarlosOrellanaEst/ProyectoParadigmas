@@ -17,6 +17,7 @@ if (isset($_POST['nickName']) && isset($_POST['password'])) {
 
     $loginBusiness = new LoginBusiness();
     $user = $loginBusiness->authenticate($nickName, $password);
+    
     // echo($user);
     if ($user !== null) {
         $_SESSION['user'] = $user;

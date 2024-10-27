@@ -3,7 +3,6 @@ include_once './touristBusiness.php';
 include_once '../domain/User.php';
 
 if (isset($_POST['create'])) {
-    $response = array();
 
     if (
         isset($_POST['touristLegalIdentification']) &&
@@ -22,93 +21,69 @@ if (isset($_POST['create'])) {
         $confirmTouristPassword = trim($_POST['confirmTouristPassword']);
         $idType = trim($_POST['idType']);
 
-        //Identificación
+        // Identificación
         $isValidId = false;
         if ($idType == 'CR') {
             $isValidId = preg_match('/^\d{9}$/', $touristLegalIdentification);
             if (!$isValidId) {
-                $response['status'] = 'error';
-                $response['message'] = 'Identificación de Costa Rica inválida';
-                echo json_encode($response);
+                echo json_encode(['status' => 'error', 'message' => 'Identificación de Costa Rica inválida']);
                 exit();
             }
         } elseif ($idType == 'foreign') {
-            $isValidId = preg_match('/^\d+$/', $touristLegalIdentification);
+            $isValidId = preg_match('/^[a-zA-Z0-9]{6,12}$/', $touristLegalIdentification);
             if (!$isValidId) {
-                header("Location: ../view/registerTouristView.php?error=invalidForeignId");
+                echo json_encode(['status' => 'error', 'message' => 'Identificación extranjera inválida. Debe contener entre 6 y 12 caracteres alfanuméricos.']);
                 exit();
             }
         }
 
-        //Nombre
+        // Nombre
         if (!empty($touristName) && is_numeric($touristName)) {
-            $response['status'] = 'error';
-            $response['message'] = 'El nombre contiene caracteres inválidos';
-            echo json_encode($response);
+            echo json_encode(['status' => 'error', 'message' => 'El nombre contiene caracteres inválidos']);
             exit();
         }
 
-        //Apellido
+        // Apellido
         if (!empty($touristSurnames) && is_numeric($touristSurnames)) {
-            $response['status'] = 'error';
-            $response['message'] = 'Los apellidos contienen caracteres inválidos';
-            echo json_encode($response);
+            echo json_encode(['status' => 'error', 'message' => 'Los apellidos contienen caracteres inválidos']);
             exit();
         }
 
-        //Telefono
+        // Teléfono
         if (!empty($touristPhone) && !preg_match('/^\d{8}$/', $touristPhone)) {
-            $response['status'] = 'error';
-            $response['message'] = 'Número de teléfono inválido';
-            echo json_encode($response);
+            echo json_encode(['status' => 'error', 'message' => 'Número de teléfono inválido']);
             exit();
         }
 
-        //Email
+        // Email
         if (!preg_match('/^[^\s@]+@[^\s@]+\.[^\s@]+$/', $touristEmail)) {
-            $response['status'] = 'error';
-            $response['message'] = 'Formato de correo electrónico inválido';
-            echo json_encode($response);
+            echo json_encode(['status' => 'error', 'message' => 'Formato de correo electrónico inválido']);
             exit();
         }
 
         // Validación de contraseña
         if ($touristPassword !== $confirmTouristPassword) {
-            $response['status'] = 'error';
-            $response['message'] = 'Las contraseñas no coinciden.';
-            echo json_encode($response);
+            echo json_encode(['status' => 'error', 'message' => 'Las contraseñas no coinciden']);
             exit();
         }
 
         // Encriptar la contraseña si son iguales
         $encryptedPassword = password_hash($touristPassword, PASSWORD_BCRYPT);
-        
+
         $user = new User(0, $touristNickName, $encryptedPassword, true, "Turista", $touristName, $touristSurnames, $touristLegalIdentification, $touristPhone, $touristEmail);
         $touristBusiness = new touristBusiness();
-        
+
         $result = $touristBusiness->insertTBUser($user);
 
-        /*try {
-            $result = $touristBusiness->insertTBUser($user);
-        } catch (Exception $e) {
-            $response['status'] = 'error';
-            $response['message'] = 'Excepción al insertar usuario: ' . $e->getMessage();
-            echo json_encode($response);
-            exit();
-        }*/
-
         if ($result['status'] === 'success') {
-            $response['status'] = 'success';
-            $response['message'] = 'Cuenta creada correctamente';
+            echo json_encode(['status' => 'success', 'message' => 'Cuenta creada correctamente']);
+            exit();
         } else {
-            $response['status'] = 'error';
-            $response['message'] = 'Fallo al agregar el Usuario: ' . $result['message'];
+            echo json_encode(['status' => 'error', 'message' => 'Fallo al agregar el Usuario: ' . $result['message']]);
+            exit();
         }
-    }  else {
-        $response['status'] = 'error';
-        $response['message'] = 'Datos incompletos o inválidos';
+    } else {
+        echo json_encode(['status' => 'error', 'message' => 'Datos incompletos o inválidos']);
+        exit();
     }
-
-    echo json_encode($response);
-    exit();  
 }

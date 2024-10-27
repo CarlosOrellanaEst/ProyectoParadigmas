@@ -9,13 +9,23 @@ class LoginBusiness {
     }
 
     public function authenticate($username, $password) {
-        // Hashear la contraseña con SHA-256
-        $hashedText = hash('sha256', $password);
-        // Obtener el usuario por nombre de usuario y contraseña hasheada
-        $user = $this->loginData->getUserByUsername($username, $hashedText);
+        // Obtener el usuario por nombre de usuario sin verificar la contraseña aún
+        $user = $this->loginData->getUserByUsername($username, $password);
     
-        // Retornar el objeto User si se encontró, o null si no
-        return $user !== null ? $user : null;
+      
+        if ($user === null) {
+            return null;
+        }
+    
+        // Verificar la contraseña usando password_verify
+        if (password_verify($password, $user->getPassword())) {
+            // Devolver el objeto User (Owner, User o Admin) si la contraseña es correcta
+            return $user;
+        } else {
+            
+            return null;
+        }
     }
+    
     
 }

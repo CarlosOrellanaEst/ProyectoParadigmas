@@ -8,15 +8,16 @@ class ownerData extends Data {
     public function insertTBOwner($owner) {
         $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
         if (!$conn) {
-            return ['status' => 'error', 'message' => 'Connection failed: ' . mysqli_connect_error()];
+            return ['status' => 'error', 'error_code' => 'db_connection_failed', 'message' => 'Connection failed: ' . mysqli_connect_error()];
         }
         $conn->set_charset('utf8');
     
+        // Obtener el último ID de tbowner
         $queryGetLastId = "SELECT MAX(tbownerid) AS idtbowner FROM tbowner";
         $idCont = mysqli_query($conn, $queryGetLastId);
         if ($idCont === false) {
             mysqli_close($conn);
-            return ['status' => 'error', 'message' => 'Failed to get last owner ID: ' . $conn->error];
+            return ['status' => 'error', 'error_code' => 'db_error', 'message' => 'Failed to get last owner ID: ' . $conn->error];
         }
         $nextIdOwner = 1;
         if ($row = mysqli_fetch_row($idCont)) {
@@ -24,11 +25,12 @@ class ownerData extends Data {
             $nextIdOwner = $lastId + 1;
         }
     
+        // Obtener el último ID de tbuser
         $queryGetLastUserId = "SELECT MAX(tbuserid) AS idtbuser FROM tbuser";
         $idCont = mysqli_query($conn, $queryGetLastUserId);
         if ($idCont === false) {
             mysqli_close($conn);
-            return ['status' => 'error', 'message' => 'Failed to get last user ID: ' . $conn->error];
+            return ['status' => 'error', 'error_code' => 'db_error', 'message' => 'Failed to get last user ID: ' . $conn->error];
         }
         $nextIdUser = 1;
         if ($row = mysqli_fetch_row($idCont)) {
@@ -52,51 +54,55 @@ class ownerData extends Data {
         // Comprobación de duplicados
         if ($this->getTBOwnerByEmail($email)) {
             mysqli_close($conn);
-            return ['status' => 'error', 'message' => 'Ya existe un propietario con este correo electrónico.'];
+            return ['status' => 'error', 'error_code' => 'email_already_registered', 'message' => 'Ya existe un propietario con este correo electrónico.'];
         }
-        if ($this->getTBOwnerByPhone($phone)) {
+        if (!empty($phone) && $this->getTBOwnerByPhone($phone)) {
             mysqli_close($conn);
-            return ['status' => 'error', 'message' => 'El número de teléfono ya está registrado.'];
+            return ['status' => 'error', 'error_code' => 'phone_already_registered', 'message' => 'El número de teléfono ya está registrado.'];
         }
         if ($this->getTBOwnerByLegalId($legalIdentification)) {
             mysqli_close($conn);
-            return ['status' => 'error', 'message' => 'La identificación legal ya está registrada.'];
+            return ['status' => 'error', 'error_code' => 'legal_id_already_registered', 'message' => 'La identificación legal ya está registrada.'];
         }
     
         // Inserción de usuario en tbuser
-        $queryInsertUsers = "INSERT INTO tbuser (tbuserid, tbusername, tbusersurnames, tbuserlegalidentification, tbuserphone, tbuseremail, tbusernickname, tbuserpassword, tbrollid, tbuserstatus) VALUES (?,?,?,?,?,?,?,?,?,?)";	
+        $queryInsertUsers = "INSERT INTO tbuser (tbuserid, tbusername, tbusersurnames, tbuserlegalidentification, tbuserphone, tbuseremail, tbusernickname, tbuserpassword, tbrollid, tbuserstatus) VALUES (?,?,?,?,?,?,?,?,?,?)";    
         $stmt = $conn->prepare($queryInsertUsers);
         if ($stmt === false) {
             mysqli_close($conn);
-            return ['status' => 'error', 'message' => 'Failed to prepare user insert statement: ' . $conn->error];
+            return ['status' => 'error', 'error_code' => 'db_error', 'message' => 'Failed to prepare user insert statement: ' . $conn->error];
         }
         $stmt->bind_param("isssssssii", $nextIdUser, $name, $surnames, $legalIdentification, $phone, $email, $nickname, $password, $tbrollid, $tbuserstatus);
         $result = $stmt->execute();
-        $stmt->close();
-    
         if (!$result) {
+            $stmt->close();
             mysqli_close($conn);
-            return ['status' => 'error', 'message' => 'Failed to insert user: ' . $conn->error];
+            return ['status' => 'error', 'error_code' => 'db_error', 'message' => 'Failed to insert user: ' . $stmt->error];
         }
+        $stmt->close();
     
         // Inserción del propietario en tbowner
         $queryInsert = "INSERT INTO tbowner (tbownerid, tbuserid, tbownerdirection, tbownerphotourl, tbownerstatus) VALUES (?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($queryInsert);
         if ($stmt === false) {
             mysqli_close($conn);
-            return ['status' => 'error', 'message' => 'Failed to prepare owner insert statement: ' . $conn->error];
+            return ['status' => 'error', 'error_code' => 'db_error', 'message' => 'Failed to prepare owner insert statement: ' . $conn->error];
         }
         $stmt->bind_param("iissi", $nextIdOwner, $nextIdUser, $direction, $photoUrl, $tbuserstatus);
         $result = $stmt->execute();
+        if (!$result) {
+            $stmt->close();
+            mysqli_close($conn);
+            return ['status' => 'error', 'error_code' => 'db_error', 'message' => 'Failed to insert owner: ' . $stmt->error];
+        }
         $stmt->close();
         mysqli_close($conn);
     
-        if ($result) {
-            return ['status' => 'success', 'message' => 'Propietario añadido correctamente.'];
-        } else {
-            return ['status' => 'error', 'message' => 'Failed to insert owner: ' . $conn->error];
-        }
+        return ['status' => 'success', 'message' => 'Propietario añadido correctamente.'];
     }
+    
+    
+    
     
     
     public function getAllTBOwner() {

@@ -19,9 +19,15 @@ if (isset($_POST['create'])) {
         $direction = isset($_POST['ownerDirection']) ? trim($_POST['ownerDirection']) : '';
         $idType = trim($_POST['idType']);
         $password = trim($_POST['password']);
+        $confirmPassword = trim($_POST['confirmPassword']);
 
-        $hashedPassword = hash('sha256', $password);
-
+        if($password !== $confirmPassword) {
+            echo json_encode(['status' => 'error', 'error_code' => 'password_mismatch', 'message' => 'Las contraseñas no coinciden']);
+            exit();
+        }
+     
+        $encryptedPassword = password_hash($password, PASSWORD_BCRYPT);
+        
         $fileUploaded = isset($_FILES['imagen']) && $_FILES['imagen']['error'] == UPLOAD_ERR_OK;
         $targetFilePath = '';
 
@@ -76,6 +82,9 @@ if (isset($_POST['create'])) {
             exit();
         }
 
+       
+
+
         if (!preg_match('/^[^\s@]+@[^\s@]+\.[^\s@]+$/', $email)) {
             echo json_encode(['status' => 'error', 'error_code' => 'invalid_email', 'message' => 'Formato de correo electrónico inválido']);
             exit();
@@ -89,7 +98,7 @@ if (isset($_POST['create'])) {
                 1,
                 0,
                 $name,
-                $hashedPassword,
+                $encryptedPassword,
                 1,
                 "Propietario",
                 $name,
@@ -101,12 +110,11 @@ if (isset($_POST['create'])) {
 
             $ownerBusiness = new ownerBusiness();
             $result = $ownerBusiness->insertTBOwner($owner);
-
             if ($result['status'] === 'success') {
                 echo json_encode(['status' => 'success', 'message' => 'Propietario añadido correctamente.']);
                 exit();
             } else {
-                echo json_encode(['status' => 'error', 'error_code' => 'db_error', 'message' => 'Fallo al agregar el propietario: ' . $result['message']]);
+                echo json_encode(['status' => 'error', 'message' => 'Fallo al agregar el Usuario: ' . $result['message']]);
                 exit();
             }
         }
