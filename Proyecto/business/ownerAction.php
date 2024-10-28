@@ -23,9 +23,6 @@ if (isset($_POST['create'])) {
         $password = trim($_POST['password']);
         $confirmPassword = isset($_POST['confirmPassword']) ? trim($_POST['confirmPassword']) : '';
 
-        error_log("Password: " . $_POST['password']);
-        error_log("Confirm Password: " . $_POST['confirmPassword']);
-
         if($password !== $confirmPassword) {
             echo json_encode(['status' => 'error', 'error_code' => 'password_mismatch', 'message' => 'Las contraseñas no coinciden']);
             exit();
@@ -63,7 +60,7 @@ if (isset($_POST['create'])) {
                 exit();
             }
         } elseif ($idType == 'foreign') {
-            // Identificación extranjera: permite entre 6 y 12 caracteres, alfanuméricos
+           
             $isValidId = preg_match('/^[a-zA-Z0-9]{6,12}$/', $legalIdentification);
             if (!$isValidId) {
                 echo json_encode(['status' => 'error', 'error_code' => 'invalid_foreign_id', 'message' => 'Identificación extranjera inválida. Debe contener entre 6 y 12 caracteres alfanuméricos.']);
@@ -117,7 +114,7 @@ if (isset($_POST['create'])) {
             if ($result['status'] === 'success') {
                 echo json_encode(['status' => 'success', 'message' => 'Propietario añadido correctamente.']);
                 exit();
-            } else {
+            } else if($result['status'] === 'error'){
                 echo json_encode(['status' => 'error', 'message' => 'Fallo al agregar el Usuario: ' . $result['message']]);
                 exit();
             }
@@ -144,7 +141,7 @@ if (isset($_POST['update'])) {
         $nickName = $_POST['ownerNickName'] ?? '';
         $legalIdentification = $_POST['ownerLegalIdentification'];
         $phone = $_POST['ownerPhone'] ?? '';
-        $email = $_POST['ownerEmail'];
+        $email = strtolower(trim($_POST['ownerEmail']));
         $direction = $_POST['ownerDirection'] ?? '';
         $password = $_POST['password'] ?? '';
         $idOwner = $_POST['ownerID'];
@@ -178,23 +175,23 @@ if (isset($_POST['update'])) {
             $photoFileName = $existingPhotoFileName;
         }
 
-        // Validación de identificación
         $isValidId = false;
         if ($idType == 'CR') {
-            $isValidId = preg_match('/^\d{9}$/', $legalIdentification);
+            $isValidId = preg_match('/^\d{9}$/', $legalIdentification); 
             if (!$isValidId) {
-                echo json_encode(['status' => 'error', 'message' => 'Identificación de Costa Rica inválida.']);
+                echo json_encode(['status' => 'error', 'error_code' => 'invalid_costa_rica_id', 'message' => 'Identificación de Costa Rica inválida. Debe contener exactamente 9 dígitos.']);
                 exit();
             }
         } elseif ($idType == 'foreign') {
-            $isValidId = preg_match('/^\d+$/', $legalIdentification);
+    
+            $isValidId = preg_match('/^[a-zA-Z0-9]{6,12}$/', $legalIdentification);
             if (!$isValidId) {
-                echo json_encode(['status' => 'error', 'message' => 'Identificación extranjera inválida.']);
+                echo json_encode(['status' => 'error', 'error_code' => 'invalid_foreign_id', 'message' => 'Identificación extranjera inválida. Debe contener entre 6 y 12 caracteres alfanuméricos.']);
                 exit();
             }
         }
 
-        // Validación de campos de texto
+ 
         if (!empty($name) && !preg_match('/^[a-zA-Z\s]+$/', $name)) {
             echo json_encode(['status' => 'error', 'message' => 'El nombre contiene caracteres inválidos.']);
             exit();
@@ -212,10 +209,10 @@ if (isset($_POST['update'])) {
             exit();
         }
 
-        // Encriptar la nueva contraseña, si se proporciona
+       
         $encryptedPassword = !empty($password) ? password_hash($password, PASSWORD_BCRYPT) : $currentOwner->getPassword();
 
-        // Actualizar propietario solo si los campos son válidos
+       
         if ($isValidId && !empty($email)) {
             $owner = new Owner(
                 $idOwner,
@@ -257,7 +254,7 @@ if (isset($_POST['update'])) {
     }
 }
 
-// ownerAction.php
+
 if (isset($_POST['delete'])) {
     if (isset($_POST['ownerID']) && isset($_POST['userID'])) {
         $idOwner = $_POST['ownerID'];

@@ -125,7 +125,7 @@ class touristCompanyTypeData extends Data {
         $id = (int)$TouristCompanyType->getId();
         $newName = $TouristCompanyType->getName();
         $newDescription = $TouristCompanyType->getDescription();
-        
+    
         $queryCheckAccount = "SELECT tbtouristcompanytypeid FROM tbtouristcompanytype 
                               WHERE tbtouristcompanytypename = ? AND tbtouristcompanytypeid != ? AND tbtouristcompanytypeisactive = 1";
         $stmtCheckAccount = $conn->prepare($queryCheckAccount);
@@ -134,24 +134,34 @@ class touristCompanyTypeData extends Data {
         $stmtCheckAccount->bind_result($existingAccountId);
         $stmtCheckAccount->fetch();
         $stmtCheckAccount->close();
-
+    
         if ($existingAccountId) {
             mysqli_close($conn);
             return null;
         }
-        
+    
+        // Definir consulta SQL, ajustando para que tbtouristcompanytypedescription acepte NULL si newDescription es null
         $query = "UPDATE tbtouristcompanytype 
                   SET tbtouristcompanytypename = ?, 
-                      tbtouristcompanytypedescription = " . (!empty($newDescription) ? "'$newDescription'" : "NULL") . "
+                      tbtouristcompanytypedescription = ?
                   WHERE tbtouristcompanytypeid = ?";
+        
         $stmt = $conn->prepare($query);
-        $stmt->bind_param("si", $newName, $id);
+        
+        // Usa bind_param con el valor correcto, asignando `null` si $newDescription es null
+        if ($newDescription === null) {
+            $stmt->bind_param("sii", $newName, $newDescription, $id); // Asigna NULL al segundo parámetro
+        } else {
+            $stmt->bind_param("ssi", $newName, $newDescription, $id);
+        }
+    
         $result = $stmt->execute();
         $stmt->close();
         mysqli_close($conn);
     
         return $result;
     }
+    
 
     public function getTbTouristCompanyTypeByName($companyTypeName) {
         $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);

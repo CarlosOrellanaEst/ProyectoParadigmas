@@ -52,7 +52,7 @@ class ownerData extends Data {
         $tbuserstatus = true;
     
         // Comprobación de duplicados
-        if ($this->getTBOwnerByEmail($email)) {
+        if ($this->getTBOwnerByEmail($email)==true) {
             mysqli_close($conn);
             return ['status' => 'error', 'error_code' => 'email_already_registered', 'message' => 'Ya existe un propietario con este correo electrónico.'];
         }
@@ -260,16 +260,17 @@ class ownerData extends Data {
         }
         $conn->set_charset('utf8');
     
-        $query = "SELECT * FROM tbuser WHERE tbuseremail= '$ownerEmail'    ";
-        $result = mysqli_query($conn, $query);
         
-        $row = mysqli_fetch_assoc($result);
-
-        $row != null && count($row) > 0 ? $ownerReturn = true : $ownerReturn = false;
+        $query = "SELECT * FROM tbuser WHERE tbuseremail = '$ownerEmail' AND tbuserstatus = 1";
+        $result = mysqli_query($conn, $query);
+    
+ 
+        $ownerReturn = ($result && mysqli_num_rows($result) > 0);
     
         mysqli_close($conn);
         return $ownerReturn;
-    } 
+    }
+    
 
     public function getTBOwnerByPhone($ownerPhone) {
         $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);

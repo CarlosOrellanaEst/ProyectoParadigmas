@@ -121,6 +121,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             
                         } else {
                             handleErrorResponse(response);
+                            location.reload(); 
                         }
                     } catch (e) {
                         console.error("Error al procesar la respuesta JSON:", e);
