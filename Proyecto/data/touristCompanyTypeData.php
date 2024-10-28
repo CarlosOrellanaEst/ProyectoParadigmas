@@ -148,9 +148,9 @@ class touristCompanyTypeData extends Data {
         
         $stmt = $conn->prepare($query);
         
-        // Usa bind_param con el valor correcto, asignando `null` si $newDescription es null
+   
         if ($newDescription === null) {
-            $stmt->bind_param("sii", $newName, $newDescription, $id); // Asigna NULL al segundo parámetro
+            $stmt->bind_param("sii", $newName, $newDescription, $id); 
         } else {
             $stmt->bind_param("ssi", $newName, $newDescription, $id);
         }
