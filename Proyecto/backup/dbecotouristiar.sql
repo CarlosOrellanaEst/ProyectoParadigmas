@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost
--- Tiempo de generación: 29-10-2024 a las 01:50:37
+-- Tiempo de generación: 29-10-2024 a las 15:39:17
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -53,13 +53,6 @@ INSERT INTO `tbactivity` (`tbactivityid`, `tbactivityname`, `tbactivityserviceco
 (6, 'Prueba', 3, 'a', 'a', 'Screenshot from 2024-09-30 23-29-50.png,Screenshot from 2024-09-30 23-30-22.png,Screenshot from 2024-10-01 00-01-10.png,Screenshot from 2024-10-02 15-23-15.png', 1, '2024-10-17 11:54:00', 10.39097779, -83.74149866);
 
 -- --------------------------------------------------------
-
-CREATE TABLE tbtouristcompanytouristcompanytype (
-  tbtouristcompanytouristcompanytypeid int(11) NOT NULL,
-  tbtouristcompany int(11) NOT NULL,
-  tbtouristcompanytype int(11) NOT NULL,
-  tbtouristcompanytouristcompanytypestatus int(11) NOT NULL DEFAULT 1
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Estructura de tabla para la tabla `tbbooking`
@@ -121,7 +114,7 @@ CREATE TABLE `tbowner` (
 --
 
 INSERT INTO `tbowner` (`tbownerid`, `tbuserid`, `tbownerdirection`, `tbownerphotourl`, `tbownerstatus`) VALUES
-(1, 2, 'Calle Falsa 123, Ciudad', '', 1),
+(1, 2, 'Calle Falsa 123, Ciudad', '', 0),
 (2, 4, '', '', 1),
 (3, 5, '', '', 1),
 (4, 6, '', '', 1),
@@ -143,7 +136,9 @@ INSERT INTO `tbowner` (`tbownerid`, `tbuserid`, `tbownerdirection`, `tbownerphot
 (20, 23, '', '', 0),
 (21, 24, '', '', 0),
 (22, 25, '', '', 0),
-(23, 26, '', '', 0);
+(23, 26, '', '', 0),
+(24, 27, '', '../images/Screenshot from 2024-09-30 23-30-22.png', 0),
+(25, 28, '', '../images/Screenshot from 2024-10-02 15-26-13.png', 1);
 
 -- --------------------------------------------------------
 
@@ -317,6 +312,19 @@ INSERT INTO `tbtouristcompany` (`tbtouristcompanyid`, `tbtouristcompanylegalname
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `tbtouristcompanytouristcompanytype`
+--
+
+CREATE TABLE `tbtouristcompanytouristcompanytype` (
+  `tbtouristcompanytouristcompanytypeid` int(11) NOT NULL,
+  `tbtouristcompany` int(11) NOT NULL,
+  `tbtouristcompanytype` int(11) NOT NULL,
+  `tbtouristcompanytouristcompanytypestatus` int(11) NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `tbtouristcompanytype`
 --
 
@@ -365,8 +373,7 @@ CREATE TABLE `tbuser` (
 
 INSERT INTO `tbuser` (`tbuserid`, `tbusername`, `tbusersurnames`, `tbuserlegalidentification`, `tbuserphone`, `tbuseremail`, `tbusernickname`, `tbuserpassword`, `tbrollid`, `tbuserstatus`) VALUES
 (1, 'admin', 'admin', '123456789', '84004800', 'admin@gmail.com', 'admin', '$2b$12$q8mTRMOR4OoY1ZXfk0p6Pe37jZR/dXlhn1302U5BtR.XN2ebXHJg6', 1, 1),
-(2, 'propietario', 'propietario', '402590268', '89571689', 'propietario@hotmail.com', 'propietario', '21be11e996807bcef07a0f66fc1ec17402e138fdda66913814b7c02b32fb24ad', 3, 1),
-(3, 'turista', 'turista', '402590269', '86942578', 'turista@gmail.com', 'turista', 'd5672f037da8c5c5c277dca73331af8116f8e6fc5cdc0b4beb9268dd410c78c1', 2, 1),
+(2, 'propietario', 'propietario', '402590268', '89571689', 'propietario@hotmail.com', 'propietario', '21be11e996807bcef07a0f66fc1ec17402e138fdda66913814b7c02b32fb24ad', 3, 0),
 (4, 'Daisy', 'Cedenio', '7638223', '87875628', 'prueba@gmail.com', 'Daisy', 'Daisy', 3, 1),
 (5, 'Carlos', 'orellana', '789293819832', '87867234', 'carlos@gmail.com', '', '', 3, 1),
 (6, 'Daisy', 'Cedenoio', '72837823782', '87323223', 'daisy@gmail.com', 'Daisy', 'Daisy', 3, 1),
@@ -374,7 +381,6 @@ INSERT INTO `tbuser` (`tbuserid`, `tbusername`, `tbusersurnames`, `tbuserlegalid
 (8, 'prueba', '', '389847634', '', 'prueb@gmail.com', 'prueba', 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3', 3, 1),
 (9, 'PruebaDef', 'Hola', 'DR2364', '78675688', 'AQUI@GMAIL.COM', 'PruebaDef', 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3', 3, 0),
 (10, 'Pedro', 'Perez', 'PR8734675823', '87888888', 'pedro@gmail.com', 'Pedro', 'a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3', 3, 0),
-(11, 'Gliturista', '', '789098765', '', 'gliturista@gmail.com', 'Gli2003', '$2y$10$4ZL3gFZPe36.2Rpatp2oM.zWz7QWQo7gJ8I8knmV2AetmDe22Uyoi', 2, 1),
 (12, 'GliOwner', '', '999999999', '11111111', 'gliowner@gmail.com', 'GliOwner', '$2y$10$rO717fAbFe53DEtTV7LXAeu1XpY8arsdiXxN6t92BcSkBsMNGN3py', 3, 0),
 (13, 'pfaf', '', '678545444', '', 'ooooo@gmail.com', 'pfaf', '$2y$10$bhqAhzGoOI9gx3BZmoMes.pXOWZ26Of4p2RePqFES28o8UacA11UW', 3, 0),
 (14, 'GliOwner', '', '938572000', '', 'egfnj@gmail.com', 'GliOwner', '$2y$10$CQ60XtsXG2v7xbX3C8a5He/Sfkspu/wT24t887ra8uukPejOgSCQ6', 3, 0),
@@ -389,7 +395,10 @@ INSERT INTO `tbuser` (`tbuserid`, `tbusername`, `tbusersurnames`, `tbuserlegalid
 (23, '', '', '293837773', '', 'roro@gmail.com', 'awdad', '$2y$10$krON28HSmpCl0MJpT.nBpuhnFkG8MdsbwWYE.J/256QfIapNshmEy', 3, 0),
 (24, '', '', '292839484', '', 'fawfaf@gmail.com', 'fafawfawf', '$2y$10$LHk5fgjE0hVShDXmjyBVF.GAxgd/9cmjN70.tXu0MUblN/DZT5Diy', 3, 0),
 (25, '', '', '999111232', '', 'yooo@gmail.com', 'wsegbwbwbs', '$2y$10$NhZakzIxkug/kfmuOfynFeB9ECc.MVmWHcIfi39YNUfImat9Pj3ou', 3, 0),
-(26, 'awfawfahgag', '', '999882232', '', 'mlfa@gmail.com', 'awfawf', '$2y$10$RXNHTNealTvjq./4xWJMuOkJxtQAnqEZnPOpf4AJ0jGebVBMddqk.', 3, 0);
+(26, 'awfawfahgag', '', '999882232', '', 'mlfa@gmail.com', 'awfawf', '$2y$10$RXNHTNealTvjq./4xWJMuOkJxtQAnqEZnPOpf4AJ0jGebVBMddqk.', 3, 0),
+(27, 'propitarioNombre', '', '999887212', '', 'propietario@gmail.com', 'propietario', '$2y$10$wxFxteRT.h34PXPZ6x.K/eef8w/mVY1Oq7c2B5PuL4tDrDPVt/9iC', 3, 0),
+(28, 'propietario', '', '989232123', '', 'propietario@gmail.com', 'propietario', '$2y$10$xKBqiely0ZiGEMw73DC8GeUWrwsNZG84p2b0pp3tFpY6D61ZVyIZG', 3, 1),
+(29, 'turista', 'turista apellido', 'D668273', '', 'turista@gmail.com', 'turista', '$2y$10$zL8PWzGm43Tda51G8Et4U.8COZTEiuUPkjwSIzeD/MDZmdahp6fyi', 2, 1);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
