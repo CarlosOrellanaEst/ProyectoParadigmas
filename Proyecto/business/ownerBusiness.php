@@ -1,5 +1,4 @@
 <?php
-
 include_once '../data/ownerData.php';
 
 class OwnerBusiness {
@@ -11,6 +10,10 @@ class OwnerBusiness {
     }
     public function insertTBOwner($owner) {
         return $this->ownerData->insertTBOwner($owner);
+    }
+
+    public function getTBOwnerByPhone($phone) {
+        return $this->ownerData->getTBOwnerByPhone($phone);
     }
     public function getAllTBOwner() {
         return $this->ownerData->getAllTBOwner();

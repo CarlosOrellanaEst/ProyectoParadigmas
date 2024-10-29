@@ -12,7 +12,21 @@ $response = array();
 if (isset($_POST['create'])) {
     
     $photoUrls = ''; // Inicializamos la variable de URLs de las imágenes como una cadena vacía
-    
+    $activityDate = $_POST['activityDate'];
+    $fechaActual = date('Y-m-d');
+
+    if (empty($activityDate)) {
+        $response['status'] = 'error';
+        $response['message'] = 'La fecha de la actividad no puede estar vacía.';
+        echo json_encode($response);
+        exit();
+
+    } elseif ($activityDate < $fechaActual) {
+        $response['status'] = 'error';
+        $response['message'] = 'No se puede registrar una actividad con una fecha anterior a la actual.';
+        echo json_encode($response);
+        exit();
+    }
     // Verificamos si se subieron imágenes
     if (isset($_FILES['imagenes']) && !empty($_FILES['imagenes']['name'][0])) {
         $uploadDir = '../images/activity/';
@@ -59,7 +73,7 @@ if (isset($_POST['create'])) {
 
     $attributeTBActivityArray = isset($_POST['attributeTBActivityArray']) ? $_POST['attributeTBActivityArray'] : '';
     $dataAttributeTBActivityArray = isset($_POST['dataAttributeTBActivityArray']) ? $_POST['dataAttributeTBActivityArray'] : '';
-    $activityDate = isset($_POST['activityDate']) ? trim($_POST['activityDate']) : date('Y-m-d H:i:s');  // Fecha actual si no se especifica
+    //$activityDate = isset($_POST['activityDate']) ? trim($_POST['activityDate']) : date('Y-m-d H:i:s');  // Fecha actual si no se especifica
 
     // Nuevas implementaciones: Captura de latitud y longitud
     $latitude = isset($_POST['latitude']) ? floatval($_POST['latitude']) : null;
@@ -115,13 +129,29 @@ if (isset($_POST['update'])) {
     $dataAttributeTBActivityArray = isset($_POST['dataAttributeTBActivityArrayTable']) ? $_POST['dataAttributeTBActivityArrayTable'] : [];
     $statusTBActivity = isset($_POST['statusTBActivity']) ? 1 : 0;
     $serviceId = $_POST['serviceId'];
-    $activityDate = isset($_POST['activityDate']) ? trim($_POST['activityDate']) : date('Y-m-d H:i:s');
+    //$activityDate = isset($_POST['activityDate']) ? trim($_POST['activityDate']) : date('Y-m-d H:i:s');
     $latitude = isset($_POST['latitude']) ? floatval($_POST['latitude']) : null;
     $longitude = isset($_POST['longitude']) ? floatval($_POST['longitude']) : null;
 
     // Validar que latitud y longitud estén presentes
     if (empty($latitude) || empty($longitude)) {
         echo json_encode(['status' => 'error', 'message' => 'Las coordenadas de latitud y longitud son requeridas.']);
+        exit();
+    }
+
+    $activityDate = $_POST['activityDate'];
+    $fechaActual = date('Y-m-d');
+
+    if (empty($activityDate)) {
+        $response['status'] = 'error';
+        $response['message'] = 'La fecha de la actividad no puede estar vacía.';
+        echo json_encode($response);
+        exit();
+
+    } elseif ($activityDate < $fechaActual) {
+        $response['status'] = 'error';
+        $response['message'] = 'No se puede registrar una actividad con una fecha anterior a la actual.';
+        echo json_encode($response);
         exit();
     }
 

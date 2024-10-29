@@ -1,23 +1,23 @@
 <?php
-    require '../domain/Owner.php';
-    require '../business/ownerBusiness.php';
+require '../domain/Owner.php';
+require '../business/ownerBusiness.php';
 
-    session_start();
-    $userLogged = $_SESSION['user'];
-    $ownerBusiness = new ownerBusiness();
+session_start();
+$userLogged = $_SESSION['user'];
+$ownerBusiness = new ownerBusiness();
 
-    // Definimos los propietarios en función del tipo de usuario
-    if ($userLogged->getUserType() == "Administrador" || $userLogged->getUserType() == "Turista") {
-        $owners = $ownerBusiness->getAllTBOwners();
-        if (!$owners || empty($owners)) {
-            echo "<script>alert('No se encontraron propietarios.');</script>";
-        }
-    } else if ($userLogged->getUserType() == "Propietario") {
-        $owners = [$userLogged]; 
+// Definimos los propietarios en función del tipo de usuario
+if ($userLogged->getUserType() == "Administrador" || $userLogged->getUserType() == "Turista") {
+    $owners = $ownerBusiness->getAllTBOwners();
+    if (!$owners || empty($owners)) {
+        echo "<script>alert('No se encontraron propietarios.');</script>";
     }
+} else if ($userLogged->getUserType() == "Propietario") {
+    $owners = [$userLogged];
+}
 
-    // Guardamos la lista de propietarios en la sesión para usarla abajo
-    $_SESSION['owners'] = $owners;
+// Guardamos la lista de propietarios en la sesión para usarla abajo
+$_SESSION['owners'] = $owners;
 ?>
 
 <!DOCTYPE html>
@@ -33,37 +33,37 @@
         }
     </style>
     <?php
-        include_once '../business/touristCompanyBusiness.php';
-        include_once '../business/touristCompanyTypeBusiness.php';
-        include_once '../business/ownerBusiness.php';
+    include_once '../business/touristCompanyBusiness.php';
+    include_once '../business/touristCompanyTypeBusiness.php';
+    include_once '../business/ownerBusiness.php';
 
-        $touristCompanyTypeBusiness = new TouristCompanyTypeBusiness();
-        $touristCompanyTypes = $touristCompanyTypeBusiness->getAll();
-        $imageBasePath = '../images/';
+    $touristCompanyTypeBusiness = new TouristCompanyTypeBusiness();
+    $touristCompanyTypes = $touristCompanyTypeBusiness->getAll();
+    $imageBasePath = '../images/';
     ?>
 
 </head>
 
 <body>
     <?php
-        if ($userLogged->getUserType() == "Propietario") {
-            echo '<a href="ownerViewSession.php">← Volver al inicio</a>';
-        } else if ($userLogged->getUserType() == "Administrador") {
-            echo '<a href="adminView.php">← Volver al inicio</a>';
-        } else if ($userLogged->getUserType() == "Turista") {
-            echo '<a href="touristView.php">← Volver al inicio</a>';
-        }
+    if ($userLogged->getUserType() == "Propietario") {
+        echo '<a href="ownerViewSession.php">← Volver al inicio</a>';
+    } else if ($userLogged->getUserType() == "Administrador") {
+        echo '<a href="adminView.php">← Volver al inicio</a>';
+    } else if ($userLogged->getUserType() == "Turista") {
+        echo '<a href="touristView.php">← Volver al inicio</a>';
+    }
     ?>
     <header>
         <h1>CRUD Empresa turística</h1>
         <p><span class="required">*</span> Campos requeridos</p>
     </header>
-    
+
 
     <section id="create">
-        <?php 
-            if ($userLogged->getUserType() == "Administrador" || $userLogged->getUserType() == "Propietario") {
-        ?>
+        <?php
+        if ($userLogged->getUserType() == "Administrador" || $userLogged->getUserType() == "Propietario") {
+            ?>
             <form id="formCreate" method="post" action="../business/touristCompanyAction.php" enctype="multipart/form-data">
                 <div class="form-group">
                     <label for="legalName">Nombre legal:</label>
@@ -76,7 +76,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="ownerId">Dueño: <span id="ownerError" style="color:red; display:none;">*campo obligatorio</span></label>
+                    <label for="ownerId">Dueño: <span id="ownerError" class="required">*</label>
                     <select name="ownerId" id="ownerId" required>
                         <option value="0">Ninguno</option>
                         <?php foreach ($owners as $owner): ?>
@@ -88,7 +88,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="companyType">Tipo de empresa:</label>
+                    <label for="companyType">Tipo de empresa: <span class="required">*</label>
                     <select name="companyType" id="companyType">
                         <option value="0">Ninguno</option>
                         <?php foreach ($touristCompanyTypes as $touristCompanyType): ?>
@@ -96,14 +96,21 @@
                                 <?php echo htmlspecialchars($touristCompanyType->getName()); ?>
                             </option>
                         <?php endforeach; ?>
+                        <option value="custom">Otro (Especifique)</option>
                     </select>
+                    <button type="button" id="addBtn">+</button>
+                    <div id="selectedCompanyTypesList"></div>
                     <!-- Campo oculto para el tipo de empresa personalizado -->
-                    <label for="customCompanyTypeName" style="display: none; margin-top: 10px;"  id="customCompanyTypeName">Nombre: <span id="customCompanyTypeError" style="color:red; display:none;">*Campo obligatorio</span></label>
-                    <input type="text" name="customCompanyType" id="customCompanyType" placeholder="Especifique otro tipo de empresa" style="display: none; margin-top: 10px;" />
+                    <label for="customCompanyType" style="display: none; margin-top: 10px;" id="customCompanyTypeName">
+                        Nombre: <span id="customCompanyTypeError" style="color:red; display:none;">*Campo obligatorio</span>
+                    </label>
+                    <input type="text" name="customCompanyType" id="customCompanyType"
+                        placeholder="Especifique otro tipo de empresa" style="display: none; margin-top: 10px;" />
                 </div>
 
                 <div class="form-group">
-                    <label for="imagenes">Imágenes: <span id="imagenesError" style="color:red; display:none;">*campo obligatorio</span></label>
+                    <label for="imagenes">Imágenes: <span id="imagenesError" style="color:red; display:none;">*campo
+                            obligatorio</span></label>
                     <input type="file" name="imagenes[]" id="imagenes" multiple />
                 </div>
 
@@ -112,9 +119,9 @@
                 <div class="form-group">
                     <input type="submit" value="Crear" name="create" id="create" />
                 </div>
-        </form>
-        <?php 
-            } 
+            </form>
+            <?php
+        }
         ?>
 
     </section>
@@ -122,11 +129,6 @@
     <br>
 
     <section>
-        <form id="formSearchOne" method="get">
-            <label for="searchOne">Buscar por nombre: </label>
-            <input type="text" placeholder="Nombre" name="searchOne" id="searchOne">
-            <input type="submit" value="Buscar" />
-        </form>
         <br>
         <div id="message" hidden></div>
         <table>
@@ -148,22 +150,12 @@
 
                 if ($userLogged->getUserType() == "Propietario") {
                     $all = $touristCompanyBusiness->getAllByOwnerID($userLogged->getIdTBOwner());
-                } else if ($userLogged->getUserType() == "Administrador" || $userLogged->getUserType() == "Turista")  {
+                } else if ($userLogged->getUserType() == "Administrador" || $userLogged->getUserType() == "Turista") {
                     $all = $touristCompanyBusiness->getAll();
                 }
 
                 $alltouristCompanyTypes = $touristCompanyTypeBusiness->getAll();
                 $touristCompanyFiltered = [];
-
-                // if (isset($_GET['searchOne'])) {
-                //     $searchTerm = $_GET['searchOne'];
-                //     $touristCompanyFiltered = array_filter($all, function ($touristCompany) use ($searchTerm) {
-                //         return stripos($touristCompany->getTbtouristcompanylegalname(), $searchTerm) !== false;
-                //     });
-                // }
-                // if (count($touristCompanyFiltered) > 0) {
-                //     $all = $touristCompanyFiltered;
-                // }
 
                 if (count($all) > 0) {
                     foreach ($all as $current) {
@@ -198,8 +190,8 @@
                         echo '<td>';
                         echo '<input type="hidden" name="id" value="' . htmlspecialchars($current->getTbtouristcompanyid()) . '">';
                         echo '<input type="hidden" name="status" value="1">';
-                        
-                        $images = $current->getTbtouristcompanyurl(); 
+
+                        $images = $current->getTbtouristcompanyurl();
                         echo '<td>';
                         foreach ($images as $index => $image) {
                             if (!empty($image)) {
@@ -218,20 +210,20 @@
                         
                         echo '</td>';
                         */
-                        
+
                         echo '<form method="post" action="../business/touristCompanyAction.php">';
                         echo '<input type="hidden" name="photoID" value="' . $current->getTbtouristcompanyid() . '">';
 
                         echo '<td>';
                         echo '<input type="hidden" name="id" value="' . htmlspecialchars($current->getTbtouristcompanyid()) . '">';
-                        if ($userLogged->getUserType() == "Administrador" || $userLogged->getUserType() == "Propietario") {                             
+                        if ($userLogged->getUserType() == "Administrador" || $userLogged->getUserType() == "Propietario") {
                             // lo que esta comentado justo 8 lineas arriba (le quite ese <td> extra. es innecesario.)
                             echo '<select name="imageIndex">';
                             foreach ($images as $index => $image) {
                                 echo '<option value="' . $index . '">Imagen ' . ($index + 1) . '</option>';
                             }
-                            echo '</select>';                            
-                            
+                            echo '</select>';
+
                             echo '<input type="submit" value="Actualizar" name="update" />';
                             echo '<input type="submit" value="Eliminar" name="delete"/>';
                             echo '<input type="submit" value="Eliminar Imagen" name="deleteImage">';
@@ -249,24 +241,6 @@
         </table>
 
     </section>
-    <script>
-        document.getElementById('companyType').addEventListener('change', function () {
-            var customInput = document.getElementById('customCompanyType');
-            var customLabel = document.getElementById('customCompanyTypeName');
-            if (this.value === '0') {
-                customInput.style.display = 'block'; 
-                customLabel.style.display = 'block'; 
-            } else {
-                customInput.style.display = 'none';
-                customLabel.style.display = 'block'; 
-            }
-        });
-    </script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            showAlertBasedOnURL();
-        });
-    </script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="../resources/touristCompanyView.js"></script>
 </body>

@@ -23,6 +23,10 @@
     <form id="ownerForm" method="post" enctype="multipart/form-data" action="./business/ownerAction.php">
     <label for="name">Nombre <span class="required">*</span> </label>
     <input placeholder="nombre" type="text" name="ownerName" id="name" autocomplete="given-name"/><br><br>
+    
+    <label for="nickName">Nombre de Usuario <span class="required">*</span></label>
+    <input placeholder="nombre de usuario" type="text" name="ownerNickName" id="nickName" autocomplete="username"/><br><br>
+
 
     <label for="surnames">Apellidos</label>
     <input placeholder="apellidos" type="text" name="ownerSurnames" id="surnames" autocomplete="family-name"/><br><br>
