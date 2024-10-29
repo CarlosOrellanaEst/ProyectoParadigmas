@@ -10,8 +10,7 @@
     <ol>
         <li><a href="touristCompanyView.php">Ver Empresas turísticas</a></li>
         <li><a href="activityView.php">Ver Actividades</a></li>
-<!--         <li><a href="./view/pruebas.php">Pruebas</a></li>
-        <li><a href="./view/serviceView.php">CRUD Servicios</a></li> -->
+        <li><a href="calendarView.php">Calendario</a></li>
     </ol>
     <?php 
        echo ' <a href="../index.php">Cerrar Sesión</a> ';

@@ -5,7 +5,7 @@ include_once '../domain/Booking.php';
 
 class bookingData extends Data {
 
-    public function insertTbBooking($booking) {
+    public function insertTbBooking($booking): bool {
         // Conexión a la base de datos
         $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
         if (!$conn) {
@@ -24,8 +24,8 @@ class bookingData extends Data {
         }
     
         // Inserción en la tabla tbbooking
-        $queryInsert = "INSERT INTO tbbooking (tbbookingid, tbactivityid, tbuserid, tbbookingnumberpersons, tbbookingstatus) 
-                        VALUES (?, ?, ?, ?, ?)";
+        $queryInsert = "INSERT INTO tbbooking (tbbookingid, tbactivityid, tbuserid, tbbookingnumberpersons, tbbookingstatus, tbbookingdate, tbbookingconfirmation) 
+                        VALUES (?, ?, ?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($queryInsert);
         if ($stmt === false) {
             die("Prepare failed: " . $conn->error);
@@ -33,13 +33,16 @@ class bookingData extends Data {
     
         // Preparación de parámetros para la inserción
         $tbbookingid = $nextId;
-        $tbactivityid = $booking->getTbactivityid(); // Obtiene el ID de la actividad
-        $tbuserid = $booking->getTbuserid(); // Obtiene el ID del usuario
-        $tbbookingnumberpersons = $booking->getTbbookingNumberPersons(); // Número de personas en la reserva
-        $tbbookingstatus = $booking->getTbbookingStatus(); // Estado de la reserva
-    
+        $tbactivityid = $booking->getIdTBActivity(); // Obtiene el ID de la actividad
+        $tbuserid = $booking->getIdTBUser(); // Obtiene el ID del usuario
+        $tbbookingnumberpersons = $booking->getNumberPersonsTBBooking(); // Número de personas en la reserva
+        $tbbookingstatus = $booking->getStatusTBBooking(); // Estado de la reserva
+        $tbbookingdate = $booking->getBookingdate(); // Fecha de la reserva
+        $tbbookingconfirmation = $booking->getConfirmation(); // Confirmación de la reserva
+
+
         // Bindeo de parámetros e inserción
-        $stmt->bind_param("iiiii", $tbbookingid, $tbactivityid, $tbuserid, $tbbookingnumberpersons, $tbbookingstatus);
+        $stmt->bind_param("iiiiisi", $tbbookingid, $tbactivityid, $tbuserid, $tbbookingnumberpersons, $tbbookingstatus, $tbbookingdate, $tbbookingconfirmation);
         $result = $stmt->execute();
     
         if (!$result) {
@@ -51,5 +54,229 @@ class bookingData extends Data {
     
         return $result;
     }
+
+    public function deleteTbBooking($bookingId): bool {
+        $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
+        if (!$conn) {
+            die("Connection failed: " . mysqli_connect_error());
+        }
+
+        $conn->set_charset('utf8mb4');
+
+        $queryDelete = "DELETE FROM tbbooking WHERE tbbookingid = ?";
+        $stmt = $conn->prepare($queryDelete);
+        if ($stmt === false) {
+            die("Prepare failed: " . $conn->error);
+        }
+
+        $stmt->bind_param("i", $bookingId);
+        $result = $stmt->execute();
+
+        if (!$result) {
+            echo "Execute failed: " . $stmt->error;
+        }
+
+        $stmt->close();
+        mysqli_close($conn);
+
+        return $result;
+    }
+
+    public function updateTbBooking($booking): bool {
+        $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
+        if (!$conn) {
+            die("Connection failed: " . mysqli_connect_error());
+        }
+
+        $conn->set_charset('utf8mb4');
+
+        $queryUpdate = "UPDATE tbbooking SET tbactivityid = ?, tbuserid = ?, tbbookingnumberpersons = ?, tbbookingstatus = ?, tbbookingdate = ?, tbbookingconfirmation = ? WHERE tbbookingid = ?";
+        $stmt = $conn->prepare($queryUpdate);
+        if ($stmt === false) {
+            die("Prepare failed: " . $conn->error);
+        }
+        echo ($booking -> __toString());
+
+        $tbactivityid = $booking->getIdTBActivity();
+        $tbuserid = $booking->getIdTBUser();
+        $tbbookingnumberpersons = $booking->getNumberPersonsTBBooking();
+        $tbbookingstatus = $booking->getStatusTBBooking();
+        $tbbookingdate = $booking->getBookingdate();
+        $tbbookingconfirmation = $booking->getConfirmation();
+        $tbbookingid = $booking->getIdTBBooking();  
+
+        $stmt->bind_param("iiiisii", $tbactivityid, $tbuserid, $tbbookingnumberpersons, $tbbookingstatus, $tbbookingdate, $tbbookingconfirmation, $tbbookingid);
+        $result = $stmt->execute();
+
+        if (!$result) {
+            echo "Execute failed: " . $stmt->error;
+        }
+
+        $stmt->close();
+        mysqli_close($conn);
+
+        return $result;
+    }
+
+    public function getAllTbBookings(): array {
+        $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
+        if (!$conn) {
+            die("Connection failed: " . mysqli_connect_error());
+        }
+
+        $conn->set_charset('utf8mb4');
+
+        $querySelect = "SELECT * FROM tbbooking WHERE tbbookingstatus = 1";
+        $result = mysqli_query($conn, $querySelect);
+        $bookings = array();
+
+        if ($result) {
+            while ($row = mysqli_fetch_assoc($result)) {
+                $booking = new Booking (
+                    $row['tbbookingid'],
+                    $row['tbactivityid'],
+                    $row['tbuserid'],
+                    $row['tbbookingnumberpersons'],
+                    $row['tbbookingstatus'],
+                    $row['tbbookingdate'],
+                    $row['tbbookingconfirmation']
+                );
+                array_push($bookings, $booking);
+            }
+        } else {
+            echo "Query failed: " . mysqli_error($conn);
+        }
+
+        mysqli_close($conn);
+
+        return $bookings;
+    }
+
+    public function getAllTbBookingsByUser($userid): array {
+        $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
+        if (!$conn) {
+            die("Connection failed: " . mysqli_connect_error());
+        }
+    
+        $conn->set_charset('utf8mb4');
+    
+        $querySelect = "SELECT * FROM tbbooking WHERE tbbookingstatus = 1 AND tbuserid = ?";
+        $stmt = $conn->prepare($querySelect);
+    
+        if ($stmt) {
+            // Asignar el parámetro
+            $stmt->bind_param("i", $userid);
+    
+            // Ejecutar la consulta
+            $stmt->execute();
+    
+            // Obtener el resultado
+            $result = $stmt->get_result();
+            $bookings = array();
+    
+            // Procesar los resultados
+            while ($row = $result->fetch_assoc()) {
+                $booking = new Booking(
+                    $row['tbbookingid'],
+                    $row['tbactivityid'],
+                    $row['tbuserid'],
+                    $row['tbbookingnumberpersons'],
+                    $row['tbbookingstatus'],
+                    $row['tbbookingdate'],
+                    $row['tbbookingconfirmation']
+                );
+                array_push($bookings, $booking);
+            }
+    
+            $stmt->close();
+        } else {
+            echo "Query preparation failed: " . mysqli_error($conn);
+        }
+    
+        mysqli_close($conn);
+    
+        return $bookings;
+    }
+    
+
+    public function getTbBookingById($bookingId): Booking {
+        $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
+        if (!$conn) {
+            die("Connection failed: " . mysqli_connect_error());
+        }
+
+        $conn->set_charset('utf8mb4');
+
+        $querySelect = "SELECT * FROM tbbooking WHERE tbbookingid = ?";
+        $stmt = $conn->prepare($querySelect);
+        if ($stmt === false) {
+            die("Prepare failed: " . $conn->error);
+        }
+
+        $stmt->bind_param("i", $bookingId);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $booking = null;
+
+        if ($result->num_rows > 0) {
+            $row = $result->fetch_assoc();
+            $booking = new Booking(
+                $row['tbbookingid'],
+                $row['tbactivityid'],
+                $row['tbuserid'],
+                $row['tbbookingnumberpersons'],
+                $row['tbbookingstatus'],
+                $row['tbbookingdate'],
+                $row['tbbookingconfirmation']
+            );
+        }
+
+        $stmt->close();
+        mysqli_close($conn);
+
+        return $booking;
+    }
+
+    public function getAllTbBookingsByActivity($activityId) : array {
+        $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
+        if (!$conn) {
+            throw new Exception("Connection failed: " . mysqli_connect_error());
+        }
+    
+        $conn->set_charset('utf8mb4');
+    
+        $querySelect = "SELECT * FROM tbbooking WHERE tbbookingstatus = 1 AND tbactivityid = ?";
+        $stmt = $conn->prepare($querySelect);
+        if ($stmt === false) {
+            throw new Exception("Prepare failed: " . $conn->error);
+        }
+    
+        $stmt->bind_param("i", $activityId);
+        $stmt->execute();
+        $stmt->bind_result($tbbookingid, $tbactivityid, $tbuserid, $tbbookingnumberpersons, $tbbookingstatus, $tbbookingdate, $tbbookingconfirmation);
+        
+        $bookings = array();
+        
+        while ($stmt->fetch()) {
+            $booking = new Booking(
+                $tbbookingid,
+                $tbactivityid,
+                $tbuserid,
+                $tbbookingnumberpersons,
+                $tbbookingstatus,
+                $tbbookingdate,
+                $tbbookingconfirmation
+            );
+            array_push($bookings, $booking);
+        }
+    
+        $stmt->close();
+        mysqli_close($conn);
+    
+        return $bookings;
+    }
+    
+
+    
     
 }

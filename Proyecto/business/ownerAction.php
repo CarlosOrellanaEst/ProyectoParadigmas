@@ -11,20 +11,17 @@ if (isset($_POST['create'])) {
         isset($_POST['ownerEmail']) &&
         isset($_POST['password'])
     ) {
-        // Extraer y limpiar los datos del formulario
         $name = isset($_POST['ownerName']) ? trim($_POST['ownerName']) : '';
         $surnames = isset($_POST['ownerSurnames']) ? trim($_POST['ownerSurnames']) : '';
         $legalIdentification = trim($_POST['ownerLegalIdentification']);
         $phone = isset($_POST['ownerPhone']) ? trim($_POST['ownerPhone']) : '';
-        $email = trim($_POST['ownerEmail']);
+        $email = strtolower(trim($_POST['ownerEmail']));
         $direction = isset($_POST['ownerDirection']) ? trim($_POST['ownerDirection']) : '';
         $idType = trim($_POST['idType']);
         $password = trim($_POST['password']);
 
-        // Encriptar la contraseña usando SHA-256
         $hashedPassword = hash('sha256', $password);
 
-        // Procesamiento de la imagen
         $fileUploaded = isset($_FILES['imagen']) && $_FILES['imagen']['error'] == UPLOAD_ERR_OK;
         $targetFilePath = '';
 
@@ -38,88 +35,92 @@ if (isset($_POST['create'])) {
 
             if (in_array($fileType, $allowTypes)) {
                 if (!move_uploaded_file($_FILES['imagen']['tmp_name'], $targetFilePath)) {
-                    $response = ['status' => 'error', 'error_code' => 'image_upload_failed', 'message' => 'Fallo al subir la imagen'];
+                    echo json_encode(['status' => 'error', 'error_code' => 'image_upload_failed', 'message' => 'Fallo al subir la imagen']);
+                    exit();
                 }
             } else {
-                $response = ['status' => 'error', 'error_code' => 'invalid_file_type', 'message' => 'Tipo de archivo no permitido'];
+                echo json_encode(['status' => 'error', 'error_code' => 'invalid_file_type', 'message' => 'Tipo de archivo no permitido']);
+                exit();
             }
         }
 
-        // Validación de la identificación legal
         $isValidId = false;
         if ($idType == 'CR') {
-            $isValidId = preg_match('/^\d{9}$/', $legalIdentification);
+            $isValidId = preg_match('/^\d{9}$/', $legalIdentification); 
             if (!$isValidId) {
-                $response = ['status' => 'error', 'error_code' => 'invalid_costa_rica_id', 'message' => 'Identificación de Costa Rica inválida. Debe contener exactamente 9 dígitos.'];
+                echo json_encode(['status' => 'error', 'error_code' => 'invalid_costa_rica_id', 'message' => 'Identificación de Costa Rica inválida. Debe contener exactamente 9 dígitos.']);
+                exit();
             }
         } elseif ($idType == 'foreign') {
-            $isValidId = preg_match('/^\d+$/', $legalIdentification);
+            // Identificación extranjera: permite entre 6 y 12 caracteres, alfanuméricos
+            $isValidId = preg_match('/^[a-zA-Z0-9]{6,12}$/', $legalIdentification);
             if (!$isValidId) {
-                $response = ['status' => 'error', 'error_code' => 'invalid_foreign_id', 'message' => 'Identificación extranjera inválida. Solo se permiten números.'];
+                echo json_encode(['status' => 'error', 'error_code' => 'invalid_foreign_id', 'message' => 'Identificación extranjera inválida. Debe contener entre 6 y 12 caracteres alfanuméricos.']);
+                exit();
             }
         }
 
-        // Validación de nombre
+
         if (!empty($name) && !preg_match('/^[a-zA-Z\s]+$/', $name)) {
-            $response = ['status' => 'error', 'error_code' => 'invalid_name', 'message' => 'El nombre contiene caracteres inválidos'];
+            echo json_encode(['status' => 'error', 'error_code' => 'invalid_name', 'message' => 'El nombre contiene caracteres inválidos']);
+            exit();
         }
 
-        // Validación de apellidos
         if (!empty($surnames) && !preg_match('/^[a-zA-Z\s]+$/', $surnames)) {
-            $response = ['status' => 'error', 'error_code' => 'invalid_surnames', 'message' => 'Los apellidos contienen caracteres inválidos'];
+            echo json_encode(['status' => 'error', 'error_code' => 'invalid_surnames', 'message' => 'Los apellidos contienen caracteres inválidos']);
+            exit();
         }
 
-        // Validación del teléfono (8 dígitos y solo números)
         if (!empty($phone) && !preg_match('/^\d{8}$/', $phone)) {
-            $response = ['status' => 'error', 'error_code' => 'invalid_phone', 'message' => 'Número de teléfono inválido. Debe contener exactamente 8 dígitos.'];
+            echo json_encode(['status' => 'error', 'error_code' => 'invalid_phone', 'message' => 'Número de teléfono inválido. Debe contener exactamente 8 dígitos.']);
+            exit();
         }
 
-        // Validación del correo
         if (!preg_match('/^[^\s@]+@[^\s@]+\.[^\s@]+$/', $email)) {
-            $response = ['status' => 'error', 'error_code' => 'invalid_email', 'message' => 'Formato de correo electrónico inválido'];
+            echo json_encode(['status' => 'error', 'error_code' => 'invalid_email', 'message' => 'Formato de correo electrónico inválido']);
+            exit();
         }
 
-        // Creamos el objeto Owner
-        if (empty($response)) { // Si no hay errores hasta aquí
+        if (empty($response)) {
             $owner = new Owner(
-                0,                              // idTBOwner
-                $direction,                     // directionTBOwner
-                $targetFilePath,                // photoURLTBOwner
-                1,                              // statusTBOwner
-                0,                              // id (tbuserid)
-                $name,                          // nickname
-                $hashedPassword,                // password (contraseña encriptada)
-                1,                              // active
-                "Propietario",                  // userType
-                $name,                          // name
-                $surnames,                      // surnames
-                $legalIdentification,           // legalIdentification
-                $phone,                         // phone
-                $email                          // email
+                0,
+                $direction,
+                $targetFilePath,
+                1,
+                0,
+                $name,
+                $hashedPassword,
+                1,
+                "Propietario",
+                $name,
+                $surnames,
+                $legalIdentification,
+                $phone,
+                $email
             );
 
             $ownerBusiness = new ownerBusiness();
             $result = $ownerBusiness->insertTBOwner($owner);
 
             if ($result['status'] === 'success') {
-                $response = ['status' => 'success', 'message' => 'Propietario añadido correctamente.'];
+                echo json_encode(['status' => 'success', 'message' => 'Propietario añadido correctamente.']);
+                exit();
             } else {
-                $response = ['status' => 'error', 'error_code' => 'db_error', 'message' => 'Fallo al agregar el propietario: ' . $result['message']];
+                echo json_encode(['status' => 'error', 'error_code' => 'db_error', 'message' => 'Fallo al agregar el propietario: ' . $result['message']]);
+                exit();
             }
         }
     } else {
-        $response = ['status' => 'error', 'error_code' => 'missing_fields', 'message' => 'Datos incompletos o inválidos'];
+        echo json_encode(['status' => 'error', 'error_code' => 'missing_fields', 'message' => 'Datos incompletos o inválidos']);
+        exit();
     }
 
-    // Verificar que siempre se esté enviando un JSON
     if (empty($response)) {
-        $response = ['status' => 'error', 'error_code' => 'unknown_error', 'message' => 'Ocurrió un error desconocido'];
+        echo json_encode(['status' => 'error', 'error_code' => 'unknown_error', 'message' => 'Ocurrió un error desconocido']);
+        exit();
     }
-
-    // Enviar la respuesta
-    echo json_encode($response);
-    exit();
 }
+
 
 
 
