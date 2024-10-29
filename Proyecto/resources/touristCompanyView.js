@@ -161,7 +161,6 @@ document.getElementById('formCreate').addEventListener('submit', function (e) {
 
 
 let selectedCompanyTypes = [];
-
 document.getElementById('addBtn').addEventListener('click', function () {
     let companyTypeSelect = document.getElementById('companyType');
     let selectedValue = companyTypeSelect.value;
