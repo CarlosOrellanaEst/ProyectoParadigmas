@@ -57,8 +57,7 @@ if (isset($_POST['create'])) {
     $ownerId = $_POST['ownerId'] ?? 0;
     $companyTypeId = $_POST['companyType'] ?? 0;
     $status = $_POST['status'] ?? '';
-    $customCompanyType = $_POST['customCompanyType'] ?? '';
-
+    
     if ($companyTypeId === '0') {
         $customCompanyType = $_POST['customCompanyType'] ?? '';
 
@@ -88,7 +87,7 @@ if (isset($_POST['create'])) {
             }
 
             $touristCompanyBusiness = new TouristCompanyBusiness();
-            var_dump($touristCompany->getTbtouristcompanycustomcompanytype());
+        
             $result = $touristCompanyBusiness->insert($touristCompany);
 
             if ($result['status'] == 'success') {
