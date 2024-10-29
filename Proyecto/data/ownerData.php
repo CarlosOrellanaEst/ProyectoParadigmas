@@ -279,7 +279,7 @@ class ownerData extends Data {
         }
         $conn->set_charset('utf8');
     
-        $query = "SELECT * FROM tbuser WHERE tbuserphone= '$ownerPhone'    ";
+        $query = "SELECT * FROM tbuser WHERE tbuserphone= '$ownerPhone'  AND tbuserstatus = 1  ";
         $result = mysqli_query($conn, $query);
         
         $row = mysqli_fetch_assoc($result);
@@ -297,7 +297,7 @@ class ownerData extends Data {
         }
         $conn->set_charset('utf8');
     
-        $query = "SELECT * FROM tbuser WHERE tbuserlegalidentification= '$LegalId'    ";
+        $query = "SELECT * FROM tbuser WHERE tbuserlegalidentification= '$LegalId'  AND tbuserstatus = 1  ";
         $result = mysqli_query($conn, $query);
         
         $row = mysqli_fetch_assoc($result);
@@ -352,7 +352,7 @@ class ownerData extends Data {
         }
         $conn->set_charset('utf8');
     
-        $query = "SELECT * FROM tbuser WHERE tbusernickname = '$nickName'";
+        $query = "SELECT * FROM tbuser WHERE tbusernickname = '$nickName' AND tbuserstatus = 1";
         $result = mysqli_query($conn, $query);
     
         if ($row = mysqli_fetch_assoc($result)) {

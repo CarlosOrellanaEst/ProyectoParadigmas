@@ -7,7 +7,7 @@ class LoginData extends Data {
 
     public function getUserByUsername($username) {
         $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
-        $query = "SELECT * FROM tbuser WHERE tbusernickname = ? LIMIT 1";
+        $query = "SELECT * FROM tbuser WHERE tbusernickname = ? AND tbuserstatus= 1 LIMIT 1";
         $stmt = $conn->prepare($query);
         if ($stmt === false) {
             die("Prepare failed: " . $conn->error);
