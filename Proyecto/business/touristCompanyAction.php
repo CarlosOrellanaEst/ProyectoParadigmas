@@ -76,13 +76,12 @@ if (isset($_POST['create'])) {
         $companyType = $touristCompanyTypeBusiness->getById($companyTypeId);
         
         if ($owner || $companyType) {
-            var_dump($legalName, $magicName, $ownerId, $companyTypeId, $photoUrls, $status);
 
             $touristCompany = new TouristCompany(0, $legalName, $magicName, $ownerId, $companyTypeId, $photoUrls, $status);
 
             
             if ($companyTypeId === '0') {
-                
+
                 $touristCompany->setTbtouristcompanycustomcompanyType($customCompanyType);
             }
 
