@@ -181,6 +181,7 @@ $_SESSION['owners'] = $owners;
                 $activityFiltered = [];
                 if (count($allActivities) > 0) {
                     foreach ($allActivities as $current) {
+                        
                         $assignedService = $serviceCompanyBusiness->getServiceCompany($current['tbactivityservicecompanyid']);
                         echo '<tr>';
                         echo '<form method="post" action="../business/activityAction.php" enctype="multipart/form-data" onsubmit="return confirmAction(event);">';

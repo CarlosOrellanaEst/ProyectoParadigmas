@@ -16,7 +16,30 @@ document.addEventListener('DOMContentLoaded', function () {
             customCompanyTypeField.style.display = 'none';
             customCompanyTypeLabel.style.display = 'none';
         }
+    }); 
+
+    let selectedCompanyTypes = [];
+    document.getElementById('addBtn').addEventListener('click', function () {
+        let companyTypeSelect = document.getElementById('companyType');
+        let selectedValue = companyTypeSelect.value;
+        let selectedText = companyTypeSelect.options[companyTypeSelect.selectedIndex].text;
+    
+        // Validación: Evitar agregar opciones con valor "0" o duplicadas
+        if (selectedValue !== "0" && !selectedCompanyTypes.includes(selectedValue)) {
+            selectedCompanyTypes.push(selectedValue);
+    
+            // Mostrar la selección en la lista
+            let companyTypeList = document.getElementById('selectedCompanyTypesList');
+            let companyTypeItem = document.createElement('div');
+            companyTypeItem.textContent = selectedText;
+            companyTypeList.appendChild(companyTypeItem);
+        } else if (selectedValue === "0") {
+            alert("Por favor, seleccione un tipo de empresa válido.");
+        } else {
+            alert("El tipo de empresa ya ha sido agregado.");
+        }
     });
+
     
     // Manejo del envío de formulario
     document.getElementById('formCreate').addEventListener('submit', function (e) {
@@ -55,6 +78,19 @@ document.addEventListener('DOMContentLoaded', function () {
         formData.append('ownerId', owner);
         formData.append('status', status);
         formData.append('create', 'create'); 
+
+        //
+        const selectedCompanyTypes = []; 
+    const companyTypeList = document.getElementById('selectedCompanyTypesList').children;
+
+    for (let item of companyTypeList) {
+        selectedCompanyTypes.push(item.textContent);
+    }
+
+    selectedCompanyTypes.forEach((type) => {
+        formData.append('selectedCompanyTypes[]', type); // Agrega cada tipo de empresa al FormData
+    });
+        //
 
         if (companyType === 'custom') {
             formData.append('customCompanyType', customCompanyType);

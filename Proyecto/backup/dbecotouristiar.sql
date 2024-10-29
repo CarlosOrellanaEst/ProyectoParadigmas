@@ -54,6 +54,13 @@ INSERT INTO `tbactivity` (`tbactivityid`, `tbactivityname`, `tbactivityserviceco
 
 -- --------------------------------------------------------
 
+CREATE TABLE tbtouristcompanytouristcompanytype (
+  tbtouristcompanytouristcompanytypeid int(11) NOT NULL,
+  tbtouristcompany int(11) NOT NULL,
+  tbtouristcompanytype int(11) NOT NULL,
+  tbtouristcompanytouristcompanytypestatus int(11) NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 --
 -- Estructura de tabla para la tabla `tbbooking`
 --
