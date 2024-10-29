@@ -85,6 +85,7 @@
                             </option>
                         <?php endforeach; ?>
                     </select>
+                    
                 </div>
 
                 <div class="form-group">
@@ -97,6 +98,8 @@
                             </option>
                         <?php endforeach; ?>
                     </select>
+                    <button type="button" id="addBtn">+</button>
+                    <div id="selectedCompanyTypesList"></div>
                     <!-- Campo oculto para el tipo de empresa personalizado -->
                     <label for="customCompanyTypeName" style="display: none; margin-top: 10px;"  id="customCompanyTypeName">Nombre: <span id="customCompanyTypeError" style="color:red; display:none;">*Campo obligatorio</span></label>
                     <input type="text" name="customCompanyType" id="customCompanyType" placeholder="Especifique otro tipo de empresa" style="display: none; margin-top: 10px;" />

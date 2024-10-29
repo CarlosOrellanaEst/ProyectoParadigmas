@@ -47,7 +47,10 @@ if (isset($_POST['create'])) {
                 }
             }
         }
-
+        $selectedCompanyTypes;
+        if (isset($_POST['selectedCompanyTypes'])) {
+            $selectedCompanyTypes = $_POST['selectedCompanyTypes']; // Esto será un array con los tipos de empresa seleccionados
+        }
 
         $photoUrls = implode(',', $fileNames);
 
@@ -77,7 +80,8 @@ if (isset($_POST['create'])) {
 
             if ($owner && $companyType) {
                 $touristCompany = new TouristCompany(0, $legalName, $magicName, $ownerId, $companyTypeId, $photoUrls, $status);
-
+                $touristCompany -> setAllTouristCompanyType($selectedCompanyTypes);
+                
                 if ($companyTypeId === '0') {
                     $touristCompany->setTbtouristcompanycustomcompanyType($customCompanyType);
                 }

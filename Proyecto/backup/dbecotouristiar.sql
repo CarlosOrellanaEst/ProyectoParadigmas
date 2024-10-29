@@ -40,6 +40,16 @@ CREATE TABLE `tbactivity` (
   `tbactivitylongitude` decimal(12,8) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- Estructura de tabla para la tabla `tbtouristcompanytouristcompanytype`
+--
+
+CREATE TABLE `tbtouristcompanytouristcompanytype` (
+  `tbtouristcompanytouristcompanytypeid` int(11) NOT NULL,
+  `tbtouristcompany` int(11) NOT NULL,
+  `tbtouristcompanytype` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+COMMIT;
+
 --
 -- Volcado de datos para la tabla `tbactivity`
 --
