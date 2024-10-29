@@ -62,6 +62,10 @@
     $services = $serviceCompanyBusiness->getAllTBServiceCompanies();
     $imageBasePath = '../images/activity/';
     ?>
+
+    <!-- Script con la lógica del mapa -->
+    <script src="../resources/maps.js" defer></script>
+
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
     <script
@@ -310,8 +314,7 @@
     });
     </script>
 
-    <!-- Script con la lógica del mapa -->
-    <script src="../resources/maps.js" defer></script>
+
 </body>
 
 </html>

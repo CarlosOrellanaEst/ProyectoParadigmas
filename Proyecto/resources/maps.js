@@ -6,7 +6,8 @@ function initMap() {
       center: lugarEstandar,
       mapId: 'd54b09205a9c0cf9'
   });
-
+  
+  console.log(map.zoom);
   var marker = new google.maps.Marker({
       position: lugarEstandar,
       map: map,
