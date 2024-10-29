@@ -1,5 +1,3 @@
-<!-- CHAT GPT. FUNCIONA -->
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -9,8 +7,17 @@
 </head>
 <body>
   <section>
-    <input type="number" id="latitud" disabled>
-    <input type="number" id="longitud" disabled>
+    <input type="number" id="latitude" disabled>
+    <input type="number" id="longitude" disabled>
+
+    <form action="">
+      <label for="inputLatitud">Ingrese la Latitud</label>
+      <input type="number" id="inputLatitud" placeholder="Latitud">
+      <label for="inputLongitud">Ingrese la Longitud</label>
+      <input type="number" id="inputLongitud" placeholder="Longitud">
+      <button type="button" onclick="geocodeAddress()">Buscar en Mapa</button>
+    </form>
+
   </section>
   <div id="map" style="height: 500px; width: 100%;"></div>
   
