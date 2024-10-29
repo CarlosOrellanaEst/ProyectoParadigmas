@@ -25,6 +25,9 @@ class ActivityBusiness {
     public function getAllActivities() {
         return $this->activityData->getAllActivities();
     }
+    public function getAllActivitiesByOwner($ownerId) {
+        return $this->activityData->getAllActivitiesByOwner($ownerId);
+    }
 
     public function getActivityById($id) {
         return $this->activityData->getActivityById($id);

@@ -1,27 +1,27 @@
 <?php
-require_once '../domain/Owner.php';
-require_once '../business/paymentTypeBusiness.php';
-require_once '../business/ownerBusiness.php';
-require_once '../business/activityBusiness.php';
-require_once '../business/serviceCompanyBusiness.php';
+    require_once '../domain/Owner.php';
+    require_once '../business/paymentTypeBusiness.php';
+    require_once '../business/ownerBusiness.php';
+    require_once '../business/activityBusiness.php';
+    require_once '../business/serviceCompanyBusiness.php';
 
 
-session_start();
-$userLogged = $_SESSION['user'];    
-$ownerBusiness = new ownerBusiness();
+    session_start();
+    $userLogged = $_SESSION['user'];    
+    $ownerBusiness = new ownerBusiness();
 
-// Definimos los propietarios en función del tipo de usuario
-if ($userLogged->getUserType() == "Administrador") {
-    $owners = $ownerBusiness->getAllTBOwners();
-    if (!$owners || empty($owners)) {
-        echo "<script>alert('No se encontraron propietarios.');</script>";
+    // Definimos los propietarios en función del tipo de usuario
+    if ($userLogged->getUserType() == "Administrador") {
+        $owners = $ownerBusiness->getAllTBOwners();
+        if (!$owners || empty($owners)) {
+            echo "<script>alert('No se encontraron propietarios.');</script>";
+        }
+    } else if ($userLogged->getUserType() == "Propietario") {
+        $owners = [$userLogged];
     }
-} else if ($userLogged->getUserType() == "Propietario") {
-    $owners = [$userLogged];
-}
 
-// Guardamos la lista de propietarios en la sesión para usarla abajo
-$_SESSION['owners'] = $owners;
+    // Guardamos la lista de propietarios en la sesión para usarla abajo
+    $_SESSION['owners'] = $owners;
 ?>
 
 <!DOCTYPE html>
@@ -177,7 +177,11 @@ $_SESSION['owners'] = $owners;
                 <?php
 
                 $activityBusiness = new ActivityBusiness();  // Instancia de la clase ActivityBusiness
-                $allActivities = $activityBusiness->getAllActivities();
+                if ($userLogged->getUserType() == "Propietario") {
+                    $allActivities = $activityBusiness->getAllActivitiesByOwner($userLogged->getUserId());
+                } else {
+                    $allActivities = $activityBusiness->getAllActivities();
+                }
                 $activityFiltered = [];
                 if (count($allActivities) > 0) {
                     foreach ($allActivities as $current) {

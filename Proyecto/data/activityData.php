@@ -138,7 +138,68 @@ class activityData extends Data
         return $activities;
     }
 
-    
+    public function getAllActivitiesByOwner($ownerid)
+    {
+        // Conexión a la base de datos
+        $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
+        if (!$conn) {
+            die("Connection failed: " . mysqli_connect_error());
+        }
+
+        $conn->set_charset('utf8mb4');
+
+        // Consulta para obtener todas las actividades activas de un propietario
+        $query = 
+        "SELECT tbactivityid, tbactivityname, tbactivityservicecompanyid, tbactivityatributearray, tbactivitydataarray, tbactivityurl, tbactivitystatus, tbactivitydate, tbactivitylatitude, tbactivitylongitude  
+        FROM tbactivity act 
+        INNER JOIN tbservicecompany servcompa ON act.tbactivityservicecompanyid = servcompa.tbservicecompanyid 
+        -- ya con tbservicecompany tengo el tbtouristcompanyid 
+        INNER JOIN tbtouristcompany tourcompany ON servcompa.tbtouristcompanyid = tourcompany.tbtouristcompanyid 
+        WHERE tourcompany.tbtouristcompanyowner = " . $ownerid . " AND act.tbactivitystatus = 1;";
+
+        $result = mysqli_query($conn, $query);
+
+        if (!$result) {
+            echo "Query failed: " . mysqli_error($conn);
+            mysqli_close($conn);
+            return null;
+        }
+
+        // Array para almacenar las actividades
+        $activities = [];
+
+        // Recorrer los resultados
+        while ($row = mysqli_fetch_assoc($result)) {
+            // Convertir los atributos de cadena a arrays
+            $atributearray = explode(',', $row['tbactivityatributearray']);
+            $dataarray = explode(',', $row['tbactivitydataarray']);
+            $urls = explode(',', $row['tbactivityurl']);
+            
+            // Crear un objeto de actividad o array asociativo
+            $activity = [
+                'tbactivityid' => $row['tbactivityid'],
+                'tbactivityname' => $row['tbactivityname'],
+                'tbactivityservicecompanyid' => $row['tbactivityservicecompanyid'],
+                'tbactivityatributearray' => $atributearray,
+                'tbactivitydataarray' => $dataarray,
+                'tbactivityurl' => $urls,
+                'tbactivitystatus' => $row['tbactivitystatus'],
+                'tbactivitydate' => $row['tbactivitydate'],
+                'tbactivitylatitude' => $row['tbactivitylatitude'],
+                'tbactivitylongitude' => $row['tbactivitylongitude']
+            ];
+
+            // Añadir la actividad al array
+            $activities[] = $activity;
+        }
+
+        // Cerrar la conexión
+        mysqli_free_result($result);
+        mysqli_close($conn);
+
+        return $activities;
+    }
+
 
 
     // Método para eliminar una actividad (marcar como inactiva)
