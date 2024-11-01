@@ -35,7 +35,8 @@ class TouristCompanyData extends Data{
         }
          */
         if($tbtouristcompanylegalname !=""){
-            if($this->getTouristCompanyByName($touristCompany)!=null){
+            if ($this->getTouristCompanyByName($touristCompany->getTbtouristcompanylegalname()) != null) {
+
                 return ['status' => 'error', 'message' => 'La compañía turística ya está registrada'];
             }
         }
