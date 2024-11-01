@@ -28,11 +28,18 @@ class TouristCompanyData extends Data{
         $stmtCheck->bind_result($count);
         $stmtCheck->fetch();
         $stmtCheck->close();
-    
+        /*
         if ($count > 0) {
             mysqli_close($conn);
             return ['status' => 'error', 'message' => 'La compañía turística ya está registrada'];
         }
+         */
+        if($tbtouristcompanylegalname !=""){
+            if($this->getTouristCompanyByName($touristCompany)!=null){
+                return ['status' => 'error', 'message' => 'La compañía turística ya está registrada'];
+            }
+        }
+        
     
         // Obtener el siguiente ID
         $queryGetLastId = "SELECT MAX(tbtouristcompanyid) AS tbtouristcompanyid FROM tbtouristcompany";
@@ -44,7 +51,12 @@ class TouristCompanyData extends Data{
         }
     
         $imageUrls = $touristCompany->getTbtouristcompanyurl();
-        $imageUrlsString = is_array($imageUrls) ? implode(',', $imageUrls) : $imageUrls;
+        if($imageUrls != ""){
+            $imageUrlsString = is_array($imageUrls) ? implode(',', $imageUrls) : $imageUrls;
+        }else{
+            $imageUrlsString =" ";
+        }
+        
     
         // Insertar en tbtouristcompany
         $queryInsert = "INSERT INTO tbtouristcompany (tbtouristcompanyid, tbtouristcompanylegalname, tbtouristcompanymagicname, tbtouristcompanyowner, tbtouristcompanycompanyType, tbtouristcompanyurl, tbtouristcompanystatus) VALUES (?, ?, ?, ?, ?, ?, ?)";

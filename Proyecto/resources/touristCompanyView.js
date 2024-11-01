@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', function () {
     // Mostrar alertas basadas en los parámetros de la URL
-    showAlertBasedOnURL();
+    
 
     // Manejo de la selección de tipo de empresa
     const companyTypeSelect = document.getElementById('companyType');
@@ -61,12 +61,16 @@ document.addEventListener('DOMContentLoaded', function () {
         // Validaciones de campos requeridos
         if (owner === '0') { 
             ownerError.style.display = 'inline'; 
+            alert("Error: se necita seleccionar un propietario para registrar.");
             console.log("Error: Owner is required");
             return; 
         }
 
-        if (companyType === 'custom' && customCompanyType === '') {
+        
+
+        if (companyType === '0' || companyType === 'custom' && customCompanyType === '') {
             customCompanyTypeError.style.display = 'inline';
+            alert("Error: se necita seleccionar un un tipo de empresa.");
             console.log("Error: Custom Company Type is required");
             return;
         }
@@ -122,7 +126,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             document.getElementById('formCreate').reset();
                             location.reload(); 
                         } else {
-                            alert('Error: ' + response.message);
+                            alert(response.error);
                         }
                     } catch (e) {
                         console.error('Respuesta JSON inválida:', xhr.responseText);
@@ -140,12 +144,10 @@ document.addEventListener('DOMContentLoaded', function () {
 });
 
 
-// Función para mostrar alertas basadas en los parámetros de la URL
-function showAlertBasedOnURL() {
-    const urlParams = new URLSearchParams(window.location.search);
-
-        if (urlParams.has('error')) {
-        switch (urlParams.get('error')) {
+/*
+function showAlertBasedOnURL(response) {
+        
+        switch (response.error_code) {
             case 'uploadFailed':
                 alert('Error al subir la imagen. Por favor, inténtelo de nuevo.');
                 break;
@@ -180,5 +182,6 @@ function showAlertBasedOnURL() {
                 alert('Ocurrió un error inesperado.');
                 break;
         }
-    }
+  
 }
+  */
