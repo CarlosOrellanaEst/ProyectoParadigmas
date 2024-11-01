@@ -1,3 +1,11 @@
+<?php
+    require '../domain/Owner.php';
+    require '../business/ownerBusiness.php';
+
+    session_start();
+    $userLogged = $_SESSION['user'];
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -7,18 +15,31 @@
     <script src="../resources/AJAXCreateService.js"></script>
     <?php
         include '../business/serviceCompanyBusiness.php';
-        include '../business/touristCompanyBusiness.php';
+        include_once '../business/touristCompanyBusiness.php';
 
         $serviceCompanyBusiness = new ServiceCompanyBusiness();
         $services = $serviceCompanyBusiness->getAllTBServices();
         $touristCompanyBusiness = new TouristCompanyBusiness();
-        $companies = $touristCompanyBusiness->getAll();
+        if ($userLogged->getUserType() == "Propietario") {
+            $companies = $touristCompanyBusiness->getAllByOwnerID($userLogged->getIdTBOwner());
+        } else if ($userLogged->getUserType() == "Administrador") {
+            $companies = $touristCompanyBusiness->getAll();
+        }
+        
         $imageBasePath = '../images/services/';
     ?>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-    <a href="adminView.php">← Volver al inicio</a>
+    <?php
+        if ($userLogged->getUserType() == "Propietario") {
+            echo '<a href="ownerViewSession.php">← Volver al inicio</a>';
+        } else if ($userLogged->getUserType() == "Administrador") {
+            echo '<a href="adminView.php">← Volver al inicio</a>';
+        } else if ($userLogged->getUserType() == "Turista") {
+            echo '<a href="touristView.php">← Volver al inicio</a>';
+        }
+    ?>
     <header>
         <h1>CRUD Servicios</h1>
         <p><span class="required">*</span> Campos requeridos</p>
