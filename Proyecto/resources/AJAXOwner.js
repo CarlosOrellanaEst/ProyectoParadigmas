@@ -87,7 +87,7 @@ function handleErrorResponse(response) {
             alert('Error: La identificación de Costa Rica debe contener exactamente 9 dígitos.');
             break;
         case 'invalid_foreign_id':
-            alert('Error: La identificación extranjera solo debe contener números.');
+            alert('Error: La identificación extranjera debe contener entre 6 y 12 caracteres alfanuméricos.');
             break;
         case 'invalid_phone':
             alert('Error: El número de teléfono debe contener exactamente 8 dígitos.');
