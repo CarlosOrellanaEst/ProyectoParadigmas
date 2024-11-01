@@ -1,3 +1,11 @@
+<?php
+    require '../domain/Owner.php';
+    require '../business/ownerBusiness.php';
+
+    session_start();
+    $userLogged = $_SESSION['user'];
+?>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -7,12 +15,17 @@
     <script src="../resources/AJAXCreateService.js"></script>
     <?php
         include '../business/serviceCompanyBusiness.php';
-        include '../business/touristCompanyBusiness.php';
+        include_once '../business/touristCompanyBusiness.php';
 
         $serviceCompanyBusiness = new ServiceCompanyBusiness();
         $services = $serviceCompanyBusiness->getAllTBServices();
         $touristCompanyBusiness = new TouristCompanyBusiness();
-        $companies = $touristCompanyBusiness->getAll();
+        if ($userLogged->getUserType() == "Propietario") {
+            $companies = $touristCompanyBusiness->getAllByOwnerID($userLogged->getIdTBOwner());
+        } else if ($userLogged->getUserType() == "Administrador") {
+            $companies = $touristCompanyBusiness->getAll();
+        }
+        
         $imageBasePath = '../images/services/';
     ?>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
