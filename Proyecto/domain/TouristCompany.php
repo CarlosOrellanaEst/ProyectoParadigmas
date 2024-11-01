@@ -12,7 +12,6 @@ class TouristCompany{
     private $photos; 
     private $allTouristCompanyType;
 
-    private $allTouristCompanyType;
 
     public function __construct($tbtouristcompanyid, $tbtouristcompanylegalname, $tbtouristcompanymagicname, $tbtouristcompanyowner, $tbtouristcompanycompanyType, $tbtouristcompanyurl, $tbtouristcompanystatus){
         $this->tbtouristcompanyid = $tbtouristcompanyid;
