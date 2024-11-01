@@ -12,6 +12,8 @@ class TouristCompany{
     private $photos; 
     private $allTouristCompanyType;
 
+    private $allTouristCompanyType;
+
     public function __construct($tbtouristcompanyid, $tbtouristcompanylegalname, $tbtouristcompanymagicname, $tbtouristcompanyowner, $tbtouristcompanycompanyType, $tbtouristcompanyurl, $tbtouristcompanystatus){
         $this->tbtouristcompanyid = $tbtouristcompanyid;
         $this->tbtouristcompanylegalname = $tbtouristcompanylegalname;
@@ -22,15 +24,7 @@ class TouristCompany{
         $this->tbtouristcompanystatus = $tbtouristcompanystatus;
         $this->photos = []; 
         $this->allTouristCompanyType = [];
-    }
-
-    public function setAllTouristCompanyType($allTouristCompanyType) {
-        $this->allTouristCompanyType[] = $allTouristCompanyType;
-    }
-    
-    public function getAllTouristCompanyType() {
-        return $this->allTouristCompanyType;
-
+        
     }
 
     public function setTbtouristcompanyid($tbtouristcompanyid) {
@@ -65,6 +59,10 @@ class TouristCompany{
         $this->tbtouristcompanystatus = $tbtouristcompanystatus;
     }
 
+    public function setAllTouristCompanyType($allTouristCompanyType) {
+        $this->allTouristCompanyType[] = $allTouristCompanyType;
+    }
+
     public function getTbtouristcompanyid() {
         return $this->tbtouristcompanyid;
     }
@@ -95,6 +93,11 @@ class TouristCompany{
 
     public function getTbtouristcompanystatus() {
         return $this->tbtouristcompanystatus;
+    }
+
+    public function getAllTouristCompanyType() {
+        return $this->allTouristCompanyType;
+
     }
 /*     public function addPhoto(Photo $photo) {
         $this->photos[] = $photo;

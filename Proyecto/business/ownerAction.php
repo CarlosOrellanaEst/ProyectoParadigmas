@@ -1,5 +1,6 @@
 <?php
-include './ownerBusiness.php';
+include_once './ownerBusiness.php';
+
 header('Content-Type: application/json');
 
 
@@ -13,15 +14,22 @@ if (isset($_POST['create'])) {
     ) {
         $name = isset($_POST['ownerName']) ? trim($_POST['ownerName']) : '';
         $surnames = isset($_POST['ownerSurnames']) ? trim($_POST['ownerSurnames']) : '';
+        $nickName = isset($_POST['nickName']) ? trim($_POST['nickName']) : '';
         $legalIdentification = trim($_POST['ownerLegalIdentification']);
         $phone = isset($_POST['ownerPhone']) ? trim($_POST['ownerPhone']) : '';
         $email = strtolower(trim($_POST['ownerEmail']));
         $direction = isset($_POST['ownerDirection']) ? trim($_POST['ownerDirection']) : '';
         $idType = trim($_POST['idType']);
         $password = trim($_POST['password']);
+        $confirmPassword = isset($_POST['confirmPassword']) ? trim($_POST['confirmPassword']) : '';
 
-        $hashedPassword = hash('sha256', $password);
-
+        if($password !== $confirmPassword) {
+            echo json_encode(['status' => 'error', 'error_code' => 'password_mismatch', 'message' => 'Las contraseñas no coinciden']);
+            exit();
+        }
+     
+        $encryptedPassword = password_hash($password, PASSWORD_BCRYPT);
+        
         $fileUploaded = isset($_FILES['imagen']) && $_FILES['imagen']['error'] == UPLOAD_ERR_OK;
         $targetFilePath = '';
 
@@ -52,7 +60,7 @@ if (isset($_POST['create'])) {
                 exit();
             }
         } elseif ($idType == 'foreign') {
-            // Identificación extranjera: permite entre 6 y 12 caracteres, alfanuméricos
+           
             $isValidId = preg_match('/^[a-zA-Z0-9]{6,12}$/', $legalIdentification);
             if (!$isValidId) {
                 echo json_encode(['status' => 'error', 'error_code' => 'invalid_foreign_id', 'message' => 'Identificación extranjera inválida. Debe contener entre 6 y 12 caracteres alfanuméricos.']);
@@ -76,11 +84,13 @@ if (isset($_POST['create'])) {
             exit();
         }
 
+
+
         if (!preg_match('/^[^\s@]+@[^\s@]+\.[^\s@]+$/', $email)) {
             echo json_encode(['status' => 'error', 'error_code' => 'invalid_email', 'message' => 'Formato de correo electrónico inválido']);
             exit();
         }
-
+        
         if (empty($response)) {
             $owner = new Owner(
                 0,
@@ -88,8 +98,8 @@ if (isset($_POST['create'])) {
                 $targetFilePath,
                 1,
                 0,
-                $name,
-                $hashedPassword,
+                $nickName,
+                $encryptedPassword,
                 1,
                 "Propietario",
                 $name,
@@ -98,15 +108,14 @@ if (isset($_POST['create'])) {
                 $phone,
                 $email
             );
-
+            error_log("Nickname: " . $nickName);
             $ownerBusiness = new ownerBusiness();
             $result = $ownerBusiness->insertTBOwner($owner);
-
             if ($result['status'] === 'success') {
                 echo json_encode(['status' => 'success', 'message' => 'Propietario añadido correctamente.']);
                 exit();
-            } else {
-                echo json_encode(['status' => 'error', 'error_code' => 'db_error', 'message' => 'Fallo al agregar el propietario: ' . $result['message']]);
+            } else if($result['status'] === 'error'){
+                echo json_encode(['status' => 'error', 'message' => 'Fallo al agregar el Usuario: ' . $result['message']]);
                 exit();
             }
         }
@@ -123,28 +132,25 @@ if (isset($_POST['create'])) {
 
 
 
-
-
-/*
-
 if (isset($_POST['update'])) {
-    if ( 
+    if (
         isset($_POST['ownerLegalIdentification'], $_POST['ownerEmail'], $_POST['ownerID'], $_POST['idType'])
-        ) 
-    {
+    ) {
         $name = $_POST['ownerName'] ?? '';
         $surnames = $_POST['ownerSurnames'] ?? '';
+        $nickName = $_POST['ownerNickName'] ?? '';
         $legalIdentification = $_POST['ownerLegalIdentification'];
         $phone = $_POST['ownerPhone'] ?? '';
-        $email = $_POST['ownerEmail'];
+        $email = strtolower(trim($_POST['ownerEmail']));
         $direction = $_POST['ownerDirection'] ?? '';
+        $password = $_POST['password'] ?? '';
         $idOwner = $_POST['ownerID'];
         $idUser = $_POST['userID'];
         $idType = $_POST['idType'];
 
         $photoFileName = '';
 
-        $ownerBusiness = new ownerBusiness();
+        $ownerBusiness = new OwnerBusiness();
         $currentOwner = $ownerBusiness->getTBOwner($idOwner);
         $existingPhotoFileName = $currentOwner->getPhotoURLTBOwner();
 
@@ -157,14 +163,12 @@ if (isset($_POST['update'])) {
             $allowTypes = array('jpg', 'png', 'jpeg', 'gif');
 
             if (in_array($fileType, $allowTypes)) {
-                if (move_uploaded_file($_FILES['newImage']['tmp_name'], $targetFilePath)) {
-                    $photoFileName = $fileName;
-                } else {
-                    header("Location: ../view/ownerView.php?error=uploadFailed");
+                if (!move_uploaded_file($_FILES['newImage']['tmp_name'], $targetFilePath)) {
+                    echo json_encode(['status' => 'error', 'message' => 'Fallo al subir la imagen.']);
                     exit();
                 }
             } else {
-                header("Location: ../view/ownerView.php?error=invalidFileType");
+                echo json_encode(['status' => 'error', 'message' => 'Tipo de archivo de imagen no permitido.']);
                 exit();
             }
         } else {
@@ -173,89 +177,104 @@ if (isset($_POST['update'])) {
 
         $isValidId = false;
         if ($idType == 'CR') {
-            $isValidId = preg_match('/^\d{9}$/', $legalIdentification);
+            $isValidId = preg_match('/^\d{9}$/', $legalIdentification); 
             if (!$isValidId) {
-                header("Location: ../view/ownerView.php?error=invalidCostaRicaId");
+                echo json_encode(['status' => 'error', 'error_code' => 'invalid_costa_rica_id', 'message' => 'Identificación de Costa Rica inválida. Debe contener exactamente 9 dígitos.']);
                 exit();
             }
         } elseif ($idType == 'foreign') {
-            $isValidId = preg_match('/^\d+$/', $legalIdentification);
+    
+            $isValidId = preg_match('/^[a-zA-Z0-9]{6,12}$/', $legalIdentification);
             if (!$isValidId) {
-                header("Location: ../view/ownerView.php?error=invalidForeignId");
+                echo json_encode(['status' => 'error', 'error_code' => 'invalid_foreign_id', 'message' => 'Identificación extranjera inválida. Debe contener entre 6 y 12 caracteres alfanuméricos.']);
                 exit();
             }
         }
 
+ 
         if (!empty($name) && !preg_match('/^[a-zA-Z\s]+$/', $name)) {
-            header("Location: ../view/ownerView.php?error=invalidName");
+            echo json_encode(['status' => 'error', 'message' => 'El nombre contiene caracteres inválidos.']);
             exit();
         }
         if (!empty($surnames) && !preg_match('/^[a-zA-Z\s]+$/', $surnames)) {
-            header("Location: ../view/ownerView.php?error=invalidSurnames");
+            echo json_encode(['status' => 'error', 'message' => 'Los apellidos contienen caracteres inválidos.']);
             exit();
         }
-
         if (!empty($phone) && !preg_match('/^\d{8}$/', $phone)) {
-            header("Location: ../view/ownerView.php?error=invalidPhone");
+            echo json_encode(['status' => 'error', 'message' => 'Número de teléfono inválido. Debe contener exactamente 8 dígitos.']);
             exit();
         }
-
         if (!preg_match('/^[^\s@]+@[^\s@]+\.[^\s@]+$/', $email)) {
-            header("Location: ../view/ownerView.php?error=invalidEmailFormat");
+            echo json_encode(['status' => 'error', 'message' => 'Formato de correo electrónico inválido.']);
             exit();
         }
 
-        if ($isValidId && !empty($email)) {
-            
-            $owner = new Owner($idOwner, $direction, "", 1, $idUser, "","", true, "Propietario", $name, $surnames, $legalIdentification, $phone, $email);
+       
+        $encryptedPassword = !empty($password) ? password_hash($password, PASSWORD_BCRYPT) : $currentOwner->getPassword();
 
-            $ownerBusiness = new ownerBusiness();
+       
+        if ($isValidId && !empty($email)) {
+            $owner = new Owner(
+                $idOwner,
+                $direction,
+                $photoFileName,
+                1,
+                $idUser,
+                $nickName,
+                $encryptedPassword,
+                true,
+                "Propietario",
+                $name,
+                $surnames,
+                $legalIdentification,
+                $phone,
+                $email
+            );
+
             $result = $ownerBusiness->updateTBOwner($owner);
 
             if ($result == 1) {
-                header("Location: ../view/ownerView.php?success=updated");
-                exit();
-            } else if ($result == "Email") {
-                header("Location: ../view/ownerView.php?error=alreadyexists");
-                exit();
-            } else if ($result == "Phone") {
-                header("Location: ../view/ownerView.php?error=phonealreadyexists");
-                exit();
-            } else if ($result == "LegalId") {
-                header("Location: ../view/ownerView.php?error=legalidalreadyexists");
-                exit();
+                echo json_encode(['status' => 'success', 'message' => 'Propietario actualizado correctamente.']);
+            } elseif ($result == "Email") {
+                echo json_encode(['status' => 'error', 'message' => 'El correo electrónico ya existe.']);
+            } elseif ($result == "Phone") {
+                echo json_encode(['status' => 'error', 'message' => 'El teléfono ya existe.']);
+            } elseif ($result == "LegalId") {
+                echo json_encode(['status' => 'error', 'message' => 'La identificación legal ya existe.']);
             } else {
-                header("Location: ../view/ownerView.php?error=dbError");
-                exit();
+                echo json_encode(['status' => 'error', 'message' => 'Error en la base de datos.']);
             }
         } else {
-            header("Location: ../view/ownerView.php?error=error");
-            exit();
+            echo json_encode(['status' => 'error', 'message' => 'Datos de identificación o correo electrónico inválidos.']);
         }
+        exit();
     } else {
-        header("Location: ../view/ownerView.php?error=error");
+        echo json_encode(['status' => 'error', 'message' => 'Campos faltantes en la solicitud.']);
         exit();
     }
 }
 
-if (isset($_POST['delete'])) { 
 
+if (isset($_POST['delete'])) {
     if (isset($_POST['ownerID']) && isset($_POST['userID'])) {
         $idOwner = $_POST['ownerID'];
         $idUser = $_POST['userID'];
-        echo ("user " . $idUser . " owner " . $idOwner);
+
         $ownerBusiness = new OwnerBusiness();
         $result = $ownerBusiness->deleteTBOwner($idOwner, $idUser);
 
-        if ($result == 1) {
-            header("location: ../view/ownerView.php?success=deleted");
+        if ($result) {
+            echo json_encode(['status' => 'success', 'message' => 'Propietario eliminado correctamente.']);
         } else {
-            header("location: ../view/ownerView.php?error=dbError");
+            echo json_encode(['status' => 'error', 'message' => 'Error en la base de datos al eliminar el propietario.']);
         }
     } else {
-        header("location: ../view/ownerView.php?error=emptyField");
+        echo json_encode(['status' => 'error', 'message' => 'Campos ID faltantes.']);
     }
+    exit();
 } else {
-    header("location: ../view/ownerView.php?error=error");
+    echo json_encode(['status' => 'error', 'message' => 'Solicitud no válida.']);
+    exit();
 }
-*/
+
+

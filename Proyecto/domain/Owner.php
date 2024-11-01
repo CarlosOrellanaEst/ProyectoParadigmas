@@ -7,7 +7,22 @@ class Owner extends User {
     private $photoURLTBOwner;
     private $statusTBOwner;
 
-    function __construct($idTBOwner = 0, $directionTBOwner = "", $photoURLTBOwner = "", $statusTBOwner = true, $id = 0, $nickname = "", $password = "", $active = true, $userType = "", $name = "", $surnames = "", $legalIdentification = "", $phone = "", $email = "") {
+    function __construct(
+        $idTBOwner = 0,
+        $directionTBOwner = "",
+        $photoURLTBOwner = "",
+        $statusTBOwner = true,
+        $id = 0,
+        $nickname = "",
+        $password = "",
+        $active = true,
+        $userType = "",
+        $name = "",
+        $surnames = "",
+        $legalIdentification = "",
+        $phone = "",
+        $email = ""
+    ) {
         // Llamar al constructor de la clase User
         parent::__construct($id, $nickname, $password, $active, $userType, $name, $surnames, $legalIdentification, $phone, $email);
 
@@ -17,8 +32,13 @@ class Owner extends User {
         $this->statusTBOwner = $statusTBOwner;
     }
 
+
     public static function fromUser(User $user, $idTBOwner = 0, $directionTBOwner = "", $photoURLTBOwner = "", $statusTBOwner = true) {
         $owner = new self (
+            $idTBOwner, 
+            $directionTBOwner, 
+            $photoURLTBOwner, 
+            $statusTBOwner,
             $user->getId(),
             $user->getNickname(),
             $user->getPassword(),
@@ -30,11 +50,6 @@ class Owner extends User {
             $user->getPhone(),
             $user->getEmail()
         );
-
-        $owner->idTBOwner = $idTBOwner;
-        $owner->directionTBOwner = $directionTBOwner;
-        $owner->photoURLTBOwner = $photoURLTBOwner;
-        $owner->statusTBOwner = $statusTBOwner;
 
         return $owner;
     }

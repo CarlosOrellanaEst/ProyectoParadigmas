@@ -12,7 +12,6 @@ $response = array();
 if (isset($_POST['create'])) {
     
     $photoUrls = ''; // Inicializamos la variable de URLs de las imágenes como una cadena vacía
-
     $activityDate = $_POST['activityDate'];
     $fechaActual = date('Y-m-d');
 
@@ -28,7 +27,6 @@ if (isset($_POST['create'])) {
         echo json_encode($response);
         exit();
     }
-
     // Verificamos si se subieron imágenes
     if (isset($_FILES['imagenes']) && !empty($_FILES['imagenes']['name'][0])) {
         $uploadDir = '../images/activity/';

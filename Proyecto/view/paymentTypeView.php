@@ -91,10 +91,8 @@
         <table>
             <thead>
                 <tr>
-                    <th>Owner id</th>
                     <th>Número de SINPE</th>
                     <th>Número de cuenta</th>
-                    <th>Estado</th>
                     <th>Acciones</th>
                 </tr>
             </thead>
@@ -110,13 +108,10 @@
                                 echo '<form method="post" action="../business/paymentTypeAction.php" onsubmit="return confirmAction(event);">';
                                 echo '<input type="hidden" name="tbpaymentTypeid" value="' . $current->getTbPaymentTypeId() . '">';
                                 echo '<tr>';
-                                    echo '<td><input type="text" name="OwnerId" value="' . $current->getOwnerId() . '"/></td>';
+                                    echo '<td style="display:none;"><input type="text" name="OwnerId" value="' . $current->getOwnerId() . '"/></td>';
                                     echo '<td><input type="text" name="SinpeNumber" value="' . $current->getSinpeNumber() . '"/></td>';
                                     echo '<td><input type="text" name="AccountNumber" value="' . $current->getAccountNumber() . '"/></td>';
-                                    echo '<td><select name="Status" id="Status">
-                                                    <option value="1"' . (($current->getStatus() == 1) ? ' selected' : '') . '>Activo</option>
-                                                    <option value="0"' . (($current->getStatus() == 0) ? ' selected' : '') . '>Inactivo</option>
-                                                </select></td>';
+                                    echo '<input type="hidden" name="Status" value="1">';
                                     echo '<td>';
                                         echo '<input type="submit" value="Actualizar" name="update"/>';
                                         echo '<input type="submit" value="Eliminar" name="delete"/>';
@@ -150,13 +145,10 @@
                                 echo '<form method="post" action="../business/paymentTypeAction.php" onsubmit="return confirmAction(event);">';
                                 echo '<input type="hidden" name="tbpaymentTypeid" value="' . $current->getTbPaymentTypeId() . '">';
                                 echo '<tr>';
-                                    echo '<td><input type="text" name="OwnerId" value="' . $current->getOwnerId() . '"/></td>';
+                                echo '<td style="display:none;"><input type="text" name="OwnerId" value="' . $current->getOwnerId() . '"/></td>';
                                     echo '<td><input type="text" name="SinpeNumber" value="' . $current->getSinpeNumber() . '"/></td>';
                                     echo '<td><input type="text" name="AccountNumber" value="' . $current->getAccountNumber() . '"/></td>';
-                                    echo '<td><select name="Status" id="Status">
-                                                    <option value="1"' . (($current->getStatus() == 1) ? ' selected' : '') . '>Activo</option>
-                                                    <option value="0"' . (($current->getStatus() == 0) ? ' selected' : '') . '>Inactivo</option>
-                                                </select></td>';
+                                    echo '<input type="hidden" name="Status" value="1">';
                                     echo '<td>';
                                         echo '<input type="submit" value="Actualizar" name="update"/>';
                                         echo '<input type="submit" value="Eliminar" name="delete"/>';
