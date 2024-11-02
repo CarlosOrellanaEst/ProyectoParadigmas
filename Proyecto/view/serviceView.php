@@ -31,7 +31,15 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 </head>
 <body>
-    <a href="adminView.php">← Volver al inicio</a>
+    <?php
+        if ($userLogged->getUserType() == "Propietario") {
+            echo '<a href="ownerViewSession.php">← Volver al inicio</a>';
+        } else if ($userLogged->getUserType() == "Administrador") {
+            echo '<a href="adminView.php">← Volver al inicio</a>';
+        } else if ($userLogged->getUserType() == "Turista") {
+            echo '<a href="touristView.php">← Volver al inicio</a>';
+        }
+    ?>
     <header>
         <h1>CRUD Servicios</h1>
         <p><span class="required">*</span> Campos requeridos</p>

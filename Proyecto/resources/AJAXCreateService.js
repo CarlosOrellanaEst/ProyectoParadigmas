@@ -3,8 +3,9 @@ document.addEventListener('DOMContentLoaded', function () {
         event.preventDefault();
 
         const companyID = document.getElementById('companyID').value.trim();
-        const serviceIdInputs = document.querySelectorAll('select[name="serviceId"]'); // Capturar todos los select de servicios
+        const serviceIdInputs = document.querySelectorAll('select[name="serviceId[]"]'); // Capturar todos los select de servicios
         const servicesIDArray = Array.from(serviceIdInputs).map(input => input.value).join(','); // Obtener todos los IDs de servicios seleccionados
+
         const images = document.getElementById('imagenes').files;
 
         const formData = new FormData();
@@ -26,7 +27,8 @@ document.addEventListener('DOMContentLoaded', function () {
                 try {
                     let response = JSON.parse(xhr.responseText);
                     if (response.status === 'success') {
-                        alert(response.message);
+                        console.log(servicesIDArray);
+                        alert(response.message + servicesIDArray);
                         document.getElementById('formCreate').reset();
                         location.reload();
                     } else {
