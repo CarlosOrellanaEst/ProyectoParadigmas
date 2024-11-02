@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function () {
-
     function handleErrorResponse(response) {
         alert('Error: ' + response.message);
     }
@@ -11,6 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const nameTBActivity = document.getElementById('nameTBActivity').value;
         const serviceID = document.getElementById('serviceId1').value;
 
+        // Obtener arrays de atributos y datos en el formulario de creación
         let attributeInputs = document.querySelectorAll('input[name="attributeTBActivityArrayFORM"]');
         let dataInputs = document.querySelectorAll('input[name="dataAttributeTBActivityArrayFORM"]');
 
@@ -65,20 +65,33 @@ document.addEventListener('DOMContentLoaded', function () {
         xhr.send(formData);
     });
 
-    // Manejador para todos los formularios excepto el de creación
+    // Manejador para los formularios de actualización
     const forms = document.querySelectorAll('form');
     forms.forEach(function (form) {
         if (form.id !== 'formCreate') {  // Excluye el formulario 'formCreate' del forEach
             form.addEventListener('submit', function (event) {
                 event.preventDefault();
 
-                const actionType = event.submitter.name; 
+                const actionType = event.submitter ? event.submitter.name : ''; 
                 const formData = new FormData(form);
 
                 formData.delete('create');
                 formData.delete('update');
                 formData.delete('delete');
                 formData.delete('deleteImage');
+
+                // Obtener arrays de atributos y datos en el formulario de actualización
+                let attributeInputs = form.querySelectorAll('input[name="attributeTBActivityArrayTable"]');
+                let dataInputs = form.querySelectorAll('input[name="dataAttributeTBActivityArrayTable"]');
+                
+                const attributeTBActivityArray = Array.from(attributeInputs).map(input => input.value).join(',');
+                const dataAttributeTBActivityArray = Array.from(dataInputs).map(input => input.value).join(',');
+
+                console.log('attributeTBActivityArray:', attributeTBActivityArray);
+                console.log('dataAttributeTBActivityArray:', dataAttributeTBActivityArray);
+
+                formData.append('attributeTBActivityArrayTable', attributeTBActivityArray);
+                formData.append('dataAttributeTBActivityArrayTable', dataAttributeTBActivityArray);
 
                 if (actionType) {
                     formData.append(actionType, actionType);

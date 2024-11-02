@@ -74,6 +74,11 @@ if (isset($_POST['create'])) {
     $activityBusiness = new ActivityBusiness();
     $result = $activityBusiness->insertActivity($activity);
 
+    if ($result['status'] == 'error' && isset($result['message']) && $result['message'] == 'Ya existe una actividad con el mismo nombre y está activa.') {
+        echo json_encode(['status' => 'error', 'message' => 'Ya existe una actividad con el mismo nombre y está activa.']);
+        exit();
+    }
+
     if ($result) {
         echo json_encode(['status' => 'success', 'message' => 'Actividad insertada correctamente.']);
     } else {
@@ -135,13 +140,16 @@ if (isset($_POST['update'])) {
     $activity = new Activity($idTBActivity, $nameTBActivity, $serviceId, $attributeTBActivityArray, $dataAttributeTBActivityArray, $allImages, 1, $activityDate, $latitude, $longitude);
     $result = $activityBusiness->updateActivity($activity);
 
-    if ($result) {
+    if ($result['status'] === 'success') {
         echo json_encode(['status' => 'success', 'message' => 'Actividad actualizada correctamente.']);
+    } elseif ($result['status'] === 'error' && $result['message'] === 'La actividad ya existe con el mismo nombre') {
+        echo json_encode(['status' => 'error', 'error_code' => 'duplicate_name', 'message' => $result['message']]);
     } else {
-        echo json_encode(['status' => 'error', 'error_code' => 'update_error', 'message' => 'Error al actualizar actividad.']);
+        echo json_encode(['status' => 'error', 'error_code' => 'update_error', 'message' => $result['message'] ?? 'Error al actualizar actividad.']);
     }
     exit();
 }
+
 
 // Eliminar una actividad
 if (isset($_POST['delete'])) {

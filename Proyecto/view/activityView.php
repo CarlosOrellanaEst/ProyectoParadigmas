@@ -1,24 +1,24 @@
 <?php
-    require_once '../domain/Owner.php';
-    require_once '../business/paymentTypeBusiness.php';
-    require_once '../business/ownerBusiness.php';
-    require_once '../business/activityBusiness.php';
-    require_once '../business/serviceCompanyBusiness.php';
+require_once '../domain/Owner.php';
+require_once '../business/paymentTypeBusiness.php';
+require_once '../business/ownerBusiness.php';
+require_once '../business/activityBusiness.php';
+require_once '../business/serviceCompanyBusiness.php';
 
-    session_start();
-    $userLogged = $_SESSION['user'];    
-    $ownerBusiness = new ownerBusiness();
+session_start();
+$userLogged = $_SESSION['user'];
+$ownerBusiness = new ownerBusiness();
 
-    if ($userLogged->getUserType() == "Administrador") {
-        $owners = $ownerBusiness->getAllTBOwners();
-        if (!$owners || empty($owners)) {
-            echo "<script>alert('No se encontraron propietarios.');</script>";
-        }
-    } else if ($userLogged->getUserType() == "Propietario") {
-        $owners = [$userLogged];
+if ($userLogged->getUserType() == "Administrador") {
+    $owners = $ownerBusiness->getAllTBOwners();
+    if (!$owners || empty($owners)) {
+        echo "<script>alert('No se encontraron propietarios.');</script>";
     }
+} else if ($userLogged->getUserType() == "Propietario") {
+    $owners = [$userLogged];
+}
 
-    $_SESSION['owners'] = $owners;
+$_SESSION['owners'] = $owners;
 ?>
 
 <!DOCTYPE html>
@@ -35,9 +35,9 @@
     </style>
     <script src="../resources/activityAJAX.js"></script>
     <?php
-        $serviceCompanyBusiness = new serviceCompanyBusiness();
-        $services = $serviceCompanyBusiness->getAllTBServiceCompanies();
-        $imageBasePath = '../images/activity/';
+    $serviceCompanyBusiness = new serviceCompanyBusiness();
+    $services = $serviceCompanyBusiness->getAllTBServiceCompanies();
+    $imageBasePath = '../images/activity/';
     ?>
     <script src="../resources/maps.js" defer></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -63,58 +63,58 @@
         <h2>Crear Actividad</h2>
         <?php
         if ($userLogged->getUserType() == "Administrador" || $userLogged->getUserType() == "Propietario") {
-            ?>
-        <form method="post" id="formCreate" action="../business/activityAction.php" enctype="multipart/form-data">
-            <label for="nameTBActivity">Nombre de la Actividad <span class="required">*</span></label>
-            <input placeholder="Nombre de la Actividad" type="text" name="nameTBActivity" id="nameTBActivity" />
-            <br><br>
+        ?>
+            <form method="post" id="formCreate" action="../business/activityAction.php" enctype="multipart/form-data">
+                <label for="nameTBActivity">Nombre de la Actividad <span class="required">*</span></label>
+                <input placeholder="Nombre de la Actividad" type="text" name="nameTBActivity" id="nameTBActivity" />
+                <br><br>
 
-            <label for="serviceId1">Servicio: </label>
-            <select name="serviceId" id="serviceId1">
-                <?php foreach ($services as $service): ?>
-                <option value="<?php echo htmlspecialchars($service->getTbservicecompanyid()); ?>">
-                    <?php
-                        $serviceName = $serviceCompanyBusiness->getTBServicesByIds($service->getTbserviceid());
-                        echo htmlspecialchars(is_array($serviceName) ? implode(', ', array_map(function ($s) {
-                            return $s->getTbservicename();
-                        }, $serviceName)) : $serviceName);
-                    ?>
-                </option>
-                <?php endforeach; ?>
-            </select>
+                <label for="serviceId1">Servicio: </label>
+                <select name="serviceId" id="serviceId1">
+                    <?php foreach ($services as $service): ?>
+                        <option value="<?php echo htmlspecialchars($service->getTbservicecompanyid()); ?>">
+                            <?php
+                            $serviceName = $serviceCompanyBusiness->getTBServicesByIds($service->getTbserviceid());
+                            echo htmlspecialchars(is_array($serviceName) ? implode(', ', array_map(function ($s) {
+                                return $s->getTbservicename();
+                            }, $serviceName)) : $serviceName);
+                            ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
 
-            <br><br>
+                <br><br>
 
-            <div id="attributes">
-                <div class="attribute-container">
-                    <label for="attributeTBActivityArray">Atributo: </label>
-                    <input type="text" name="attributeTBActivityArrayFORM" placeholder="Atributo" />
-                    <label for="dataAttributeTBActivityArray">Dato: </label>
-                    <input type="text" name="dataAttributeTBActivityArrayFORM" placeholder="Dato" />
+                <div id="attributes">
+                    <div class="attribute-container">
+                        <label for="attributeTBActivityArray">Atributo: </label>
+                        <input type="text" name="attributeTBActivityArrayFORM" placeholder="Atributo" />
+                        <label for="dataAttributeTBActivityArray">Dato: </label>
+                        <input type="text" name="dataAttributeTBActivityArrayFORM" placeholder="Dato" />
+                    </div>
                 </div>
-            </div>
 
-            <button type="button" id="addAttribute">Agregar otro atributo</button>
-            <br><br>
+                <button type="button" id="addAttribute">Agregar otro atributo</button>
+                <br><br>
 
-            <label class="datetime-label" for="activityDate">Fecha y Hora de la Actividad: <span class="required">*</span></label>
-            <input type="datetime-local" name="activityDate" id="activityDate">
-            <br><br>
+                <label class="datetime-label" for="activityDate">Fecha y Hora de la Actividad: <span class="required">*</span></label>
+                <input type="datetime-local" name="activityDate" id="activityDate">
+                <br><br>
 
-            <label for="imagenes">Selecciona las imágenes (máximo 5): </label><br>
-            <input type="file" name="imagenes[]" id="imagenes" multiple />
-            <br><br>
-            <span class="required">*</span>Seleccionar una ubicacion diferente a la automatica
-            <div id="map" style="height: 500px; width: 100%;">
-            </div>
-            <br><br>
-            <input type="text" style="display:none;" name="latitude" id="latitude">
-            <input type="text" style="display:none;" name="longitude" id="longitude">
-            <br><br>
+                <label for="imagenes">Selecciona las imágenes (máximo 5): </label><br>
+                <input type="file" name="imagenes[]" id="imagenes" multiple />
+                <br><br>
+                <span class="required">*</span>Seleccionar una ubicacion diferente a la automatica
+                <div id="map" style="height: 500px; width: 100%;">
+                </div>
+                <br><br>
+                <input type="text" style="display:none;" name="latitude" id="latitude">
+                <input type="text" style="display:none;" name="longitude" id="longitude">
+                <br><br>
 
-            <input type="hidden" id="statusTBActivity" name="statusTBActivity" value="1">
-            <input type="submit" value="Crear" name="create" id="create" />
-        </form>
+                <input type="hidden" id="statusTBActivity" name="statusTBActivity" value="1">
+                <input type="submit" value="Crear" name="create" id="create" />
+            </form>
         <?php
         }
         ?>
@@ -147,7 +147,7 @@
                 } else {
                     $allActivities = $activityBusiness->getAllActivities();
                 }
-                
+
                 if (count($allActivities) > 0) {
                     foreach ($allActivities as $current) {
                         $assignedService = $serviceCompanyBusiness->getServiceCompany($current['tbactivityservicecompanyid']);
@@ -178,22 +178,26 @@
                         echo '</td>';
 
                         echo '<td>';
-                        $attributeArray = $current['tbactivityatributearray'];
-                        $dataArray = $current['tbactivitydataarray'];
-                        
-                        for ($i = 0; $i < count($attributeArray); $i++) {
+                        $attributeArray = is_array($current['tbactivityatributearray']) ? $current['tbactivityatributearray'] : explode(',', $current['tbactivityatributearray']);
+                        $dataArray = is_array($current['tbactivitydataarray']) ? $current['tbactivitydataarray'] : explode(',', $current['tbactivitydataarray']);
+
+                        $maxCount = max(count($attributeArray), count($dataArray));
+
+                        for ($i = 0; $i < $maxCount; $i++) {
+                            $attributeValue = $i < count($attributeArray) ? htmlspecialchars($attributeArray[$i]) : '';
+                            $dataValue = $i < count($dataArray) ? htmlspecialchars($dataArray[$i]) : '';
+
                             echo '<div>';
-                            echo '<input type="text" name="attributeTBActivityArrayTable" value="' . htmlspecialchars($attributeArray[$i]) . '" placeholder="Atributo" />';
-                            echo '<input type="text" name="dataAttributeTBActivityArrayTable" value="' . htmlspecialchars($dataArray[$i]) . '" placeholder="Dato" />';
+                            echo '<input type="text" name="attributeTBActivityArrayTable" value="' . $attributeValue . '" placeholder="Atributo" />';
+                            echo '<input type="text" name="dataAttributeTBActivityArrayTable" value="' . $dataValue . '" placeholder="Dato" />';
                             echo '</div>';
                         }
                         echo '</td>';
 
+
+
                         echo '<td>';
-                        $urls = $current['tbactivityurl'];
-                        if (is_string($urls)) {
-                            $urls = explode(',', $urls);
-                        }
+                        $urls = is_string($current['tbactivityurl']) ? explode(',', $current['tbactivityurl']) : $current['tbactivityurl'];
                         foreach ($urls as $index => $url) {
                             if (!empty($url)) {
                                 $fullImagePath = $imageBasePath . trim($url);
@@ -241,25 +245,25 @@
     </section>
 
     <script>
-    document.getElementById('addAttribute').addEventListener('click', function() {
-        const attributeContainer = document.createElement('div');
-        attributeContainer.innerHTML = `
+        document.getElementById('addAttribute').addEventListener('click', function() {
+            const attributeContainer = document.createElement('div');
+            attributeContainer.innerHTML = `
             <label for="attributeTBActivityArray">Atributo: </label>
             <input type="text" name="attributeTBActivityArrayFORM" placeholder="Atributo" />
             <label for="dataAttributeTBActivityArray">Dato: </label>
             <input type="text" name="dataAttributeTBActivityArrayFORM" placeholder="Dato" />
         `;
-        document.getElementById('attributes').appendChild(attributeContainer);
-    });
+            document.getElementById('attributes').appendChild(attributeContainer);
+        });
 
-    function confirmAction(event) {
-        return confirm('¿Estás seguro de que deseas realizar esta acción?');
-    }
+        function confirmAction(event) {
+            return confirm('¿Estás seguro de que deseas realizar esta acción?');
+        }
 
-    $('.show-attributes').click(function() {
-        var activityId = $(this).data('activity-id');
-        $('#attributes-' + activityId).toggle();
-    });
+        $('.show-attributes').click(function() {
+            var activityId = $(this).data('activity-id');
+            $('#attributes-' + activityId).toggle();
+        });
     </script>
 </body>
 
