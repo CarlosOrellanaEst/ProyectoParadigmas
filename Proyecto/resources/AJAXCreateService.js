@@ -8,8 +8,9 @@ document.addEventListener('DOMContentLoaded', function () {
         event.preventDefault();
 
         const companyID = document.getElementById('companyID').value.trim();
-        const serviceIdInputs = document.querySelectorAll('select[name="serviceId"]'); // Capturar todos los select de servicios
+        const serviceIdInputs = document.querySelectorAll('select[name="serviceId[]"]'); // Capturar todos los select de servicios
         const servicesIDArray = Array.from(serviceIdInputs).map(input => input.value).join(','); // Obtener todos los IDs de servicios seleccionados
+
         const images = document.getElementById('imagenes').files;
 
         const formData = new FormData();
