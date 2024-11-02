@@ -64,7 +64,7 @@ $_SESSION['owners'] = $owners;
         <?php
         if ($userLogged->getUserType() == "Administrador" || $userLogged->getUserType() == "Propietario") {
             ?>
-            <form id="formCreate" method="post" action="../business/touristCompanyAction.php" enctype="multipart/form-data">
+            <form id="formCreate" method="post">
                 <div class="form-group">
                     <label for="legalName">Nombre legal:</label>
                     <input placeholder="Nombre legal" type="text" name="legalName" id="legalName" />

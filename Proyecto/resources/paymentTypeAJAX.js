@@ -19,22 +19,23 @@ document.addEventListener('DOMContentLoaded', function () {
         xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
         xhr.onreadystatechange = function () {
             if (xhr.readyState === 4) {
-                try {
-                    let response = JSON.parse(xhr.responseText);
-                    if (xhr.status === 200) {
+                if (xhr.status === 200) {
+                    try {
+                        const response = JSON.parse(xhr.responseText);
                         if (response.status === 'success') {
                             alert(response.message);
                             document.getElementById('formCreate').reset();
-                            location.reload();  // Recarga la página después de éxito
+                            location.reload(); 
                         } else {
-                            //handleErrorResponse(response);
+                            alert('Error: ' + response.message);
                         }
-                    } else {
-                        alert('HTTP Error: ' + xhr.status);
+                    } catch (e) {
+                        console.error('Respuesta JSON inválida:', xhr.responseText); // Muestra la respuesta completa
+                        alert('Error procesando la respuesta del servidor.');
                     }
-                } catch (e) {
-                    console.error('Error procesando la respuesta JSON:', xhr.responseText);
-                    alert('Error procesando la respuesta del servidor.');
+                } else {
+                    console.error('Error HTTP:', xhr.status, xhr.statusText);
+                    alert('Error HTTP: ' + xhr.status + ' - ' + xhr.statusText);
                 }
             }
         };
@@ -42,9 +43,9 @@ document.addEventListener('DOMContentLoaded', function () {
         // Envío de datos en formato URL-encoded
         xhr.send('ownerId=' + encodeURIComponent(postData.ownerId) + '&accountNumber=' + encodeURIComponent(postData.accountNumber) + '&sinpeNumber=' + encodeURIComponent(postData.sinpeNumber));
     });
-});
+    // Manejo de errores de respuesta
 
-// Manejo de errores de respuesta
+});
 function handleErrorResponse(response) {
     switch (response.error_code) {
         case 'account_required':
@@ -70,3 +71,5 @@ function handleErrorResponse(response) {
             break;
     }
 }
+
+

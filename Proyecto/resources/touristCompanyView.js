@@ -1,36 +1,29 @@
-document.addEventListener('DOMContentLoaded', function () {
-    // Mostrar alertas basadas en los parámetros de la URL
-    showAlertBasedOnURL();
-
-    // Manejo de la selección de tipo de empresa
-    const companyTypeSelect = document.getElementById('companyType');
-    const customCompanyTypeField = document.getElementById('customCompanyType');
-    const customCompanyTypeLabel = document.getElementById('customCompanyTypeName');
-
+document.addEventListener("DOMContentLoaded", function () {
     // Mostrar u ocultar el campo personalizado según la selección del tipo de empresa
-    companyTypeSelect.addEventListener('change', function() {
-        if (this.value === 'custom') {
-            customCompanyTypeField.style.display = 'block';
-            customCompanyTypeLabel.style.display = 'block';
+    const companyTypeSelect = document.getElementById("companyType");
+    const customCompanyTypeField = document.getElementById("customCompanyType");
+    const customCompanyTypeLabel = document.getElementById("customCompanyTypeName");
+
+    companyTypeSelect.addEventListener("change", function () {
+        if (this.value === "custom") {
+            customCompanyTypeField.style.display = "block";
+            customCompanyTypeLabel.style.display = "block";
         } else {
-            customCompanyTypeField.style.display = 'none';
-            customCompanyTypeLabel.style.display = 'none';
+            customCompanyTypeField.style.display = "none";
+            customCompanyTypeLabel.style.display = "none";
         }
-    }); 
+    });
 
     let selectedCompanyTypes = [];
-    document.getElementById('addBtn').addEventListener('click', function () {
-        let companyTypeSelect = document.getElementById('companyType');
+    document.getElementById("addBtn").addEventListener("click", function () {
         let selectedValue = companyTypeSelect.value;
         let selectedText = companyTypeSelect.options[companyTypeSelect.selectedIndex].text;
-    
-        // Validación: Evitar agregar opciones con valor "0" o duplicadas
+
         if (selectedValue !== "0" && !selectedCompanyTypes.includes(selectedValue)) {
             selectedCompanyTypes.push(selectedValue);
-    
-            // Mostrar la selección en la lista
-            let companyTypeList = document.getElementById('selectedCompanyTypesList');
-            let companyTypeItem = document.createElement('div');
+
+            let companyTypeList = document.getElementById("selectedCompanyTypesList");
+            let companyTypeItem = document.createElement("div");
             companyTypeItem.textContent = selectedText;
             companyTypeList.appendChild(companyTypeItem);
         } else if (selectedValue === "0") {
@@ -40,145 +33,150 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    
-    // Manejo del envío de formulario
-    document.getElementById('formCreate').addEventListener('submit', function (e) {
-        e.preventDefault(); // Prevenir el envío por defecto del formulario
+    // Manejo del envío de formulario de creación
+    document.getElementById("formCreate").addEventListener("submit", function (e) {
+        e.preventDefault();
 
-        const magicName = document.getElementById('magicName').value.trim();
-        const legalName = document.getElementById('legalName').value.trim();
-        const owner = document.getElementById('ownerId').value;
-        const companyType = document.getElementById('companyType').value;
-        const images = document.getElementById('imagenes').files;
-        const status = document.getElementById('status').value;
-        const ownerError = document.getElementById('ownerError');
-        const customCompanyType = document.getElementById('customCompanyType').value.trim();
-        const customCompanyTypeError = document.getElementById('customCompanyTypeError');
+        const magicName = document.getElementById("magicName").value.trim();
+        const legalName = document.getElementById("legalName").value.trim();
+        const owner = document.getElementById("ownerId").value;
+        const companyType = document.getElementById("companyType").value;
+        const images = document.getElementById("imagenes").files;
+        const status = document.getElementById("status").value;
+        const customCompanyType = document.getElementById("customCompanyType").value.trim();
 
-        ownerError.style.display = 'none';
-        customCompanyTypeError.style.display = 'none';
-
-        // Validaciones de campos requeridos
-        if (owner === '0') { 
-            ownerError.style.display = 'inline'; 
-            console.log("Error: Owner is required");
-            return; 
-        }
-
-        if (companyType === 'custom' && customCompanyType === '') {
-            customCompanyTypeError.style.display = 'inline';
-            console.log("Error: Custom Company Type is required");
+        if (owner === "0") {
+            alert("Error: se necesita seleccionar un propietario para registrar.");
             return;
         }
-        console.log("customCompanyType: ", customCompanyType);
-        // Crear y enviar datos del formulario mediante AJAX
-        const formData = new FormData();
-        formData.append('magicName', magicName);
-        formData.append('legalName', legalName);
-        formData.append('ownerId', owner);
-        formData.append('status', status);
-        formData.append('create', 'create'); 
 
-        //
-        const selectedCompanyTypes = []; 
-    const companyTypeList = document.getElementById('selectedCompanyTypesList').children;
-
-    for (let item of companyTypeList) {
-        selectedCompanyTypes.push(item.textContent);
-    }
-
-    selectedCompanyTypes.forEach((type) => {
-        formData.append('selectedCompanyTypes[]', type); // Agrega cada tipo de empresa al FormData
-    });
-        //
-
-        if (companyType === 'custom') {
-            formData.append('customCompanyType', customCompanyType);
-        } else {
-            formData.append('companyType', companyType);
+        if (companyType === "0" || (companyType === "custom" && customCompanyType === "")) {
+            alert("Error: se necesita seleccionar un tipo de empresa.");
+            return;
         }
 
-        // Validar y agregar archivos seleccionados
+        const formData = new FormData();
+        formData.append("magicName", magicName);
+        formData.append("legalName", legalName);
+        formData.append("ownerId", owner);
+        formData.append("status", status);
+        formData.append("create", "create");
+
+        const selectedCompanyTypes = [];
+        const companyTypeList = document.getElementById("selectedCompanyTypesList").children;
+        for (let item of companyTypeList) {
+            selectedCompanyTypes.push(item.textContent);
+        }
+
+        selectedCompanyTypes.forEach((type) => {
+            formData.append("selectedCompanyTypes[]", type);
+        });
+
+        if (companyType === "custom") {
+            formData.append("customCompanyType", customCompanyType);
+        } else {
+            formData.append("companyType", companyType);
+        }
+
         if (images.length > 0) {
             for (let i = 0; i < images.length; i++) {
-                formData.append('imagenes[]', images[i]);
+                formData.append("imagenes[]", images[i]);
             }
-        } else {
-            console.log("No images selected");
         }
 
-        console.log("Form data prepared:", formData);
+        sendAjaxRequest(formData, "Crear empresa");
+    });
 
-        const xhr = new XMLHttpRequest();
-        xhr.open('POST', '../business/touristCompanyAction.php', true);
+    // Captura el evento de confirmación de acciones en los formularios de actualización y eliminación
+    document.querySelectorAll("form[onsubmit]").forEach(function (form) {
+        form.addEventListener("submit", function (e) {
+            e.preventDefault();
+
+            // Determina el tipo de acción (actualizar, eliminar o eliminar imagen)
+            const actionType = e.submitter.name; // "update", "delete" o "deleteImage"
+            if (actionType === "delete" && !confirm("¿Estás seguro de que deseas eliminar este registro?")) {
+                return;
+            } else if (actionType === "update" && !confirm("¿Estás seguro de que deseas actualizar este registro?")) {
+                return;
+            } else if (actionType === "deleteImage" && !confirm("¿Estás seguro de que deseas eliminar esta imagen?")) {
+                return;
+            }
+
+            const formData = new FormData(form);
+            formData.append(actionType, actionType); // Añade el tipo de acción al FormData
+
+            sendAjaxRequest(formData, actionType);
+        });
+    });
+
+    // Función para manejar la solicitud AJAX
+    function sendAjaxRequest(formData, actionDescription) {
+        let xhr = new XMLHttpRequest();
+        xhr.open("POST", "../business/touristCompanyAction.php", true);
 
         xhr.onreadystatechange = function () {
             if (xhr.readyState === 4) {
-                if (xhr.status === 200) {
-                    try {
-                        const response = JSON.parse(xhr.responseText);
-                        if (response.status === 'success') {
-                            alert(response.message);
-                            document.getElementById('formCreate').reset();
-                            location.reload(); 
-                        } else {
-                            alert('Error: ' + response.message);
-                        }
-                    } catch (e) {
-                        console.error('Respuesta JSON inválida:', xhr.responseText);
-                        alert('Error procesando la respuesta del servidor.');
+                try {
+                    let response = JSON.parse(xhr.responseText.trim());
+                    if (xhr.status === 200 && response.status === "success") {
+                        alert(response.message);
+                        location.reload(); // Recargar la página para reflejar los cambios
+                    } else {
+                        handleErrorResponse(response);
+                        location.reload();
                     }
-                } else {
-                    console.error('Error HTTP:', xhr.status, xhr.statusText);
-                    alert('Error HTTP: ' + xhr.status + ' - ' + xhr.statusText);
+                } catch (e) {
+                    console.error("Error al procesar la respuesta JSON:", e);
+                    alert("Error al procesar la respuesta del servidor.");
                 }
             }
         };
 
-        xhr.send(formData);
-    });
-});
+        xhr.send(formData); // Envía los datos de formulario
+    }
 
-
-// Función para mostrar alertas basadas en los parámetros de la URL
-function showAlertBasedOnURL() {
-    const urlParams = new URLSearchParams(window.location.search);
-
-        if (urlParams.has('error')) {
-        switch (urlParams.get('error')) {
-            case 'uploadFailed':
-                alert('Error al subir la imagen. Por favor, inténtelo de nuevo.');
+    // Manejo de errores del servidor
+    function handleErrorResponse(response) {
+        switch (response.error_code) {
+            case "max_images_exceeded":
+                alert("Error: Solo se permite subir un máximo de 5 imágenes.");
                 break;
-            case 'invalidFileType':
-                alert('Formato de imagen inválido. Solo se permiten JPG, PNG, JPEG y GIF.');
+            case "file_move_failed":
+                alert("Error: No se pudo mover la imagen al directorio.");
                 break;
-            case 'dbError':
-                alert('Error en la base de datos al realizar la acción.');
+            case "invalid_file_type":
+                alert("Error: Formato de imagen inválido. Solo se permiten JPG, PNG, JPEG y GIF.");
                 break;
-            case 'emptyField':
-                alert('El campo de texto no puede estar vacío.');
+            case "custom_company_type_required":
+                alert("Error: Debe especificar un tipo de empresa personalizado.");
                 break;
-            case 'invalidOwnerOrCompanyType':
-                alert('Propietario o tipo de empresa no válido. Por favor, revise los campos.');
+            case "company_exists":
+                alert("Error: La empresa ya existe.");
                 break;
-            case 'invalidId':
-                alert('ID inválido. No se pudo completar la acción.');
+            case "database_error":
+                alert("Error en la base de datos al realizar la acción.");
                 break;
-            case 'missingFields':
-                alert('Faltan campos obligatorios. Por favor, complete todos los datos.');
+            case "invalid_owner_or_company_type":
+                alert("Error: Propietario o tipo de compañía inválido.");
                 break;
-            case 'deleteFailed':
-                alert('Error al eliminar la empresa.');
+            case "owner_required":
+                alert("Error: El campo propietario es obligatorio.");
                 break;
-            case 'updateFailed':
-                alert('Error al actualizar la empresa.');
+            case "upload_failed":
+                alert("Error al subir la imagen. Por favor, inténtelo de nuevo.");
                 break;
-            case 'companyExists':  
-                alert('Ya existe una empresa turística con el mismo nombre legal y está activa.');
+            case "update_failed":
+                alert("Error al actualizar la empresa.");
+                break;
+            case "delete_failed":
+                alert("Error al eliminar la empresa.");
+                break;
+            case "image_not_found":
+                alert("Error: Imagen no encontrada.");
                 break;
             default:
-                alert('Ocurrió un error inesperado.');
+                alert(response.message || "Ocurrió un error inesperado.");
                 break;
         }
     }
-}
+});

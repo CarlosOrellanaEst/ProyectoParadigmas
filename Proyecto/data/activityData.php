@@ -228,94 +228,92 @@ class activityData extends Data
 
     // Método para actualizar una actividad
     public function updateActivity($activity)
-    {
-        // Conexión a la base de datos
-        $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
-        if (!$conn) {
-            return false; // Si la conexión falla, devolver false
-        }
-    
-        $conn->set_charset('utf8mb4');
-    
-        // Revisión de duplicados
-        $tbactivityname = $activity->getNameTBActivity();
-        $tbactivityid = $activity->getIdTBActivity();
-    
-        $checkQuery = "SELECT COUNT(*) FROM tbactivity WHERE tbactivityname = ? AND tbactivityid != ? AND tbactivitystatus = 1";
-        $stmtCheck = $conn->prepare($checkQuery);
-        if ($stmtCheck === false) {
-            mysqli_close($conn);
-            return false; // Si la preparación falla, devolver false
-        }
-    
-        $stmtCheck->bind_param("si", $tbactivityname, $tbactivityid);
-        $stmtCheck->execute();
-        $stmtCheck->bind_result($count);
-        $stmtCheck->fetch();
-        $stmtCheck->close();
-    
-        if ($count > 0) {
-            mysqli_close($conn);
-            return false; // Si existe una actividad con el mismo nombre activa, devolver false
-        }
-    
-        // Actualización de la actividad con latitud y longitud
-        $queryUpdate = "UPDATE tbactivity
+{
+    // Conexión a la base de datos
+    $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
+    if (!$conn) {
+        return ['status' => 'error', 'message' => 'Fallo en la conexión a la base de datos'];
+    }
+
+    $conn->set_charset('utf8mb4');
+
+    // Revisión de duplicados
+    $tbactivityname = $activity->getNameTBActivity();
+    $tbactivityid = $activity->getIdTBActivity();
+
+    $checkQuery = "SELECT COUNT(*) FROM tbactivity WHERE tbactivityname = ? AND tbactivityid != ? AND tbactivitystatus = 1";
+    $stmtCheck = $conn->prepare($checkQuery);
+    if ($stmtCheck === false) {
+        mysqli_close($conn);
+        return ['status' => 'error', 'message' => 'Error al preparar la consulta de verificación de duplicados'];
+    }
+
+    $stmtCheck->bind_param("si", $tbactivityname, $tbactivityid);
+    $stmtCheck->execute();
+    $stmtCheck->bind_result($count);
+    $stmtCheck->fetch();
+    $stmtCheck->close();
+
+    if ($count > 0) {
+        mysqli_close($conn);
+        return ['status' => 'error', 'message' => 'La actividad ya existe con el mismo nombre'];
+    }
+
+    // Actualización de la actividad con latitud y longitud
+    $queryUpdate = "UPDATE tbactivity
                     SET tbactivityname = ?, tbactivityservicecompanyid = ?, tbactivityatributearray = ?, tbactivitydataarray = ?, tbactivityurl = ?, tbactivitystatus = ?, tbactivitydate = ?, tbactivitylatitude = ?, tbactivitylongitude = ?
                     WHERE tbactivityid = ?";
-        $stmt = $conn->prepare($queryUpdate);
-        if ($stmt === false) {
-            mysqli_close($conn);
-            return false; // Si la preparación falla, devolver false
-        }
-    
-        // Enlazamos los parámetros correctamente
-        $tbServicesid = $activity->getTbservicecompanyid();
-        $tbactivityatributearray = is_array($activity->getAttributeTBActivityArray()) ? implode(",", $activity->getAttributeTBActivityArray()) : '';
-        $tbactivitydataarray = is_array($activity->getDataAttributeTBActivityArray()) ? implode(",", $activity->getDataAttributeTBActivityArray()) : '';
-        $imageUrls = is_array($activity->getTbactivityURL()) ? implode(',', $activity->getTbactivityURL()) : $activity->getTbactivityURL();
-        $tbactivitystatus = $activity->getStatusTBActivity();
-        $tbactivitydate = $activity->getActivityDate();
-        $latitude = $activity->getLatitude();
-        $longitude = $activity->getLongitude();
-    
-        // Orden correcto de los parámetros en bind_param
-        $stmt->bind_param("sisssssddi", 
-            $tbactivityname,          // s - nombre de la actividad
-            $tbServicesid,            // i - ID del servicio
-            $tbactivityatributearray, // s - array de atributos
-            $tbactivitydataarray,     // s - array de datos
-            $imageUrls,               // s - URLs de imágenes
-            $tbactivitystatus,        // s - estado
-            $tbactivitydate,          // s - fecha de la actividad
-            $latitude,                // d - latitud
-            $longitude,               // d - longitud
-            $tbactivityid             // i - ID de la actividad
-        );
-    
-        $result = $stmt->execute();
-    
-        if (!$result) {
-            // Si la ejecución falla, devolver false
-            $stmt->close();
-            mysqli_close($conn);
-            return false;
-        }
-    
-        // Verificamos si la consulta afectó alguna fila
-        if ($stmt->affected_rows === 0) {
-            // Si no se afectó ninguna fila, también devolvemos false
-            $stmt->close();
-            mysqli_close($conn);
-            return false;
-        }
-    
-        // Si todo fue exitoso
+    $stmt = $conn->prepare($queryUpdate);
+    if ($stmt === false) {
+        mysqli_close($conn);
+        return ['status' => 'error', 'message' => 'Error al preparar la consulta de actualización'];
+    }
+
+    // Enlazamos los parámetros correctamente
+    $tbServicesid = $activity->getTbservicecompanyid();
+    $tbactivityatributearray = is_array($activity->getAttributeTBActivityArray()) ? implode(",", $activity->getAttributeTBActivityArray()) : '';
+    $tbactivitydataarray = is_array($activity->getDataAttributeTBActivityArray()) ? implode(",", $activity->getDataAttributeTBActivityArray()) : '';
+    $imageUrls = is_array($activity->getTbactivityURL()) ? implode(',', $activity->getTbactivityURL()) : $activity->getTbactivityURL();
+    $tbactivitystatus = $activity->getStatusTBActivity();
+    $tbactivitydate = $activity->getActivityDate();
+    $latitude = $activity->getLatitude();
+    $longitude = $activity->getLongitude();
+
+    // Orden correcto de los parámetros en bind_param
+    $stmt->bind_param("sisssssddi", 
+        $tbactivityname,          
+        $tbServicesid,            
+        $tbactivityatributearray, 
+        $tbactivitydataarray,     
+        $imageUrls,             
+        $tbactivitystatus,        
+        $tbactivitydate,        
+        $latitude,                
+        $longitude,             
+        $tbactivityid             
+    );
+
+    $result = $stmt->execute();
+
+    if (!$result) {
         $stmt->close();
         mysqli_close($conn);
-    
-        return true; // Devolvemos true solo si todo se actualizó correctamente
+        return ['status' => 'error', 'message' => 'Error al ejecutar la actualización'];
     }
+
+    if ($stmt->affected_rows === 0) {
+        $stmt->close();
+        mysqli_close($conn);
+        return ['status' => 'error', 'message' => 'No se ha actualizado ninguna fila'];
+    }
+
+    // Si todo fue exitoso
+    $stmt->close();
+    mysqli_close($conn);
+
+    return ['status' => 'success', 'message' => 'Actividad actualizada exitosamente'];
+}
+
     
 
 

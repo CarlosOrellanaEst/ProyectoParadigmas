@@ -1,47 +1,35 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
 include_once '../business/activityBusiness.php'; 
 include_once '../domain/Activity.php'; 
+header('Content-Type: application/json');
 
 $response = array(); 
 
 // Crear una nueva actividad
 if (isset($_POST['create'])) {
     
-    $photoUrls = ''; // Inicializamos la variable de URLs de las imágenes como una cadena vacía
+    $photoUrls = ''; 
     $activityDate = $_POST['activityDate'];
     $fechaActual = date('Y-m-d');
 
     if (empty($activityDate)) {
-        $response['status'] = 'error';
-        $response['message'] = 'La fecha de la actividad no puede estar vacía.';
-        echo json_encode($response);
+        echo json_encode(['status' => 'error', 'error_code' => 'invalid_date', 'message' => 'La fecha de la actividad no puede estar vacía.']);
         exit();
-
     } elseif ($activityDate < $fechaActual) {
-        $response['status'] = 'error';
-        $response['message'] = 'No se puede registrar una actividad con una fecha anterior a la actual.';
-        echo json_encode($response);
+        echo json_encode(['status' => 'error', 'error_code' => 'past_date', 'message' => 'No se puede registrar una actividad con una fecha anterior a la actual.']);
         exit();
     }
-    // Verificamos si se subieron imágenes
+
     if (isset($_FILES['imagenes']) && !empty($_FILES['imagenes']['name'][0])) {
         $uploadDir = '../images/activity/';
         $fileNames = array(); 
         $allowTypes = array('jpg', 'png', 'jpeg', 'gif');
 
-        // Validación de límite de imágenes (máximo 5)
         if (count($_FILES['imagenes']['name']) > 5) {
-            $response['status'] = 'error';
-            $response['message'] = 'Solo se permite subir un máximo de 5 imágenes.';
-            echo json_encode($response);
+            echo json_encode(['status' => 'error', 'error_code' => 'image_limit', 'message' => 'Solo se permite subir un máximo de 5 imágenes.']);
             exit();
         }
 
-        // Procesar las imágenes
         foreach ($_FILES['imagenes']['name'] as $key => $fileName) {
             $targetFilePath = $uploadDir . basename($fileName);
             $fileType = strtolower(pathinfo($targetFilePath, PATHINFO_EXTENSION));
@@ -50,92 +38,68 @@ if (isset($_POST['create'])) {
                 if (move_uploaded_file($_FILES['imagenes']['tmp_name'][$key], $targetFilePath)) {
                     $fileNames[] = basename($fileName);
                 } else {
-                    $response['status'] = 'error';
-                    $response['message'] = 'Error al mover la imagen al directorio.';
-                    echo json_encode($response);
+                    echo json_encode(['status' => 'error', 'error_code' => 'image_upload_error', 'message' => 'Error al mover la imagen al directorio.']);
                     exit();
                 }
             } else {
-                $response['status'] = 'error';
-                $response['message'] = 'Formato de imagen inválido. Solo se permiten JPG, PNG, JPEG, y GIF.';
-                echo json_encode($response);
+                echo json_encode(['status' => 'error', 'error_code' => 'invalid_image_format', 'message' => 'Formato de imagen inválido. Solo se permiten JPG, PNG, JPEG, y GIF.']);
                 exit();
             }
         }
 
-        // Convertir los nombres de las imágenes en una cadena separada por comas
         $photoUrls = implode(',', $fileNames);
     }
 
-    // Capturar los datos del formulario
     $nameTBActivity = isset($_POST['nameTBActivity']) ? trim($_POST['nameTBActivity']) : '';
     $serviceID = isset($_POST['serviceId']) ? trim($_POST['serviceId']) : 0;
-
     $attributeTBActivityArray = isset($_POST['attributeTBActivityArray']) ? $_POST['attributeTBActivityArray'] : '';
     $dataAttributeTBActivityArray = isset($_POST['dataAttributeTBActivityArray']) ? $_POST['dataAttributeTBActivityArray'] : '';
-    //$activityDate = isset($_POST['activityDate']) ? trim($_POST['activityDate']) : date('Y-m-d H:i:s');  // Fecha actual si no se especifica
-
-    // Nuevas implementaciones: Captura de latitud y longitud
     $latitude = isset($_POST['latitude']) ? floatval($_POST['latitude']) : null;
     $longitude = isset($_POST['longitude']) ? floatval($_POST['longitude']) : null;
 
-    // Validaciones de campos obligatorios
     if (empty($nameTBActivity)) {
-        echo json_encode(['status' => 'error', 'message' => 'El nombre de la actividad es requerido.']);
+        echo json_encode(['status' => 'error', 'error_code' => 'missing_name', 'message' => 'El nombre de la actividad es requerido.']);
         exit();
     }
-
     if (empty($serviceID)) {
-        echo json_encode(['status' => 'error', 'message' => 'El ID del servicio es requerido.']);
+        echo json_encode(['status' => 'error', 'error_code' => 'missing_service_id', 'message' => 'El ID del servicio es requerido.']);
         exit();
     }
-
     if (empty($latitude) || empty($longitude)) {
-        echo json_encode(['status' => 'error', 'message' => 'Las coordenadas de latitud y longitud son requeridas.']);
+        echo json_encode(['status' => 'error', 'error_code' => 'missing_coordinates', 'message' => 'Las coordenadas de latitud y longitud son requeridas.']);
         exit();
     }
 
-    // Crear una nueva instancia de la actividad con latitud y longitud
     $activity = new Activity(0, $nameTBActivity, $serviceID, $attributeTBActivityArray, $dataAttributeTBActivityArray, $photoUrls, 1, $activityDate, $latitude, $longitude);
     $activityBusiness = new ActivityBusiness();
-
-    // Insertar la actividad
     $result = $activityBusiness->insertActivity($activity);
 
-    // Manejo de respuesta
-    if (is_array($result) && $result['status'] == 'error') {
-        echo json_encode($result); 
+    if ($result['status'] == 'error' && isset($result['message']) && $result['message'] == 'Ya existe una actividad con el mismo nombre y está activa.') {
+        echo json_encode(['status' => 'error', 'message' => 'Ya existe una actividad con el mismo nombre y está activa.']);
         exit();
     }
 
     if ($result) {
-        $response = ['status' => 'success', 'message' => 'Actividad insertada correctamente.'];
+        echo json_encode(['status' => 'success', 'message' => 'Actividad insertada correctamente.']);
     } else {
-        $response = ['status' => 'error', 'message' => 'Error al insertar actividad.'];
+        echo json_encode(['status' => 'error', 'error_code' => 'insert_error', 'message' => 'Error al insertar actividad.']);
     }
-
-    echo json_encode($response);
     exit();
 }
 
-
-
 // Actualizar una actividad existente
 if (isset($_POST['update'])) {
-
     $idTBActivity = $_POST['idTBActivity'];
     $nameTBActivity = $_POST['nameTBActivity'];
     $attributeTBActivityArray = isset($_POST['attributeTBActivityArrayTable']) ? $_POST['attributeTBActivityArrayTable'] : [];
     $dataAttributeTBActivityArray = isset($_POST['dataAttributeTBActivityArrayTable']) ? $_POST['dataAttributeTBActivityArrayTable'] : [];
     $statusTBActivity = isset($_POST['statusTBActivity']) ? 1 : 0;
     $serviceId = $_POST['serviceId'];
-    //$activityDate = isset($_POST['activityDate']) ? trim($_POST['activityDate']) : date('Y-m-d H:i:s');
     $latitude = isset($_POST['latitude']) ? floatval($_POST['latitude']) : null;
     $longitude = isset($_POST['longitude']) ? floatval($_POST['longitude']) : null;
 
-    // Validar que latitud y longitud estén presentes
     if (empty($latitude) || empty($longitude)) {
-        echo json_encode(['status' => 'error', 'message' => 'Las coordenadas de latitud y longitud son requeridas.']);
+        echo json_encode(['status' => 'error', 'error_code' => 'missing_coordinates', 'message' => 'Las coordenadas de latitud y longitud son requeridas.']);
         exit();
     }
 
@@ -143,23 +107,16 @@ if (isset($_POST['update'])) {
     $fechaActual = date('Y-m-d');
 
     if (empty($activityDate)) {
-        $response['status'] = 'error';
-        $response['message'] = 'La fecha de la actividad no puede estar vacía.';
-        echo json_encode($response);
+        echo json_encode(['status' => 'error', 'error_code' => 'invalid_date', 'message' => 'La fecha de la actividad no puede estar vacía.']);
         exit();
-
     } elseif ($activityDate < $fechaActual) {
-        $response['status'] = 'error';
-        $response['message'] = 'No se puede registrar una actividad con una fecha anterior a la actual.';
-        echo json_encode($response);
+        echo json_encode(['status' => 'error', 'error_code' => 'past_date', 'message' => 'No se puede registrar una actividad con una fecha anterior a la actual.']);
         exit();
     }
 
-    // Obtener imágenes existentes y nuevas
     $existingImages = $_POST['existingImages'] ?? '';
     $uploadedImages = [];
 
-    // Verificar si existingImages ya es un array
     if (is_string($existingImages)) {
         $existingImages = explode(',', $existingImages);
     }
@@ -176,21 +133,19 @@ if (isset($_POST['update'])) {
         }
     }
 
-    // Unir las imágenes nuevas con las existentes
     $allImages = array_merge($existingImages, $uploadedImages);
     $allImages = implode(',', array_filter($allImages));
 
-    // Crear una instancia de la actividad para actualizar
     $activityBusiness = new ActivityBusiness();
     $activity = new Activity($idTBActivity, $nameTBActivity, $serviceId, $attributeTBActivityArray, $dataAttributeTBActivityArray, $allImages, 1, $activityDate, $latitude, $longitude);
-
-    // Actualizar la actividad
     $result = $activityBusiness->updateActivity($activity);
 
-    if ($result) {
+    if ($result['status'] === 'success') {
         echo json_encode(['status' => 'success', 'message' => 'Actividad actualizada correctamente.']);
+    } elseif ($result['status'] === 'error' && $result['message'] === 'La actividad ya existe con el mismo nombre') {
+        echo json_encode(['status' => 'error', 'error_code' => 'duplicate_name', 'message' => $result['message']]);
     } else {
-        echo json_encode(['status' => 'error', 'message' => 'Error al actualizar actividad.']);
+        echo json_encode(['status' => 'error', 'error_code' => 'update_error', 'message' => $result['message'] ?? 'Error al actualizar actividad.']);
     }
     exit();
 }
@@ -206,7 +161,7 @@ if (isset($_POST['delete'])) {
     if ($result) {
         echo json_encode(['status' => 'success', 'message' => 'Actividad eliminada correctamente.']);
     } else {
-        echo json_encode(['status' => 'error', 'message' => 'Error al eliminar actividad.']);
+        echo json_encode(['status' => 'error', 'error_code' => 'delete_error', 'message' => 'Error al eliminar actividad.']);
     }
     exit();
 }
@@ -218,7 +173,6 @@ if (isset($_POST['deleteImage'])) {
 
     $activityBusiness = new ActivityBusiness();
     $currentActivity = $activityBusiness->getActivityById($activityId);
-    
     $images = $currentActivity->getTbactivityURL(); 
 
     if (is_string($images)) {
@@ -226,28 +180,21 @@ if (isset($_POST['deleteImage'])) {
     }
 
     if (isset($images[$imageIndexToDelete])) {
-        
         $filePath = '../images/activity/' . trim($images[$imageIndexToDelete]);
-        
         $imageToDelete = trim($images[$imageIndexToDelete]);
-        
         unset($images[$imageIndexToDelete]);
-        
         $newImageUrls = implode(',', $images);  
         $activityBusiness->removeImageFromActivity($activityId, $newImageUrls);
         
         $imageInUse = $activityBusiness->isImageInUse($imageToDelete);
-        
-        // Eliminar la imagen físicamente si ya no está en uso
+
         if (!$imageInUse && file_exists($filePath)) {
             unlink($filePath);  
         }
 
         echo json_encode(['status' => 'success', 'message' => 'Imagen eliminada correctamente.']);
     } else {
-        echo json_encode(['status' => 'error', 'message' => 'La imagen no fue encontrada.']);
+        echo json_encode(['status' => 'error', 'error_code' => 'image_not_found', 'message' => 'La imagen no fue encontrada.']);
     }
     exit();
 }
-
-
