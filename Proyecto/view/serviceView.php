@@ -52,7 +52,7 @@
             <select name="companyID" id="companyID" required>
                 <?php foreach ($companies as $company): ?>
                     <option value="<?php echo htmlspecialchars($company->getTbtouristcompanyid()); ?>">
-                        <?php echo htmlspecialchars($company->getTbtouristcompanymagicname()); ?>
+                        <?php echo htmlspecialchars($company->getTbtouristcompanylegalname()); ?>
                     </option>
                 <?php endforeach; ?>
             </select>

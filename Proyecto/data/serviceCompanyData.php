@@ -77,7 +77,9 @@ class serviceCompanyData extends Data {
         $conn->set_charset('utf8');
         
         // Consulta para seleccionar todos los registros de tbservicecompany
-        $query = "SELECT * FROM tbservicecompany WHERE tbservicetatus = 1;";
+
+        // $query = "SELECT * FROM tbservicecompany WHERE tbservicetatus = 1;";
+        $query = " SELECT * FROM tbservicecompany INNER JOIN tbtouristcompany ON tbservicecompany.tbtouristcompanyid = tbtouristcompany.tbtouristcompanyid WHERE tbservicetatus = 1 AND tbtouristcompany.tbtouristcompanystatus = 1; ";
         $result = mysqli_query($conn, $query);
         
         // Crear un array para almacenar las compañías de servicios
