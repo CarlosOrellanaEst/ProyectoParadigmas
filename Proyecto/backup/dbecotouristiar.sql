@@ -41,14 +41,6 @@ CREATE TABLE `tbactivity` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Estructura de tabla para la tabla `tbtouristcompanytouristcompanytype`
---
-
-CREATE TABLE `tbtouristcompanytouristcompanytype` (
-  `tbtouristcompanytouristcompanytypeid` int(11) NOT NULL,
-  `tbtouristcompany` int(11) NOT NULL,
-  `tbtouristcompanytype` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-COMMIT;
 
 --
 -- Volcado de datos para la tabla `tbactivity`
@@ -103,7 +95,7 @@ CREATE TABLE `tbcustomizedtouristcompanytype` (
   `tbownerid` int(11) NOT NULL,
   `tbcustomizedtouristcompanytypename` varchar(200) NOT NULL,
   `tbcustomizedtouristcompanytypestatus` int(11) NOT NULL DEFAULT 1
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -117,7 +109,7 @@ CREATE TABLE `tbowner` (
   `tbownerdirection` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `tbownerphotourl` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `tbownerstatus` tinyint(1) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Volcado de datos para la tabla `tbowner`
