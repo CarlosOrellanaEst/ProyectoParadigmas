@@ -52,8 +52,7 @@ INSERT INTO `tbactivity` (`tbactivityid`, `tbactivityname`, `tbactivityserviceco
 (3, 'Kayak en el Río', 5, 'Duración,Nivel de Dificultad', '3 horas,Moderado', 'dog.jpg,pexels3.jpg', 1, '2024-10-05 11:00:00', 10.23456789, -84.23456789),
 (4, 'Paseo en Caballo', 4, 'Duración,Tamaño del Grupo', '2 horas,10 personas', 'IMG_1312.PNG,uwu.jpeg', 1, '2024-10-07 08:00:00', 9.12345678, -83.12345678),
 (5, 'Excursión Nocturna', 1, 'Duración,Equipo Necesario', '5 horas,Linterna y repelente', 'miAmigueCarlos.jpg,gerald.jpg', 1, '2024-10-09 18:00:00', 10.56789012, -84.56789012),
-(6, 'Prueba', 3, 'a', 'a', 'Screenshot from 2024-09-30 23-29-50.png,Screenshot from 2024-09-30 23-30-22.png,Screenshot from 2024-10-01 00-01-10.png,Screenshot from 2024-10-02 15-23-15.png', 1, '2024-10-17 11:54:00', 10.39097779, -83.74149866),
-(7, 'actividad_prueba_owner_charlitos', 5, 'bloqueador', '15', '', 1, '2024-10-31 20:00:00', 10.35458146, -83.97003046);
+(6, 'Prueba', 3, 'a', 'a', 'Screenshot from 2024-09-30 23-29-50.png,Screenshot from 2024-09-30 23-30-22.png,Screenshot from 2024-10-01 00-01-10.png,Screenshot from 2024-10-02 15-23-15.png', 1, '2024-10-17 11:54:00', 10.39097779, -83.74149866);
 
 -- --------------------------------------------------------
 

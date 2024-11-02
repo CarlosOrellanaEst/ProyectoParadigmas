@@ -7,18 +7,18 @@ require_once '../business/serviceCompanyBusiness.php';
 
 session_start();
 $userLogged = $_SESSION['user'];
-$ownerBusiness = new ownerBusiness();
+// $ownerBusiness = new ownerBusiness();
 
-if ($userLogged->getUserType() == "Administrador") {
-    $owners = $ownerBusiness->getAllTBOwners();
-    if (!$owners || empty($owners)) {
-        echo "<script>alert('No se encontraron propietarios.');</script>";
-    }
-} else if ($userLogged->getUserType() == "Propietario") {
-    $owners = [$userLogged];
-}
+// if ($userLogged->getUserType() == "Administrador") {
+//     $owners = $ownerBusiness->getAllTBOwners();
+//     if (!$owners || empty($owners)) {
+//         echo "<script>alert('No se encontraron propietarios.');</script>";
+//     }
+// } else if ($userLogged->getUserType() == "Propietario") {
+//     $owners = [$userLogged];
+// }
 
-$_SESSION['owners'] = $owners;
+// $_SESSION['owners'] = $owners;
 
 ?>
 

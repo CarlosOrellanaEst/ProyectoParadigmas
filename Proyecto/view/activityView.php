@@ -4,25 +4,8 @@ require_once '../business/paymentTypeBusiness.php';
 require_once '../business/ownerBusiness.php';
 require_once '../business/activityBusiness.php';
 require_once '../business/serviceCompanyBusiness.php';
-
     session_start();
     $userLogged = $_SESSION['user'];    
-    $ownerBusiness = new ownerBusiness();
-
-    // Definimos los propietarios en función del tipo de usuario
-    if ($userLogged->getUserType() == "Administrador") {
-        $owners = $ownerBusiness->getAllTBOwners();
-        if (!$owners || empty($owners)) {
-            echo "<script>alert('No se encontraron propietarios.');</script>";
-        }
-    } else if ($userLogged->getUserType() == "Propietario") {
-        $owners = [$userLogged];
-    }else if ($userLogged->getUserType() == "Propietario") {
-        $owners = [$userLogged];
-    }
- 
-
-$_SESSION['owners'] = $owners;
 ?>
 
 <!DOCTYPE html>
@@ -41,9 +24,9 @@ $_SESSION['owners'] = $owners;
     <?php
         $serviceCompanyBusiness = new serviceCompanyBusiness();
         if ($userLogged->getUserType() == "Propietario") { 
-            $services = $serviceCompanyBusiness->getAllTBServiceCompaniesByOwner($userLogged->getIdTBOwner());
-        } else {
-            $services = $serviceCompanyBusiness->getAllTBServiceCompanies();
+            $servicesCompanies = $serviceCompanyBusiness->getAllTBServiceCompaniesByOwner($userLogged->getIdTBOwner());
+        } else if ($userLogged->getUserType() == "Administrador") {
+            $servicesCompanies = $serviceCompanyBusiness->getAllTBServiceCompanies();
         }
         $imageBasePath = '../images/activity/';
     ?>
@@ -77,9 +60,17 @@ $_SESSION['owners'] = $owners;
                 <input placeholder="Nombre de la Actividad" type="text" name="nameTBActivity" id="nameTBActivity" />
                 <br><br>
 
-                <label for="serviceId1">Servicio: </label>
+                <?php 
+                    if ($userLogged->getUserType() == "Propietario") {
+                    echo ' <label for="serviceId1">Servicio(s) asociado(s) a mis empresas: </label>';
+                    } else if ($userLogged->getUserType() == "Administrador") {
+                        echo ' <label for="serviceId1">Servicio(s) asociado(s) a las empresas: </label>';
+                    }
+                ?>
+ 
+
                 <select name="serviceId" id="serviceId1">
-                    <?php foreach ($services as $service): ?>
+                    <?php foreach ($servicesCompanies as $service): ?>
                         <option value="<?php echo htmlspecialchars($service->getTbservicecompanyid()); ?>">
                             <?php
                             $serviceName = $serviceCompanyBusiness->getTBServicesByIds($service->getTbserviceid());
@@ -151,7 +142,7 @@ $_SESSION['owners'] = $owners;
                 <?php
                 $activityBusiness = new ActivityBusiness();
                 if ($userLogged->getUserType() == "Propietario") {
-                    $allActivities = $activityBusiness->getAllActivitiesByOwner($userLogged->getUserId());
+                    $allActivities = $activityBusiness->getAllActivitiesByOwner($userLogged->getIdTBOwner());
                 } else {
                     $allActivities = $activityBusiness->getAllActivities();
                 }
@@ -170,7 +161,7 @@ $_SESSION['owners'] = $owners;
 
                         echo '<td>';
                         echo '<select name="serviceId">';
-                        foreach ($services as $service) {
+                        foreach ($servicesCompanies as $service) {
                             $serviceName = $serviceCompanyBusiness->getTBServicesByIds($service->getTbserviceid());
                             echo '<option value="' . htmlspecialchars($service->getTbservicecompanyid()) . '"';
                             if ($service->getTbservicecompanyid() == $current['tbactivityservicecompanyid']) {
