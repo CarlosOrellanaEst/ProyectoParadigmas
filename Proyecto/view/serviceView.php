@@ -105,21 +105,24 @@
             </thead>
             <tbody>
                 <?php
-                $allServiceCompanies = $serviceCompanyBusiness->getAllTBServiceCompanies();
-                
+                if ($userLogged->getUserType() == "Propietario") { 
+                    $allServiceCompanies = $serviceCompanyBusiness->getAllTBServiceCompaniesByOwner($userLogged->getIdTBOwner());
+                } else {
+                    $allServiceCompanies = $serviceCompanyBusiness->getAllTBServiceCompanies();
+                }  
                 $serviceCompanyFiltered = [];
 
                 // Filtrar los resultados si se ha realizado una búsqueda
-                if (isset($_GET['searchOne'])) {
-                    $searchTerm = $_GET['searchOne'];
-                    $serviceCompanyFiltered = array_filter($allServiceCompanies, function ($serviceCompany) use ($searchTerm) {
-                        return stripos($serviceCompany->getTbserviceid(), $searchTerm) !== false;
-                    });
-                }
+                // if (isset($_GET['searchOne'])) {
+                //     $searchTerm = $_GET['searchOne'];
+                //     $serviceCompanyFiltered = array_filter($allServiceCompanies, function ($serviceCompany) use ($searchTerm) {
+                //         return stripos($serviceCompany->getTbserviceid(), $searchTerm) !== false;
+                //     });
+                // }
 
-                if (count($serviceCompanyFiltered) > 0) {
-                    $allServiceCompanies = $serviceCompanyFiltered;
-                }
+                // if (count($serviceCompanyFiltered) > 0) {
+                //     $allServiceCompanies = $serviceCompanyFiltered;
+                // }
 
                 if (count($allServiceCompanies) > 0) {
                     foreach ($allServiceCompanies as $current) {
@@ -132,6 +135,7 @@
                         // Mostrar nombre de la empresa
                         echo '<td>';
                         echo '<select name="companyId" required>';
+                        
                         foreach ($companies as $company) {
                             echo '<option value="' . htmlspecialchars($company->getTbtouristcompanyid()) . '"';
                             if ($company->getTbtouristcompanyid() == $current->getTbtouristcompanyid()) {

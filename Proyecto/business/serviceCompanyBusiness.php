@@ -29,10 +29,16 @@ class serviceCompanyBusiness {
     public function getAllTBServiceCompanies(){
         return $this->serviceCompanyData->getAllTBServiceCompanies();
     }
-    public function getAllTBServiceCompaniesByOwner($ownerId) {
+
+    public function getAllTBServiceCompaniesByOwner($idOwner){
+        return $this->serviceCompanyData->getAllTBServiceCompaniesByOwner($idOwner);
+    }
+
+    // filtro para actividades
+    public function getAllTBServiceCompaniesByOwnerForActivity($idOwner) {
         $allServicesOwner = "";
         $touristCompanyBusiness = new touristCompanyBusiness();
-        $allTouristCompaniesByOwner = $touristCompanyBusiness->getAllByOwnerID($ownerId);
+        $allTouristCompaniesByOwner = $touristCompanyBusiness->getAllByOwnerID($idOwner);
         if (count($allTouristCompaniesByOwner) > 0) {
             foreach ($allTouristCompaniesByOwner as $current) {
                 $allServicesOwner .= "," . $this->serviceCompanyData->getServicesIDsByCompanyID($current->getTbtouristcompanyid());

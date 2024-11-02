@@ -105,6 +105,43 @@ class serviceCompanyData extends Data {
         return $serviceCompanies;
     }
 
+    public function getAllTBServiceCompaniesByOwner($idOwner) {
+        $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
+        if (!$conn) {
+            die("Connection failed: " . mysqli_connect_error());
+        }
+        $conn->set_charset('utf8');
+
+        // $query = "SELECT * FROM tbservicecompany WHERE tbservicetatus = 1;";
+        $query = 
+            " SELECT * FROM tbservicecompany 
+            INNER JOIN tbtouristcompany 
+            ON tbservicecompany.tbtouristcompanyid = tbtouristcompany.tbtouristcompanyid 
+            WHERE tbservicetatus = 1 AND tbtouristcompany.tbtouristcompanystatus = 1 AND tbtouristcompany.tbtouristcompanyowner = " . $idOwner . "; ";
+        $result = mysqli_query($conn, $query);
+        
+        // Crear un array para almacenar las compañías de servicios
+        $serviceCompanies = [];
+        
+        // Recorrer los resultados y crear objetos ServiceCompany para cada fila
+        while ($row = mysqli_fetch_assoc($result)) {
+            $currentServiceCompany = new ServiceCompany(
+                $row['tbservicecompanyid'], 
+                $row['tbtouristcompanyid'], 
+                $row['tbserviceid'], 
+                $row['tbservicecompanyURL'],
+                $row['tbservicetatus']
+            );
+            array_push($serviceCompanies, $currentServiceCompany);
+        }
+        
+        // Cerrar la conexión
+        mysqli_close($conn);
+        
+        // Devolver la lista de compañías de servicios
+        return $serviceCompanies;
+    }
+
     public function getServicesIDsByCompanyID($companyid) {
         $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
         if (!$conn) {
