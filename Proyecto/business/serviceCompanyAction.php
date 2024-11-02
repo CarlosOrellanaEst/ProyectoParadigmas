@@ -48,10 +48,13 @@ if (isset($_POST['create'])) {
 
         // Validación y obtención de datos
         $companyID = isset($_POST['companyID']) ? trim($_POST['companyID']) : 0;
-        $serviceIds = isset($_POST['serviceId']) ? $_POST['serviceId'] : array();
+        $serviceIds = isset($_POST['serviceId']) ? $_POST['serviceId'] : " viene, vacio, lol";
+
+        //echo ($serviceIds);
 
         // Concatenar IDs de servicios en una cadena separada por comas
         $serviceIdsString = explode(',', $serviceIds);
+        // echo ($serviceIdsString);
 
         if (!empty($companyID) && !empty($serviceIdsString)) {
             // Crear el objeto ServiceCompany con los datos necesarios
@@ -61,7 +64,7 @@ if (isset($_POST['create'])) {
 
             if ($result['status'] === 'success') {
                 
-                $response = ['status' => 'success', 'message' => 'Servicio agregado correctamente.'];
+                $response = ['status' => 'success', 'message' => 'Servicio agregado correctamente, los servicios fueron ' . $serviceIdsString];
             } else {
                 $response = ['status' => 'error', 'message' => 'Error en la base de datos.'];
             }

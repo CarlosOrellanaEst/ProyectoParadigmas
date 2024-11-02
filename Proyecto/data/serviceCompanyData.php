@@ -41,6 +41,7 @@ class serviceCompanyData extends Data {
     
         // Obtener y procesar los IDs de los servicios
         $serviceIds = $service->getTbserviceid();
+        
         $idService = is_array($serviceIds) ? implode(",", $serviceIds) : $serviceIds;
     
         // Obtener y procesar las URLs de las fotos agrupadas por servicios
@@ -106,6 +107,35 @@ class serviceCompanyData extends Data {
         // Devolver la lista de compañías de servicios
         return $serviceCompanies;
     }
+
+    public function getServicesIDsByCompanyID($companyid) {
+        $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
+        if (!$conn) {
+            die("Connection failed: " . mysqli_connect_error());
+        }
+        $conn->set_charset('utf8');
+        
+        $query = "SELECT tbserviceid FROM tbservicecompany WHERE tbservicetatus = 1 AND tbtouristcompanyid = ?";
+        $stmt = mysqli_prepare($conn, $query);
+        if (!$stmt) {
+            die("Error en la preparación de la consulta: " . mysqli_error($conn));
+        }
+
+        mysqli_stmt_bind_param($stmt, 'i', $companyid);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
+    
+        $services = "";
+        while ($row = mysqli_fetch_assoc($result)) {
+            $services = $row['tbserviceid'];
+        }
+    
+        mysqli_stmt_close($stmt);
+        mysqli_close($conn);
+    
+        return $services;
+    }
+    
     
     public function getServiceCompany($serviceCompanyId) {
         $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
@@ -164,7 +194,6 @@ class serviceCompanyData extends Data {
     }
     
     
-
     public function getAllTBServices() {
         // Establecer conexión con la base de datos
         $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
@@ -288,11 +317,9 @@ class serviceCompanyData extends Data {
     
         return $servicesReturn; // Retornar la lista de servicios
     }
-    
-    
 
-    
-    
+
+       
     
     public function removeImageFromServiceCompany($serviceCompanyId, $newImageUrls) {
         $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);

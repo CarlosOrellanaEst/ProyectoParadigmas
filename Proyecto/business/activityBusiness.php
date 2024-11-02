@@ -1,6 +1,6 @@
 <?php
 
-include_once '../data/activityData.php'; // Ajusta la ruta según tu estructura
+include_once '../data/activityData.php';
 
 class ActivityBusiness {
 

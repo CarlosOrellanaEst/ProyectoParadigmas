@@ -1,6 +1,7 @@
 <?php
 
 include '../data/serviceCompanyData.php';
+include_once 'touristCompanyBusiness.php';
 include 'photoBusiness.php';
 
 class serviceCompanyBusiness {
@@ -28,6 +29,22 @@ class serviceCompanyBusiness {
     public function getAllTBServiceCompanies(){
         return $this->serviceCompanyData->getAllTBServiceCompanies();
     }
+    public function getAllTBServiceCompaniesByOwner($ownerId) {
+        $allServicesOwner = "";
+        $touristCompanyBusiness = new touristCompanyBusiness();
+        $allTouristCompaniesByOwner = $touristCompanyBusiness->getAllByOwnerID($ownerId);
+        if (count($allTouristCompaniesByOwner) > 0) {
+            foreach ($allTouristCompaniesByOwner as $current) {
+                $allServicesOwner .= "," . $this->serviceCompanyData->getServicesIDsByCompanyID($current->getTbtouristcompanyid());
+            }
+        }
+        $allServicesOwnerDef = [];
+        if ($allServicesOwner != "") {
+            $allServicesOwnerDef = $this->getTBServicesByIds($allServicesOwner);
+        }
+        return $allServicesOwnerDef;
+    }
+
     public function removeImageFromServiceCompany($serviceCompanyId, $newImageUrls){
         return $this->serviceCompanyData->removeImageFromServiceCompany($serviceCompanyId, $newImageUrls);
     }

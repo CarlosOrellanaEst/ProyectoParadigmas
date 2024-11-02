@@ -5,7 +5,6 @@
     require_once '../business/activityBusiness.php';
     require_once '../business/serviceCompanyBusiness.php';
 
-
     session_start();
     $userLogged = $_SESSION['user'];    
     $ownerBusiness = new ownerBusiness();
@@ -57,10 +56,13 @@
     </style>
     <script src="../resources/activityAJAX.js"></script>
     <?php
-
-    $serviceCompanyBusiness = new serviceCompanyBusiness();
-    $services = $serviceCompanyBusiness->getAllTBServiceCompanies();
-    $imageBasePath = '../images/activity/';
+        $serviceCompanyBusiness = new serviceCompanyBusiness();
+        if ($userLogged->getUserType() == "Propietario") { 
+            $services = $serviceCompanyBusiness->getAllTBServiceCompaniesByOwner($userLogged->getIdTBOwner());
+        } else {
+            $services = $serviceCompanyBusiness->getAllTBServiceCompanies();
+        }
+        $imageBasePath = '../images/activity/';
     ?>
 
     <!-- Script con la lógica del mapa -->
