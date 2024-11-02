@@ -59,6 +59,20 @@ if (isset($_POST['create'])) {
             echo json_encode(['status' => 'error', 'error_code' => 'custom_company_type_required', 'message' => 'Debe especificar un tipo de empresa personalizado.']);
             exit();
         }
+        /*else {
+            // Aquí debes insertar el tipo de empresa personalizado en la tabla correspondiente
+
+            $customTypeBusiness = new TouristCompanyData(); // Asegúrate de que esta clase esté bien incluida
+            $result = $customTypeBusiness->insertCustomizedtouristcompanytype($ownerId, $customCompanyType);
+            // Agrega un mensaje de depuración
+            if ($result['status'] !== 'success') {
+                echo json_encode(['status' => 'error', 'error_code' => 'insert_custom_type_failed', 'message' => $result['message']]);
+                exit();
+            }
+            // Si se inserta correctamente, puedes obtener el ID del tipo de empresa personalizado
+
+            $companyTypeId = $result['new_id']; // Asegúrate de que tu método de inserción devuelva el nuevo ID
+        }*/
     }
 
     if ($ownerId) {
@@ -72,18 +86,18 @@ if (isset($_POST['create'])) {
             $touristCompany = new TouristCompany(0, $legalName, $magicName, $ownerId, $companyTypeId, $photoUrls, $status);
             $touristCompany->setAllTouristCompanyType($selectedCompanyTypes ?? []);
 
-            if ($companyTypeId === '0') {
-                $touristCompany->setTbtouristcompanycustomcompanyType($customCompanyType);
-            }
-
             $touristCompanyBusiness = new TouristCompanyBusiness();
             $result = $touristCompanyBusiness->insert($touristCompany);
+
+            if ($companyTypeId === '0') {
+                $touristCompany->setTbtouristcompanycustomcompanyType($customCompanyType);
+                $bol = $touristCompanyBusiness->insertCustomizedtouristcompanytype($ownerId, $customCompanyType);
+            }
 
             if ($result['status'] == 'success') {
                 ob_end_clean();
                 echo json_encode(['status' => 'success', 'message' => 'Empresa creada con éxito.'], JSON_UNESCAPED_UNICODE);
                 exit;
-
             } elseif ($result['status'] == 'error' && isset($result['message']) && $result['message'] === 'Empresa ya existe.') {
                 echo json_encode(['status' => 'error', 'error_code' => 'company_exists', 'message' => 'La empresa ya existe.']);
             } else {

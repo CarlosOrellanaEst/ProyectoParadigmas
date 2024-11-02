@@ -25,6 +25,9 @@ if (isset($_POST['create'])) {
         $fileNames = array(); 
         $allowTypes = array('jpg', 'png', 'jpeg', 'gif');
 
+        
+
+        // Validación de límite de imágenes (máximo 5)
         if (count($_FILES['imagenes']['name']) > 5) {
             echo json_encode(['status' => 'error', 'error_code' => 'image_limit', 'message' => 'Solo se permite subir un máximo de 5 imágenes.']);
             exit();

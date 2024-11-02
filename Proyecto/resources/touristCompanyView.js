@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const magicName = document.getElementById("magicName").value.trim();
         const legalName = document.getElementById("legalName").value.trim();
         const owner = document.getElementById("ownerId").value;
-        const companyType = document.getElementById("companyType").value;
+        var companyType = document.getElementById("companyType").value;
         const images = document.getElementById("imagenes").files;
         const status = document.getElementById("status").value;
         const customCompanyType = document.getElementById("customCompanyType").value.trim();
@@ -73,16 +73,19 @@ document.addEventListener("DOMContentLoaded", function () {
         });
 
         if (companyType === "custom") {
+            companyType = 0;
             formData.append("customCompanyType", customCompanyType);
-        } else {
-            formData.append("companyType", companyType);
         }
+
+        formData.append("companyType", companyType);
 
         if (images.length > 0) {
             for (let i = 0; i < images.length; i++) {
                 formData.append("imagenes[]", images[i]);
             }
         }
+        //alert("Id owner: " + owner);
+        //alert("Custom: " + customCompanyType);
 
         sendAjaxRequest(formData, "Crear empresa");
     });
@@ -180,3 +183,28 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     }
 });
+
+
+let selectedCompanyTypes = [];
+document.getElementById('addBtn').addEventListener('click', function () {
+    let companyTypeSelect = document.getElementById('companyType');
+    let selectedValue = companyTypeSelect.value;
+    let selectedText = companyTypeSelect.options[companyTypeSelect.selectedIndex].text;
+
+    // Validación: Evitar agregar opciones con valor "0" o duplicadas
+    if (selectedValue !== "0" && !selectedCompanyTypes.includes(selectedValue)) {
+        selectedCompanyTypes.push(selectedValue);
+
+        // Mostrar la selección en la lista
+        let companyTypeList = document.getElementById('selectedCompanyTypesList');
+        let companyTypeItem = document.createElement('div');
+        companyTypeItem.textContent = selectedText;
+        companyTypeList.appendChild(companyTypeItem);
+
+    } else if (selectedValue === "custom") {
+        alert("Por favor, seleccione un tipo de empresa válido.");
+    } else {
+        alert("El tipo de empresa ya ha sido agregado.");
+    }
+});
+

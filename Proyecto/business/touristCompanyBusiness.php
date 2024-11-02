@@ -14,6 +14,10 @@ class TouristCompanyBusiness {
         return $this->touristCompanyData->insertTouristCompany($touristCompany);
     }
 
+    public function insertCustomizedtouristcompanytype($ownerId, $customCompanyType) {
+        return $this->touristCompanyData->insertCustomizedtouristcompanytype($ownerId, $customCompanyType);
+    }
+
     public function getAll() {
         return $this->touristCompanyData->getAllTouristCompanies();
     }
