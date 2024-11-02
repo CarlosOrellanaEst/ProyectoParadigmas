@@ -14,6 +14,13 @@ class serviceCompanyData extends Data {
         }
         $conn->set_charset('utf8');
     
+        // Obtener valores del objeto $service
+        $touristCompanyId = $service->getTbtouristcompanyid();
+    
+        if ($this->companyWithServices($touristCompanyId)) {
+            return ['status' => 'error', 'message' => 'Ya existen servicios activos asociados a esta empresa.'];
+        }
+    
         // Obtener el último ID de la tabla tbservicecompany
         $queryGetLastId = "SELECT MAX(tbservicecompanyid) AS idTbservicecompany FROM tbservicecompany";
         $idCont = mysqli_query($conn, $queryGetLastId);
@@ -28,16 +35,13 @@ class serviceCompanyData extends Data {
             $nextId = $lastId + 1;
         }
     
-        
         // Insertar los datos en la tabla
         $queryInsert = "INSERT INTO tbservicecompany (tbservicecompanyid, tbtouristcompanyid, tbserviceid, tbservicecompanyURL, tbservicetatus) VALUES (?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($queryInsert);
         if ($stmt === false) {
-            die("Prepare failed: " . $conn->error);
+            mysqli_close($conn);
+            return ['status' => 'error', 'message' => 'Prepare failed: ' . $conn->error];
         }
-    
-        // Obtener valores del objeto $service
-        $touristCompanyId = $service->getTbtouristcompanyid();
     
         // Obtener y procesar los IDs de los servicios
         $serviceIds = $service->getTbserviceid();
@@ -45,26 +49,17 @@ class serviceCompanyData extends Data {
     
         // Obtener y procesar las URLs de las fotos agrupadas por servicios
         $photosUrlsByService = $service->getTbservicecompanyURL();
-       
-        if (is_array($photosUrlsByService)) {
-            $imageUrlsString = implode(',', $photosUrlsByService);
-        } else {
-            $imageUrlsString = $photosUrlsByService;
-        }
+        $imageUrlsString = is_array($photosUrlsByService) ? implode(',', $photosUrlsByService) : $photosUrlsByService;
+    
         $status = 1;
-        $stmt->bind_param("iissi",$nextId, $touristCompanyId, $idService,  $imageUrlsString, $status);
-      
+        $stmt->bind_param("iissi", $nextId, $touristCompanyId, $idService, $imageUrlsString, $status);
+    
         $result = $stmt->execute();
-    
-        if (!$result) {
-            echo "Execute failed: " . $stmt->error;
-        }
-    
         $stmt->close();
         mysqli_close($conn);
-
+    
         if ($result) {
-            return ['status' => 'success', 'message' => ' añadido correctamente.'];
+            return ['status' => 'success', 'message' => 'Servicio añadido correctamente.'];
         } else {
             return ['status' => 'error', 'message' => 'Falló al agregar el Servicio: ' . $conn->error];
         }
@@ -378,5 +373,22 @@ class serviceCompanyData extends Data {
     
         return $result;
     
+}
+public function companyWithServices($companyID) {
+    $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
+    if (!$conn) {
+        return false;
+    }
+
+    $query = "SELECT COUNT(*) FROM tbservicecompany WHERE tbtouristcompanyid = ? AND tbservicetatus = 1";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("i", $companyID);
+    $stmt->execute();
+    $stmt->bind_result($count);
+    $stmt->fetch();
+    $stmt->close();
+    mysqli_close($conn);
+
+    return $count > 0;
 }
 }

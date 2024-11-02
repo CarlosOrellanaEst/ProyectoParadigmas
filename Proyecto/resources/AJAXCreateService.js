@@ -1,4 +1,9 @@
 document.addEventListener('DOMContentLoaded', function () {
+    // Función para mostrar alertas
+    function showAlert(message) {
+        alert(message); // Puedes reemplazar 'alert()' con cualquier otra implementación de alerta si lo deseas
+    }
+
     document.getElementById('formCreate').addEventListener('submit', function (event) {
         event.preventDefault();
 
@@ -26,17 +31,19 @@ document.addEventListener('DOMContentLoaded', function () {
                 try {
                     let response = JSON.parse(xhr.responseText);
                     if (response.status === 'success') {
-                        alert(response.message);
+                        showAlert(response.message);
                         document.getElementById('formCreate').reset();
                         location.reload();
                     } else {
-                        alert('Error: ' + response.message);
+                        showAlert('Error: ' + response.message);
                     }
                 } catch (e) {
                     console.error('Error al procesar la respuesta del servidor', e);
+                    showAlert('Error al procesar la respuesta del servidor.');
                 }
             } else {
                 console.error('Error en la solicitud', xhr.statusText);
+                showAlert('Error en la solicitud: ' + xhr.statusText);
             }
         };
         xhr.send(formData);
@@ -51,16 +58,16 @@ document.addEventListener('DOMContentLoaded', function () {
     if (success) {
         switch (success) {
             case 'created':
-                alert('Servicio agregado correctamente.');
+                showAlert('Servicio agregado correctamente.');
                 break;
             case 'updated':
-                alert('Servicio actualizado correctamente.');
+                showAlert('Servicio actualizado correctamente.');
                 break;
             case 'deleted':
-                alert('Servicio eliminado correctamente.');
+                showAlert('Servicio eliminado correctamente.');
                 break;
             case 'image_deleted':
-                alert('Imagen eliminada correctamente.');
+                showAlert('Imagen eliminada correctamente.');
                 break;
         }
     }
@@ -68,40 +75,43 @@ document.addEventListener('DOMContentLoaded', function () {
     if (error) {
         switch (error) {
             case 'image_error':
-                alert('Error al mover la imagen al directorio.');
+                showAlert('Error al mover la imagen al directorio.');
                 break;
             case 'invalidImageType':
-                alert('Formato de imagen inválido. Solo se permiten JPG, PNG, JPEG, y GIF.');
+                showAlert('Formato de imagen inválido. Solo se permiten JPG, PNG, JPEG, y GIF.');
                 break;
             case 'noImages':
-                alert('No se han subido imágenes.');
+                showAlert('No se han subido imágenes.');
                 break;
             case 'emptyFields':
-                alert('No se permiten campos vacíos.');
+                showAlert('No se permiten campos vacíos.');
                 break;
             case 'dbError':
-                alert('Error en la base de datos.');
+                showAlert('Error en la base de datos.');
                 break;
             case 'notFound':
-                alert('Servicio no encontrado.');
+                showAlert('Servicio no encontrado.');
                 break;
             case 'alreadyExists':
-                alert('El servicio ya existe.');
+                showAlert('El servicio ya existe.');
+                break;
+            case 'duplicateCompanyID':
+                showAlert('El ID de la compañía ya existe. Por favor, ingresa un ID diferente.');
                 break;
             case 'missingData':
-                alert('Faltan datos en el formulario.');
+                showAlert('Faltan datos en el formulario.');
                 break;
             case 'invalidInput':
-                alert('Datos inválidos. Asegúrate de que todos los campos sean numéricos.');
+                showAlert('Datos inválidos. Asegúrate de que todos los campos sean numéricos.');
                 break;
             case 'emptyField':
-                alert('El ID del servicio está vacío.');
+                showAlert('El ID del servicio está vacío.');
                 break;
             case 'image_not_found':
-                alert('Imagen no encontrada.');
+                showAlert('Imagen no encontrada.');
                 break;
             default:
-                alert('Ocurrió un error desconocido.');
+                showAlert('Ocurrió un error desconocido.');
                 break;
         }
     }

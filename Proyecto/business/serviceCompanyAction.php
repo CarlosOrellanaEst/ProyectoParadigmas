@@ -1,6 +1,12 @@
 <?php
 include './serviceCompanyBusiness.php';
 
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 if (isset($_POST['create'])) {
     $response = array();
 
@@ -55,6 +61,8 @@ if (isset($_POST['create'])) {
 
         if (!empty($companyID) && !empty($serviceIdsString)) {
             // Crear el objeto ServiceCompany con los datos necesarios
+
+           
             $service = new ServiceCompany(0, $companyID, $serviceIdsString, $photoUrls, 1);
             $serviceBusiness = new serviceCompanyBusiness();
             $result = $serviceBusiness->insertTBServiceCompany($service);
@@ -63,12 +71,15 @@ if (isset($_POST['create'])) {
                 
                 $response = ['status' => 'success', 'message' => 'Servicio agregado correctamente.'];
             } else {
-                $response = ['status' => 'error', 'message' => 'Error en la base de datos.'];
+
+                $response = ['status' => 'error', 'message' => 'Error en la base de datos.'];            
             }
         } else {
             $response = ['status' => 'error', 'message' => 'No se permiten campos vacíos.'];
         }
 
+        
+        
         echo json_encode($response);
         exit();
         /*
@@ -79,7 +90,7 @@ if (isset($_POST['create'])) {
     }
     */
 } 
-
+}
 
 
 if (isset($_POST['update'])) {

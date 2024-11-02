@@ -60,8 +60,8 @@
 
             <div id="servicesContainer">
                 <div id="serviceRow1">
-                    <label for="serviceId1">Servicio <span class="required">*</span></label>
-                    <select name="serviceId[]" id="serviceId1" required>
+                    <label for="serviceId">Servicio <span class="required">*</span></label>
+                    <select name="serviceId" id="serviceId" required>
                         <?php foreach ($services as $service): ?>
                             <option value="<?php echo htmlspecialchars($service->getIdTbservice()); ?>">
                                 <?php echo htmlspecialchars($service->getTbservicename()); ?>
@@ -216,7 +216,7 @@
                    newService.id = `serviceRow${serviceCount}`;
                    newService.innerHTML = `
                        <label for="serviceId${serviceCount}">Servicio: </label>
-                       <select name="serviceId[]" id="serviceId${serviceCount}" required>
+                       <select name="serviceId" id="serviceId${serviceCount}" required>
                            <?php foreach ($services as $service): ?>
                                <option value="<?php echo htmlspecialchars($service->getIdTbservice()); ?>">
                                    <?php echo htmlspecialchars($service->getTbservicename()); ?>
