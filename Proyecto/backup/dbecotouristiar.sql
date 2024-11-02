@@ -227,7 +227,7 @@ CREATE TABLE `tbservice` (
   `tbserviceid` int(11) NOT NULL,
   `tbservicename` varchar(255) NOT NULL,
   `tbservicedescription` text NOT NULL,
-  `tbservicetatus` tinyint(1) NOT NULL
+  `tbservicestatus` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
@@ -255,7 +255,7 @@ CREATE TABLE `tbservicecompany` (
   `tbtouristcompanyid` int(11) NOT NULL,
   `tbserviceid` text NOT NULL,
   `tbservicecompanyURL` text NOT NULL,
-  `tbservicetatus` tinyint(1) NOT NULL
+  `tbservicestatus` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
