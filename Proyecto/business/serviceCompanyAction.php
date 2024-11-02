@@ -1,95 +1,84 @@
 <?php
 include './serviceCompanyBusiness.php';
 
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
-
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 if (isset($_POST['create'])) {
     $response = array();
 
     // Verificación de las imágenes subidas
-    //if (isset($_FILES['imagenes']) && !empty($_FILES['imagenes']['name'][0])) {
-        $uploadDir = '../images/services/';
-        $fileNames = array(); // Array para almacenar nombres de archivos procesados
-        $allowTypes = array('jpg', 'png', 'jpeg', 'gif');
+    $uploadDir = '../images/services/';
+    $fileNames = array(); // Array para almacenar nombres de archivos procesados
+    $allowTypes = array('jpg', 'png', 'jpeg', 'gif');
 
-        // Verificar si se han subido más de 5 imágenes
-        if (isset($_FILES['imagenes']) && !empty($_FILES['imagenes']['name'][0])){
-            if (count($_FILES['imagenes']['name']) > 5) {
-                $response['status'] = 'error';
-                $response['message'] = 'Solo se permite subir un máximo de 5 imágenes';
-                echo json_encode($response);
-                exit();
-            }
-    
-            // Procesar y mover los archivos
-            foreach ($_FILES['imagenes']['name'] as $key => $fileName) {
-                $targetFilePath = $uploadDir . basename($fileName);
-                $fileType = strtolower(pathinfo($targetFilePath, PATHINFO_EXTENSION));
-    
-                if (in_array($fileType, $allowTypes)) {
-                    if (move_uploaded_file($_FILES['imagenes']['tmp_name'][$key], $targetFilePath)) {
-                        $fileNames[] = basename($fileName);
-                    } else {
-                        $response['status'] = 'error';
-                        $response['message'] = 'Error al mover la imagen al directorio.';
-                        echo json_encode($response);
-                        exit();
-                    }
+    // Verificar si se han subido más de 5 imágenes
+    if (isset($_FILES['imagenes']) && !empty($_FILES['imagenes']['name'][0])) {
+        if (count($_FILES['imagenes']['name']) > 5) {
+            $response['status'] = 'error';
+            $response['message'] = 'Solo se permite subir un máximo de 5 imágenes';
+            echo json_encode($response);
+            exit();
+        }
+
+        // Procesar y mover los archivos
+        foreach ($_FILES['imagenes']['name'] as $key => $fileName) {
+            $targetFilePath = $uploadDir . basename($fileName);
+            $fileType = strtolower(pathinfo($targetFilePath, PATHINFO_EXTENSION));
+
+            if (in_array($fileType, $allowTypes)) {
+                if (move_uploaded_file($_FILES['imagenes']['tmp_name'][$key], $targetFilePath)) {
+                    $fileNames[] = basename($fileName);
                 } else {
                     $response['status'] = 'error';
-                    $response['message'] = 'Formato de imagen inválido. Solo se permiten JPG, PNG, JPEG, y GIF.';
+                    $response['message'] = 'Error al mover la imagen al directorio.';
                     echo json_encode($response);
                     exit();
                 }
-        }
-        
-        }
-
-        // Concatenar las URLs de imágenes
-        $photoUrls = implode(',', $fileNames);
-
-        // Validación y obtención de datos
-        $companyID = isset($_POST['companyID']) ? trim($_POST['companyID']) : 0;
-        $serviceIds = isset($_POST['serviceId']) ? $_POST['serviceId'] : array();
-
-        // Concatenar IDs de servicios en una cadena separada por comas
-        $serviceIdsString = explode(',', $serviceIds);
-
-        if (!empty($companyID) && !empty($serviceIdsString)) {
-            // Crear el objeto ServiceCompany con los datos necesarios
-
-           
-            $service = new ServiceCompany(0, $companyID, $serviceIdsString, $photoUrls, 1);
-            $serviceBusiness = new serviceCompanyBusiness();
-            $result = $serviceBusiness->insertTBServiceCompany($service);
-
-            if ($result['status'] === 'success') {
-                
-                $response = ['status' => 'success', 'message' => 'Servicio agregado correctamente.'];
             } else {
-
-                $response = ['status' => 'error', 'message' => 'Error en la base de datos.'];            
+                $response['status'] = 'error';
+                $response['message'] = 'Formato de imagen inválido. Solo se permiten JPG, PNG, JPEG, y GIF.';
+                echo json_encode($response);
+                exit();
             }
-        } else {
-            $response = ['status' => 'error', 'message' => 'No se permiten campos vacíos.'];
+        }
+    }
+
+    // Concatenar las URLs de imágenes
+    $photoUrls = implode(',', $fileNames);
+
+    // Validación y obtención de datos
+    $companyID = isset($_POST['companyID']) ? trim($_POST['companyID']) : 0;
+    $serviceIds = isset($_POST['serviceId']) ? $_POST['serviceId'] : array();
+
+    // Concatenar IDs de servicios en una cadena separada por comas
+    $serviceIdsString = explode(',', $serviceIds);
+
+    // Validar que companyID no esté vacío
+    if (!empty($companyID) && !empty($serviceIdsString)) {
+        $serviceBusiness = new serviceCompanyBusiness();
+        
+        // Verificar si el companyID ya está en uso
+        $existingServices = $serviceBusiness->companyWithServices($companyID);
+
+        if (!empty($existingServices)) {
+            $response = ['status' => 'error', 'message' => 'Ya existen servicios activos asociados a esta empresa.'];
+            echo json_encode($response);
+            exit();
         }
 
-        
-        
-        echo json_encode($response);
-        exit();
-        /*
+        // Crear el objeto ServiceCompany con los datos necesarios
+        $service = new ServiceCompany(0, $companyID, $serviceIdsString, $photoUrls, 1);
+        $result = $serviceBusiness->insertTBServiceCompany($service);
+
+        if ($result['status'] === 'success') {
+            $response = ['status' => 'success', 'message' => 'Servicio agregado correctamente.'];
+        } else {
+            $response = ['status' => 'error', 'message' => 'Error en la base de datos.'];            
+        }
     } else {
-        $response = ['status' => 'error', 'message' => 'No se han subido imágenes.'];
-        echo json_encode($response);
-        exit();
+        $response = ['status' => 'error', 'message' => 'No se permiten campos vacíos.'];
     }
-    */
-} 
+
+    echo json_encode($response);
+    exit();
 }
 
 

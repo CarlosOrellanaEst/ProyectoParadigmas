@@ -145,21 +145,34 @@
                         // Mostrar servicios en select
                         echo '<td>';
                         $serviceIds = explode(',', $current->getTbserviceid());
-                        foreach ($serviceIds as $index => $serviceId) {
-                            echo '<div class="service-row">';
-                            echo '<select name="serviceId[]">';
-                            foreach ($services as $service) {
-                                echo '<option value="' . htmlspecialchars($service->getIdTbservice()) . '"';
-                                if ($service->getIdTbservice() == $serviceId) {
-                                    echo ' selected';
+                        
+                        // Verificar si serviceIds está vacío
+                        if (empty($serviceIds) || (count($serviceIds) === 1 && trim($serviceIds[0]) === '')) {
+                            // Si no hay servicios asociados, mostrar un mensaje
+                            echo '<div class="no-services-message">No hay servicios asociados</div>';
+                        } else {
+                            foreach ($serviceIds as $index => $serviceId) {
+                                echo '<div class="service-row">';
+                                echo '<select name="serviceId[]">';
+                                foreach ($services as $service) {
+                                    echo '<option value="' . htmlspecialchars($service->getIdTbservice()) . '"';
+                                    if ($service->getIdTbservice() == $serviceId) {
+                                        echo ' selected';
+                                    }
+                                    echo '>' . htmlspecialchars($service->getTbservicename()) . '</option>';
                                 }
-                                echo '>' . htmlspecialchars($service->getTbservicename()) . '</option>';
+                                echo '</select>';
+                                echo '</div>'; // Cerrar el div de service-row
                             }
-                            echo '</select>';
+
+                        }
+                        echo '<input type="submit" value="Agregar servicio" name="addService2" />';
+                        echo '</td>';
+                        
                            
                             
                            
-                        }
+                        
                         echo '<select name="serviceIndex">'; 
                         foreach ($serviceIds as $index => $service) {
                             echo '<option value="' . $index . '">Servicio ' . ($index + 1) . '</option>';
