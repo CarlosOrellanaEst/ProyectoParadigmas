@@ -52,6 +52,13 @@ if (isset($_POST['create'])) {
     $companyTypeId = $_POST['companyType'] ?? 0;
     $status = $_POST['status'] ?? '';
     $customCompanyType = '';
+    $selectedCompanyTypes = $_POST['selectedCompanyTypes'] ?? [];
+    echo '<script>console.log(' . json_encode($selectedCompanyTypes) . ')</script>';
+    if (empty($selectedCompanyTypes)) {
+        echo json_encode(['status' => 'error', 'error_code' => 'no_company_types', 'message' => 'No se han seleccionado tipos de empresa.']);
+        exit();
+    }
+    
 
     if ($companyTypeId === '0') {
         $customCompanyType = $_POST['customCompanyType'] ?? '';
