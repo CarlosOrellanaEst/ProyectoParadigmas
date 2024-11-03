@@ -104,6 +104,34 @@ $userLogged = $_SESSION['user'];
         </tbody>
     </table>
 
+    <section>
+        <h2>Actividades Recomendadas</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Caracteristicas</th>
+                    <th>Valores</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                $activityBusiness = new ActivityBusiness();
+                $uniqueAttributes = $activityBusiness->getAllActivitiesForRecomendations();
+                if (count($uniqueAttributes) > 0) {
+                    foreach ($uniqueAttributes as $attribute) {
+                        echo '<tr>';
+                        echo '<td>' . htmlspecialchars($attribute) . '</td>';
+                        echo '</tr>';
+                    }
+                } else {
+                    echo '<tr><td>No se encontraron resultados</td></tr>';
+                }
+                ?>
+            </tbody>
+        </table>
+    </section>
+
+
     <script>
     <?php
         $activityBusiness = new ActivityBusiness();
