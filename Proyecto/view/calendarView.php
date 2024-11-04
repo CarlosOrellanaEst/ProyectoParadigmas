@@ -106,7 +106,7 @@ $userLogged = $_SESSION['user'];
 
     <section>
         <h2>Actividades Recomendadas</h2>
-        <table>
+        <table id="recommendations-table">
             <thead>
                 <tr>
                     <th>Caracteristicas</th>
@@ -121,15 +121,34 @@ $userLogged = $_SESSION['user'];
                     foreach ($uniqueAttributes as $attribute) {
                         echo '<tr>';
                         echo '<td>' . htmlspecialchars($attribute) . '</td>';
+                        echo '<td><input type="text" class="attribute-value" data-attribute="' . htmlspecialchars($attribute) . '" placeholder="Ingrese un valor"></td>';
                         echo '</tr>';
                     }
                 } else {
-                    echo '<tr><td>No se encontraron resultados</td></tr>';
+                    echo '<tr><td colspan="2">No se encontraron resultados</td></tr>';
                 }
                 ?>
             </tbody>
         </table>
-    </section>
+        
+        <!-- Tabla para mostrar los resultados de la búsqueda -->
+        <table id="recommended-activities-table" style="display: none;">
+            <thead>
+                <tr>
+                    <th>Nombre de la Actividad</th>
+                    <th>Servicio</th>
+                    <th>Atributos y Datos</th>
+                    <th>Fotos</th>
+                    <th>Fecha y Hora</th>
+                    <th>Longitud</th>
+                    <th>Latitud</th>
+                    <th>Reservar</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+</section>
 
 
     <script>
@@ -352,6 +371,9 @@ $userLogged = $_SESSION['user'];
 
 
     </script>
+
+  <!-- script para las recomendaciones de actividades -->
+    <script src="../resources/recommendationAJAX.js"> </script>
 
 <script
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCRQx6ssQ25Ezy99nFNHJYSCVIpE9JeAUI&libraries=marker&callback=initMap&loading=async"

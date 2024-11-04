@@ -62,6 +62,10 @@ class ActivityBusiness {
         return $this->activityData->getAllActivitiesByOwner($ownerId);
     }
 
+    public function getAllActivitiesRecommended($attribute, $value) {
+        return $this->activityData->getAllActivitiesRecommended($attribute, $value);
+    }
+
     public function getActivityById($id) {
         return $this->activityData->getActivityById($id);
     }
