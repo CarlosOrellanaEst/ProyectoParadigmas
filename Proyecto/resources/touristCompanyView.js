@@ -65,11 +65,9 @@ document.addEventListener("DOMContentLoaded", function () {
         // Aquí recolectamos los tipos de empresa seleccionados
         const companyTypeList = document.getElementById("selectedCompanyTypesList");
 
-        if (companyTypeList) { // Verifica que el elemento exista
-            const children = companyTypeList.children; // Obtiene los hijos
-            for (let item of children) {
-                formData.append("selectedCompanyTypes[]", item.textContent); // Asegúrate de que esto sea el ID
-            }
+        if (selectedCompanyTypes.length > 0) { // Verifica que el elemento exista
+            console.log(selectedCompanyTypes);
+            formData.append("selectedCompanyTypes", JSON.stringify(selectedCompanyTypes)); // Asegúrate de que esto sea el ID
         } else {
             console.error("El elemento 'selectedCompanyTypesList' no se encontró.");
         } 

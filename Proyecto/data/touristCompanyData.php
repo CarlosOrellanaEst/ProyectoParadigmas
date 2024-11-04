@@ -113,9 +113,10 @@ class TouristCompanyData extends Data{
             $nextId = $lastId + 1;
         }
         
-        $allCompanyTypes = $this->getTouristCompanyTypeIds($touristCompany);
-        $companyTypeIds = explode(',', $allCompanyTypes); 
-    
+        $allCompanyTypes = $touristCompany->getAllTouristCompanyType();
+        //$companyTypeIds = explode(',', $allCompanyTypes); 
+        //error_log('IDs de empresas turísticas después de explode: ' . print_r($companyTypeIds, true));
+
         $queryInsert = "INSERT INTO tbtouristcompanytouristcompanytype (tbtouristcompanytouristcompanytypeid, tbtouristcompany, tbtouristcompanytype) VALUES (?, ?, ?)";
         $stmt = $conn->prepare($queryInsert);
         if ($stmt === false) {
@@ -123,14 +124,16 @@ class TouristCompanyData extends Data{
             return ['status' => 'error', 'message' => 'Prepare fallido: ' . $conn->error];
         }
     
-        foreach ($companyTypeIds as $typeId) {
-            $stmt->bind_param("iii", $nextId, $companyId, $typeId);
-            $result = $stmt->execute();
-    
-            if (!$result) {
-                error_log('Error en la inserción: ' . $stmt->error); 
+        foreach ($allCompanyTypes as $typeId) {
+            if (!empty($typeId)) { 
+                $stmt->bind_param("iii", $nextId, $companyId, $typeId);
+                $result = $stmt->execute();
+        
+                if (!$result) {
+                    error_log('Error en la inserción: ' . $stmt->error); 
+                }
+                $nextId++;
             }
-            $nextId++;
         }
     
         $stmt->close();
@@ -146,7 +149,7 @@ class TouristCompanyData extends Data{
                 $ids[] = $company->getId();
             }
         }
-        
+        //error_log('IDs de tipos de empresa turística: ' . implode(',', $ids));
         return implode(',', $ids);
     }
 
