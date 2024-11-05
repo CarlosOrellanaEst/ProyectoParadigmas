@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost
--- Tiempo de generación: 02-11-2024 a las 20:58:17
+-- Tiempo de generación: 05-11-2024 a las 17:23:10
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -40,21 +40,13 @@ CREATE TABLE `tbactivity` (
   `tbactivitylongitude` decimal(12,8) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Estructura de tabla para la tabla `tbtouristcompanytouristcompanytype`
-CREATE TABLE `tbtouristcompanytouristcompanytype` (
-  `tbtouristcompanytouristcompanytypeid` int(11) NOT NULL,
-  `tbtouristcompany` int(11) NOT NULL,
-  `tbtouristcompanytype` int(11) NOT NULL,
-  `tbtouristcompanytouristcompanytypestatus` int(11) NOT NULL DEFAULT 1
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
 --
 -- Volcado de datos para la tabla `tbactivity`
 --
 
 INSERT INTO `tbactivity` (`tbactivityid`, `tbactivityname`, `tbactivityservicecompanyid`, `tbactivityatributearray`, `tbactivitydataarray`, `tbactivityurl`, `tbactivitystatus`, `tbactivitydate`, `tbactivitylatitude`, `tbactivitylongitude`) VALUES
-(1, 'Senderismo en el Bosque', 2, 'Duración,Distancia', '2 horas,5 km', 'Cat03.jpg,pexels1.jpg', 1, '2024-10-01 09:00:00', 10.12345678, -84.12345678),
-(2, 'Fotografía de Vida Silvestre', 3, 'Duración,Equipo Recomendado', '4 horas,Cámara con zoom', 'daisy.jpg,pexels2.jpg', 1, '2024-10-03 07:30:00', 9.87654321, -83.98765432),
+(1, 'Senderismo en el Bosque', 2, '', '', 'Cat03.jpg,pexels1.jpg', 1, '2024-11-28 09:00:00', 10.12345678, -84.12345678),
+(2, 'Fotografía de Vida Silvestre', 1, '', '', 'pexels2.jpg', 1, '2024-11-22 07:30:00', 9.87654321, -83.98765432),
 (3, 'Kayak en el Río', 5, 'Duración,Nivel de Dificultad', '3 horas,Moderado', 'dog.jpg,pexels3.jpg', 1, '2024-10-05 11:00:00', 10.23456789, -84.23456789),
 (4, 'Paseo en Caballo', 4, 'Duración,Tamaño del Grupo', '2 horas,10 personas', 'IMG_1312.PNG,uwu.jpeg', 1, '2024-10-07 08:00:00', 9.12345678, -83.12345678),
 (5, 'Excursión Nocturna', 1, 'Duración,Equipo Necesario', '5 horas,Linterna y repelente', 'miAmigueCarlos.jpg,gerald.jpg', 1, '2024-10-09 18:00:00', 10.56789012, -84.56789012),
@@ -113,8 +105,8 @@ CREATE TABLE `tbcustomizedtouristcompanytype` (
 CREATE TABLE `tbowner` (
   `tbownerid` int(11) NOT NULL,
   `tbuserid` int(11) NOT NULL,
-  `tbownerdirection` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
-  `tbownerphotourl` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `tbownerdirection` varchar(500) NOT NULL,
+  `tbownerphotourl` varchar(500) NOT NULL,
   `tbownerstatus` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -146,7 +138,13 @@ INSERT INTO `tbowner` (`tbownerid`, `tbuserid`, `tbownerdirection`, `tbownerphot
 (21, 24, '', '', 0),
 (22, 25, '', '', 0),
 (23, 26, '', '', 0),
-(24, 27, '', '', 1);
+(24, 27, '', '', 1),
+(25, 30, 'Cairo', '', 1),
+(26, 31, 'Cairo', '', 1),
+(27, 32, 'Cairo', '', 1),
+(28, 34, 'Cairo', '', 0),
+(29, 35, 'Cairo', '', 1),
+(30, 36, 'Cairo', '', 1);
 
 -- --------------------------------------------------------
 
@@ -236,7 +234,10 @@ CREATE TABLE `tbservice` (
   `tbservicestatus` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+--
 -- Volcado de datos para la tabla `tbservice`
+--
+
 INSERT INTO `tbservice` (`tbserviceid`, `tbservicename`, `tbservicedescription`, `tbservicestatus`) VALUES
 (1, 'Senderismo Guiado', 'Exploración de rutas naturales con guías expertos que proporcionan información sobre la flora y fauna local.', 1),
 (2, 'Observación de Aves', 'Actividad que permite a los participantes observar y aprender sobre las diversas especies de aves en su hábitat natural.', 1),
@@ -266,7 +267,7 @@ CREATE TABLE `tbservicecompany` (
 --
 
 INSERT INTO `tbservicecompany` (`tbservicecompanyid`, `tbtouristcompanyid`, `tbserviceid`, `tbservicecompanyURL`, `tbservicestatus`) VALUES
-(1, 9, '2,1,3', '', 1),
+(1, 9, '4,1,7', '', 1),
 (2, 10, '8,6,3,7', '', 1);
 
 -- --------------------------------------------------------
@@ -304,6 +305,19 @@ INSERT INTO `tbtouristcompany` (`tbtouristcompanyid`, `tbtouristcompanylegalname
 (15, 'herhh', '', 5, 2, '', 0),
 (17, 'AAAAAAA', '', 2, 4, '', 0),
 (19, 'pruebaServiciosActividadesCarlos.SA', 'pruebaServiciosActividadesCarlos', 24, 2, '', 1);
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `tbtouristcompanytouristcompanytype`
+--
+
+CREATE TABLE `tbtouristcompanytouristcompanytype` (
+  `tbtouristcompanytouristcompanytypeid` int(11) NOT NULL,
+  `tbtouristcompany` int(11) NOT NULL,
+  `tbtouristcompanytype` int(11) NOT NULL,
+  `tbtouristcompanytouristcompanytypestatus` int(11) NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -381,7 +395,16 @@ INSERT INTO `tbuser` (`tbuserid`, `tbusername`, `tbusersurnames`, `tbuserlegalid
 (24, '', '', '292839484', '', 'fawfaf@gmail.com', 'fafawfawf', '$2y$10$LHk5fgjE0hVShDXmjyBVF.GAxgd/9cmjN70.tXu0MUblN/DZT5Diy', 3, 0),
 (25, '', '', '999111232', '', 'yooo@gmail.com', 'wsegbwbwbs', '$2y$10$NhZakzIxkug/kfmuOfynFeB9ECc.MVmWHcIfi39YNUfImat9Pj3ou', 3, 0),
 (26, 'awfawfahgag', '', '999882232', '', 'mlfa@gmail.com', 'awfawf', '$2y$10$RXNHTNealTvjq./4xWJMuOkJxtQAnqEZnPOpf4AJ0jGebVBMddqk.', 3, 0),
-(27, 'carlitos', 'Orellana Obando', '402590264', '', 'charlorellana@gmail.com', 'charlitos', '$2y$10$kPvGUY7HoxkO1qWoxcd3eOs5pzI4cnQCMtJfWNo9rRPi/aYzTy2Le', 3, 1);
+(27, 'carlitos', 'Orellana Obando', '402590264', '', 'charlorellana@gmail.com', 'charlitos', '$2y$10$kPvGUY7HoxkO1qWoxcd3eOs5pzI4cnQCMtJfWNo9rRPi/aYzTy2Le', 3, 1),
+(28, 'Dilan', 'Gutierrez..', '878679876', '98647678', 'afaa@a.ksbhfgyj', 'dddd', '$2y$10$VMrrIUw2si6F9iAkkI4J1OctlDfD84PZcvDNRhhl6zKzOvY8DdB/K', 2, 1),
+(29, 'Dilan', 'Gutierrez', '584933293', '43234534', 'afaa@aksbe.hf', 'ddd', '$2y$10$G.QNQ0iBs2B13iP477H67uYU26SBZtNPGJOqnQJg5OfBtQRrouFRy', 2, 1),
+(30, 'JAMAL', 'Gutierrez', '478398764', '43343228', 'degutierrezh02@gmail.com3', 'JAMAL', '$2y$10$xYxDshrXQAWh/ruxNe3CuuDB9DcVPYnMUQgGMLAbPd9Z/GAPiq3Gu', 3, 1),
+(31, 'Dilan', 'Gutierrez', '444433211', '61663697', 'degutierrezh02@gmail.com32', '22JAMAL', '$2y$10$BYMfJl1WUGEjcGFLyXA3nOr38ETjVkHGUNHQGN/8OxeUYNPiMNCrm', 3, 1),
+(32, 'JAMAL', 'Gutierrez', '894736273', '89987657', 'degutierrezh02@gmail.comeee', 'hjvgj', '$2y$10$iFnJc.k37Py30.oaNyAgheMnQ.LGB4168xP77a8hKfyUOPDnAtSWy', 3, 1),
+(33, 'Eduardo', 'Gutierrez', '123234323', '88888899', 'afaasa@aksbhf.sfa2124', 'edu', '$2y$10$Pd/DWEMtgXOqcCaq62Ocpu9HNb6W3FxPzaRqEOZwwVj3K5fyiPHWO', 2, 1),
+(34, 'GLEEEEEND', 'Gutierrez', '435678907', '38928738', 'degutierrezh02@gmail.com32222', 'GLENDA', '$2y$10$leS15Y4x0RqLw1Komzr5W.cT2qShVUr7ZvxXNcEwtGNDojJNhR.Oq', 3, 0),
+(35, 'asfa', 'SASAS', '376483762', '22112244', 'degutierrezh02@gmail.com1212', 'AD1', '$2y$10$.oWt34aCWD7giKclfWapTeSLpI9AsLzWtx5TVWTRdYmZhgeYwzyd.', 3, 1),
+(36, 'kajjad', 'saad', '487637890', '33338111', 'degutierrezh02@gmail.com1111', 'asdas1', '$2y$10$/7Cv/588S/QU/TrahW8gLuRDsy7kOedrXZIxb5Edqqd2L0ywVEEda', 3, 1);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
