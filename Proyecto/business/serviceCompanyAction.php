@@ -81,7 +81,6 @@ if (isset($_POST['create'])) {
     exit();
 }
 
-
 if (isset($_POST['update'])) {
     $companyId = $_POST['companyId'];
     $serviceIds = isset($_POST['serviceId']) ? $_POST['serviceId'] : [];
@@ -113,10 +112,20 @@ if (isset($_POST['update'])) {
             $newImageUrls = array_merge($existingImages, $uploadedImages);
             $imageUrlsString = implode(',', $newImageUrls);
 
+            // Solo actualiza los servicios si se selecciona uno nuevo
+            if (!empty($serviceIds)) {
+                // Actualiza el servicio a uno nuevo seleccionado
+                $servicesIdString = implode(',', $serviceIds); // Solo usar el nuevo servicio
+            } else {
+                // Mantiene el servicio existente si no se selecciona nada nuevo
+                $servicesIdString = $currentService->getTbserviceid();
+            }
+
             // Actualizar el registro
-            $service = new ServiceCompany($serviceCompanyId, $companyId, implode(',', $serviceIds), $imageUrlsString, 1);
+            $service = new ServiceCompany($serviceCompanyId, $companyId, $servicesIdString, $imageUrlsString, 1);
             $result = $serviceCompanyBusiness->updateTBServiceCompany($service);
 
+            // Manejo de la respuesta
             if ($result['status'] === 'success') {
                 header("Location: ../view/serviceView.php?success=updated");
                 exit();

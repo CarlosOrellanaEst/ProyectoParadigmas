@@ -166,7 +166,8 @@
                             }
 
                         }
-                        echo '<input type="submit" value="Agregar servicio" name="addService2" />';
+                        echo '<button type="button" class="addServiceRow">Agregar servicio</button>';
+                       
                         echo '</td>';
                         
                            
@@ -244,8 +245,34 @@
                }
            });
 
-           
-       });
+           document.querySelectorAll('.addServiceRow').forEach(button => {
+                button.addEventListener('click', function() {
+                    const container = this.previousElementSibling;
+
+                    if (container.querySelectorAll('.service-row').length < 7) {
+                        const newService = document.createElement('div');
+                        newService.classList.add('service-row');
+                        newService.innerHTML = `
+                            <select name="serviceId[]">
+                                <?php foreach ($services as $service): ?>
+                                    <option value="<?php echo htmlspecialchars($service->getIdTbservice()); ?>">
+                                        <?php echo htmlspecialchars($service->getTbservicename()); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                            <button type="button" class="remove-service">Eliminar</button>
+                        `;
+                        container.appendChild(newService);
+                        
+                        newService.querySelector('.remove-service').addEventListener('click', function() {
+                            newService.remove();
+                        });
+                    } else {
+                        alert("No puedes agregar más de 7 servicios.");
+                    }
+                });
+            });
+        });
     </script>
 </body>
 </html>

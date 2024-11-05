@@ -342,21 +342,18 @@ class serviceCompanyData extends Data {
     }
 
     public function updateTBServiceCompany($service) {
-        // Conexión a la base de datos
         $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
         if (!$conn) {
             return ['status' => 'error', 'message' => 'Connection failed: ' . mysqli_connect_error()];
         }
         $conn->set_charset('utf8');
     
-        // Obtener valores del objeto $service
         $serviceCompanyId = $service->getTbservicecompanyid();
         $touristCompanyId = $service->getTbtouristcompanyid();
-        $serviceIds = $service->getTbserviceid(); // Suponiendo que este campo ya es un string con múltiples IDs separados por comas
+        $serviceIds = $service->getTbserviceid(); // String con IDs separados por comas
         $imageUrlsString = is_array($service->getTbservicecompanyURL()) ? implode(',', $service->getTbservicecompanyURL()) : $service->getTbservicecompanyURL();
         $status = $service->getTbservicetatus();
     
-        // Consulta para actualizar el registro
         $queryUpdate = "UPDATE tbservicecompany 
                         SET tbtouristcompanyid = ?, tbserviceid = ?, tbservicecompanyURL = ?, tbservicetatus = ? 
                         WHERE tbservicecompanyid = ?";
@@ -379,6 +376,7 @@ class serviceCompanyData extends Data {
     
         return ['status' => 'success', 'message' => 'Actualizado correctamente.'];
     }
+    
 
     public function removeServiceFromServiceCompany($serviceCompanyId, $serviceIdToRemove) {
         $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
