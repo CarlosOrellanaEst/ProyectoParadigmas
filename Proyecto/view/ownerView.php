@@ -74,9 +74,29 @@ $_SESSION['owners'] = $owners;
             echo '<label for="legalIdentification">Identificación Legal <span class="required">*</span></label>';
             echo '<input placeholder="identificacionLegal" type="text" name="ownerLegalIdentification" id="legalIdentification"/><br><br>';
 
+            
             echo '<label for="phone">Teléfono</label>';
-            echo '<input placeholder="telefono" type="text" name="ownerPhone" id="phone"/><br><br>';
-
+            echo '<input placeholder="3333-3333" type="text" name="ownerPhone" id="phone" oninput="formatPhone(this)" maxlength="9"/><br><br>';
+            echo '<script>
+                function formatPhone(input) {
+                    // Remueve caracteres no numéricos
+                    let value = input.value.replace(/\D/g, "");
+                    
+                    // Limita a los primeros 8 dígitos
+                    if (value.length > 8) {
+                        value = value.substring(0, 8);
+                    }
+                    
+                    // Aplica el formato XXXX-XXXX
+                    if (value.length > 4) {
+                        input.value = value.substring(0, 4) + "-" + value.substring(4);
+                    } else {
+                        input.value = value;
+                    }
+                }
+            </script>';
+            
+            
             echo '<label for="email">Correo <span class="required">*</span></label>';
             echo '<input placeholder="correo" type="text" name="ownerEmail" id="email"/><br><br>';
 
