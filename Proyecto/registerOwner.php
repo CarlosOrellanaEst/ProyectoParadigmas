@@ -40,8 +40,9 @@
     <label for="legalIdentification">Identificación Legal <span class="required">*</span></label>
     <input placeholder="identificación legal" type="text" name="ownerLegalIdentification" id="legalIdentification" autocomplete="off"/><br><br>
 
-    <label for="phone">Teléfono</label>
-    <input placeholder="teléfono" type="text" name="ownerPhone" id="phone" autocomplete="tel"/><br><br>
+    <label for="phone">Teléfono</label>;
+    <input placeholder="3333-3333" type="text" name="ownerPhone" id="phone" oninput="formatPhone(this)" maxlength="9"/><br><br>;
+           
 
     <label for="email">Correo <span class="required">*</span></label>
     <input placeholder="correo" type="text" name="ownerEmail" id="email" autocomplete="email"/><br><br>
@@ -64,5 +65,24 @@
     <script src="./resources/ownerView.js"></script>
     <script src="./resources/AJAXOwner.js"></script>
     <script src="./resources/register.js"></script> 
+
+    <script>
+                function formatPhone(input) {
+                    // Remueve caracteres no numéricos
+                    let value = input.value.replace(/\D/g, "");
+                    
+                    // Limita a los primeros 8 dígitos
+                    if (value.length > 8) {
+                        value = value.substring(0, 8);
+                    }
+                    
+                    // Aplica el formato XXXX-XXXX
+                    if (value.length > 4) {
+                        input.value = value.substring(0, 4) + "-" + value.substring(4);
+                    } else {
+                        input.value = value;
+                    }
+                }
+            </script>;
 </body>
 </html>
