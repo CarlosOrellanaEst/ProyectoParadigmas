@@ -236,11 +236,8 @@ CREATE TABLE `tbservice` (
   `tbservicestatus` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
---
 -- Volcado de datos para la tabla `tbservice`
---
-
-INSERT INTO `tbservice` (`tbserviceid`, `tbservicename`, `tbservicedescription`, `tbservicetatus`) VALUES
+INSERT INTO `tbservice` (`tbserviceid`, `tbservicename`, `tbservicedescription`, `tbservicestatus`) VALUES
 (1, 'Senderismo Guiado', 'Exploración de rutas naturales con guías expertos que proporcionan información sobre la flora y fauna local.', 1),
 (2, 'Observación de Aves', 'Actividad que permite a los participantes observar y aprender sobre las diversas especies de aves en su hábitat natural.', 1),
 (3, 'Kayak en Ríos y Lagos', 'Recorridos en kayak por ríos y lagos para disfrutar del paisaje y la vida silvestre desde una perspectiva única.', 1),
@@ -268,7 +265,7 @@ CREATE TABLE `tbservicecompany` (
 -- Volcado de datos para la tabla `tbservicecompany`
 --
 
-INSERT INTO `tbservicecompany` (`tbservicecompanyid`, `tbtouristcompanyid`, `tbserviceid`, `tbservicecompanyURL`, `tbservicetatus`) VALUES
+INSERT INTO `tbservicecompany` (`tbservicecompanyid`, `tbtouristcompanyid`, `tbserviceid`, `tbservicecompanyURL`, `tbservicestatus`) VALUES
 (1, 9, '2,1,3', '', 1),
 (2, 10, '8,6,3,7', '', 1);
 
