@@ -79,13 +79,13 @@ if (isset($_POST['create'])) {
             exit();
         }
 
-        if (!empty($phone) && !preg_match('/^\d{8}$/', $phone)) {
-            echo json_encode(['status' => 'error', 'error_code' => 'invalid_phone', 'message' => 'Número de teléfono inválido. Debe contener exactamente 8 dígitos.']);
-            exit();
-        }
+        $phone = str_replace('-', '', $phone); // Elimina el guion de la máscara
 
+if (!empty($phone) && !preg_match('/^\d{8}$/', $phone)) {
+    echo json_encode(['status' => 'error', 'error_code' => 'invalid_phone', 'message' => 'Número de teléfono inválido. Debe contener exactamente 8 dígitos.']);
+    exit();
 
-
+}
         if (!preg_match('/^[^\s@]+@[^\s@]+\.[^\s@]+$/', $email)) {
             echo json_encode(['status' => 'error', 'error_code' => 'invalid_email', 'message' => 'Formato de correo electrónico inválido']);
             exit();
@@ -276,5 +276,3 @@ if (isset($_POST['delete'])) {
     echo json_encode(['status' => 'error', 'message' => 'Solicitud no válida.']);
     exit();
 }
-
-

@@ -49,6 +49,9 @@ if (isset($_POST['create'])) {
             exit();
         }
 
+
+        $touristPhone = str_replace('-', '', $touristPhone); // Elimina el guion de la máscara
+
         // Teléfono
         if (!empty($touristPhone) && !preg_match('/^\d{8}$/', $touristPhone)) {
             echo json_encode(['status' => 'error', 'message' => 'Número de teléfono inválido']);
