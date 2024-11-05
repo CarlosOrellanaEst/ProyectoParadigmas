@@ -1,5 +1,8 @@
 <?php
 
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 include_once 'data.php';
 include_once '../domain/TouristCompany.php'; 
 include_once '../domain/Photo.php'; 
@@ -77,40 +80,15 @@ class TouristCompanyData extends Data{
     
         if ($result) {
             $stmt->close();
-            // Obtener el siguiente ID
-            $queryGetLastId2 = "SELECT MAX(tbtouristcompanytouristcompanytypeid) AS tbtouristcompanytouristcompanytypeid FROM tbtouristcompanytouristcompanytype";
-            $idCont2 = mysqli_query($conn, $queryGetLastId2);
-            $nextIdInter = 1;
-            if ($row = mysqli_fetch_row($idCont2)) {
-                $lastId2 = $row[0] !== null ? (int)trim($row[0]) : 0;
-                $nextIdInter = $lastId2 + 1;
+
+            $resultInsertType = $this->insertTbTouristCompanyTouristCompanyType($touristCompany, $nextId);
+
+            if ($resultInsertType['status'] === 'error') {
+                return $resultInsertType;
             }
-            // Insertar en la tabla intermedia
-            $selectedCompanyTypes = $touristCompany->getAllTouristCompanyType(); // Obtener tipos de empresa seleccionados
-            foreach ($selectedCompanyTypes as $companyTypeId) {
-                var_dump($nextIdInter, $nextId, $companyTypeId);
-                $queryInsertType = "INSERT INTO tbtouristcompanytouristcompanytype (tbtouristcompanytouristcompanytypeid, tbtouristcompany, tbtouristcompanytype) VALUES (?, ?, ?)";
-                $stmtType = $conn->prepare($queryInsertType);
-                if ($stmtType === false) {
-                    mysqli_close($conn);
-                    return ['status' => 'error ', 'message' => 'Prepare fallido para insertar tipo de empresa: ' . $conn->error];
-                }
-    
-                $stmtType->bind_param("iii",$nextIdInter, $nextId, $companyTypeId);
-                $resultType = $stmtType->execute();
-    
-                if (!$resultType) {
-                    $errorMessage = $conn->error;
-                    $stmtType->close();
-                    mysqli_close($conn);
-                    return ['status' => 'error', 'message' => 'Falló al agregar el tipo de empresa: ' . $errorMessage];
-                }
-    
-                $stmtType->close();
-            }
-    
+
             mysqli_close($conn);
-            return ['status' => 'success', 'message' => 'Compañía turística añadida correctamente.'];
+            return ['status' => 'success', 'message' => 'Compañía turística añadida correctamente.']; 
         } else {
             $errorMessage = $conn->error;
             $stmt->close();
@@ -118,8 +96,107 @@ class TouristCompanyData extends Data{
             return ['status' => 'error', 'message' => 'Falló al agregar la compañía turística: ' . $errorMessage];
         }
     }
+
+    public function insertTbTouristCompanyTouristCompanyType($touristCompany, $companyId) {
+        $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
+        if (!$conn) {
+            return ['status' => 'error', 'message' => 'Fallo en la conexión: ' . mysqli_connect_error()];
+        }
+        $conn->set_charset('utf8');
     
-    public function insertCustomizedtouristcompanytype($touristCompany) {
+        $queryGetLastId = "SELECT MAX(tbtouristcompanytouristcompanytypeid) AS idtbtouristcompanytouristcompanytype FROM tbtouristcompanytouristcompanytype";
+        $idCont = mysqli_query($conn, $queryGetLastId);
+        $nextId = 1;
+    
+        if ($row = mysqli_fetch_row($idCont)) {
+            $lastId = $row[0] !== null ? (int)trim($row[0]) : 0;
+            $nextId = $lastId + 1;
+        }
+        
+        $allCompanyTypes = $touristCompany->getAllTouristCompanyType();
+        //$companyTypeIds = explode(',', $allCompanyTypes); 
+        //error_log('IDs de empresas turísticas después de explode: ' . print_r($companyTypeIds, true));
+
+        $queryInsert = "INSERT INTO tbtouristcompanytouristcompanytype (tbtouristcompanytouristcompanytypeid, tbtouristcompany, tbtouristcompanytype) VALUES (?, ?, ?)";
+        $stmt = $conn->prepare($queryInsert);
+        if ($stmt === false) {
+            mysqli_close($conn);
+            return ['status' => 'error', 'message' => 'Prepare fallido: ' . $conn->error];
+        }
+    
+        foreach ($allCompanyTypes as $typeId) {
+            if (!empty($typeId)) { 
+                $stmt->bind_param("iii", $nextId, $companyId, $typeId);
+                $result = $stmt->execute();
+        
+                if (!$result) {
+                    error_log('Error en la inserción: ' . $stmt->error); 
+                }
+                $nextId++;
+            }
+        }
+    
+        $stmt->close();
+        mysqli_close($conn);
+        return ['status' => 'success', 'message' => 'Tipos de empresa turística añadidos correctamente.'];
+    }
+    
+    function getTouristCompanyTypeIds($touristCompany) {
+        $ids = [];
+        
+        foreach ($touristCompany->getAllTouristCompanyType() as $company) {
+            if ($company instanceof TouristCompanyType) {
+                $ids[] = $company->getId();
+            }
+        }
+        //error_log('IDs de tipos de empresa turística: ' . implode(',', $ids));
+        return implode(',', $ids);
+    }
+
+    public function insertCustomizedtouristcompanytype($ownerId, $customCompanyType) {
+        $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
+        if (!$conn) {
+            return ['status' => 'error', 'message' => 'Fallo en la conexión: ' . mysqli_connect_error()];
+        }
+        $conn->set_charset('utf8');
+
+        $queryGetLastId = "SELECT MAX(tbcustomizedtouristcompanytypeid) AS idtbcustomizedtouristcompanytype FROM tbcustomizedtouristcompanytype";
+        $idCont = mysqli_query($conn, $queryGetLastId);
+        $nextId = 1;
+        $active = 1;
+
+        if ($row = mysqli_fetch_row($idCont)) {
+            $lastId = $row[0] !== null ? (int)trim($row[0]) : 0;
+            $nextId = $lastId + 1;
+        }
+
+        $queryInsert = "INSERT INTO tbcustomizedtouristcompanytype (tbcustomizedtouristcompanytypeid, tbownerid, tbcustomizedtouristcompanytypename, tbcustomizedtouristcompanytypestatus) VALUES (?, ?, ?, ?)";
+        $stmt = $conn->prepare($queryInsert);
+        if ($stmt === false) {
+            mysqli_close($conn);
+            return ['status' => 'error', 'message' => 'Prepare fallido: ' . $conn->error];
+        }
+
+        $stmt->bind_param("iisi", $nextId, $ownerId, $customCompanyType, $active);
+        $result = $stmt->execute();
+
+        if ($result) {
+            $stmt->close();
+            mysqli_close($conn);
+            return true;
+            //return ['status' => 'success', 'message' => 'Tipo de empresa turística turistica añadida correctamente.'];
+        } else {
+            $errorMessage = $conn->error;
+            $stmt->close();
+            mysqli_close($conn);
+            error_log('Error en la inserción: ' . $stmt->error); // Log de error en la inserción
+            //return ['status' => 'error', 'message' => 'Falló al agregar el tipo de empresa personalizada: ' . $conn->error];
+
+            return false;
+            
+        }
+    }
+   /* public function insertCustomizedtouristcompanytype($touristCompany) {
         $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
         if (!$conn) {
             return ['status' => 'error', 'message' => 'Fallo en la conexión: ' . mysqli_connect_error()];
@@ -134,7 +211,7 @@ class TouristCompanyData extends Data{
             $nextId = $lastId + 1;
         }
 
-        $queryInsert = "INSERT INTO tbcustomizedtouristcompanytype (tbcustomizedtouristcompanytypeid, tbownerid, tbcustomizedtouristcompanytypename) VALUES (?, ?, ?)";
+        $queryInsert = "INSERT INTO tbcustomizedtouristcompanytype (tbcustomizedtouristcompanytypeid, tbownerid, tbcustomizedtouristcompanytypename, tbcustomizedtouristcompanytypestatus) VALUES (?, ?, ?, ?)";
         $stmt = $conn->prepare($queryInsert);
         if ($stmt === false) {
             mysqli_close($conn);
@@ -145,7 +222,7 @@ class TouristCompanyData extends Data{
         $tbtouristcompanycompanyType = $touristCompany->getTbtouristcompanycustomcompanytype();
        // $tbtouristcompanystatus = $touristCompany->getTbtouristcompanystatus();
 
-        $stmt->bind_param("iis", $nextId, $tbtouristcompanyowner, $tbtouristcompanycompanyType);
+        $stmt->bind_param("iisi", $nextId, $tbtouristcompanyowner, $tbtouristcompanycompanyType, 1);
         $result = $stmt->execute();
 
 
@@ -160,7 +237,7 @@ class TouristCompanyData extends Data{
             return ['status' => 'error', 'message' => 'Falló al agregar la compañía turística: ' . $errorMessage];
         }
 
-    }
+    }*/
     
     
     
@@ -233,7 +310,7 @@ public function getAllTouristCompaniesByOwnerId($ownerId) {
 
     mysqli_close($conn);
     return $touristCompanies;
-}
+} 
 
 
     public function deleteTouristCompany($id) {

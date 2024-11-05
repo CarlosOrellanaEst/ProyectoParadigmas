@@ -188,7 +188,7 @@ class touristCompanyTypeData extends Data {
         }
         $conn->set_charset('utf8');
     
-        $query = "SELECT * FROM tbtouristcompanytype WHERE tbtouristcompanytypeid= $idTouristCompanyType";
+        $query = "SELECT * FROM tbtouristcompanytype WHERE tbtouristcompanytypeid = $idTouristCompanyType";
         $result = mysqli_query($conn, $query);
         
         $row = mysqli_fetch_assoc($result);
