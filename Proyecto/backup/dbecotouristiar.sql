@@ -93,6 +93,7 @@ INSERT INTO `tbbooking` (`tbbookingid`, `tbactivityid`, `tbuserid`, `tbbookingnu
 CREATE TABLE `tbcustomizedtouristcompanytype` (
   `tbcustomizedtouristcompanytypeid` int(11) NOT NULL,
   `tbownerid` int(11) NOT NULL,
+  `tbtouristcompanyid` int(11) NOT NULL,
   `tbcustomizedtouristcompanytypename` varchar(200) NOT NULL,
   `tbcustomizedtouristcompanytypestatus` int(11) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
