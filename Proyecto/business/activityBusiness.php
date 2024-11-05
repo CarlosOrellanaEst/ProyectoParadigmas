@@ -25,8 +25,45 @@ class ActivityBusiness {
     public function getAllActivities() {
         return $this->activityData->getAllActivities();
     }
+
+    public function getAllActivitiesForRecomendations() {
+        $activities = $this->activityData->getAllActivities();
+        $uniqueAttributes = [];
+    
+        foreach ($activities as $activity) {
+            foreach ($activity['tbactivityatributearray'] as $attributeData) {
+                $cleanAttribute = trim($attributeData);
+                
+                // Convertimos a minúsculas para la comparación
+                $lowercaseAttribute = strtolower($cleanAttribute);
+                
+                // Se verifica si es en minuscula o mayuscula
+                // Verificamos si existe usando la versión en minúsculas
+                $exists = false;
+                foreach ($uniqueAttributes as $existingAttribute) {
+                    if (strtolower($existingAttribute) === $lowercaseAttribute) {
+                        $exists = true;
+                        break;
+                    }
+                }
+                
+                // Si no existe, agregamos la versión original (no la versión en minúsculas)
+                if (!$exists) {
+                    $uniqueAttributes[] = $cleanAttribute;
+                }
+            }
+        }
+        
+        sort($uniqueAttributes);
+        return $uniqueAttributes;
+    }   
+
     public function getAllActivitiesByOwner($ownerId) {
         return $this->activityData->getAllActivitiesByOwner($ownerId);
+    }
+
+    public function getAllActivitiesRecommended($attribute, $value) {
+        return $this->activityData->getAllActivitiesRecommended($attribute, $value);
     }
 
     public function getActivityById($id) {

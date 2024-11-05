@@ -36,7 +36,7 @@ class serviceCompanyData extends Data {
         }
     
         // Insertar los datos en la tabla
-        $queryInsert = "INSERT INTO tbservicecompany (tbservicecompanyid, tbtouristcompanyid, tbserviceid, tbservicecompanyURL, tbservicetatus) VALUES (?, ?, ?, ?, ?)";
+        $queryInsert = "INSERT INTO tbservicecompany (tbservicecompanyid, tbtouristcompanyid, tbserviceid, tbservicecompanyURL, tbservicestatus) VALUES (?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($queryInsert);
         if ($stmt === false) {
             mysqli_close($conn);
@@ -79,8 +79,8 @@ class serviceCompanyData extends Data {
         
         // Consulta para seleccionar todos los registros de tbservicecompany
 
-        // $query = "SELECT * FROM tbservicecompany WHERE tbservicetatus = 1;";
-        $query = " SELECT * FROM tbservicecompany INNER JOIN tbtouristcompany ON tbservicecompany.tbtouristcompanyid = tbtouristcompany.tbtouristcompanyid WHERE tbservicetatus = 1 AND tbtouristcompany.tbtouristcompanystatus = 1; ";
+        // $query = "SELECT * FROM tbservicecompany WHERE tbservicestatus = 1;";
+        $query = " SELECT * FROM tbservicecompany INNER JOIN tbtouristcompany ON tbservicecompany.tbtouristcompanyid = tbtouristcompany.tbtouristcompanyid WHERE tbservicestatus = 1 AND tbtouristcompany.tbtouristcompanystatus = 1; ";
         $result = mysqli_query($conn, $query);
         
         // Crear un array para almacenar las compañías de servicios
@@ -93,7 +93,44 @@ class serviceCompanyData extends Data {
                 $row['tbtouristcompanyid'], 
                 $row['tbserviceid'], 
                 $row['tbservicecompanyURL'],
-                $row['tbservicetatus']
+                $row['tbservicestatus']
+            );
+            array_push($serviceCompanies, $currentServiceCompany);
+        }
+        
+        // Cerrar la conexión
+        mysqli_close($conn);
+        
+        // Devolver la lista de compañías de servicios
+        return $serviceCompanies;
+    }
+
+    public function getAllTBServiceCompaniesByOwner($idOwner) {
+        $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
+        if (!$conn) {
+            die("Connection failed: " . mysqli_connect_error());
+        }
+        $conn->set_charset('utf8');
+
+        // $query = "SELECT * FROM tbservicecompany WHERE tbservicestatus = 1;";
+        $query = 
+            " SELECT * FROM tbservicecompany 
+            INNER JOIN tbtouristcompany 
+            ON tbservicecompany.tbtouristcompanyid = tbtouristcompany.tbtouristcompanyid 
+            WHERE tbservicestatus = 1 AND tbtouristcompany.tbtouristcompanystatus = 1 AND tbtouristcompany.tbtouristcompanyowner = " . $idOwner . "; ";
+        $result = mysqli_query($conn, $query);
+        
+        // Crear un array para almacenar las compañías de servicios
+        $serviceCompanies = [];
+        
+        // Recorrer los resultados y crear objetos ServiceCompany para cada fila
+        while ($row = mysqli_fetch_assoc($result)) {
+            $currentServiceCompany = new ServiceCompany(
+                $row['tbservicecompanyid'], 
+                $row['tbtouristcompanyid'], 
+                $row['tbserviceid'], 
+                $row['tbservicecompanyURL'],
+                $row['tbservicestatus']
             );
             array_push($serviceCompanies, $currentServiceCompany);
         }
@@ -112,7 +149,7 @@ class serviceCompanyData extends Data {
         }
         $conn->set_charset('utf8');
         
-        $query = "SELECT tbserviceid FROM tbservicecompany WHERE tbservicetatus = 1 AND tbtouristcompanyid = ?";
+        $query = "SELECT tbserviceid FROM tbservicecompany WHERE tbservicestatus = 1 AND tbtouristcompanyid = ?";
         $stmt = mysqli_prepare($conn, $query);
         if (!$stmt) {
             die("Error en la preparación de la consulta: " . mysqli_error($conn));
@@ -142,7 +179,7 @@ class serviceCompanyData extends Data {
         $conn->set_charset('utf8mb4');
     
         // Preparar la consulta con un parámetro para evitar SQL injection
-        $query = "SELECT * FROM tbservicecompany WHERE tbservicecompanyid = ? AND tbservicetatus != 0";
+        $query = "SELECT * FROM tbservicecompany WHERE tbservicecompanyid = ? AND tbservicestatus != 0";
         $stmt = $conn->prepare($query);
         if ($stmt === false) {
             die("Prepare failed: " . $conn->error);
@@ -162,7 +199,7 @@ class serviceCompanyData extends Data {
                 $row['tbtouristcompanyid'],
                 $row['tbserviceid'],
                 $row['tbservicecompanyURL'],
-                $row['tbservicetatus']
+                $row['tbservicestatus']
             );
         } else {
             $serviceCompany = null;
@@ -179,8 +216,8 @@ class serviceCompanyData extends Data {
         $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
         $conn->set_charset('utf8');
     
-        // Actualizar el campo 'tbservicetatus' a 0 (desactivar servicio)
-        $queryUpdate = "UPDATE tbservicecompany SET tbservicetatus = 0 WHERE tbservicecompanyid = " . $idServiceCompany . ";";
+        // Actualizar el campo 'tbservicestatus' a 0 (desactivar servicio)
+        $queryUpdate = "UPDATE tbservicecompany SET tbservicestatus = 0 WHERE tbservicecompanyid = " . $idServiceCompany . ";";
         $result = mysqli_query($conn, $queryUpdate);
     
         // Cerrar la conexión
@@ -201,8 +238,8 @@ class serviceCompanyData extends Data {
         // Establecer el charset
         $conn->set_charset('utf8');
         
-        // Consulta para seleccionar todos los servicios que están activos (tbservicetatus = 1)
-        $query = "SELECT * FROM tbservice WHERE tbservicetatus = 1;";
+        // Consulta para seleccionar todos los servicios que están activos (tbservicestatus = 1)
+        $query = "SELECT * FROM tbservice WHERE tbservicestatus = 1;";
         $result = mysqli_query($conn, $query);
         
         // Crear un array para almacenar los servicios
@@ -210,7 +247,7 @@ class serviceCompanyData extends Data {
         
         // Recorrer los resultados y crear objetos Service para cada fila
         while ($row = mysqli_fetch_assoc($result)) {
-            $currentService = new Service($row['tbserviceid'], $row['tbservicename'], $row['tbservicedescription'], $row['tbservicetatus']);
+            $currentService = new Service($row['tbserviceid'], $row['tbservicename'], $row['tbservicedescription'], $row['tbservicestatus']);
             array_push($services, $currentService);
         }
         
@@ -248,7 +285,7 @@ class serviceCompanyData extends Data {
                 $row['tbserviceid'], 
                 $row['tbservicename'], 
                 $row['tbservicedescription'], 
-                $row['tbservicetatus']
+                $row['tbservicestatus']
             );
         }
         
@@ -352,10 +389,10 @@ class serviceCompanyData extends Data {
         $touristCompanyId = $service->getTbtouristcompanyid();
         $serviceIds = $service->getTbserviceid(); // String con IDs separados por comas
         $imageUrlsString = is_array($service->getTbservicecompanyURL()) ? implode(',', $service->getTbservicecompanyURL()) : $service->getTbservicecompanyURL();
-        $status = $service->getTbservicetatus();
+        $status = $service->gettbservicestatus();
     
         $queryUpdate = "UPDATE tbservicecompany 
-                        SET tbtouristcompanyid = ?, tbserviceid = ?, tbservicecompanyURL = ?, tbservicetatus = ? 
+                        SET tbtouristcompanyid = ?, tbserviceid = ?, tbservicecompanyURL = ?, tbservicestatus = ? 
                         WHERE tbservicecompanyid = ?";
         $stmt = $conn->prepare($queryUpdate);
         if ($stmt === false) {
@@ -407,7 +444,7 @@ public function companyWithServices($companyID) {
         return false;
     }
 
-    $query = "SELECT COUNT(*) FROM tbservicecompany WHERE tbtouristcompanyid = ? AND tbservicetatus = 1";
+    $query = "SELECT COUNT(*) FROM tbservicecompany WHERE tbtouristcompanyid = ? AND tbservicestatus = 1";
     $stmt = $conn->prepare($query);
     $stmt->bind_param("i", $companyID);
     $stmt->execute();
