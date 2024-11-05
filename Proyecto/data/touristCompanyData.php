@@ -169,15 +169,23 @@ class TouristCompanyData extends Data{
             $lastId = $row[0] !== null ? (int)trim($row[0]) : 0;
             $nextId = $lastId + 1;
         }
+        $queryGetLastTouristCompanyId = "SELECT MAX(tbtouristcompanyid) AS tbtouristcompanyid FROM tbtouristcompany";
+        $touristCompanyResult = mysqli_query($conn, $queryGetLastTouristCompanyId);
+        $touristCompanyId = 0; // Valor por defecto si no se encuentra
+    
+        if ($touristCompanyRow = mysqli_fetch_row($touristCompanyResult)) {
+            $touristCompanyId = $touristCompanyRow[0] !== null ? (int)trim($touristCompanyRow[0]) : 0;
+        }
 
-        $queryInsert = "INSERT INTO tbcustomizedtouristcompanytype (tbcustomizedtouristcompanytypeid, tbownerid, tbcustomizedtouristcompanytypename, tbcustomizedtouristcompanytypestatus) VALUES (?, ?, ?, ?)";
+        $queryInsert = "INSERT INTO tbcustomizedtouristcompanytype (tbcustomizedtouristcompanytypeid, tbownerid, tbtouristcompanyid, tbcustomizedtouristcompanytypename, tbcustomizedtouristcompanytypestatus) VALUES (?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($queryInsert);
         if ($stmt === false) {
             mysqli_close($conn);
             return ['status' => 'error', 'message' => 'Prepare fallido: ' . $conn->error];
         }
+        
 
-        $stmt->bind_param("iisi", $nextId, $ownerId, $customCompanyType, $active);
+        $stmt->bind_param("iiisi", $nextId, $ownerId, $touristCompanyId, $customCompanyType, $active);
         $result = $stmt->execute();
 
         if ($result) {
@@ -331,10 +339,68 @@ public function getAllTouristCompaniesByOwnerId($ownerId) {
 
         $result = $stmt->execute();
 
+        $result2 = $this->deleteTbtouristcompanytouristcompanytype($id);
+
+        $result3 = $this->deleteCustomizedTouristCompanyType($id);
+
+        if ($result2 && $result3){
+            $stmt->close();
+            mysqli_close($conn);
+            return $result;
+        } else {
+            return false;
+        }   
+    }
+
+    public function deleteTbtouristcompanytouristcompanytype ($id) {
+        $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
+        if (!$conn) {
+            die("Connection failed: " . mysqli_connect_error());
+        }
+        $conn->set_charset('utf8');
+    
+        // Modificamos la consulta para actualizar la tabla tbtouristcompanytouristcompanytype
+        $query = "UPDATE tbcustomizedtouristcompanytype  SET tbcustomizedtouristcompanytypestatus=0 WHERE tbtouristcompanyid=?";
+    
+        $stmt = $conn->prepare($query);
+        if ($stmt === false) {
+            die("Prepare failed: " . $conn->error);
+        }
+    
+        // Cambiamos el tipo de parámetro a "i" para un entero
+        $stmt->bind_param("i", $id);
+    
+        $result = $stmt->execute();
+    
         $stmt->close();
-
         mysqli_close($conn);
+    
+        return $result;
+    }
 
+    public function deleteCustomizedTouristCompanyType($id) {
+        $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
+        if (!$conn) {
+            die("Connection failed: " . mysqli_connect_error());
+        }
+        $conn->set_charset('utf8');
+    
+        // Modificamos la consulta para actualizar la tabla tbcustomizedtouristcompanytype
+        $query = "UPDATE tbcustomizedtouristcompanytype SET tbcustomizedtouristcompanytypestatus=0 WHERE tbcustomizedtouristcompanytypeid=?";
+    
+        $stmt = $conn->prepare($query);
+        if ($stmt === false) {
+            die("Prepare failed: " . $conn->error);
+        }
+    
+        // Cambiamos el tipo de parámetro a "i" para un entero
+        $stmt->bind_param("i", $id);
+    
+        $result = $stmt->execute();
+    
+        $stmt->close();
+        mysqli_close($conn);
+    
         return $result;
     }
 
