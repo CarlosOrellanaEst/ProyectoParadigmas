@@ -132,6 +132,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         xhr.onreadystatechange = function () {
             if (xhr.readyState === 4) {
+                console.log("Respuesta del servidor:", xhr.responseText);
                 try {
                     let response = JSON.parse(xhr.responseText.trim());
                     if (xhr.status === 200 && response.status === "success") {

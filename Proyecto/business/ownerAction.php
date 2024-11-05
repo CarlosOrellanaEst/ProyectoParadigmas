@@ -69,23 +69,23 @@ if (isset($_POST['create'])) {
         }
 
 
-        if (!empty($name) && !preg_match('/^[a-zA-Z\s]+$/', $name)) {
-            echo json_encode(['status' => 'error', 'error_code' => 'invalid_name', 'message' => 'El nombre contiene caracteres inválidos']);
+        if (!empty($name) && is_numeric($name)) {
+            echo json_encode(['status' => 'error', 'message' => 'El nombre contiene caracteres inválidos']);
+            exit();
+        }
+        // Apellido
+        if (!empty($surnames) && is_numeric($surnames)) {
+            echo json_encode(['status' => 'error', 'message' => 'Los apellidos contienen caracteres inválidos']);
             exit();
         }
 
-        if (!empty($surnames) && !preg_match('/^[a-zA-Z\s]+$/', $surnames)) {
-            echo json_encode(['status' => 'error', 'error_code' => 'invalid_surnames', 'message' => 'Los apellidos contienen caracteres inválidos']);
-            exit();
-        }
+        $phone = str_replace('-', '', $phone); // Elimina el guion de la máscara
 
-        if (!empty($phone) && !preg_match('/^\d{8}$/', $phone)) {
-            echo json_encode(['status' => 'error', 'error_code' => 'invalid_phone', 'message' => 'Número de teléfono inválido. Debe contener exactamente 8 dígitos.']);
-            exit();
-        }
+if (!empty($phone) && !preg_match('/^\d{8}$/', $phone)) {
+    echo json_encode(['status' => 'error', 'error_code' => 'invalid_phone', 'message' => 'Número de teléfono inválido. Debe contener exactamente 8 dígitos.']);
+    exit();
 
-
-
+}
         if (!preg_match('/^[^\s@]+@[^\s@]+\.[^\s@]+$/', $email)) {
             echo json_encode(['status' => 'error', 'error_code' => 'invalid_email', 'message' => 'Formato de correo electrónico inválido']);
             exit();
@@ -191,19 +191,21 @@ if (isset($_POST['update'])) {
             }
         }
 
- 
-        if (!empty($name) && !preg_match('/^[a-zA-Z\s]+$/', $name)) {
-            echo json_encode(['status' => 'error', 'message' => 'El nombre contiene caracteres inválidos.']);
+
+        if (!empty($name) && is_numeric($name)) {
+            echo json_encode(['status' => 'error', 'message' => 'El nombre contiene caracteres inválidos']);
             exit();
         }
-        if (!empty($surnames) && !preg_match('/^[a-zA-Z\s]+$/', $surnames)) {
-            echo json_encode(['status' => 'error', 'message' => 'Los apellidos contienen caracteres inválidos.']);
+        // Apellido
+        if (!empty($surnames) && is_numeric($surnames)) {
+            echo json_encode(['status' => 'error', 'message' => 'Los apellidos contienen caracteres inválidos']);
             exit();
         }
         if (!empty($phone) && !preg_match('/^\d{8}$/', $phone)) {
             echo json_encode(['status' => 'error', 'message' => 'Número de teléfono inválido. Debe contener exactamente 8 dígitos.']);
             exit();
         }
+
         if (!preg_match('/^[^\s@]+@[^\s@]+\.[^\s@]+$/', $email)) {
             echo json_encode(['status' => 'error', 'message' => 'Formato de correo electrónico inválido.']);
             exit();
@@ -276,5 +278,3 @@ if (isset($_POST['delete'])) {
     echo json_encode(['status' => 'error', 'message' => 'Solicitud no válida.']);
     exit();
 }
-
-

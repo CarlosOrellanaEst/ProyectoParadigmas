@@ -40,7 +40,7 @@
             <input placeholder="Ingrese su identificación legal" type="text" name="touristLegalIdentification" id="touristLegalIdentification"/><br><br>
 
             <label for="touristPhone">Teléfono </label>
-            <input placeholder="Ingrese su teléfono" type="text" name="touristPhone" id="touristPhone"/><br><br>
+            <input placeholder="3333-3333" type="text" name="touristPhone" id="touristPhone" oninput="formatPhone(this)" maxlength="9"/><br><br>
 
             <label for="touristEmail">Correo <span class="required">*</label>
             <input placeholder="Ingrese su correo" type="text" name="touristEmail" id="touristEmail"/><br><br>
@@ -59,5 +59,23 @@
     </section>
     <br>
     
+    <script>
+                function formatPhone(input) {
+                    // Remueve caracteres no numéricos
+                    let value = input.value.replace(/\D/g, "");
+                    
+                    // Limita a los primeros 8 dígitos
+                    if (value.length > 8) {
+                        value = value.substring(0, 8);
+                    }
+                    
+                    // Aplica el formato XXXX-XXXX
+                    if (value.length > 4) {
+                        input.value = value.substring(0, 4) + "-" + value.substring(4);
+                    } else {
+                        input.value = value;
+                    }
+                }
+            </script>;
 </body>
 </html>

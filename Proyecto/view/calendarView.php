@@ -7,18 +7,18 @@ require_once '../business/serviceCompanyBusiness.php';
 
 session_start();
 $userLogged = $_SESSION['user'];
-$ownerBusiness = new ownerBusiness();
+// $ownerBusiness = new ownerBusiness();
 
-if ($userLogged->getUserType() == "Administrador") {
-    $owners = $ownerBusiness->getAllTBOwners();
-    if (!$owners || empty($owners)) {
-        echo "<script>alert('No se encontraron propietarios.');</script>";
-    }
-} else if ($userLogged->getUserType() == "Propietario") {
-    $owners = [$userLogged];
-}
+// if ($userLogged->getUserType() == "Administrador") {
+//     $owners = $ownerBusiness->getAllTBOwners();
+//     if (!$owners || empty($owners)) {
+//         echo "<script>alert('No se encontraron propietarios.');</script>";
+//     }
+// } else if ($userLogged->getUserType() == "Propietario") {
+//     $owners = [$userLogged];
+// }
 
-$_SESSION['owners'] = $owners;
+// $_SESSION['owners'] = $owners;
 
 ?>
 
@@ -103,6 +103,53 @@ $_SESSION['owners'] = $owners;
 
         </tbody>
     </table>
+
+    <section>
+        <h2>Actividades Recomendadas</h2>
+        <table id="recommendations-table">
+            <thead>
+                <tr>
+                    <th>Caracteristicas</th>
+                    <th>Valores</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                $activityBusiness = new ActivityBusiness();
+                $uniqueAttributes = $activityBusiness->getAllActivitiesForRecomendations();
+                if (count($uniqueAttributes) > 0) {
+                    foreach ($uniqueAttributes as $attribute) {
+                        echo '<tr>';
+                        echo '<td>' . htmlspecialchars($attribute) . '</td>';
+                        echo '<td><input type="text" class="attribute-value" data-attribute="' . htmlspecialchars($attribute) . '" placeholder="Ingrese un valor"></td>';
+                        echo '</tr>';
+                    }
+                } else {
+                    echo '<tr><td colspan="2">No se encontraron resultados</td></tr>';
+                }
+                ?>
+            </tbody>
+        </table>
+        
+        <!-- Tabla para mostrar los resultados de la búsqueda -->
+        <table id="recommended-activities-table" style="display: none;">
+            <thead>
+                <tr>
+                    <th>Nombre de la Actividad</th>
+                    <th>Servicio</th>
+                    <th>Atributos y Datos</th>
+                    <th>Fotos</th>
+                    <th>Fecha y Hora</th>
+                    <th>Longitud</th>
+                    <th>Latitud</th>
+                    <th>Reservar</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+</section>
+
 
     <script>
     <?php
@@ -324,6 +371,9 @@ $_SESSION['owners'] = $owners;
 
 
     </script>
+
+  <!-- script para las recomendaciones de actividades -->
+    <script src="../resources/recommendationAJAX.js"> </script>
 
 <script
         src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCRQx6ssQ25Ezy99nFNHJYSCVIpE9JeAUI&libraries=marker&callback=initMap&loading=async"

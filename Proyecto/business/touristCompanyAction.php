@@ -53,14 +53,15 @@ if (isset($_POST['create'])) {
     $customCompanyType = '';
     $selectedCompanyTypes = $_POST['selectedCompanyTypes'] ?? '[]';
     $selectedCompanyTypes = json_decode($selectedCompanyTypes);
+    $customCompanyType = $_POST['customCompanyType'] ?? '';
 
-    if (empty($selectedCompanyTypes)) {
+    if (empty($selectedCompanyTypes) && ($companyTypeId != 0)) {
         echo json_encode(['status' => 'error', 'error_code' => 'no_company_types', 'message' => 'No se han seleccionado tipos de empresa.']);
         exit();
     }
 
     if ($companyTypeId === '0') {
-        $customCompanyType = $_POST['customCompanyType'] ?? '';
+        
         if (empty($customCompanyType)) {
             echo json_encode(['status' => 'error', 'error_code' => 'custom_company_type_required', 'message' => 'Debe especificar un tipo de empresa personalizado.']);
             exit();
