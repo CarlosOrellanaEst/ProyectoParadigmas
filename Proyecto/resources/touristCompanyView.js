@@ -18,10 +18,10 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("addBtn").addEventListener("click", function () {
         let selectedValue = companyTypeSelect.value;
         let selectedText = companyTypeSelect.options[companyTypeSelect.selectedIndex].text;
-
+    
         if (selectedValue !== "0" && !selectedCompanyTypes.includes(selectedValue)) {
             selectedCompanyTypes.push(selectedValue);
-
+    
             let companyTypeList = document.getElementById("selectedCompanyTypesList");
             let companyTypeItem = document.createElement("div");
             companyTypeItem.textContent = selectedText;
@@ -62,15 +62,24 @@ document.addEventListener("DOMContentLoaded", function () {
         formData.append("status", status);
         formData.append("create", "create");
 
-        const selectedCompanyTypes = [];
-        const companyTypeList = document.getElementById("selectedCompanyTypesList").children;
-        for (let item of companyTypeList) {
-            selectedCompanyTypes.push(item.textContent);
-        }
+        // Aquí recolectamos los tipos de empresa seleccionados
+        const companyTypeList = document.getElementById("selectedCompanyTypesList");
 
+        if (selectedCompanyTypes.length > 0) { // Verifica que el elemento exista
+            console.log(selectedCompanyTypes);
+            formData.append("selectedCompanyTypes", JSON.stringify(selectedCompanyTypes)); // Asegúrate de que esto sea el ID
+        } else {
+            console.error("El elemento 'selectedCompanyTypesList' no se encontró.");
+        } 
+
+        //const companyTypeList = document.getElementById("selectedCompanyTypesList").children;
+        /*const selectedCompanyTypes = [];
         selectedCompanyTypes.forEach((type) => {
             formData.append("selectedCompanyTypes[]", type);
         });
+        for (let [key, value] of formData.entries()) {
+            console.log(key, value);
+        }*/
 
         if (companyType === "custom") {
             companyType = 0;
@@ -86,6 +95,10 @@ document.addEventListener("DOMContentLoaded", function () {
         }
         //alert("Id owner: " + owner);
         //alert("Custom: " + customCompanyType);
+        // Verificar el contenido de formData
+        for (let [key, value] of formData.entries()) {
+            console.log(key, value);
+        }
 
         sendAjaxRequest(formData, "Crear empresa");
     });
@@ -185,7 +198,7 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 
-let selectedCompanyTypes = [];
+/*let selectedCompanyTypes = [];
 document.getElementById('addBtn').addEventListener('click', function () {
     let companyTypeSelect = document.getElementById('companyType');
     let selectedValue = companyTypeSelect.value;
@@ -206,5 +219,5 @@ document.getElementById('addBtn').addEventListener('click', function () {
     } else {
         alert("El tipo de empresa ya ha sido agregado.");
     }
-});
+});*/
 

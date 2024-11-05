@@ -58,8 +58,8 @@ class TouristCompany{
         $this->tbtouristcompanystatus = $tbtouristcompanystatus;
     }
 
-    public function setAllTouristCompanyType($allTouristCompanyType) {
-        $this->allTouristCompanyType[] = $allTouristCompanyType;
+    public function setAllTouristCompanyType(array $types) {
+        $this->allTouristCompanyType = $types; 
     }
 
     public function getTbtouristcompanyid() {
