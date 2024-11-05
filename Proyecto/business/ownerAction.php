@@ -210,7 +210,7 @@ if (isset($_POST['update'])) {
         }
 
        
-        $encryptedPassword = !empty($password) ? password_hash($password, PASSWORD_BCRYPT) : $currentOwner->getPassword();
+        //$encryptedPassword = !empty($password) ? password_hash($password, PASSWORD_BCRYPT) : $currentOwner->getPassword();
 
        
         if ($isValidId && !empty($email)) {
@@ -221,7 +221,7 @@ if (isset($_POST['update'])) {
                 1,
                 $idUser,
                 $nickName,
-                $encryptedPassword,
+                $password,
                 true,
                 "Propietario",
                 $name,

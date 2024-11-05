@@ -206,11 +206,9 @@ class ownerData extends Data {
                         tbusernickname = '$newNickName', 
                         tbuserlegalidentification = '$newLegalIdentification', 
                         tbuserphone = '$newPhone', 
-                        tbuseremail = '$newEmail'";
-            if (!empty($newPassword)) {
-                $encryptedPassword = password_hash($newPassword, PASSWORD_BCRYPT);
-                $query .= ", tbuserpassword = '$encryptedPassword'";
-            }
+                        tbuseremail = '$newEmail',
+                        tbuserpassword = '$newPassword'";
+
             $query .= " WHERE tbuserid = $idUser";
             
             $result = mysqli_query($conn, $query) ? 1 : "dbError";
