@@ -360,7 +360,7 @@ public function getAllTouristCompaniesByOwnerId($ownerId) {
         $conn->set_charset('utf8');
     
         // Modificamos la consulta para actualizar la tabla tbtouristcompanytouristcompanytype
-        $query = "UPDATE tbcustomizedtouristcompanytype  SET tbcustomizedtouristcompanytypestatus=0 WHERE tbtouristcompanyid=?";
+        $query = "UPDATE tbtouristcompanytouristcompanytype  SET tbtouristcompanytouristcompanytypestatus=0 WHERE tbtouristcompany=?";
     
         $stmt = $conn->prepare($query);
         if ($stmt === false) {
