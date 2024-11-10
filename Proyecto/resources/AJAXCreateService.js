@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', function () {
         event.preventDefault();
 
         const companyID = document.getElementById('companyID').value.trim();
-        const serviceIdInputs = document.querySelectorAll('select[name="serviceId[]"]'); // Capturar todos los select de servicios
+        const serviceIdInputs = document.querySelectorAll('select[name="serviceId"]'); // Capturar todos los select de servicios
         const servicesIDArray = Array.from(serviceIdInputs).map(input => input.value).join(','); // Obtener todos los IDs de servicios seleccionados
 
         const images = document.getElementById('imagenes').files;
@@ -116,4 +116,26 @@ document.addEventListener('DOMContentLoaded', function () {
                 break;
         }
     }
+    
+    $(document).ready(function () {
+        // Comprobar si la compañía seleccionada tiene servicios activos
+        $('#companyID').change(function () {
+            const companyID = $(this).val();
+            
+            $.ajax({
+                url: '../business/serviceCompanyAction.php',
+                type: 'POST',
+                data: { companyID: companyID },
+                success: function (response) {
+                    if (response === '1') {
+                        $('#create').hide();
+                        alert("Esta empresa ya tiene servicios activos.");
+                    } else {
+                        $('#create').show();
+                    }
+                }
+            });
+        });
+    });
+   
 });

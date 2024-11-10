@@ -389,7 +389,7 @@ class serviceCompanyData extends Data {
         $touristCompanyId = $service->getTbtouristcompanyid();
         $serviceIds = $service->getTbserviceid(); // String con IDs separados por comas
         $imageUrlsString = is_array($service->getTbservicecompanyURL()) ? implode(',', $service->getTbservicecompanyURL()) : $service->getTbservicecompanyURL();
-        $status = $service->gettbservicestatus();
+        $status = $service->getTbservicetatus();
     
         $queryUpdate = "UPDATE tbservicecompany 
                         SET tbtouristcompanyid = ?, tbserviceid = ?, tbservicecompanyURL = ?, tbservicestatus = ? 
