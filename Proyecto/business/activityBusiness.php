@@ -25,7 +25,7 @@ class ActivityBusiness {
     public function getAllActivities() {
         return $this->activityData->getAllActivities();
     }
-
+    // obtenemos todos los atributos de las actividades, sin repetirse
     public function getAllActivitiesForRecomendations() {
         $activities = $this->activityData->getAllActivities();
         $uniqueAttributes = [];
@@ -56,7 +56,46 @@ class ActivityBusiness {
         
         sort($uniqueAttributes);
         return $uniqueAttributes;
-    }   
+    }
+    
+    // por atributo, obtenemos todos los valores únicos de las actividades
+    public function getAllUniqueValuesForRecomendations($attribute) {
+        // Obtenemos todos los valores para el atributo
+        $values = $this->activityData->getAllValuesPerAttribute($attribute);
+        $uniqueValues = [];
+        
+        // Filtramos los valores únicos
+        foreach ($values as $value) {
+            $lowercaseValue = strtolower($value);
+            
+            // Verificamos si ya existe el valor
+            $exists = false;
+            foreach ($uniqueValues as $existingValue) {
+                if (strtolower($existingValue) === $lowercaseValue) {
+                    $exists = true;
+                    break;
+                }
+            }
+            if (!$exists) {
+                $uniqueValues[] = $value;
+            }
+        }
+        
+        sort($uniqueValues);
+        return $uniqueValues;
+    }
+    
+    // el metodo que llamamos en la vista
+    public function getAllAttributesWithValues() {
+        $uniqueAttributes = $this->getAllActivitiesForRecomendations();
+        $result = [];
+        
+        foreach ($uniqueAttributes as $attribute) {
+            $result[$attribute] = $this->getAllUniqueValuesForRecomendations($attribute);
+        }
+        
+        return $result;
+    }
 
     public function getAllActivitiesByOwner($ownerId) {
         return $this->activityData->getAllActivitiesByOwner($ownerId);

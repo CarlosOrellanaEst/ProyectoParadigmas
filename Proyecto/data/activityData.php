@@ -138,7 +138,51 @@ class activityData extends Data
         return $activities;
     }
 
-    // Método para obtener todas las actividades activas
+    public function getAllValuesPerAttribute($attribute)
+    {
+        // Conexión a la base de datos
+        $conn = mysqli_connect($this->server, $this->user, $this->password, $this->db);
+        if (!$conn) {
+            die("Connection failed: " . mysqli_connect_error());
+        }
+    
+        $conn->set_charset('utf8mb4');
+    
+        // Obtenemos todas las actividades activas
+        $query = "SELECT tbactivityatributearray, tbactivitydataarray FROM tbactivity WHERE tbactivitystatus = 1";
+        
+        $result = mysqli_query($conn, $query);
+    
+        if (!$result) {
+            echo "Query failed: " . mysqli_error($conn);
+            mysqli_close($conn);
+            return null;
+        }
+    
+        // Array para almacenar los valores únicos
+        $values = [];
+    
+        // Recorrer los resultados
+        while ($row = mysqli_fetch_assoc($result)) {
+            $atributearray = explode(',', $row['tbactivityatributearray']);
+            $dataarray = explode(',', $row['tbactivitydataarray']);
+            
+            // Buscamos el índice del atributo
+            $index = array_search(trim($attribute), array_map('trim', $atributearray));
+            
+            // Si encontramos el atributo, agregamos su valor correspondiente
+            if ($index !== false && isset($dataarray[$index])) {
+                $values[] = trim($dataarray[$index]);
+            }
+        }
+    
+        mysqli_free_result($result);
+        mysqli_close($conn);
+    
+        return $values;
+    }
+
+    // Método para obtener todas las actividades recomendadas activas
     public function getAllActivitiesRecommended($attribute, $value)
     {
         // Conexión a la base de datos

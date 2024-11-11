@@ -111,21 +111,30 @@ $userLogged = $_SESSION['user'];
                 <tr>
                     <th>Caracteristicas</th>
                     <th>Valores</th>
+                    <th>Posibles Valores</th>
                 </tr>
             </thead>
             <tbody>
                 <?php
                 $activityBusiness = new ActivityBusiness();
-                $uniqueAttributes = $activityBusiness->getAllActivitiesForRecomendations();
-                if (count($uniqueAttributes) > 0) {
-                    foreach ($uniqueAttributes as $attribute) {
+                $attributesWithValues = $activityBusiness->getAllAttributesWithValues();
+                
+                if (!empty($attributesWithValues)) {
+                    foreach ($attributesWithValues as $attribute => $values) {
                         echo '<tr>';
                         echo '<td>' . htmlspecialchars($attribute) . '</td>';
                         echo '<td><input type="text" class="attribute-value" data-attribute="' . htmlspecialchars($attribute) . '" placeholder="Ingrese un valor"></td>';
+                        echo '<td>';
+                        
+                        // Convertimos el array de valores a string y lo mostramos en un texto
+                        $valuesString = implode(', ', $values);
+                        echo '<span class="possible-values" data-attribute="' . htmlspecialchars($attribute) . '">' . htmlspecialchars($valuesString) . '</span>';
+                        
+                        echo '</td>';
                         echo '</tr>';
                     }
                 } else {
-                    echo '<tr><td colspan="2">No se encontraron resultados</td></tr>';
+                    echo '<tr><td colspan="3">No se encontraron resultados</td></tr>';
                 }
                 ?>
             </tbody>
@@ -148,7 +157,7 @@ $userLogged = $_SESSION['user'];
             <tbody>
             </tbody>
         </table>
-</section>
+    </section>
 
 
     <script>
@@ -237,50 +246,50 @@ $userLogged = $_SESSION['user'];
     }
 
     function filterActivities() {
-    const startDate = new Date(document.getElementById('start-date').value);
-    const selectedLatitude = parseFloat(document.getElementById('selected-latitude').value);
-    const selectedLongitude = parseFloat(document.getElementById('selected-longitude').value);
-    const filterType = document.getElementById('filter-type').value;
+        const startDate = new Date(document.getElementById('start-date').value);
+        const selectedLatitude = parseFloat(document.getElementById('selected-latitude').value);
+        const selectedLongitude = parseFloat(document.getElementById('selected-longitude').value);
+        const filterType = document.getElementById('filter-type').value;
 
-    let endDate = new Date(startDate);
+        let endDate = new Date(startDate);
 
-    // Ajustar el rango según el tipo de filtro
-    if (filterType === 'week') {
-        // Suma 6 días para obtener el final de la semana
-        endDate.setDate(startDate.getDate() + 6);
-    } else if (filterType === 'day') {
-        // Para 'day', no se modifica el endDate, solo usamos el mismo startDate
-        endDate.setDate(startDate.getDate());
-    } else if (filterType === 'month') {
-        // Suma un mes al startDate
-        endDate.setMonth(startDate.getMonth() + 1);
-    }
+        // Ajustar el rango según el tipo de filtro
+        if (filterType === 'week') {
+            // Suma 6 días para obtener el final de la semana
+            endDate.setDate(startDate.getDate() + 6);
+        } else if (filterType === 'day') {
+            // Para 'day', no se modifica el endDate, solo usamos el mismo startDate
+            endDate.setDate(startDate.getDate());
+        } else if (filterType === 'month') {
+            // Suma un mes al startDate
+            endDate.setMonth(startDate.getMonth() + 1);
+        }
 
-    // Filtrar actividades por fecha, ignorando horas
-    const filteredActivities = activities.filter(activity => {
-        const activityDate = new Date(activity.tbactivitydate);
+        // Filtrar actividades por fecha, ignorando horas
+        const filteredActivities = activities.filter(activity => {
+            const activityDate = new Date(activity.tbactivitydate);
 
-        // Elimina las horas de las fechas (mantener solo año, mes y día)
-        const activityDateWithoutTime = new Date(activityDate.getFullYear(), activityDate.getMonth(), activityDate.getDate());
-        const startDateWithoutTime = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
-        const endDateWithoutTime = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
+            // Elimina las horas de las fechas (mantener solo año, mes y día)
+            const activityDateWithoutTime = new Date(activityDate.getFullYear(), activityDate.getMonth(), activityDate.getDate());
+            const startDateWithoutTime = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate());
+            const endDateWithoutTime = new Date(endDate.getFullYear(), endDate.getMonth(), endDate.getDate());
 
-        // Calcular distancia para filtrar por rango
-        const distance = calculateDistance(activity.tbactivitylatitude, activity.tbactivitylongitude,
-            selectedLatitude, selectedLongitude);
-        const isInRange = distance <= 50; // Rango de 50 km
+            // Calcular distancia para filtrar por rango
+            const distance = calculateDistance(activity.tbactivitylatitude, activity.tbactivitylongitude,
+                selectedLatitude, selectedLongitude);
+            const isInRange = distance <= 50; // Rango de 50 km
 
-        // Verificar si la actividad está en el rango de fechas
-        const isInDateRange = activityDateWithoutTime >= startDateWithoutTime && activityDateWithoutTime <= endDateWithoutTime;
+            // Verificar si la actividad está en el rango de fechas
+            const isInDateRange = activityDateWithoutTime >= startDateWithoutTime && activityDateWithoutTime <= endDateWithoutTime;
 
-        return isInRange && isInDateRange;
-    });
-
-        clearMarkers();
-        displayActivities(filteredActivities);
-        filteredActivities.forEach(activity => {
-            addMarker(activity);
+            return isInRange && isInDateRange;
         });
+
+            clearMarkers();
+            displayActivities(filteredActivities);
+            filteredActivities.forEach(activity => {
+                addMarker(activity);
+            });
     }
 
     function calculateDistance(lat1, lon1, lat2, lon2) {
