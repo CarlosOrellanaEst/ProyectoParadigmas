@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost
--- Tiempo de generación: 05-11-2024 a las 17:23:10
+-- Tiempo de generación: 12-11-2024 a las 15:54:04
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -50,7 +50,8 @@ INSERT INTO `tbactivity` (`tbactivityid`, `tbactivityname`, `tbactivityserviceco
 (3, 'Kayak en el Río', 5, 'Duración,Nivel de Dificultad', '3 horas,Moderado', 'dog.jpg,pexels3.jpg', 1, '2024-10-05 11:00:00', 10.23456789, -84.23456789),
 (4, 'Paseo en Caballo', 4, 'Duración,Tamaño del Grupo', '2 horas,10 personas', 'IMG_1312.PNG,uwu.jpeg', 1, '2024-10-07 08:00:00', 9.12345678, -83.12345678),
 (5, 'Excursión Nocturna', 1, 'Duración,Equipo Necesario', '5 horas,Linterna y repelente', 'miAmigueCarlos.jpg,gerald.jpg', 1, '2024-10-09 18:00:00', 10.56789012, -84.56789012),
-(6, 'Prueba', 3, 'a', 'a', 'Screenshot from 2024-09-30 23-29-50.png,Screenshot from 2024-09-30 23-30-22.png,Screenshot from 2024-10-01 00-01-10.png,Screenshot from 2024-10-02 15-23-15.png', 1, '2024-10-17 11:54:00', 10.39097779, -83.74149866);
+(6, 'Prueba', 5, '', '', 'Screenshot from 2024-09-30 23-29-50.png,Screenshot from 2024-09-30 23-30-22.png,Screenshot from 2024-10-01 00-01-10.png,Screenshot from 2024-10-02 15-23-15.png', 1, '2024-11-14 11:54:00', 10.39097779, -83.74149866),
+(7, 'Actividad1', 6, 'Atriubuto1D', 'Dato1', 'Screenshot from 2024-09-30 23-29-50.png,Screenshot from 2024-09-30 23-30-22.png,Screenshot from 2024-10-01 00-01-10.png,Screenshot from 2024-10-02 15-23-15.png,Screenshot from 2024-10-02 15-26-13.png', 1, '2024-11-29 08:35:00', 10.33153832, -84.42951746);
 
 -- --------------------------------------------------------
 
@@ -80,7 +81,22 @@ INSERT INTO `tbbooking` (`tbbookingid`, `tbactivityid`, `tbuserid`, `tbbookingnu
 (5, 5, 1, 9, 1, '2024-10-19', b'0'),
 (6, 5, 1, 3, 1, '2024-10-19', b'0'),
 (7, 5, 1, 12, 1, '2024-10-19', b'0'),
-(8, 4, 1, 22, 1, '2024-10-19', b'0');
+(8, 4, 1, 22, 1, '2024-10-19', b'0'),
+(9, 5, 38, 3, 1, '2024-11-12', b'0'),
+(10, 1, 40, 3, 1, '2024-11-12', b'0');
+
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `tbcompanycustomtype`
+--
+
+CREATE TABLE `tbcompanycustomtype` (
+  `tbcompanycustomtypeid` int(11) NOT NULL,
+  `tbtouristcompany` int(11) NOT NULL,
+  `tbcompanycustomtype` varchar(100) NOT NULL,
+  `tbcompanycustomtypestatus` int(11) NOT NULL DEFAULT 1
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
 
@@ -144,7 +160,9 @@ INSERT INTO `tbowner` (`tbownerid`, `tbuserid`, `tbownerdirection`, `tbownerphot
 (27, 32, 'Cairo', '', 1),
 (28, 34, 'Cairo', '', 0),
 (29, 35, 'Cairo', '', 1),
-(30, 36, 'Cairo', '', 1);
+(30, 36, 'Cairo', '', 1),
+(31, 37, '', '../images/Screenshot from 2024-10-01 00-01-10.png', 1),
+(32, 39, '', '../images/Screenshot from 2024-10-02 15-23-15.png', 1);
 
 -- --------------------------------------------------------
 
@@ -183,7 +201,9 @@ INSERT INTO `tbpaymenttype` (`tbpaymenttypeid`, `tbownerid`, `tbpaymenttypenumbe
 (16, 3, 'CR12345678909876543222', '', 1, 0),
 (17, 3, 'CR12345678909876543111', '', 1, 0),
 (18, 3, 'CR12345678909876543444', '87876522', 1, 1),
-(19, 3, 'CR12345678909876543699', '', 1, 0);
+(19, 3, 'CR12345678909876543699', '', 1, 0),
+(20, 31, 'CR12345678901234567444', '', 1, 1),
+(21, 32, 'CR12345678901234567222', '87345634', 1, 1);
 
 -- --------------------------------------------------------
 
@@ -268,7 +288,11 @@ CREATE TABLE `tbservicecompany` (
 
 INSERT INTO `tbservicecompany` (`tbservicecompanyid`, `tbtouristcompanyid`, `tbserviceid`, `tbservicecompanyURL`, `tbservicestatus`) VALUES
 (1, 9, '4,1,7', '', 1),
-(2, 10, '8,6,3,7', '', 1);
+(2, 10, '8,6,3,7', '', 1),
+(3, 20, '2,5,6,8', 'Screenshot from 2024-09-30 23-29-50.png,Screenshot from 2024-09-30 23-30-22.png,Screenshot from 2024-10-01 00-01-10.png,Screenshot from 2024-10-02 15-23-15.png', 1),
+(4, 12, '2,4', 'Screenshot from 2024-09-30 23-29-50.png,Screenshot from 2024-09-30 23-30-22.png,Screenshot from 2024-10-01 00-01-10.png,Screenshot from 2024-10-02 15-26-13.png', 1),
+(5, 22, '8', 'Screenshot from 2024-09-30 23-29-50.png,Screenshot from 2024-09-30 23-30-22.png,Screenshot from 2024-10-01 00-01-10.png', 1),
+(6, 23, '1,2', 'Screenshot from 2024-09-30 23-29-50.png,Screenshot from 2024-09-30 23-30-22.png,Screenshot from 2024-10-01 00-01-10.png,Screenshot from 2024-10-02 15-23-15.png', 1);
 
 -- --------------------------------------------------------
 
@@ -281,7 +305,7 @@ CREATE TABLE `tbtouristcompany` (
   `tbtouristcompanylegalname` varchar(255) NOT NULL,
   `tbtouristcompanymagicname` varchar(255) NOT NULL,
   `tbtouristcompanyowner` int(11) NOT NULL,
-  `tbtouristcompanycompanyType` int(11) NOT NULL,
+  `tbtouristcompanycompanyType` text NOT NULL,
   `tbtouristcompanyurl` text NOT NULL,
   `tbtouristcompanystatus` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -291,20 +315,24 @@ CREATE TABLE `tbtouristcompany` (
 --
 
 INSERT INTO `tbtouristcompany` (`tbtouristcompanyid`, `tbtouristcompanylegalname`, `tbtouristcompanymagicname`, `tbtouristcompanyowner`, `tbtouristcompanycompanyType`, `tbtouristcompanyurl`, `tbtouristcompanystatus`) VALUES
-(1, 'EMPRESA1', 'EMPRESACHIDA1', 2, 2, '', 0),
-(2, 'EMPRESA2', 'LAMASCHIDA2', 5, 5, '', 0),
-(3, 'PRUEBAELIMINAR3', 'CALAVERA3', 4, 3, '', 0),
-(6, 'No', '', 1, 0, 'foca.jpg', 0),
-(7, 'No', '', 2, 0, 'IMG_1312.PNG', 0),
-(8, 'PRUEBAELIMINAR3', 'depende', 2, 1, 'dog.jpg', 0),
-(9, 'EMPRESA2', 'Empresachida2', 2, 2, '', 1),
-(10, 'EMPRESA1', '', 3, 1, '', 1),
-(12, 'PRUEBAELIMINAR3', '', 1, 1, '', 1),
-(13, 'PRUEBAELIMINAR3', '', 2, 0, '', 0),
-(14, 'ad', 'awfawf', 16, 3, '', 1),
-(15, 'herhh', '', 5, 2, '', 0),
-(17, 'AAAAAAA', '', 2, 4, '', 0),
-(19, 'pruebaServiciosActividadesCarlos.SA', 'pruebaServiciosActividadesCarlos', 24, 2, '', 1);
+(1, 'EMPRESA1', 'EMPRESACHIDA1', 2, '2', '', 0),
+(2, 'EMPRESA2', 'LAMASCHIDA2', 5, '5', '', 0),
+(3, 'PRUEBAELIMINAR3', 'CALAVERA3', 4, '3', '', 0),
+(6, 'No', '', 1, '0', 'foca.jpg', 0),
+(7, 'No', '', 2, '0', 'IMG_1312.PNG', 0),
+(8, 'PRUEBAELIMINAR3', 'depende', 2, '1', 'dog.jpg', 0),
+(9, 'EMPRESA2', 'Empresachida2', 2, '2', '', 1),
+(10, 'EMPRESA1', '', 3, '1', '', 1),
+(12, 'PRUEBAELIMINAR3', '', 1, '1', '', 1),
+(13, 'PRUEBAELIMINAR3', '', 2, '0', '', 0),
+(14, 'ad', 'awfawf', 16, '3', '', 1),
+(15, 'herhh', '', 5, '2', '', 0),
+(17, 'AAAAAAA', '', 2, '4', '', 0),
+(19, 'pruebaServiciosActividadesCarlos.SA', 'pruebaServiciosActividadesCarlos', 24, '2', '', 1),
+(20, 'EmpresaRaw', 'Yo', 31, '2,4,6', 'Screenshot from 2024-10-02 15-23-15.png', 1),
+(21, 'Prueba', 'a', 31, '2,5,4', 'Screenshot from 2024-09-30 23-29-50.png,Screenshot from 2024-09-30 23-30-22.png,Screenshot from 2024-10-02 15-26-13.png', 1),
+(22, 'a', 'a', 31, '6', 'Screenshot from 2024-09-30 23-30-22.png,Screenshot from 2024-10-01 00-01-10.png', 1),
+(23, 'dEPENDE', 'A', 32, '1,2,3', 'Screenshot from 2024-09-30 23-30-22.png,Screenshot from 2024-10-01 00-01-10.png,Screenshot from 2024-10-02 15-26-13.png', 1);
 
 -- --------------------------------------------------------
 
@@ -318,6 +346,13 @@ CREATE TABLE `tbtouristcompanytouristcompanytype` (
   `tbtouristcompanytype` int(11) NOT NULL,
   `tbtouristcompanytouristcompanytypestatus` int(11) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Volcado de datos para la tabla `tbtouristcompanytouristcompanytype`
+--
+
+INSERT INTO `tbtouristcompanytouristcompanytype` (`tbtouristcompanytouristcompanytypeid`, `tbtouristcompany`, `tbtouristcompanytype`, `tbtouristcompanytouristcompanytypestatus`) VALUES
+(1, 22, 6, 1);
 
 -- --------------------------------------------------------
 
@@ -404,7 +439,11 @@ INSERT INTO `tbuser` (`tbuserid`, `tbusername`, `tbusersurnames`, `tbuserlegalid
 (33, 'Eduardo', 'Gutierrez', '123234323', '88888899', 'afaasa@aksbhf.sfa2124', 'edu', '$2y$10$Pd/DWEMtgXOqcCaq62Ocpu9HNb6W3FxPzaRqEOZwwVj3K5fyiPHWO', 2, 1),
 (34, 'GLEEEEEND', 'Gutierrez', '435678907', '38928738', 'degutierrezh02@gmail.com32222', 'GLENDA', '$2y$10$leS15Y4x0RqLw1Komzr5W.cT2qShVUr7ZvxXNcEwtGNDojJNhR.Oq', 3, 0),
 (35, 'asfa', 'SASAS', '376483762', '22112244', 'degutierrezh02@gmail.com1212', 'AD1', '$2y$10$.oWt34aCWD7giKclfWapTeSLpI9AsLzWtx5TVWTRdYmZhgeYwzyd.', 3, 1),
-(36, 'kajjad', 'saad', '487637890', '33338111', 'degutierrezh02@gmail.com1111', 'asdas1', '$2y$10$/7Cv/588S/QU/TrahW8gLuRDsy7kOedrXZIxb5Edqqd2L0ywVEEda', 3, 1);
+(36, 'kajjad', 'saad', '487637890', '33338111', 'degutierrezh02@gmail.com1111', 'asdas1', '$2y$10$/7Cv/588S/QU/TrahW8gLuRDsy7kOedrXZIxb5Edqqd2L0ywVEEda', 3, 1),
+(37, 'Raw', '', 'D77773', '28372321', 'raw@gmail.com', 'Raw', '$2y$10$4UTEazt5bHHGrq9NxAwxxOudyP.Nwa89mCR5uS93an.0Rx1L/HSES', 3, 1),
+(38, 'jamel', '', '298392837', '92839238', 'jamal@gmail.com', 'jamel', '$2y$10$fWTJDQA5ACUPZiK2UXyT8OiaUppI1PfJDWCEjr8DFJ95afX2asMu2', 2, 1),
+(39, 'Alvaro', 'Diaz.', '289387453', '88887726', 'alvarito@gmail.com', 'Alvarito', '$2y$10$n3aQ7BdTOFiqqJYyQsZHV.LSdHIUxXrUzrPWTTHUaSy2RS..A7KWe', 3, 1),
+(40, 'Jose', 'Jose.', 'D872321', '82828942', 'Jose@gmail.com', 'Jose', '$2y$10$T2dn/ss.58ztoWAoEetg7e2JprHUjf0MVRKkhXK7TSwS2zGmVmVIm', 2, 1);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
