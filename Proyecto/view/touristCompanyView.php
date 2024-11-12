@@ -131,77 +131,15 @@ $_SESSION['owners'] = $owners;
             </div>
         </form>
         <?php
-        if ($userLogged->getUserType() == "Administrador" || $userLogged->getUserType() == "Propietario") {
-            ?>
-            <form id="formCreate" method="post">
-                <div class="form-group">
-                    <label for="legalName">Nombre legal:</label>
-                    <input placeholder="Nombre legal" type="text" name="legalName" id="legalName" />
-                </div>
-
-                <div class="form-group">
-                    <label for="magicName">Nombre mágico:</label>
-                    <input placeholder="Nombre mágico" type="text" name="magicName" id="magicName" />
-                </div>
-
-                <div class="form-group">
-                    <label for="ownerId">Dueño: <span id="ownerError" class="required">*</label>
-                    <select name="ownerId" id="ownerId" required>
-                        <option value="0">Ninguno</option>
-                        <?php foreach ($owners as $owner): ?>
-                            <option value="<?php echo htmlspecialchars($owner->getIdTBOwner()); ?>">
-                                <?php echo htmlspecialchars($owner->getName() . ' ' . $owner->getSurnames()); ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                    
-                </div>
-
-                <div class="form-group">
-                    <label for="companyType">Tipo de empresa: <span class="required">*</label>
-                    <select name="companyType" id="companyType">
-                        <option value="0">Ninguno</option>
-                        <?php foreach ($touristCompanyTypes as $touristCompanyType): ?>
-                            <option value="<?php echo htmlspecialchars($touristCompanyType->getId()); ?>">
-                                <?php echo htmlspecialchars($touristCompanyType->getName()); ?>
-                            </option>
-                        <?php endforeach; ?>
-                        <option value="custom">Otro (Especifique)</option>
-                    </select>
-                    <button type="button" id="addBtn">+</button>
-                    <div id="selectedCompanyTypesList"></div>
-                    <!-- Campo oculto para el tipo de empresa personalizado -->
-                    <label for="customCompanyType" style="display: none; margin-top: 10px;" id="customCompanyTypeName">
-                        Nombre: <span id="customCompanyTypeError" style="color:red; display:none;">*Campo obligatorio</span>
-                    </label>
-                    <input type="text" name="customCompanyType" id="customCompanyType"
-                        placeholder="Especifique otro tipo de empresa" style="display: none; margin-top: 10px;" />
-                </div>
-
-                <div class="form-group">
-                    <label for="imagenes">Imágenes: <span id="imagenesError" style="color:red; display:none;">*campo
-                            obligatorio</span></label>
-                    <input type="file" name="imagenes[]" id="imagenes" multiple />
-                </div>
-
-                <input type="hidden" id="status" name="status" value="1">
-
-                <div class="form-group">
-                    <input type="submit" value="Crear" name="create" id="create" />
-                </div>
-            </form>
-            <?php
-        }
-        ?>
-
-    </section>
-
+    }
+    ?>
+</section>
     <br>
 
     <section>
         <br>
         <div id="message" hidden></div>
-        <table>
+        <table border = 1>
             <thead>
                 <tr>
                     <th>Nombre legal</th>
@@ -212,17 +150,37 @@ $_SESSION['owners'] = $owners;
                     <th>Acciones</th>
                 </tr>
             </thead>
-            <tbody>
-                <?php
-                $touristCompanyBusiness = new TouristCompanyBusiness();
-                $ownerBusiness = new OwnerBusiness();
-                $touristCompanyTypeBusiness = new TouristCompanyTypeBusiness();
+           <tbody>
+    <?php
+    $touristCompanyBusiness = new TouristCompanyBusiness();
+    $ownerBusiness = new OwnerBusiness();
+    $touristCompanyTypeBusiness = new TouristCompanyTypeBusiness();
 
-                if ($userLogged->getUserType() == "Propietario") {
-                    $all = $touristCompanyBusiness->getAllByOwnerID($userLogged->getIdTBOwner());
-                } else if ($userLogged->getUserType() == "Administrador" || $userLogged->getUserType() == "Turista") {
-                    $all = $touristCompanyBusiness->getAll();
+    if ($userLogged->getUserType() == "Propietario") {
+        $all = $touristCompanyBusiness->getAllByOwnerID($userLogged->getIdTBOwner());
+    } else if ($userLogged->getUserType() == "Administrador" || $userLogged->getUserType() == "Turista") {
+        $all = $touristCompanyBusiness->getAll();
+    }
+
+    $alltouristCompanyTypes = $touristCompanyTypeBusiness->getAll();
+
+    if (count($all) > 0) {
+        foreach ($all as $current) {
+            $imageUrl = !empty($current->getTbtouristcompanyurl()) ? $imageBasePath . trim($current->getTbtouristcompanyurl()[0]) : '';
+            $assignedOwner = $ownerBusiness->getTBOwner($current->getTbtouristcompanyowner());
+
+            // Obtención de los tipos de empresa como cadena separada por comas
+            $companyTypes = $current->getTbtouristcompanycompanyType();
+            $companyTypesArray = explode(',', $companyTypes); // Convertir la cadena en un array
+            
+            // Obtener los nombres de los tipos de empresa
+            $companyTypesNames = [];
+            foreach ($companyTypesArray as $typeId) {
+                $assignedCompanyType = $touristCompanyTypeBusiness->getById(trim($typeId)); // Obtener el objeto del tipo de empresa
+                if ($assignedCompanyType) {
+                    $companyTypesNames[] = $assignedCompanyType->getName(); // Agregar el nombre al array
                 }
+            }
 
             echo '<tr>';
             echo '<td>' . htmlspecialchars($current->getTbtouristcompanylegalname()) . '</td>';
@@ -247,7 +205,7 @@ $_SESSION['owners'] = $owners;
             echo '</td>';
             echo '</tr>';
         }
-      else {
+    } else {
         echo '<tr><td colspan="6">No se encontraron resultados</td></tr>';
     }
     ?>
@@ -255,88 +213,30 @@ $_SESSION['owners'] = $owners;
         </table>
     </section>
 
-                if (count($all) > 0) {
-                    foreach ($all as $current) {
-                        $assignedCompanyType = $touristCompanyTypeBusiness->getById($current->getTbtouristcompanycompanyType());
-                        $assignedOwner = $ownerBusiness->getTBOwner($current->getTbtouristcompanyowner());
-                        echo '<tr>';
-                        echo '<form method="post" action="../business/touristCompanyAction.php" onsubmit="return confirmAction(event);">';
-                        echo '<td><input type="text" name="legalName" value="' . htmlspecialchars($current->getTbtouristcompanylegalname()) . '" ></td>';
-                        echo '<td><input type="text" name="magicName" value="' . htmlspecialchars($current->getTbtouristcompanymagicname()) . '" ></td>';
-                        echo '<td>';
-                        echo '<select name="ownerId" required>';
-                        foreach ($owners as $owner) {
-                            echo '<option value="' . htmlspecialchars($owner->getIdTBOwner()) . '"';
-                            if ($owner->getIdTBOwner() == $current->getTbtouristcompanyowner()) {
-                                echo ' selected';
-                            }
-                            echo '>' . htmlspecialchars($owner->getName() . ' ' . $owner->getSurnames()) . '</option>';
-                        }
-                        echo '</select>';
-                        echo '</td>';
-                        echo '<td>';
-                        echo '<select name="companyType" required>';
-                        foreach ($alltouristCompanyTypes as $touristCompanyType) {
-                            echo '<option value="' . htmlspecialchars($touristCompanyType->getId()) . '"';
-                            if ($touristCompanyType->getId() == $current->getTbtouristcompanycompanyType()) {
-                                echo ' selected';
-                            }
-                            echo '>' . htmlspecialchars($touristCompanyType->getName()) . '</option>';
-                        }
-                        echo '</select>';
-                        echo '</td>';
-                        echo '<td>';
-                        echo '<input type="hidden" name="id" value="' . htmlspecialchars($current->getTbtouristcompanyid()) . '">';
-                        echo '<input type="hidden" name="status" value="1">';
-
-                        $images = $current->getTbtouristcompanyurl();
-                        echo '<td>';
-                        foreach ($images as $index => $image) {
-                            if (!empty($image)) {
-                                echo '<img src="' . $imageBasePath . trim($image) . '" alt="Foto" width="50" height="50" />';
-                            }
-                        }
-                        echo '</td>';
-
-                        /*    
-                        echo '<td>';
-                        echo '<select name="imageIndex">';
-                        foreach ($images as $index => $image) {
-                            echo '<option value="' . $index . '">Imagen ' . ($index + 1) . '</option>';
-                        }
-                        echo '</select>';
-                        
-                        echo '</td>';
-                        */
-
-                        echo '<form method="post" action="../business/touristCompanyAction.php">';
-                        echo '<input type="hidden" name="photoID" value="' . $current->getTbtouristcompanyid() . '">';
-
-                        echo '<td>';
-                        echo '<input type="hidden" name="id" value="' . htmlspecialchars($current->getTbtouristcompanyid()) . '">';
-                        if ($userLogged->getUserType() == "Administrador" || $userLogged->getUserType() == "Propietario") {
-                            // lo que esta comentado justo 8 lineas arriba (le quite ese <td> extra. es innecesario.)
-                            echo '<select name="imageIndex">';
-                            foreach ($images as $index => $image) {
-                                echo '<option value="' . $index . '">Imagen ' . ($index + 1) . '</option>';
-                            }
-                            echo '</select>';
-
-                            echo '<input type="submit" value="Actualizar" name="update" />';
-                            echo '<input type="submit" value="Eliminar" name="delete"/>';
-                            echo '<input type="submit" value="Eliminar Imagen" name="deleteImage">';
-                        }
-                        echo '</td>';
-
-                        echo '</form>';
-                        echo '</tr>';
-                    }
+    <script>
+      function deleteTouristCompany(id) {
+    if (confirm("¿Estás seguro de que deseas eliminar esta empresa turística?")) {
+        $.ajax({
+            url: "../business/touristCompanyAction.php",
+            type: "POST",
+            data: { delete: true, id: id },
+            dataType: "json",
+            success: function(response) {
+                if (response.status === 'success') {
+                    alert(response.message);
+                    location.reload(); // Recarga la página para actualizar la lista
                 } else {
-                    echo '<tr><td colspan="6">No se encontraron resultados</td></tr>';
+                    alert(response.message);
                 }
-                ?>
-            </tbody>
-        </table>
+            },
+            error: function() {
+                alert("Ocurrió un error al intentar eliminar la empresa.");
+            }
+        });
+    }
+}
+// Variable global para almacenar el tipo de empresa original
+let originalCompanyType = null;
 
 function fillForm(companyId, legalName, magicName, ownerId, companyTypeIds, imageUrl) {
     // Rellenar los campos del formulario
