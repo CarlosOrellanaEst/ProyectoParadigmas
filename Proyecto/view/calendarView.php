@@ -64,6 +64,7 @@ $userLogged = $_SESSION['user'];
         } else if ($userLogged->getUserType() == "Turista") {
             echo '<a href="touristView.php">← Volver al inicio</a>';
         }
+        $imageBasePath = '../images/activity/';
     ?>
     <h2>Calendario de Actividades Turísticas</h2>
 
@@ -352,7 +353,7 @@ $userLogged = $_SESSION['user'];
                 <td>${activity.tbactivityname}</td>
                 <td>${activity.tbactivityservicecompanyid}</td>
                 <td>${activity.tbactivityatributearray.join(', ')}</td>
-                <td>${activity.tbactivityurl.map(url => `<img src="${url}" width="50" height="50"/>`).join('')}</td>
+                <td>${activity.tbactivityurl.map(url => `<img src="${$imageBasePath}" width="50" height="50"/>`).join('')}</td>
                 <td>${activity.tbactivitydate}</td>
                 <td>${activity.tbactivitylongitude}</td>
                 <td>${activity.tbactivitylatitude}</td>
