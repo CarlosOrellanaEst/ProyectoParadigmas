@@ -40,8 +40,8 @@
     <label for="legalIdentification">Identificación Legal <span class="required">*</span></label>
     <input placeholder="identificación legal" type="text" name="ownerLegalIdentification" id="legalIdentification" autocomplete="off"/><br><br>
 
-    <label for="phone">Teléfono</label>;
-    <input placeholder="3333-3333" type="text" name="ownerPhone" id="phone" oninput="formatPhone(this)" maxlength="9"/><br><br>;
+    <label for="phone">Teléfono</label>
+    <input placeholder="3333-3333" type="text" name="ownerPhone" id="phone" oninput="formatPhone(this)" maxlength="9"/><br><br>
            
 
     <label for="email">Correo <span class="required">*</span></label>
@@ -83,6 +83,6 @@
                         input.value = value;
                     }
                 }
-            </script>;
+            </script>
 </body>
 </html>
