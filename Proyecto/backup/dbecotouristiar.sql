@@ -281,7 +281,7 @@ CREATE TABLE `tbtouristcompany` (
   `tbtouristcompanylegalname` varchar(255) NOT NULL,
   `tbtouristcompanymagicname` varchar(255) NOT NULL,
   `tbtouristcompanyowner` int(11) NOT NULL,
-  `tbtouristcompanycompanyType` Text NOT NULL,
+  `tbtouristcompanycompanyType` int(11) NOT NULL,
   `tbtouristcompanyurl` text NOT NULL,
   `tbtouristcompanystatus` tinyint(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -312,11 +312,11 @@ INSERT INTO `tbtouristcompany` (`tbtouristcompanyid`, `tbtouristcompanylegalname
 -- Estructura de tabla para la tabla `tbtouristcompanytouristcompanytype`
 --
 
-CREATE TABLE `tbcompanycustomtype` (
-  `tbcompanycustomtypeid` int(11) NOT NULL,
+CREATE TABLE `tbtouristcompanytouristcompanytype` (
+  `tbtouristcompanytouristcompanytypeid` int(11) NOT NULL,
   `tbtouristcompany` int(11) NOT NULL,
-  `tbcompanycustomtype` Varchar(100) NOT NULL,
-  `tbcompanycustomtypestatus` int(11) NOT NULL DEFAULT 1
+  `tbtouristcompanytype` int(11) NOT NULL,
+  `tbtouristcompanytouristcompanytypestatus` int(11) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
