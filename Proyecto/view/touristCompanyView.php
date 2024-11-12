@@ -235,6 +235,18 @@ $_SESSION['owners'] = $owners;
         });
     }
 }
+
+const companyTypes = <?php echo json_encode(array_map(function($type) {
+        return [
+            'id' => $type->getId(),
+            'name' => $type->getName()
+        ];
+    }, $touristCompanyTypes)); ?>;
+
+    const companyTypesMap = {};
+    companyTypes.forEach(type => {
+        companyTypesMap[type.id] = type.name;
+    });
 // Variable global para almacenar el tipo de empresa original
 let originalCompanyType = null;
 
@@ -271,22 +283,25 @@ function fillForm(companyId, legalName, magicName, ownerId, companyTypeIds, imag
 
     // Si hay tipos de empresa asociados, agregar esos a la lista
     if (companyTypeIds) {
-        const companyTypeArray = companyTypeIds.split(','); // Convertir la cadena a un array
+    const companyTypeArray = companyTypeIds.split(','); // Convertir la cadena a un array
 
-        // Para cada tipo de empresa, agregamos un elemento visual en la lista de tipos seleccionados
-        companyTypeArray.forEach(function(typeId) {
-            // Crear un elemento de tipo de empresa en la lista
-            const listItem = $('<div class="selected-type"></div>');
-            listItem.text(`Tipo de empresa: ${typeId}`); // Mostrar el ID o el nombre (puedes cambiar esto)
-            listItem.attr('data-type-id', typeId); // Guardamos el ID en el atributo 'data'
+    // Para cada tipo de empresa, agregamos un elemento visual en la lista de tipos seleccionados
+    companyTypeArray.forEach(function(typeId) {
+        // Obtener el nombre del tipo de empresa utilizando el objeto companyTypesMap
+        const companyTypeName = companyTypesMap[typeId];
 
-            // Agregar el elemento al contenedor de tipos seleccionados
-            $('#selectedCompanyTypesList').append(listItem);
-        });
-    }
+        // Crear un elemento de tipo de empresa en la lista
+        const listItem = $('<div class="selected-type"></div>');
+        listItem.text(`Tipo de empresa: ${companyTypeName}`); // Mostrar el nombre en lugar del ID
+        listItem.attr('data-type-id', typeId); // Guardamos el ID en el atributo 'data'
+
+
+
+        // Agregar el elemento al contenedor de tipos seleccionados
+        $('#selectedCompanyTypesList').append(listItem);
+    });
 }
-
-
+}
 
 
 function updateTouristCompany() {
@@ -319,7 +334,15 @@ function updateTouristCompany() {
         });
 
         if (selectedCompanyTypes.length > 0) {
-            companyTypeData += selectedCompanyTypes.join(',');
+            // Comprobar si hay duplicados
+            const uniqueCompanyTypes = [...new Set(selectedCompanyTypes)];
+
+            if (uniqueCompanyTypes.length !== selectedCompanyTypes.length) {
+                alert("Error: No se pueden agregar tipos de empresa duplicados.");
+                return; // Detenemos la ejecución si hay duplicados
+            }
+
+            companyTypeData += uniqueCompanyTypes.join(','); // Evita duplicados
         }
 
         if (companyType === "custom" && customCompanyType) {
@@ -347,6 +370,7 @@ function updateTouristCompany() {
     // Enviar la solicitud Ajax
     sendAjaxRequest(formData, 'Actualizar empresa');
 }
+
 
 function sendAjaxRequest(formData, action) {
     $.ajax({
