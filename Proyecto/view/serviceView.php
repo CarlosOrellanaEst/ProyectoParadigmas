@@ -20,15 +20,17 @@
         $serviceCompanyBusiness = new ServiceCompanyBusiness();
         $services = $serviceCompanyBusiness->getAllTBServices();
         $touristCompanyBusiness = new TouristCompanyBusiness();
+        
         if ($userLogged->getUserType() == "Propietario") {
             $companies = $touristCompanyBusiness->getAllByOwnerID($userLogged->getIdTBOwner());
         } else if ($userLogged->getUserType() == "Administrador") {
             $companies = $touristCompanyBusiness->getAll();
         }
-        
+
         $imageBasePath = '../images/services/';
     ?>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+   
 </head>
 <body>
     <?php
@@ -50,6 +52,7 @@
         <form method="post" id="formCreate" action="../business/serviceCompanyAction.php" enctype="multipart/form-data">
             <label for="companyID">Nombre de la Empresa Turística <span class="required">*</span></label>
             <select name="companyID" id="companyID" required>
+                <option value="" disabled selected>Seleccione una empresa</option>
                 <?php foreach ($companies as $company): ?>
                     <option value="<?php echo htmlspecialchars($company->getTbtouristcompanyid()); ?>">
                         <?php echo htmlspecialchars($company->getTbtouristcompanylegalname()); ?>
@@ -62,6 +65,7 @@
                 <div id="serviceRow1">
                     <label for="serviceId">Servicio <span class="required">*</span></label>
                     <select name="serviceId" id="serviceId" required>
+                        <option value="" disabled selected>Seleccione servicio</option>
                         <?php foreach ($services as $service): ?>
                             <option value="<?php echo htmlspecialchars($service->getIdTbservice()); ?>">
                                 <?php echo htmlspecialchars($service->getTbservicename()); ?>
@@ -168,11 +172,10 @@
                                 echo '</select>';
                                 echo '</div>'; // Cerrar el div de service-row
                             }
-
                         }
                         echo '<button type="button" class="addServiceRow">Agregar servicio</button>';
                        
-                        echo '</td>';
+                     
                         
                            
                             
@@ -244,6 +247,9 @@
                        <button type="button" class="remove-service">Eliminar</button>
                    `;
                    servicesContainer.appendChild(newService);
+                   newService.querySelector('.remove-service').addEventListener('click', function() {
+                            newService.remove();
+                        });
                } else {
                    alert('No puedes agregar más de 7 servicios.');
                }

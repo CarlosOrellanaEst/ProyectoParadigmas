@@ -1,9 +1,11 @@
 document.addEventListener("DOMContentLoaded", function () {
-    // Mostrar u ocultar el campo personalizado según la selección del tipo de empresa
+    // Obtener los elementos del DOM
     const companyTypeSelect = document.getElementById("companyType");
     const customCompanyTypeField = document.getElementById("customCompanyType");
     const customCompanyTypeLabel = document.getElementById("customCompanyTypeName");
+    const selectedCompanyTypesList = document.getElementById("selectedCompanyTypesList");
 
+    // Mostrar u ocultar el campo personalizado según la selección del tipo de empresa
     companyTypeSelect.addEventListener("change", function () {
         if (this.value === "custom") {
             customCompanyTypeField.style.display = "block";
@@ -15,17 +17,34 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
     let selectedCompanyTypes = [];
+
+    // Evento de click para agregar un tipo de empresa a la lista
     document.getElementById("addBtn").addEventListener("click", function () {
         let selectedValue = companyTypeSelect.value;
         let selectedText = companyTypeSelect.options[companyTypeSelect.selectedIndex].text;
-    
+
+        // Si se selecciona un tipo válido (no "0" y no duplicado)
         if (selectedValue !== "0" && !selectedCompanyTypes.includes(selectedValue)) {
             selectedCompanyTypes.push(selectedValue);
-    
-            let companyTypeList = document.getElementById("selectedCompanyTypesList");
+
             let companyTypeItem = document.createElement("div");
             companyTypeItem.textContent = selectedText;
-            companyTypeList.appendChild(companyTypeItem);
+            companyTypeItem.dataset.typeId = selectedValue;  // Agregar el data-type-id con el valor seleccionado
+            companyTypeItem.classList.add("selected-type");  // Agregar una clase para facilitar su identificación
+
+            // Crear un botón de eliminación para este tipo de empresa
+            let removeBtn = document.createElement("button");
+            removeBtn.textContent = "-";
+            removeBtn.classList.add("remove-btn");
+
+            // Evento para eliminar el tipo de empresa de la lista
+            removeBtn.addEventListener("click", function () {
+                selectedCompanyTypes = selectedCompanyTypes.filter(type => type !== selectedValue);
+                selectedCompanyTypesList.removeChild(companyTypeItem);
+            });
+
+            companyTypeItem.appendChild(removeBtn);
+            selectedCompanyTypesList.appendChild(companyTypeItem);
         } else if (selectedValue === "0") {
             alert("Por favor, seleccione un tipo de empresa válido.");
         } else {
@@ -33,75 +52,83 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // Manejo del envío de formulario de creación
+
     document.getElementById("formCreate").addEventListener("submit", function (e) {
         e.preventDefault();
-
+    
+        const actionType = document.getElementById("actionType").value;
         const magicName = document.getElementById("magicName").value.trim();
         const legalName = document.getElementById("legalName").value.trim();
         const owner = document.getElementById("ownerId").value;
-        var companyType = document.getElementById("companyType").value;
+        const companyType = document.getElementById("companyType").value;
         const images = document.getElementById("imagenes").files;
         const status = document.getElementById("status").value;
         const customCompanyType = document.getElementById("customCompanyType").value.trim();
-
+    
+        // Validaciones
         if (owner === "0") {
             alert("Error: se necesita seleccionar un propietario para registrar.");
             return;
         }
-
+    
         if (companyType === "0" || (companyType === "custom" && customCompanyType === "")) {
             alert("Error: se necesita seleccionar un tipo de empresa.");
             return;
         }
-
+    
+        // Recoger los tipos de empresa seleccionados en el contenedor
+        const selectedCompanyTypes = [];
+        const selectedCompanyTypeElements = document.querySelectorAll("#selectedCompanyTypesList .selected-type");
+    
+        selectedCompanyTypeElements.forEach(function (element) {
+            selectedCompanyTypes.push(element.dataset.typeId);  // Usamos data-type-id para obtener el valor del ID
+        });
+    
+        console.log("Tipos de empresa seleccionados:", selectedCompanyTypes); // Mostrar en consola los tipos seleccionados
+    
+        // Concatenar los tipos de empresa con su ID
+        let companyTypeData = '';
+    
+        // Agregar tipos seleccionados al string (sin duplicados)
+        if (selectedCompanyTypes.length > 0) {
+            companyTypeData += selectedCompanyTypes.join(',');  // Agregar los IDs de los tipos de empresa
+        }
+    
+        // Si el tipo de empresa es 'custom', añadir customCompanyType (sin el '0')
+        if (companyType === "custom" && customCompanyType) {
+            if (companyTypeData) {
+                companyTypeData += ',';  // Separador para los valores adicionales
+            }
+            companyTypeData += customCompanyType;  // Solo agregamos el nombre del tipo personalizado, sin el '0'
+        }
+    
+        console.log("Datos a enviar en companyTypeData:", companyTypeData);  // Ver qué se enviará
+    
         const formData = new FormData();
         formData.append("magicName", magicName);
         formData.append("legalName", legalName);
         formData.append("ownerId", owner);
         formData.append("status", status);
         formData.append("create", "create");
-
-        // Aquí recolectamos los tipos de empresa seleccionados
-        const companyTypeList = document.getElementById("selectedCompanyTypesList");
-
-        if (selectedCompanyTypes.length > 0) { // Verifica que el elemento exista
-            console.log(selectedCompanyTypes);
-            formData.append("selectedCompanyTypes", JSON.stringify(selectedCompanyTypes)); // Asegúrate de que esto sea el ID
-        } else {
-            console.error("El elemento 'selectedCompanyTypesList' no se encontró.");
-        } 
-
-        //const companyTypeList = document.getElementById("selectedCompanyTypesList").children;
-        /*const selectedCompanyTypes = [];
-        selectedCompanyTypes.forEach((type) => {
-            formData.append("selectedCompanyTypes[]", type);
-        });
-        for (let [key, value] of formData.entries()) {
-            console.log(key, value);
-        }*/
-
-        if (companyType === "custom") {
-            companyType = 0;
-            formData.append("customCompanyType", customCompanyType);
-        }
-
-        formData.append("companyType", companyType);
-
+    
+        formData.append("companyTypeData", companyTypeData);  // Enviar la variable concatenada
+    
+        // Agregar imágenes si las hay
         if (images.length > 0) {
             for (let i = 0; i < images.length; i++) {
                 formData.append("imagenes[]", images[i]);
             }
         }
-        //alert("Id owner: " + owner);
-        //alert("Custom: " + customCompanyType);
+    
         // Verificar el contenido de formData
         for (let [key, value] of formData.entries()) {
             console.log(key, value);
         }
-
+    
         sendAjaxRequest(formData, "Crear empresa");
     });
+
+
 
     // Captura el evento de confirmación de acciones en los formularios de actualización y eliminación
     document.querySelectorAll("form[onsubmit]").forEach(function (form) {

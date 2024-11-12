@@ -1,7 +1,7 @@
 <?php
 include './serviceCompanyBusiness.php';
 
-if (isset($_POST['create'])) {
+if ($_POST['formAction'] == 'create') {
     $response = array();
 
     // Verificación de las imágenes subidas
@@ -81,18 +81,17 @@ if (isset($_POST['create'])) {
     exit();
 }
 
-if (isset($_POST['update'])) {
+} elseif ($_POST['formAction'] == 'update') {
     $companyId = $_POST['companyId'];
-    $serviceIds = isset($_POST['serviceId']) ? $_POST['serviceId'] : [];
+    $newServiceIds = isset($_POST['serviceId']) ? $_POST['serviceId'] : [];  // Array con todos los nuevos serviceIds
     $serviceCompanyId = $_POST['id'];
 
-    // Validación básica
     if (is_numeric($companyId) && is_numeric($serviceCompanyId)) {
         $serviceCompanyBusiness = new ServiceCompanyBusiness();
         $currentService = $serviceCompanyBusiness->getServiceCompany($serviceCompanyId);
-
+        
         if ($currentService) {
-            // Procesar imágenes subidas
+            // Procesar imágenes subidas (ya existente en tu código)
             $uploadedImages = [];
             if (isset($_FILES['imagenes']) && count($_FILES['imagenes']['name']) > 0) {
                 $totalFiles = count($_FILES['imagenes']['name']);
@@ -100,36 +99,28 @@ if (isset($_POST['update'])) {
                     $fileName = $_FILES['imagenes']['name'][$i];
                     $tempName = $_FILES['imagenes']['tmp_name'][$i];
                     $targetPath = "../images/services/" . basename($fileName);
-
                     if (move_uploaded_file($tempName, $targetPath)) {
                         $uploadedImages[] = $fileName;
                     }
                 }
             }
-
-            // Unir las imágenes existentes con las nuevas
             $existingImages = explode(',', $currentService->getTbservicecompanyURL());
-            $newImageUrls = array_merge($existingImages, $uploadedImages);
+            $newImageUrls = array_unique(array_merge($existingImages, $uploadedImages));
             $imageUrlsString = implode(',', $newImageUrls);
 
-            // Solo actualiza los servicios si se selecciona uno nuevo
-            if (!empty($serviceIds)) {
-                // Actualiza el servicio a uno nuevo seleccionado
-                $servicesIdString = implode(',', $serviceIds); // Solo usar el nuevo servicio
-            } else {
-                // Mantiene el servicio existente si no se selecciona nada nuevo
-                $servicesIdString = $currentService->getTbserviceid();
-            }
+            // Unir los serviceId existentes con los nuevos, sin duplicados
+            $existingServiceIds = explode(',', $currentService->getTbserviceid());
+            $allServiceIds = array_unique(array_merge($existingServiceIds, $newServiceIds));
+            $servicesIdString = implode(',', $allServiceIds);
 
             // Actualizar el registro
             $service = new ServiceCompany($serviceCompanyId, $companyId, $servicesIdString, $imageUrlsString, 1);
             $result = $serviceCompanyBusiness->updateTBServiceCompany($service);
 
-            // Manejo de la respuesta
             if ($result['status'] === 'success') {
                 header("Location: ../view/serviceView.php?success=updated");
                 exit();
-            } elseif ($result['status'] === 'error' && $result['message'] === 'Service already exists') {
+            } elseif ($result['status'] === 'error' && $result['message'] === 'El servicio ya existe') {
                 header("Location: ../view/serviceView.php?error=alreadyExists");
                 exit();
             } else {
@@ -145,7 +136,6 @@ if (isset($_POST['update'])) {
         exit();
     }
 }
-
 
 
 
@@ -242,4 +232,14 @@ if (isset($_POST['deleteService'])) {
         header("Location: ../view/serviceView.php?error=service_not_found");
         exit();
     }
+}
+
+if (isset($_POST['companyID'])) {
+    $companyID = intval($_POST['companyID']);
+    $serviceCompanyBusiness = new ServiceCompanyBusiness();
+
+    // Comprobar si la compañía tiene servicios activos
+    $hasServices = $serviceCompanyBusiness->companyWithServices($companyID);
+    
+    echo $hasServices ? '1' : '0';
 }

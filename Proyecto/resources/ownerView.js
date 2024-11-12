@@ -65,7 +65,7 @@ document.addEventListener('DOMContentLoaded', function () {
                         if (response.status === 'success') {
                             alert(response.message);
                             document.getElementById('formCreate').reset();
-                            setTimeout(() => location.reload(), 500); 
+                            setTimeout(() => location.wd(), 500); 
                         } else {
                             alert('Error: ' + response.message);
                         }
@@ -121,7 +121,6 @@ document.addEventListener('DOMContentLoaded', function () {
                             
                         } else {
                             handleErrorResponse(response);
-                            location.reload(); 
                         }
                     } catch (e) {
                         console.error("Error al procesar la respuesta JSON:", e);
