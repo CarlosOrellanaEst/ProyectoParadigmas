@@ -97,7 +97,7 @@ $_SESSION['owners'] = $owners;
                             <?php echo htmlspecialchars($touristCompanyType->getName()); ?>
                         </option>
                     <?php endforeach; ?>
-                    <option value="custom">Otro (Especifique)</option>
+               
                 </select>
                 <button type="button" id="addBtn">+</button>
                 <div id="selectedCompanyTypesList"></div>
@@ -188,11 +188,16 @@ $_SESSION['owners'] = $owners;
             echo '<td>' . htmlspecialchars($assignedOwner->getName() . ' ' . $assignedOwner->getSurnames()) . '</td>';
             echo '<td>' . implode(', ', $companyTypesNames) . '</td>'; // Mostrar los tipos de empresa separados por coma
             echo '<td>';
-            foreach ($current->getTbtouristcompanyurl() as $image) {
-                if (!empty($image)) {
-                    echo '<img src="' . $imageBasePath . trim($image) . '" alt="Foto" width="50" height="50" />';
-                }
-            }
+            
+   foreach ($current->getTbtouristcompanyurl() as $index => $image): ?>
+        <?php if (!empty($image)): ?>
+            <div class="image-container">
+                <img src="<?php echo $imageBasePath . trim($image); ?>" alt="Foto" width="50" height="50" />
+                <button type="button" onclick="deleteImage(<?php echo $current->getTbtouristcompanyid(); ?>, <?php echo $index; ?>)">Eliminar</button>
+            </div>
+        <?php endif; ?>
+    <?php endforeach; 
+
             echo '</td>';
             echo '<td>';
             echo '<button type="button" onclick="deleteTouristCompany(' . htmlspecialchars($current->getTbtouristcompanyid()) . ')">Eliminar</button>';
@@ -233,45 +238,56 @@ $_SESSION['owners'] = $owners;
 // Variable global para almacenar el tipo de empresa original
 let originalCompanyType = null;
 
-function fillForm(companyId, legalName, magicName, ownerId, companyTypeId, imageUrl) {
+function fillForm(companyId, legalName, magicName, ownerId, companyTypeIds, imageUrl) {
+    // Rellenar los campos del formulario
     $('#companyId').val(companyId);
     $('#legalName').val(legalName);
     $('#magicName').val(magicName);
     $('#ownerId').val(ownerId);
-    $('#companyType').val(companyTypeId);
+   
 
     // Guardar el valor original del tipo de empresa
-    originalCompanyType = companyTypeId;
+    originalCompanyType = companyTypeIds;
 
-    // Mostrar vista previa de la imagen
+    // Ocultar las secciones de imagen
+    $('#imagenes').hide();  // Ocultar el campo de selección de imágenes
+    $('#imagePreview').hide();  // Ocultar la vista previa de la imagen
+
+    // Si hay una imagen existente, mostrar la vista previa
     if (imageUrl) {
         $('#imagePreview').html(`<img src="${imageUrl}" alt="Imagen actual" width="100" height="100" />`);
+        $('#imagePreview').show(); // Mostrar la vista previa de la imagen
     } else {
-        $('#imagePreview').html(''); // Si no hay imagen, limpiar la vista previa
+        $('#imagePreview').html(''); // Limpiar la vista previa si no hay imagen
     }
 
-    $('#actionType').val('update'); // Cambiar acción a 'update'
+    // Cambiar la acción del formulario a 'update' (actualización)
+    $('#actionType').val('update');
     $('#formSubmitButton').hide(); // Ocultar el botón de "Crear"
     $('#updateButton').show(); // Mostrar el botón de "Actualizar"
+
+    // Limpiar la lista de tipos de empresa seleccionados antes de agregar los nuevos
+    $('#selectedCompanyTypesList').empty();
+
+    // Si hay tipos de empresa asociados, agregar esos a la lista
+    if (companyTypeIds) {
+        const companyTypeArray = companyTypeIds.split(','); // Convertir la cadena a un array
+
+        // Para cada tipo de empresa, agregamos un elemento visual en la lista de tipos seleccionados
+        companyTypeArray.forEach(function(typeId) {
+            // Crear un elemento de tipo de empresa en la lista
+            const listItem = $('<div class="selected-type"></div>');
+            listItem.text(`Tipo de empresa: ${typeId}`); // Mostrar el ID o el nombre (puedes cambiar esto)
+            listItem.attr('data-type-id', typeId); // Guardamos el ID en el atributo 'data'
+
+            // Agregar el elemento al contenedor de tipos seleccionados
+            $('#selectedCompanyTypesList').append(listItem);
+        });
+    }
 }
 
-function addCompanyType() {
-    const selectedType = $('#companyType').val();
-    const customType = $('#customCompanyType').val();
 
-    if (selectedType === "custom" && !customType) {
-        alert("Error: Debe especificar un nombre para el tipo de empresa personalizado.");
-        return;
-    }
 
-    // Añadir el tipo de empresa a la lista de seleccionados
-    if (selectedType !== "0") {
-        const typeDisplay = selectedType === "custom" ? customType : $('#companyType option:selected').text();
-        const typeId = selectedType === "custom" ? customType : selectedType;
-
-        $('#selectedCompanyTypesList').append(`<span class="selected-type" data-type-id="${typeId}">${typeDisplay}</span>`);
-    }
-}
 
 function updateTouristCompany() {
     let formData = new FormData($('#formCreate')[0]);
@@ -354,6 +370,31 @@ function sendAjaxRequest(formData, action) {
     });
 }
 
+function deleteImage(companyId, imageIndex) {
+    if (confirm("¿Estás seguro de que deseas eliminar esta imagen?")) {
+        $.ajax({
+            url: "../business/touristCompanyAction.php",
+            type: "POST",
+            data: {
+                deleteImage: true,  // Indicamos que estamos eliminando una imagen
+                photoID: companyId,
+                imageIndex: imageIndex
+            },
+            dataType: "json",
+            success: function(response) {
+                if (response.status === 'success') {
+                    alert(response.message);
+                    location.reload(); // Recarga la página para actualizar la lista de imágenes
+                } else {
+                    alert(response.message);
+                }
+            },
+            error: function() {
+                alert("Ocurrió un error al intentar eliminar la imagen.");
+            }
+        });
+    }
+}
 
     </script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
