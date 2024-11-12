@@ -76,6 +76,6 @@
                         input.value = value;
                     }
                 }
-            </script>
+            </script>;
 </body>
 </html>
