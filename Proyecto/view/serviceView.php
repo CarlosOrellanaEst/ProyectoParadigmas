@@ -172,7 +172,6 @@
                                 echo '</select>';
                                 echo '</div>'; // Cerrar el div de service-row
                             }
-
                         }
                         echo '<button type="button" class="addServiceRow">Agregar servicio</button>';
                        
