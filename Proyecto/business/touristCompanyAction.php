@@ -19,6 +19,7 @@ if (isset($_POST['create'])) {
     $fileNames = array();
     $allowTypes = array('jpg', 'png', 'jpeg', 'gif');
 
+    // Validación y carga de imágenes
     if (isset($_FILES['imagenes']) && !empty($_FILES['imagenes']['name'][0])) {
         if (count($_FILES['imagenes']['name']) > 5) {
             echo json_encode(['status' => 'error', 'error_code' => 'max_images_exceeded', 'message' => 'Solo se permite subir un máximo de 5 imágenes']);
@@ -43,70 +44,77 @@ if (isset($_POST['create'])) {
         }
     }
 
+    // Obtener las URLs de las imágenes
     $photoUrls = !empty($fileNames) ? implode(',', $fileNames) : null;
 
+    // Obtener los datos del formulario
     $legalName = $_POST['legalName'] ?? '';
     $magicName = $_POST['magicName'] ?? '';
     $ownerId = $_POST['ownerId'] ?? 0;
-    $companyTypeId = $_POST['companyType'] ?? 0;
     $status = $_POST['status'] ?? '';
-    $customCompanyType = '';
-    $selectedCompanyTypes = $_POST['selectedCompanyTypes'] ?? '[]';
-    $selectedCompanyTypes = json_decode($selectedCompanyTypes);
-    $customCompanyType = $_POST['customCompanyType'] ?? '';
+    $companyTypeData = $_POST['companyTypeData'] ?? '';  // Recibir la cadena concatenada de tipos de empresa
 
-    if (empty($selectedCompanyTypes) && ($companyTypeId != 0)) {
-        echo json_encode(['status' => 'error', 'error_code' => 'no_company_types', 'message' => 'No se han seleccionado tipos de empresa.']);
+    // Validaciones
+    if (empty($companyTypeData)) {
+        echo json_encode(['status' => 'error', 'error_code' => 'company_type_required', 'message' => 'Debe especificar un tipo de empresa.']);
         exit();
     }
 
-    if ($companyTypeId === '0') {
-        
-        if (empty($customCompanyType)) {
-            echo json_encode(['status' => 'error', 'error_code' => 'custom_company_type_required', 'message' => 'Debe especificar un tipo de empresa personalizado.']);
-            exit();
-        }
-        /*else {
-            // Aquí debes insertar el tipo de empresa personalizado en la tabla correspondiente
+    // Si se reciben tipos de empresa como una cadena separada por comas, separarlos
+    $companyTypes = explode(',', $companyTypeData);
 
-            $customTypeBusiness = new TouristCompanyData(); // Asegúrate de que esta clase esté bien incluida
-            $result = $customTypeBusiness->insertCustomizedtouristcompanytype($ownerId, $customCompanyType);
-            // Agrega un mensaje de depuración
-            if ($result['status'] !== 'success') {
-                echo json_encode(['status' => 'error', 'error_code' => 'insert_custom_type_failed', 'message' => $result['message']]);
-                exit();
-            }
-            // Si se inserta correctamente, puedes obtener el ID del tipo de empresa personalizado
+    // Eliminar los "0" en los tipos de empresa
+    $companyTypes = array_filter($companyTypes, function($type) {
+        return $type !== '0';
+    });
+    
+    // Reindexar el array para evitar posibles problemas con índices no continuos
+    $companyTypes = array_values($companyTypes);
 
-            $companyTypeId = $result['new_id']; // Asegúrate de que tu método de inserción devuelva el nuevo ID
-        }*/
+    // Si el tipo de empresa es "custom", asegurarse de que se maneje correctamente
+    if (in_array('custom', $companyTypes) && empty($companyTypes[1])) {
+        echo json_encode(['status' => 'error', 'error_code' => 'custom_company_type_required', 'message' => 'Debe especificar un tipo de empresa personalizado.']);
+        exit();
     }
 
+    // Procesar el propietario y tipo de empresa
     if ($ownerId) {
         $ownerBusiness = new OwnerBusiness();
         $owner = $ownerBusiness->getTBOwner($ownerId);
 
+        // Obtener el tipo de empresa
         $touristCompanyTypeBusiness = new TouristCompanyTypeBusiness();
-        $companyType = $touristCompanyTypeBusiness->getById($companyTypeId);
+        // Procesamos todos los tipos de empresa seleccionados
+        $companyTypesObjects = [];
+        foreach ($companyTypes as $companyTypeId) {
+            $companyType = $touristCompanyTypeBusiness->getById($companyTypeId);  // Obtener tipo de empresa por ID
+            if ($companyType) {
+                $companyTypesObjects[] = $companyType;
+            }
+        }
 
-        if ($owner && $companyType) {
-            $touristCompany = new TouristCompany(0, $legalName, $magicName, $ownerId, $companyTypeId, $photoUrls, $status);
-            $touristCompany->setAllTouristCompanyType($selectedCompanyTypes ?? []);
+        // Validar si se han obtenido todos los tipos de empresa correctamente
+        if ($owner && count($companyTypesObjects) > 0) {
+            $touristCompany = new TouristCompany(0, $legalName, $magicName, $ownerId, implode(',', $companyTypes), $photoUrls, $status);
 
+            // Insertar los tipos de empresa seleccionados
+            $touristCompany->setAllTouristCompanyType($companyTypesObjects);
+
+            // Insertar la empresa en la base de datos
             $touristCompanyBusiness = new TouristCompanyBusiness();
             $result = $touristCompanyBusiness->insert($touristCompany);
 
-            if ($companyTypeId === '0') {
+            // Si el tipo de empresa es "custom", realizar acción adicional
+            if (in_array('custom', $companyTypes)) {
+                $customCompanyType = $companyTypes[1];  // El segundo valor es el tipo personalizado
                 $touristCompany->setTbtouristcompanycustomcompanyType($customCompanyType);
-                $bol = $touristCompanyBusiness->insertCustomizedtouristcompanytype($ownerId, $customCompanyType);
+                $touristCompanyBusiness->insertCustomizedtouristcompanytype($ownerId, $customCompanyType);
             }
 
+            // Respuesta exitosa
             if ($result['status'] == 'success') {
-                ob_end_clean();
                 echo json_encode(['status' => 'success', 'message' => 'Empresa creada con éxito.'], JSON_UNESCAPED_UNICODE);
                 exit;
-            } elseif ($result['status'] == 'error' && isset($result['message']) && $result['message'] === 'Empresa ya existe.') {
-                echo json_encode(['status' => 'error', 'error_code' => 'company_exists', 'message' => 'La empresa ya existe.']);
             } else {
                 echo json_encode(['status' => 'error', 'error_code' => 'database_error', 'message' => 'Error en la base de datos: ' . $result['message']]);
             }
@@ -120,20 +128,26 @@ if (isset($_POST['create'])) {
     exit();
 }
 
-if (isset($_POST['update'])) {
-    if (isset($_POST['id'], $_POST['ownerId'], $_POST['status'])) {
-        $id = $_POST['id'];
+
+
+// Lógica de actualización
+if (isset($_POST['action']) && $_POST['action'] === 'update') {
+    // Obtener los datos del formulario
+    if (isset($_POST['companyId'], $_POST['ownerId'], $_POST['status'], $_POST['companyTypeData'])) {
+        $id = $_POST['companyId'];
         $legalName = $_POST['legalName'];
         $magicName = $_POST['magicName'];
         $ownerId = $_POST['ownerId'];
-        $companyTypeId = $_POST['companyType'];
+        $companyTypeId = $_POST['companyTypeData'] ?? ''; // Obtener los tipos de empresa (separados por comas)
         $status = $_POST['status'];
 
+        // Lógica para la foto (igual que antes)
         $photoFileName = '';
         $touristCompanyBusiness = new TouristCompanyBusiness();
         $currentTouristCompany = $touristCompanyBusiness->getById($id);
         $existingPhotoFileName = $currentTouristCompany->getTbtouristcompanyurl();
 
+        // Subir nueva imagen si se selecciona
         if (isset($_FILES['newImage']) && $_FILES['newImage']['error'] == UPLOAD_ERR_OK) {
             $uploadDir = '../images/';
             $fileName = basename($_FILES['newImage']['name']);
@@ -156,14 +170,22 @@ if (isset($_POST['update'])) {
             $photoFileName = $existingPhotoFileName;
         }
 
+        // Procesar los tipos de empresa (cadena separada por comas)
+        $companyTypes = explode(',', $companyTypeId); // Convertir la cadena a un array
+
+        // Si el tipo de empresa es "custom", verificar si se especificó un nombre
+        if (in_array('custom', $companyTypes) && empty($_POST['companyTypeData'])) {
+            echo json_encode(['status' => 'error', 'error_code' => 'custom_company_type_required', 'message' => 'Debe especificar un tipo de empresa personalizado.']);
+            exit();
+        }
+
+        // Actualizar la empresa
         if ($ownerId) {
-            $touristCompany = new TouristCompany($id, $legalName, $magicName, $ownerId, $companyTypeId, $photoFileName, $status);
+            $touristCompany = new TouristCompany($id, $legalName, $magicName, $ownerId, implode(',', $companyTypes), $photoFileName, $status);
             $result = $touristCompanyBusiness->update($touristCompany);
 
             if ($result['status'] === 'success') {
                 echo json_encode(['status' => 'success', 'message' => 'Empresa actualizada con éxito.']);
-            } elseif ($result['status'] === 'error' && strpos($result['message'], 'Ya existe una compañía turística') !== false) {
-                echo json_encode(['status' => 'error', 'error_code' => 'company_exists', 'message' => 'Ya existe una empresa turística con el mismo nombre legal.']);
             } else {
                 echo json_encode(['status' => 'error', 'error_code' => 'update_failed', 'message' => 'Error al actualizar la empresa.']);
             }
@@ -173,9 +195,10 @@ if (isset($_POST['update'])) {
     } else {
         echo json_encode(['status' => 'error', 'error_code' => 'missing_fields', 'message' => 'Faltan campos obligatorios para la actualización.']);
     }
-
-    exit();
 }
+
+
+
 
 if (isset($_POST['delete'])) {
     if (isset($_POST['id']) && is_numeric($_POST['id'])) {

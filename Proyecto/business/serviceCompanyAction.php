@@ -1,7 +1,7 @@
 <?php
 include './serviceCompanyBusiness.php';
 
-if (isset($_POST['create'])) {
+if ($_POST['formAction'] == 'create') {
     $response = array();
 
     // Verificación de las imágenes subidas
@@ -81,7 +81,7 @@ if (isset($_POST['create'])) {
     exit();
 }
 
-if (isset($_POST['update'])) {
+} elseif ($_POST['formAction'] == 'update') {
     $companyId = $_POST['companyId'];
     $newServiceIds = isset($_POST['serviceId']) ? $_POST['serviceId'] : [];  // Array con todos los nuevos serviceIds
     $serviceCompanyId = $_POST['id'];
