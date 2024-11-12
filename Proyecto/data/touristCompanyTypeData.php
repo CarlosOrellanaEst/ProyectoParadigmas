@@ -192,7 +192,17 @@ class touristCompanyTypeData extends Data {
         $result = mysqli_query($conn, $query);
         
         $row = mysqli_fetch_assoc($result);
-        $companyType = new touristCompanyType($row['tbtouristcompanytypeid'], $row['tbtouristcompanytypename'], $row['tbtouristcompanytypedescription']);
+        //$companyType = new touristCompanyType($row['tbtouristcompanytypeid'], $row['tbtouristcompanytypename'], $row['tbtouristcompanytypedescription']);
+        $companyType = null;
+        if (!empty($row) && isset($row['tbtouristcompanytypeid'], $row['tbtouristcompanytypename'], $row['tbtouristcompanytypedescription'])) {
+            $companyType = new touristCompanyType(
+                $row['tbtouristcompanytypeid'], 
+                $row['tbtouristcompanytypename'], 
+                $row['tbtouristcompanytypedescription']
+            );
+        } else {
+            error_log('Error: El array $row está vacío o faltan claves requeridas.');
+        }
     
         mysqli_close($conn);
         return $companyType;
